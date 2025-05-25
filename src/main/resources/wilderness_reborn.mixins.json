@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.fuyuaki.wilderness_reborn.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "wilderness_reborn.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
