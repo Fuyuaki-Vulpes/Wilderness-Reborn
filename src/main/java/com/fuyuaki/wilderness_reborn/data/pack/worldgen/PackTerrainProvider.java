@@ -28,7 +28,7 @@ public class PackTerrainProvider {
                 .addPoint(-0.78F, -0.40F)
                 .addPoint(-0.51F, -0.2222F)
                 .addPoint(-0.30F, -0.12F)
-                .addPoint(-0.17F, 0.0F)
+                .addPoint(-0.195F, -0.06F)
                 .addPoint(-0.13F, cubicspline)
                 .addPoint(0.0F, cubicspline1)
                 .addPoint(0.25F, cubicspline2)

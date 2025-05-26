@@ -9,9 +9,6 @@ public class ModNoiseData {
     public static final NormalNoise.NoiseParameters DEFAULT_SHIFT = new NormalNoise.NoiseParameters(-3, 1.0, 1.0, 1.0, 0.0);
 
     public static void bootstrap(BootstrapContext<NormalNoise.NoiseParameters> context) {
-        register(context, ModNoises.RIVERS,-10,1,0.3,1,0);
-        register(context, ModNoises.RIVER_PLACEMENT,-10,1);
-
     }
 
     private static void register(
