@@ -46,9 +46,9 @@
                   "argument1": {
                     "type": "minecraft:y_clamped_gradient",
                     "from_value": 0.0,
-                    "from_y": -64,
+                    "from_y": -256,
                     "to_value": 1.0,
-                    "to_y": -40
+                    "to_y": -232
                   },
                   "argument2": {
                     "type": "minecraft:add",
@@ -61,9 +61,9 @@
                         "argument1": {
                           "type": "minecraft:y_clamped_gradient",
                           "from_value": 1.0,
-                          "from_y": 240,
+                          "from_y": 688,
                           "to_value": 0.0,
-                          "to_y": 256
+                          "to_y": 704
                         },
                         "argument2": {
                           "type": "minecraft:add",
@@ -186,9 +186,9 @@
         "argument1": {
           "type": "minecraft:y_clamped_gradient",
           "from_value": 0.0,
-          "from_y": -64,
+          "from_y": -256,
           "to_value": 1.0,
-          "to_y": -40
+          "to_y": -232
         },
         "argument2": {
           "type": "minecraft:add",
@@ -201,9 +201,9 @@
               "argument1": {
                 "type": "minecraft:y_clamped_gradient",
                 "from_value": 1.0,
-                "from_y": 240,
+                "from_y": 688,
                 "to_value": 0.0,
-                "to_y": 256
+                "to_y": 704
               },
               "argument2": {
                 "type": "minecraft:add",
@@ -332,7 +332,7 @@
     }
   },
   "ore_veins_enabled": true,
-  "sea_level": 100,
+  "sea_level": 63,
   "spawn_target": [
     {
       "continentalness": [

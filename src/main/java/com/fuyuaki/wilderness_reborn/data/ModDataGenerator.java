@@ -1,15 +1,7 @@
 package com.fuyuaki.wilderness_reborn.data;
 
 
-import com.fuyuaki.wilderness_reborn.data.generation.advancement.GenAdvancements;
-import com.fuyuaki.wilderness_reborn.data.generation.lang.EN_US_LangProvider;
-import com.fuyuaki.wilderness_reborn.data.generation.loot.GlobalLootModifiers;
-import com.fuyuaki.wilderness_reborn.data.generation.model.ModModelProvider;
-import com.fuyuaki.wilderness_reborn.data.generation.other.GenLoot;
-import com.fuyuaki.wilderness_reborn.data.generation.other.GenRecipes;
-import com.fuyuaki.wilderness_reborn.data.generation.other.GenSoundDefinition;
-import com.fuyuaki.wilderness_reborn.data.generation.other.GenWorld;
-import com.fuyuaki.wilderness_reborn.data.generation.tags.*;
+import com.fuyuaki.wilderness_reborn.data.generation.other.ModBuiltInEntries;
 import com.fuyuaki.wilderness_reborn.data.pack.PackBuiltInEntries;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -31,7 +23,7 @@ public class ModDataGenerator {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-        var datapackRegistries = new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), GenWorld.BUILDER, Set.of(MODID));
+        var datapackRegistries = new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), ModBuiltInEntries.BUILDER, Set.of(MODID));
 /*
 
         event.createProvider(GenRecipes.Runner::new);
@@ -52,10 +44,10 @@ public class ModDataGenerator {
         generator.addProvider(true,
                 new GenEntityTags(packOutput, datapackRegistries.getRegistryProvider()));
 
-
+*/
         generator.addProvider(true,
-                new GenWorld(packOutput, lookupProvider));
-
+                new ModBuiltInEntries(packOutput, lookupProvider));
+/*
         generator.addProvider(true,
                 new EN_US_LangProvider(packOutput));
 
@@ -69,8 +61,9 @@ public class ModDataGenerator {
                 )
         );*/
         PackOutput datapackOutput = new PackOutput(packOutput.getOutputFolder().resolve("resourcepacks/wilderness_reborn"));
+        DataGenerator.PackGenerator packGenerator = event.getGenerator().getBuiltinDatapack(true, MODID,"wilderness_reborn");
 
-        generator.addProvider(true,
+        packGenerator.addProvider(output ->
                 new PackBuiltInEntries(datapackOutput, lookupProvider));
 
 

@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.fuyuaki.wilderness_reborn.api.WildernessRebornMod.MODID;
 
-public class GenWorld extends DatapackBuiltinEntriesProvider {
+public class ModBuiltInEntries extends DatapackBuiltinEntriesProvider {
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.CONFIGURED_FEATURE, ModFeatureUtils::bootstrap)
             .add(Registries.PLACED_FEATURE, ModPlacementUtils::bootstrap)
@@ -30,7 +30,7 @@ public class GenWorld extends DatapackBuiltinEntriesProvider {
             ;
 
 
-    public GenWorld(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    public ModBuiltInEntries(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, BUILDER, Set.of(MODID));
     }
 }

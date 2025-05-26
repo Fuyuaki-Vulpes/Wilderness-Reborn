@@ -11,8 +11,7 @@ public class PackNoiseData {
 
     public static void bootstrap(BootstrapContext<NormalNoise.NoiseParameters> context) {
         registerBiomeNoises(context, 0, Noises.TEMPERATURE, Noises.VEGETATION, Noises.CONTINENTALNESS, Noises.EROSION);
-        registerBiomeNoises(context, -2, Noises.TEMPERATURE_LARGE, Noises.VEGETATION_LARGE, Noises.CONTINENTALNESS_LARGE, Noises.EROSION_LARGE);
-        register(context, Noises.RIDGE, -7, 1.0, 2.0, 1.0, 0.0, 0.0, 0.0);
+        register(context, Noises.RIDGE, -8, 2.0, 2.0, 1.0, 3.0, 0.0, 0.0);
         context.register(Noises.SHIFT, DEFAULT_SHIFT);
         register(context, Noises.AQUIFER_BARRIER, -3, 1.0);
         register(context, Noises.AQUIFER_FLUID_LEVEL_FLOODEDNESS, -7, 1.0);
@@ -58,12 +57,8 @@ public class PackNoiseData {
         register(context, Noises.POWDER_SNOW, -6, 1.0, 1.0, 1.0, 1.0);
         register(context, Noises.PACKED_ICE, -7, 1.0, 1.0, 1.0, 1.0);
         register(context, Noises.ICE, -4, 1.0, 1.0, 1.0, 1.0);
-        register(context, Noises.SOUL_SAND_LAYER, -8, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.013333333333333334);
         register(context, Noises.GRAVEL_LAYER, -8, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.013333333333333334);
         register(context, Noises.PATCH, -5, 1.0, 0.0, 0.0, 0.0, 0.0, 0.013333333333333334);
-        register(context, Noises.NETHERRACK, -3, 1.0, 0.0, 0.0, 0.35);
-        register(context, Noises.NETHER_WART, -3, 1.0, 0.0, 0.0, 0.9);
-        register(context, Noises.NETHER_STATE_SELECTOR, -4, 1.0);
     }
 
     private static void registerBiomeNoises(
@@ -77,7 +72,7 @@ public class PackNoiseData {
         register(context, temperature, -10 + firstOctave, 1.5, 0.0, 1.0, 0.0, 0.0, 0.0);
         register(context, vegetation, -8 + firstOctave, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0);
         register(context, continentalness, -9 + firstOctave, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0);
-        register(context, erosion, -9 + firstOctave, 1.0, 1.0, 0.0, 1.0, 1.0);
+        register(context, erosion, -10 + firstOctave, 1.5, 1.0, 1.0, 1.0, 1.0);
     }
 
     private static void register(
