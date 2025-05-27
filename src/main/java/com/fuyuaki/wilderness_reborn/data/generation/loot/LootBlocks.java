@@ -1,5 +1,7 @@
 package com.fuyuaki.wilderness_reborn.data.generation.loot;
 
+import com.fuyuaki.wilderness_reborn.world.item.ModItems;
+import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -9,6 +11,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -37,6 +40,20 @@ public class LootBlocks extends BlockLootSubProvider {
     @Override
     protected void generate() {
 
+        add(ModBlocks.CHALK.get(), block -> createSingleItemTableWithSilkTouch(block, ModItems.CHALK_DUST,ConstantValue.exactly(4.0F)));
+        dropSelf(ModBlocks.LIMESTONE.get());
+        dropSelf(ModBlocks.MUD_STONE.get());
+
+        dropSelf(ModBlocks.CHALKY_SOIL.get());
+        dropOther(ModBlocks.CHALKY_FARMLAND.get(), ModBlocks.CHALKY_SOIL);
+        dropSelf(ModBlocks.CLAY_SOIL.get());
+        dropOther(ModBlocks.CLAY_FARMLAND.get(), ModBlocks.CLAY_SOIL);
+        add(ModBlocks.PEAT.get(), block -> createSingleItemTableWithSilkTouch(block, ModItems.PEAT_BALL, ConstantValue.exactly(4.0F)));
+        add(ModBlocks.PEAT_FARMLAND.get(), createSingleItemTable(ModItems.PEAT_BALL, ConstantValue.exactly(4.0F)));
+        dropSelf(ModBlocks.SANDY_SOIL.get());
+        dropOther(ModBlocks.SANDY_FARMLAND.get(), ModBlocks.SANDY_SOIL);
+        dropSelf(ModBlocks.SILT.get());
+        dropOther(ModBlocks.SILT_FARMLAND.get(), ModBlocks.SILT);
 
     }
 

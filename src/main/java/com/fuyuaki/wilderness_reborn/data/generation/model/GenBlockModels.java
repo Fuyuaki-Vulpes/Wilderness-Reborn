@@ -1,14 +1,18 @@
 package com.fuyuaki.wilderness_reborn.data.generation.model;
 
+import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelOutput;
 import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.data.models.blockstates.BlockModelDefinitionGenerator;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.model.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.registries.DeferredBlock;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -33,6 +37,19 @@ public class GenBlockModels extends BlockModelGenerators {
 //                .filter(BlockFamily::shouldGenerateModel)
 //                .forEach(p_386718_ -> this.family(p_386718_.getBaseBlock()).generateFor(p_386718_));
 
+        createTrivialCube(ModBlocks.CHALK.get());
+        createTrivialCube(ModBlocks.LIMESTONE.get());
+        createTrivialCube(ModBlocks.MUD_STONE.get());
+        createTrivialCube(ModBlocks.CHALKY_SOIL.get());
+        createFarmland(ModBlocks.CHALKY_FARMLAND, ModBlocks.CHALKY_SOIL);
+        createTrivialCube(ModBlocks.CLAY_SOIL.get());
+        createFarmland(ModBlocks.CLAY_FARMLAND, ModBlocks.CLAY_SOIL);
+        createTrivialCube(ModBlocks.PEAT.get());
+        createFarmland(ModBlocks.PEAT_FARMLAND, ModBlocks.PEAT);
+        createTrivialCube(ModBlocks.SANDY_SOIL.get());
+        createFarmland(ModBlocks.SANDY_FARMLAND, ModBlocks.SANDY_SOIL);
+        createTrivialCube(ModBlocks.SILT.get());
+        createFarmland(ModBlocks.SILT_FARMLAND, ModBlocks.SILT);
         }
 
     public void createVerticalBlock(Block block, Block side, Block bottom, Block top){
@@ -83,6 +100,22 @@ public class GenBlockModels extends BlockModelGenerators {
     this.createGrassBlock(block,dirt,block,snow,colorSource);
     }
 
+    public void createFarmland(DeferredBlock<Block> farmland, DeferredBlock<Block> soil) {
+        TextureMapping texturemapping = new TextureMapping()
+                .put(TextureSlot.DIRT, TextureMapping.getBlockTexture(soil.get()))
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(farmland.get()));
+        TextureMapping texturemapping1 = new TextureMapping()
+                .put(TextureSlot.DIRT, TextureMapping.getBlockTexture(soil.get()))
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(farmland.get(), "_moist"));
+        MultiVariant multivariant = plainVariant(ModelTemplates.FARMLAND.create(farmland.get(), texturemapping, this.modelOutput));
+        MultiVariant multivariant1 = plainVariant(
+                ModelTemplates.FARMLAND.create(TextureMapping.getBlockTexture(farmland.get(), "_moist"), texturemapping1, this.modelOutput)
+        );
+        this.blockStateOutput
+                .accept(
+                        MultiVariantGenerator.dispatch(farmland.get()).with(createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, multivariant1, multivariant))
+                );
+    }
 
 
 

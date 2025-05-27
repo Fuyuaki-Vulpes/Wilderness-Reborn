@@ -1,5 +1,7 @@
 package com.fuyuaki.wilderness_reborn.data.generation.other;
 
+import com.fuyuaki.wilderness_reborn.world.item.ModItems;
+import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -12,6 +14,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -26,7 +30,22 @@ public class GenRecipes  extends RecipeProvider {
     protected void buildRecipes() {
         this.generateForEnabledBlockFamilies(FeatureFlagSet.of(FeatureFlags.VANILLA));
 
+        twoByTwoPacker(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CHALK, ModItems.CHALK_DUST);
+        twoByTwoPacker(RecipeCategory.BUILDING_BLOCKS, ModBlocks.PEAT, ModItems.PEAT_BALL);
+        shapeless(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CHALKY_SOIL)
+                .requires(Blocks.DIRT)
+                .requires(ModItems.CHALK_DUST)
+                .group("brown_dye")
+                .unlockedBy("has_chalk_dust", this.has(ModItems.CHALK_DUST))
+                .save(this.output);
+        shapeless(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CHALKY_FARMLAND)
+                .requires(ModBlocks.CHALKY_SOIL)
+                .requires(Tags.Items.SEEDS)
+                .group("brown_dye")
+                .unlockedBy("has_chalk_dust", this.has(ModItems.CHALK_DUST))
+                .save(this.output);
     }
+
 
 
 

@@ -1,5 +1,6 @@
 package com.fuyuaki.wilderness_reborn.data.generation.model;
 
+import com.fuyuaki.wilderness_reborn.world.item.ModItems;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ItemModelOutput;
 import net.minecraft.client.data.models.model.ItemModelUtils;
@@ -51,6 +52,8 @@ public class GenItemModels extends ItemModelGenerators {
     @Override
     public void run() {
 
+        simpleItem(ModItems.CHALK_DUST);
+        simpleItem(ModItems.PEAT_BALL);
 
     }
 

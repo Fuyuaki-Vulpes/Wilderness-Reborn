@@ -1,4 +1,4 @@
-// 1.21.5	2025-05-26T14:12:17.9453424	wilderness_reborn_wilderness_reborn/Registries
+// 1.21.5	2025-05-27T12:10:01.4492119	wilderness_reborn_wilderness_reborn/Registries
 d62d4ef31c705ae2221ec889692f6acad126fcce resourcepacks/wilderness_reborn/data/minecraft/dimension_type/overworld.json
 7580c0daadb84f23561f7425cce124706dc343d6 resourcepacks/wilderness_reborn/data/minecraft/worldgen/configured_carver/canyon.json
 da29c72052eb864d157ced4944d359366efec18d resourcepacks/wilderness_reborn/data/minecraft/worldgen/configured_carver/cave.json
@@ -59,7 +59,7 @@ dd505c720d4af14fb38b033b8c7b5d4430811f33 resourcepacks/wilderness_reborn/data/mi
 dee3d1cb549513644a534b3d41b89380ace745a2 resourcepacks/wilderness_reborn/data/minecraft/worldgen/noise/pillar_rareness.json
 dee3d1cb549513644a534b3d41b89380ace745a2 resourcepacks/wilderness_reborn/data/minecraft/worldgen/noise/pillar_thickness.json
 5d9160688e7187f6ff35229f3300e345dda26fe9 resourcepacks/wilderness_reborn/data/minecraft/worldgen/noise/powder_snow.json
-927c1ed554ee5598d0474d5c7160600d6112047f resourcepacks/wilderness_reborn/data/minecraft/worldgen/noise/ridge.json
+f6508c33cf6b47498a96170c3a8445dbbdd056f6 resourcepacks/wilderness_reborn/data/minecraft/worldgen/noise/ridge.json
 f819fb29070e13882767d5ea75439dde044abd17 resourcepacks/wilderness_reborn/data/minecraft/worldgen/noise/spaghetti_2d.json
 dee3d1cb549513644a534b3d41b89380ace745a2 resourcepacks/wilderness_reborn/data/minecraft/worldgen/noise/spaghetti_2d_elevation.json
 628a0fdb9dfa22e40e3f6e2cae7035260c893999 resourcepacks/wilderness_reborn/data/minecraft/worldgen/noise/spaghetti_2d_modulator.json
