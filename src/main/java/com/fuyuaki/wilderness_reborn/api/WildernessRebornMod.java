@@ -1,5 +1,6 @@
 package com.fuyuaki.wilderness_reborn.api;
 
+import com.fuyuaki.wilderness_reborn.data.pack.worldgen.PackSurfaceRuleData;
 import com.fuyuaki.wilderness_reborn.world.item.ModCreativeModeTabs;
 import com.fuyuaki.wilderness_reborn.world.item.ModItems;
 import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
@@ -9,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -46,6 +48,7 @@ public class WildernessRebornMod {
     public WildernessRebornMod(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
 
+        PackSurfaceRuleData.ConditionSource.init(modEventBus);
         ModBlocks.init(modEventBus);
         ModItems.init(modEventBus);
         ModCreativeModeTabs.init(modEventBus);

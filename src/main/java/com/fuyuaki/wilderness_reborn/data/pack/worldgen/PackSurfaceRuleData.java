@@ -1,12 +1,24 @@
 package com.fuyuaki.wilderness_reborn.data.pack.worldgen;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.levelgen.Noises;
-import net.minecraft.world.level.levelgen.SurfaceRules;
-import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.*;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Function;
+
+import static com.fuyuaki.wilderness_reborn.api.WildernessRebornMod.MODID;
 
 public class PackSurfaceRuleData {
 
@@ -93,7 +105,7 @@ public class PackSurfaceRuleData {
         SurfaceRules.RuleSource makePowderSnowLarge = SurfaceRules.ifTrue(
                 SurfaceRules.noiseCondition(Noises.POWDER_SNOW, 0.35, 0.6), SurfaceRules.ifTrue(surfacerules$conditionsource8, POWDER_SNOW)
         );
-        SurfaceRules.RuleSource surfacerules$rulesource6 = SurfaceRules.sequence(
+        SurfaceRules.RuleSource underSurfaceRule = SurfaceRules.sequence(
                 SurfaceRules.ifTrue(
                         SurfaceRules.isBiome(Biomes.FROZEN_PEAKS),
                         SurfaceRules.sequence(
@@ -112,6 +124,7 @@ public class PackSurfaceRuleData {
                         )
                 ),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.JAGGED_PEAKS), STONE),
+                SurfaceRules.ifTrue(isSteep, STONE),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.GROVE), SurfaceRules.sequence(makePowderSnow, DIRT)),
                 surfacerules$rulesource3,
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.WINDSWEPT_SAVANNA), SurfaceRules.ifTrue(surfaceNoiseAbove(1.75), STONE)),
@@ -125,9 +138,11 @@ public class PackSurfaceRuleData {
                         )
                 ),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MANGROVE_SWAMP), MUD),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.RIVER,Biomes.FROZEN_RIVER),
+                        SurfaceRules.ifTrue(PackSurfaceRuleData.continental_threshold(NoiseRouterData.CONTINENTS,-0.2F,-0.1F), makeSandSurface)),
                 DIRT
         );
-        SurfaceRules.RuleSource surfacerules$rulesource7 = SurfaceRules.sequence(
+        SurfaceRules.RuleSource surfaceRule = SurfaceRules.sequence(
                 SurfaceRules.ifTrue(
                         SurfaceRules.isBiome(Biomes.FROZEN_PEAKS),
                         SurfaceRules.sequence(
@@ -155,6 +170,8 @@ public class PackSurfaceRuleData {
                         SurfaceRules.isBiome(Biomes.GROVE),
                         SurfaceRules.sequence(makePowderSnowLarge, SurfaceRules.ifTrue(surfacerules$conditionsource8, SNOW_BLOCK))
                 ),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.ICE_SPIKES), SurfaceRules.ifTrue(surfacerules$conditionsource8, SNOW_BLOCK)),
+                SurfaceRules.ifTrue(isSteep, STONE),
                 surfacerules$rulesource3,
                 SurfaceRules.ifTrue(
                         SurfaceRules.isBiome(Biomes.WINDSWEPT_SAVANNA),
@@ -173,15 +190,16 @@ public class PackSurfaceRuleData {
                         SurfaceRules.isBiome(Biomes.OLD_GROWTH_PINE_TAIGA, Biomes.OLD_GROWTH_SPRUCE_TAIGA),
                         SurfaceRules.sequence(SurfaceRules.ifTrue(surfaceNoiseAbove(1.75), COARSE_DIRT), SurfaceRules.ifTrue(surfaceNoiseAbove(-0.95), PODZOL))
                 ),
-                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.ICE_SPIKES), SurfaceRules.ifTrue(surfacerules$conditionsource8, SNOW_BLOCK)),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MANGROVE_SWAMP), MUD),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MUSHROOM_FIELDS), MYCELIUM),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.RIVER,Biomes.FROZEN_RIVER),
+                        SurfaceRules.ifTrue(PackSurfaceRuleData.continental_threshold(NoiseRouterData.CONTINENTS,-0.2F,-0.1F), makeSandSurface)),
                 makeGrassSurfance
         );
         SurfaceRules.ConditionSource surfaceNoiseVeryNegative = SurfaceRules.noiseCondition(Noises.SURFACE, -0.909, -0.5454);
         SurfaceRules.ConditionSource surfaceNoiseMedian = SurfaceRules.noiseCondition(Noises.SURFACE, -0.1818, 0.1818);
         SurfaceRules.ConditionSource surfaceNoiseVeryPositive = SurfaceRules.noiseCondition(Noises.SURFACE, 0.5454, 0.909);
-        SurfaceRules.RuleSource surfacerules$rulesource8 = SurfaceRules.sequence(
+        SurfaceRules.RuleSource badlandsAndSurfaces = SurfaceRules.sequence(
                 SurfaceRules.ifTrue(
                         SurfaceRules.ON_FLOOR,
                         SurfaceRules.sequence(
@@ -267,7 +285,7 @@ public class PackSurfaceRuleData {
                                                         )
                                                 )
                                         ),
-                                        surfacerules$rulesource7
+                                        surfaceRule
                                 )
                         )
                 ),
@@ -277,7 +295,7 @@ public class PackSurfaceRuleData {
                                 SurfaceRules.ifTrue(
                                         SurfaceRules.ON_FLOOR, SurfaceRules.ifTrue(isFrozenOcean, SurfaceRules.ifTrue(surfacerules$conditionsource10, WATER))
                                 ),
-                                SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, surfacerules$rulesource6),
+                                SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, underSurfaceRule),
                                 SurfaceRules.ifTrue(isWarmOceanSnowyOceanOrBeach, SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, SANDSTONE)),
                                 SurfaceRules.ifTrue(isDesert, SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, SANDSTONE))
                         )
@@ -302,10 +320,14 @@ public class PackSurfaceRuleData {
             builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("bedrock_floor", VerticalAnchor.bottom(), VerticalAnchor.aboveBottom(5)), BEDROCK));
         }
 
-        SurfaceRules.RuleSource surfacerules$rulesource9 = SurfaceRules.ifTrue(SurfaceRules.abovePreliminarySurface(), surfacerules$rulesource8);
-        builder.add(aboveGround ? surfacerules$rulesource9 : surfacerules$rulesource8);
+        SurfaceRules.RuleSource surfacerules$rulesource9 = SurfaceRules.ifTrue(SurfaceRules.abovePreliminarySurface(), badlandsAndSurfaces);
+        builder.add(aboveGround ? surfacerules$rulesource9 : badlandsAndSurfaces);
         builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("deepslate", VerticalAnchor.absolute(0), VerticalAnchor.absolute(8)), DEEPSLATE));
         return SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
+    }
+
+    private static SurfaceRules.ConditionSource continental_threshold(ResourceKey<DensityFunction> densityFunction, double minThreshold, double maxThreshold) {
+        return new ContinentalnessSource(densityFunction, minThreshold, maxThreshold);
     }
 
 
@@ -315,5 +337,68 @@ public class PackSurfaceRuleData {
 
     private static SurfaceRules.ConditionSource surfaceNoiseAbove(double value) {
         return SurfaceRules.noiseCondition(Noises.SURFACE, value / 8.25, Double.MAX_VALUE);
+    }
+
+    record ContinentalnessSource(ResourceKey<DensityFunction> densityMap, double minThreshold, double maxThreshold) implements SurfaceRules.ConditionSource {
+        static final KeyDispatchDataCodec<ContinentalnessSource> CODEC = KeyDispatchDataCodec.of(
+                RecordCodecBuilder.mapCodec(
+                        p_258995_ -> p_258995_.group(
+                                        ResourceKey.codec(Registries.DENSITY_FUNCTION).fieldOf("densityMap").forGetter(ContinentalnessSource::densityMap),
+                                        Codec.DOUBLE.fieldOf("min_threshold").forGetter(ContinentalnessSource::minThreshold),
+                                        Codec.DOUBLE.fieldOf("max_threshold").forGetter(ContinentalnessSource::maxThreshold)
+                                )
+                                .apply(p_258995_, ContinentalnessSource::new)
+                )
+        );
+
+        @Override
+        public KeyDispatchDataCodec<? extends SurfaceRules.ConditionSource> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public SurfaceRules.Condition apply(SurfaceRules.Context ruleContext) {
+            final DensityFunction densityFunction = ruleContext.randomState.router().continents();
+            final DensityFunction.FunctionContext functionContext = new DensityFunction.FunctionContext() {
+                @Override
+                public int blockX() {
+                    return ruleContext.blockX;
+                }
+
+                @Override
+                public int blockY() {
+                    return ruleContext.blockY;
+                }
+
+                @Override
+                public int blockZ() {
+                    return ruleContext.blockZ;
+                }
+            };
+
+            class ContinentalnessThresholdCondition extends SurfaceRules.LazyXZCondition {
+                ContinentalnessThresholdCondition() {
+                    super(ruleContext);
+                }
+
+                @Override
+                protected boolean compute() {
+                    double d0 = densityFunction.compute(functionContext);
+                    return d0 >= ContinentalnessSource.this.minThreshold && d0 <= ContinentalnessSource.this.maxThreshold;
+                }
+            }
+
+            return new ContinentalnessThresholdCondition();
+        }
+    }
+    public interface ConditionSource extends Function<SurfaceRules.Context, SurfaceRules.Condition> {
+        static final DeferredRegister<MapCodec<? extends SurfaceRules.ConditionSource>> CONDITIONS = DeferredRegister.create(BuiltInRegistries.MATERIAL_CONDITION,MODID);
+
+        public static final DeferredHolder<MapCodec<? extends SurfaceRules.ConditionSource>, MapCodec<? extends SurfaceRules.ConditionSource>> CONTINENTALNESS_CONDITION =
+                CONDITIONS.register("continentalness_threshold", ContinentalnessSource.CODEC::codec);
+
+        public static void init(IEventBus bus){
+            CONDITIONS.register(bus);
+        }
     }
 }

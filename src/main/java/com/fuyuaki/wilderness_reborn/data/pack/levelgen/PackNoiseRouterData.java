@@ -2,16 +2,13 @@ package com.fuyuaki.wilderness_reborn.data.pack.levelgen;
 
 import com.fuyuaki.wilderness_reborn.api.WildernessRebornMod;
 import com.fuyuaki.wilderness_reborn.data.pack.worldgen.PackTerrainProvider;
-import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModNoises;
+import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModNoiseRouterData;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.data.worldgen.TerrainProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.CubicSpline;
-import net.minecraft.util.ToFloatFunction;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
@@ -40,6 +37,7 @@ public class PackNoiseRouterData {
     private static final ResourceKey<DensityFunction> BASE_3D_NOISE_OVERWORLD = createKey("overworld/base_3d_noise");
     public static final ResourceKey<DensityFunction> CONTINENTS = createKey("overworld/continents");
     public static final ResourceKey<DensityFunction> EROSION = createKey("overworld/erosion");
+    public static final ResourceKey<DensityFunction> PLATEAU_OR_HILL = createKey("overworld/plateau_or_hill");
     public static final ResourceKey<DensityFunction> RIDGES = createKey("overworld/ridges");
     public static final ResourceKey<DensityFunction> RIDGES_FOLDED = createKey("overworld/ridges_folded");
     public static final ResourceKey<DensityFunction> OFFSET = createKey("overworld/offset");
@@ -101,6 +99,8 @@ public class PackNoiseRouterData {
                 EROSION,
                 DensityFunctions.flatCache(DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(Noises.EROSION)))
         );
+
+
         DensityFunction ridges = registerAndWrap(
                 context,
                 RIDGES,
@@ -128,21 +128,6 @@ public class PackNoiseRouterData {
 
     }
 
-    private static DensityFunction river(DensityFunction riverPath, DensityFunction riverFlow) {
-        return DensityFunctions.mul(
-                DensityFunctions.mul(
-                        DensityFunctions.add(
-                                DensityFunctions.add(
-                                        riverPath.abs(),
-                                        DensityFunctions.constant(-0.6666666666666666)
-                                ).abs(),
-                                DensityFunctions.constant(-0.3333333333333333)
-                        ),
-                        riverFlow.abs()
-                ),
-                DensityFunctions.constant(1.0)
-        );
-    }
 
 
     private static void registerTerrainNoises(
@@ -162,22 +147,38 @@ public class PackNoiseRouterData {
         DensityFunctions.Spline.Coordinate coordsErosion = new DensityFunctions.Spline.Coordinate(erosion);
         DensityFunctions.Spline.Coordinate coordsRidges = new DensityFunctions.Spline.Coordinate(densityFunctionRegistry.getOrThrow(RIDGES));
         DensityFunctions.Spline.Coordinate coordsValleysAndPeaks = new DensityFunctions.Spline.Coordinate(densityFunctionRegistry.getOrThrow(RIDGES_FOLDED));
+        DensityFunctions.Spline.Coordinate coordsHillCurvature = new DensityFunctions.Spline.Coordinate(densityFunctionRegistry.getOrThrow(ModNoiseRouterData.HILL_CURVATURE));
+        DensityFunctions.Spline.Coordinate coordsSpikes = new DensityFunctions.Spline.Coordinate(densityFunctionRegistry.getOrThrow(ModNoiseRouterData.HILL_CURVATURE));
+
+        DensityFunction elevationOffset = DensityFunctions.mul(
+                DensityFunctions.constant(0.05F),
+                getFunction(densityFunctionRegistry, ModNoiseRouterData.ELEVATION));
+
         DensityFunction worldOffset = registerAndWrap(
                 context,
                 offsetKey,
                 splineWithBlending(
                         DensityFunctions.add(
-                                DensityFunctions.constant(-0.50375F),
+                                DensityFunctions.add(
+                                        DensityFunctions.constant(-0.50375F),
+                                        DensityFunctions.lerp(DensityFunctions.add(
+                                                        DensityFunctions.constant(-1.0F),
+                                                        DensityFunctions.mul(getFunction(densityFunctionRegistry, CONTINENTS).abs(), DensityFunctions.constant(2.0F))
+                                                ),
+                                                DensityFunctions.constant(0.0F),
+                                                elevationOffset
+                                                )
+                                ),
                                 DensityFunctions.spline(
                                         PackTerrainProvider.overworldOffset(
-                                                coordsContinentalness, coordsErosion, coordsValleysAndPeaks, amplified
+                                                coordsContinentalness, coordsErosion, coordsValleysAndPeaks, coordsHillCurvature, coordsSpikes, amplified
                                         )
                                 )
                         ),
                         DensityFunctions.blendOffset()
                 )
         );
-        DensityFunction densityfunction1 = registerAndWrap(
+        DensityFunction overworldFactor = registerAndWrap(
                 context,
                 factorKey,
                 splineWithBlending(
@@ -193,10 +194,12 @@ public class PackNoiseRouterData {
                         BLENDING_FACTOR
                 )
         );
-        DensityFunction densityfunction2 = registerAndWrap(
-                context, depthKey, DensityFunctions.add(DensityFunctions.yClampedGradient(-256, 1024, 1.5, -2.5), worldOffset)
+        DensityFunction depthGradient = registerAndWrap(
+                context, depthKey, DensityFunctions.add(DensityFunctions.yClampedGradient(-256, 1024, 1.5, -2.5), worldOffset
+
+                )
         );
-        DensityFunction densityfunction3 = registerAndWrap(
+        DensityFunction jaggedness = registerAndWrap(
                 context,
                 jaggednessKey,
                 splineWithBlending(
@@ -212,9 +215,17 @@ public class PackNoiseRouterData {
                         BLENDING_JAGGEDNESS
                 )
         );
-        DensityFunction densityfunction4 = DensityFunctions.mul(densityfunction3, jaggedNoise.halfNegative());
-        DensityFunction densityfunction5 = noiseGradientDensity(densityfunction1, DensityFunctions.add(densityfunction2, densityfunction4));
-        context.register(slopedCheeseKey, DensityFunctions.add(densityfunction5, getFunction(densityFunctionRegistry, BASE_3D_NOISE_OVERWORLD)));
+        DensityFunction noiseFilter = getFunction(densityFunctionRegistry, ModNoiseRouterData.NOISE_FILTER);
+        DensityFunction jaggednessPost = DensityFunctions.mul(jaggedness, jaggedNoise.halfNegative());
+        DensityFunction factorWithJaggedness = noiseGradientDensity(overworldFactor, DensityFunctions.add(depthGradient, jaggednessPost));
+        context.register(slopedCheeseKey,
+                DensityFunctions.lerp(
+                        noiseFilter,
+                        DensityFunctions.add(factorWithJaggedness, DensityFunctions.mul(getFunction(densityFunctionRegistry, ModNoiseRouterData.OVERWORLD_NOISE_2),DensityFunctions.constant(0.5F))),
+                        DensityFunctions.add(factorWithJaggedness, DensityFunctions.mul(getFunction(densityFunctionRegistry, ModNoiseRouterData.OVERWORLD_NOISE),DensityFunctions.constant(0.5F))
+                        )
+                )
+        );
     }
 
     private static DensityFunction registerAndWrap(
@@ -321,9 +332,9 @@ public class PackNoiseRouterData {
         DensityFunction densityfunction1 = getFunction(densityFunctionRegistry, SPAGHETTI_ROUGHNESS_FUNCTION);
         DensityFunction densityfunction2 = DensityFunctions.noise(noiseParameters.getOrThrow(Noises.CAVE_LAYER), 8.0);
         DensityFunction densityfunction3 = DensityFunctions.mul(DensityFunctions.constant(4.0), densityfunction2.square());
-        DensityFunction densityfunction4 = DensityFunctions.noise(noiseParameters.getOrThrow(Noises.CAVE_CHEESE), 0.6666666666666666);
+        DensityFunction cheeseCaves = DensityFunctions.noise(noiseParameters.getOrThrow(Noises.CAVE_CHEESE), 0.6666666666666666);
         DensityFunction densityfunction5 = DensityFunctions.add(
-                DensityFunctions.add(DensityFunctions.constant(0.27), densityfunction4).clamp(-1.0, 1.0),
+                DensityFunctions.add(DensityFunctions.constant(0.27), cheeseCaves).clamp(-1.0, 1.0),
                 DensityFunctions.add(DensityFunctions.constant(1.5), DensityFunctions.mul(DensityFunctions.constant(-0.64), slopedCheese)).clamp(0.0, 0.5)
         );
         DensityFunction densityfunction6 = DensityFunctions.add(densityfunction3, densityfunction5);
@@ -485,3 +496,4 @@ public class PackNoiseRouterData {
     }
 
 }
+

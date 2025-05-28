@@ -7,11 +7,11 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 public class PackNoiseData {
     @Deprecated
-    public static final NormalNoise.NoiseParameters DEFAULT_SHIFT = new NormalNoise.NoiseParameters(-3, 1.0, 1.0, 1.0, 0.0);
+    public static final NormalNoise.NoiseParameters DEFAULT_SHIFT = new NormalNoise.NoiseParameters(-4, 1.0, 1.0, 1.0, 0.0);
 
     public static void bootstrap(BootstrapContext<NormalNoise.NoiseParameters> context) {
         registerBiomeNoises(context, 0, Noises.TEMPERATURE, Noises.VEGETATION, Noises.CONTINENTALNESS, Noises.EROSION);
-        register(context, Noises.RIDGE, -7, 2.0, 2.0, 1.0, 3.0, 0.0, 0.0);
+        register(context, Noises.RIDGE, -8, 2.0, 3.0, 1.0, 2.0, 2.0, 2.0);
         context.register(Noises.SHIFT, DEFAULT_SHIFT);
         register(context, Noises.AQUIFER_BARRIER, -3, 1.0);
         register(context, Noises.AQUIFER_FLUID_LEVEL_FLOODEDNESS, -7, 1.0);
@@ -41,7 +41,7 @@ public class PackNoiseData {
         register(context, Noises.NOODLE_THICKNESS, -8, 1.0);
         register(context, Noises.NOODLE_RIDGE_A, -7, 1.0);
         register(context, Noises.NOODLE_RIDGE_B, -7, 1.0);
-        register(context, Noises.JAGGED, -16, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        register(context, Noises.JAGGED, -16, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
         register(context, Noises.SURFACE, -6, 1.0, 1.0, 1.0);
         register(context, Noises.SURFACE_SECONDARY, -6, 1.0, 1.0, 0.0, 1.0);
         register(context, Noises.CLAY_BANDS_OFFSET, -8, 1.0);
@@ -69,10 +69,10 @@ public class PackNoiseData {
             ResourceKey<NormalNoise.NoiseParameters> continentalness,
             ResourceKey<NormalNoise.NoiseParameters> erosion
     ) {
-        register(context, temperature, -10 + firstOctave, 1.5, 0.0, 1.0, 0.0, 0.0, 0.0);
-        register(context, vegetation, -8 + firstOctave, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0);
-        register(context, continentalness, -9 + firstOctave, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0);
-        register(context, erosion, -10 + firstOctave, 1.5, 1.0, 1.0, 1.0, 1.0);
+        register(context, temperature, -10 + firstOctave, 1.5, 2.0, 1.0, 0.0);
+        register(context, vegetation, -8 + firstOctave, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+        register(context, continentalness, -11 + firstOctave, 2.0, 2.0, 0.0, 2.0, 1.0);
+        register(context, erosion, -10 + firstOctave, 1, 2.0, 2.0, 0.0);
     }
 
     private static void register(

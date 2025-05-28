@@ -5,6 +5,9 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "wilderness_reborn.refmap.json",
   "mixins": [
+    "NoiseBasedChunkGeneratorMixin",
+    "SurfaceRulesSteepConditionMixin",
+    "WorldCarverMixin"
   ],
   "client": [
   ],

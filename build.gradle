@@ -10,7 +10,9 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
-
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
 }
 
 base {
@@ -104,6 +106,7 @@ dependencies {
     // Example mod dependency using a file as dependency
     // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
 
+    implementation("maven.modrinth:lithostitched:$lithostitchedVersion-neoforge-$minecraft_version")
 
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
@@ -117,6 +120,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
                              minecraft_version_range: minecraft_version_range,
                              neo_version            : neo_version,
                              neo_version_range      : neo_version_range,
+                             lithostitchedRange      : lithostitchedRange,
+                             lithostitchedVersion      : lithostitchedVersion,
                              loader_version_range   : loader_version_range,
                              mod_id                 : mod_id,
                              mod_name               : mod_name,
