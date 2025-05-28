@@ -22,9 +22,14 @@ public class ModItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
 
+    //Items
+
+    public static final DeferredItem<Item> PEAT_BALL = registerItem("peat_ball", new Item.Properties());
+    public static final DeferredItem<Item> CHALK_DUST = registerItem("chalk_dust", new Item.Properties());
 
 
 
+    //Methods
 
     public static DeferredItem<Item> registerItem(String name, Item.Properties properties) {
         return registerItem(name, Item::new, properties);

@@ -1,6 +1,7 @@
 package com.fuyuaki.wilderness_reborn.world.item;
 
 import com.fuyuaki.wilderness_reborn.api.WildernessRebornMod;
+import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -39,6 +40,21 @@ public class ModCreativeModeTabs {
             .icon(Items.COMPASS.asItem()::getDefaultInstance)
             .displayItems(((parameters, output) -> {
                 output.accept(Items.CHERRY_SAPLING);
+                output.accept(ModItems.PEAT_BALL);
+                output.accept(ModItems.CHALK_DUST);
+                output.accept(ModBlocks.LIMESTONE);
+                output.accept(ModBlocks.MUD_STONE);
+                output.accept(ModBlocks.CHALK);
+                output.accept(ModBlocks.CHALKY_SOIL);
+                output.accept(ModBlocks.CHALKY_FARMLAND);
+                output.accept(ModBlocks.CLAY_SOIL);
+                output.accept(ModBlocks.CLAY_FARMLAND);
+                output.accept(ModBlocks.PEAT);
+                output.accept(ModBlocks.PEAT_FARMLAND);
+                output.accept(ModBlocks.SANDY_SOIL);
+                output.accept(ModBlocks.SANDY_FARMLAND);
+                output.accept(ModBlocks.SILT);
+                output.accept(ModBlocks.SILT_FARMLAND);
             }))
             .build());
 

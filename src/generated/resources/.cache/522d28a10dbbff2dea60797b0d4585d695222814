@@ -1,0 +1,9 @@
+// 1.21.5	2025-05-27T18:14:59.2110231	More Than Adventure recipes
+f6118d6fa3e2bd8bee80162a52507e0fe9be7f11 data/wilderness_reborn/advancement/recipes/building_blocks/chalk.json
+2d138705fa8150c16ff9bb43b1793035afed8713 data/wilderness_reborn/advancement/recipes/building_blocks/chalky_farmland.json
+60942cc56ff61c5e47c0e5ea2b006ea147e46889 data/wilderness_reborn/advancement/recipes/building_blocks/chalky_soil.json
+4c483d10b469c287f14ba7ab5002c1e13ac9d1ad data/wilderness_reborn/advancement/recipes/building_blocks/peat.json
+8874695e2a9fff03137d616a4748f13505fc3301 data/wilderness_reborn/recipe/chalk.json
+ae8f0fe1de3807478b30b3004c2b27a91a587d07 data/wilderness_reborn/recipe/chalky_farmland.json
+bdc661f129df7033653542b0ee9adbebb7670de1 data/wilderness_reborn/recipe/chalky_soil.json
+599144d8f85a6b427db7a8fcd38a056518549532 data/wilderness_reborn/recipe/peat.json

@@ -26,10 +26,87 @@ import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
 import static com.fuyuaki.wilderness_reborn.api.WildernessRebornMod.MODID;
+import static net.minecraft.world.item.Items.registerBlock;
 
 public class ModBlocks{
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
+
+    //Blocks
+
+    //Stones
+
+    public static final DeferredBlock<Block> CHALK = registerBlock("chalk", BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CONCRETE));
+    public static final DeferredBlock<Block> LIMESTONE = registerBlock("limestone", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
+    public static final DeferredBlock<Block> MUD_STONE = registerBlock("mud_stone", BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS));
+
+    //Soils
+
+    public static final DeferredBlock<Block> CHALKY_SOIL = registerBlockWithItem("chalky_soil",
+            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CONCRETE_POWDER));
+    public static final DeferredBlock<Block> CHALKY_FARMLAND = registerBlockWithItem("chalky_farmland",
+            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CONCRETE_POWDER)
+    );
+    public static final DeferredBlock<Block> CLAY_SOIL = registerBlockWithItem("clay_soil",
+            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY));
+    public static final DeferredBlock<Block> CLAY_FARMLAND = registerBlockWithItem("clay_farmland",
+            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY)
+    );
+    public static final DeferredBlock<Block> PEAT = registerBlockWithItem("peat",
+            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK));
+    public static final DeferredBlock<Block> PEAT_FARMLAND = registerBlockWithItem("peat_farmland",
+            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
+    );
+    public static final DeferredBlock<Block> SANDY_SOIL = registerBlockWithItem("sandy_soil",
+            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.SAND));
+    public static final DeferredBlock<Block> SANDY_FARMLAND = registerBlockWithItem("sandy_farmland",
+            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.SAND)
+    );
+    public static final DeferredBlock<Block> SILT = registerBlockWithItem("silt",
+            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.MUD));
+    public static final DeferredBlock<Block> SILT_FARMLAND = registerBlockWithItem("silt_farmland",
+            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)
+    );
+
+
+
+    //Methods
+
+
+
+    private static  <B extends Block> DeferredBlock<B> register(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
+
+        return BLOCKS.registerBlock(name,factory,properties);
+    }
+
+    private static <B extends Block> DeferredBlock<B> registerBlockWithItem(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
+        DeferredBlock<B> BLOCK = register(name,factory,properties);
+        ModItems.registerItem(name, (p) -> new BlockItem(BLOCK.get(), p),new Item.Properties());
+        return BLOCK;
+    }
+    private static <B extends Block> DeferredBlock<?> registerBlockWithItemCustomProperties(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties, Item.Properties iProperties) {
+        DeferredBlock<B> BLOCK = register(name,factory,properties);
+        ModItems.registerItem(name, (p) -> new BlockItem(BLOCK.get(), p), iProperties);
+        return BLOCK;
+    }
+
+    private static  DeferredBlock<Block> registerBlock(String name, BlockBehaviour.Properties properties) {
+        return registerBlockWithItem(name, Block::new, properties);
+    }
+
+    private static DeferredBlock<StairBlock> registerStair(String name, Block baseBlock) {
+        return registerBlockWithItem(name, p_368009_ -> new StairBlock(baseBlock.defaultBlockState(), p_368009_), BlockBehaviour.Properties.ofFullCopy(baseBlock));
+    }
+
+    private static BlockBehaviour.Properties wallVariant(Block baseBlock, boolean overrideDescription) {
+        BlockBehaviour.Properties blockbehaviour$properties = baseBlock.properties();
+        BlockBehaviour.Properties blockbehaviour$properties1 = BlockBehaviour.Properties.of().overrideLootTable(baseBlock.getLootTable());
+        if (overrideDescription) {
+            blockbehaviour$properties1 = blockbehaviour$properties1.overrideDescription(baseBlock.getDescriptionId());
+        }
+
+        return blockbehaviour$properties1;
+    }
 
     private static ToIntFunction<BlockState> litBlockEmission(int lightValue) {
         return p_50763_ -> p_50763_.getValue(BlockStateProperties.LIT) ? lightValue : 0;
@@ -161,43 +238,6 @@ public class ModBlocks{
                 .sound(SoundType.CANDLE)
                 .lightLevel(CandleBlock.LIGHT_EMISSION)
                 .pushReaction(PushReaction.DESTROY);
-    }
-
-    private static DeferredBlock<StairBlock> registerStair(String name, Block baseBlock) {
-        return registerBlockWithItem(name, p_368009_ -> new StairBlock(baseBlock.defaultBlockState(), p_368009_), BlockBehaviour.Properties.ofFullCopy(baseBlock));
-    }
-
-    private static BlockBehaviour.Properties wallVariant(Block baseBlock, boolean overrideDescription) {
-        BlockBehaviour.Properties blockbehaviour$properties = baseBlock.properties();
-        BlockBehaviour.Properties blockbehaviour$properties1 = BlockBehaviour.Properties.of().overrideLootTable(baseBlock.getLootTable());
-        if (overrideDescription) {
-            blockbehaviour$properties1 = blockbehaviour$properties1.overrideDescription(baseBlock.getDescriptionId());
-        }
-
-        return blockbehaviour$properties1;
-    }
-
-    private static  <B extends Block> DeferredBlock<B> register(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
-
-        return BLOCKS.registerBlock(name,factory,properties);
-    }
-
-    private static <B extends Block> DeferredBlock<B> registerBlockWithItem(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
-        DeferredBlock<B> BLOCK = register(name,factory,properties);
-        ModItems.registerItem(name, (p) -> new BlockItem(BLOCK.get(), p),new Item.Properties());
-        return BLOCK;
-    }
-    private static <B extends Block> DeferredBlock<?> registerBlockWithItemCustomProperties(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties, Item.Properties iProperties) {
-        DeferredBlock<B> BLOCK = register(name,factory,properties);
-        ModItems.registerItem(name, (p) -> new BlockItem(BLOCK.get(), p), iProperties);
-        return BLOCK;
-    }
-
-
-
-
-    private static  DeferredBlock<Block> registerBlockWithItem(String name, BlockBehaviour.Properties properties) {
-        return registerBlockWithItem(name, Block::new, properties);
     }
 
     public static void init(IEventBus bus){
