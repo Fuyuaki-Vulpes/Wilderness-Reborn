@@ -9,9 +9,12 @@ public class ModNoiseData {
     public static final NormalNoise.NoiseParameters DEFAULT_SHIFT = new NormalNoise.NoiseParameters(-3, 1.0, 1.0, 1.0, 0.0);
 
     public static void bootstrap(BootstrapContext<NormalNoise.NoiseParameters> context) {
+        register(context, ModNoises.TOPOGRAPHY_SIMPLE, -10,1, 1,0,1);
+        register(context, ModNoises.TOPOGRAPHY_EDGES, -13,6, 12,9,3,8,8);
         register(context, ModNoises.TECTONIC_ACTIVITY, -10,1,0,1,1,1);
         register(context, ModNoises.HILL_CURVATURE, -12,0,2,1,2,2,2);
         register(context, ModNoises.ELEVATION, -11,1,1,1);
+        register(context, ModNoises.OVERWORLD_FACTOR_TECTONIC_PLATES, -14,0.6,0.5,2,0,2,1,5,2);
         register(context, ModNoises.OVERWORLD_NOISE, -6,1,2,3,1,2,1);
         register(context, ModNoises.OVERWORLD_NOISE_2, -7,1F,4F,1,1,2,1);
         register(context, ModNoises.SPIKES, -4,0.2,1,0,2,1);

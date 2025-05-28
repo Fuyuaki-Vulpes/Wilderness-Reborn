@@ -8,8 +8,11 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 public class ModNoises {
 
     public static final ResourceKey<NormalNoise.NoiseParameters> TECTONIC_ACTIVITY = createKey("tectonic_activity");
+    public static final ResourceKey<NormalNoise.NoiseParameters> TOPOGRAPHY_SIMPLE = createKey("topography_simple");
+    public static final ResourceKey<NormalNoise.NoiseParameters> TOPOGRAPHY_EDGES = createKey("topography_edges");
     public static final ResourceKey<NormalNoise.NoiseParameters> HILL_CURVATURE = createKey("hill_curvature");
     public static final ResourceKey<NormalNoise.NoiseParameters> ELEVATION = createKey("elevation");
+    public static final ResourceKey<NormalNoise.NoiseParameters> OVERWORLD_FACTOR_TECTONIC_PLATES = createKey("overworld_factor_tectonic_plates");
     public static final ResourceKey<NormalNoise.NoiseParameters> OVERWORLD_NOISE = createKey("overworld_noise");
     public static final ResourceKey<NormalNoise.NoiseParameters> OVERWORLD_NOISE_2 = createKey("overworld_noise_2");
     public static final ResourceKey<NormalNoise.NoiseParameters> NOISE_FILTER = createKey("noise_filter");

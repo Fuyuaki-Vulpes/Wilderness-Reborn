@@ -1,12 +1,12 @@
 package com.fuyuaki.wilderness_reborn.data.pack.levelgen;
 
-import com.fuyuaki.wilderness_reborn.data.pack.worldgen.PackSurfaceRuleData;
+
+import com.fuyuaki.wilderness_reborn.data.worldgen.ModSurfaceRuleData;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -88,7 +88,7 @@ public record PackNoiseGeneratorSettings (
                 Blocks.STONE.defaultBlockState(),
                 Blocks.WATER.defaultBlockState(),
                 PackNoiseRouterData.overworld(context.lookup(Registries.DENSITY_FUNCTION), context.lookup(Registries.NOISE), amplified, large),
-                PackSurfaceRuleData.overworld(),
+                ModSurfaceRuleData.overworld(),
                 new OverworldBiomeBuilder().spawnTarget(),
                 63,
                 false,

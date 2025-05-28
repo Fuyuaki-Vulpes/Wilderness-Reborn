@@ -1,4 +1,4 @@
-package com.fuyuaki.wilderness_reborn.data.pack.worldgen;
+package com.fuyuaki.wilderness_reborn.data.worldgen;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 import static com.fuyuaki.wilderness_reborn.api.WildernessRebornMod.MODID;
 
-public class PackSurfaceRuleData {
+public class ModSurfaceRuleData {
 
     private static final SurfaceRules.RuleSource AIR = makeStateRule(Blocks.AIR);
     private static final SurfaceRules.RuleSource BEDROCK = makeStateRule(Blocks.BEDROCK);
@@ -139,7 +139,7 @@ public class PackSurfaceRuleData {
                 ),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MANGROVE_SWAMP), MUD),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.RIVER,Biomes.FROZEN_RIVER),
-                        SurfaceRules.ifTrue(PackSurfaceRuleData.continental_threshold(NoiseRouterData.CONTINENTS,-0.2F,-0.1F), makeSandSurface)),
+                        SurfaceRules.ifTrue(ModSurfaceRuleData.continental_threshold(NoiseRouterData.CONTINENTS,-0.2F,-0.111F), makeSandSurface)),
                 DIRT
         );
         SurfaceRules.RuleSource surfaceRule = SurfaceRules.sequence(
@@ -193,7 +193,7 @@ public class PackSurfaceRuleData {
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MANGROVE_SWAMP), MUD),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MUSHROOM_FIELDS), MYCELIUM),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.RIVER,Biomes.FROZEN_RIVER),
-                        SurfaceRules.ifTrue(PackSurfaceRuleData.continental_threshold(NoiseRouterData.CONTINENTS,-0.2F,-0.1F), makeSandSurface)),
+                        SurfaceRules.ifTrue(ModSurfaceRuleData.continental_threshold(NoiseRouterData.CONTINENTS,-0.2F,-0.1F), makeSandSurface)),
                 makeGrassSurfance
         );
         SurfaceRules.ConditionSource surfaceNoiseVeryNegative = SurfaceRules.noiseCondition(Noises.SURFACE, -0.909, -0.5454);

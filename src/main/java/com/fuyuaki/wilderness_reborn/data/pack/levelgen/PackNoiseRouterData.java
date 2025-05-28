@@ -1,7 +1,7 @@
 package com.fuyuaki.wilderness_reborn.data.pack.levelgen;
 
 import com.fuyuaki.wilderness_reborn.api.WildernessRebornMod;
-import com.fuyuaki.wilderness_reborn.data.pack.worldgen.PackTerrainProvider;
+import com.fuyuaki.wilderness_reborn.data.worldgen.ModTerrainProvider;
 import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModNoiseRouterData;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -170,7 +170,7 @@ public class PackNoiseRouterData {
                                                 )
                                 ),
                                 DensityFunctions.spline(
-                                        PackTerrainProvider.overworldOffset(
+                                        ModTerrainProvider.overworldOffset(
                                                 coordsContinentalness, coordsErosion, coordsValleysAndPeaks, coordsHillCurvature, coordsSpikes, amplified
                                         )
                                 )
@@ -183,7 +183,7 @@ public class PackNoiseRouterData {
                 factorKey,
                 splineWithBlending(
                         DensityFunctions.spline(
-                                PackTerrainProvider.overworldFactor(
+                                ModTerrainProvider.overworldFactor(
                                         coordsContinentalness,
                                         coordsErosion,
                                         coordsRidges,
@@ -204,7 +204,7 @@ public class PackNoiseRouterData {
                 jaggednessKey,
                 splineWithBlending(
                         DensityFunctions.spline(
-                                PackTerrainProvider.overworldJaggedness(
+                                ModTerrainProvider.overworldJaggedness(
                                         coordsContinentalness,
                                         coordsErosion,
                                         coordsRidges,

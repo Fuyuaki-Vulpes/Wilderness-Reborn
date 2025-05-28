@@ -2436,7 +2436,7 @@
                             "if_true": {
                               "type": "wilderness_reborn:continentalness_threshold",
                               "densityMap": "minecraft:overworld/continents",
-                              "max_threshold": -0.10000000149011612,
+                              "max_threshold": -0.11100000143051147,
                               "min_threshold": -0.20000000298023224
                             },
                             "then_run": {

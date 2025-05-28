@@ -13,6 +13,16 @@ repositories {
     maven {
         url = "https://api.modrinth.com/maven"
     }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+    flatDir { dir 'libs' }
+
+
 }
 
 base {
@@ -107,7 +117,8 @@ dependencies {
     // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
 
     implementation("maven.modrinth:lithostitched:$lithostitchedVersion-neoforge-$minecraft_version")
-
+    compileOnly ("maven.modrinth:DistantHorizonsApi:$dhAPIVersion")
+    runtimeOnly("maven.modrinth:DistantHorizons:$dhVersion")
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html

@@ -1,12 +1,18 @@
-package com.fuyuaki.wilderness_reborn.data.pack.worldgen;
+package com.fuyuaki.wilderness_reborn.data.worldgen;
 
 import com.fuyuaki.wilderness_reborn.data.pack.levelgen.PackNoiseRouterData;
+import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModNoiseRouterData;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.CubicSpline;
 import net.minecraft.util.Mth;
 import net.minecraft.util.ToFloatFunction;
-import net.minecraft.world.level.levelgen.NoiseRouterData;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
+import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
-public class PackTerrainProvider {
+public class ModTerrainProvider {
     private static final float DEEP_OCEAN_CONTINENTALNESS = -0.51F;
     private static final float OCEAN_CONTINENTALNESS = -0.4F;
     private static final float PLAINS_CONTINENTALNESS = 0.1F;
@@ -19,20 +25,20 @@ public class PackTerrainProvider {
     public static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> overworldOffset(I continents, I erosion, I ridgesFolded, I hillCurvature, I spikes, boolean amplified) {
         ToFloatFunction<Float> tofloatfunction = amplified ? AMPLIFIED_OFFSET : NO_TRANSFORM;
         CubicSpline<C, I> seaLevel = buildErosionOffsetSpline(erosion, ridgesFolded, hillCurvature,
-                -0.025F, 0.0F, 0.005F, 0.05F, -0.025F, 0.001F,0.8F,-0.025F, 0.005F,0.01F,
-                spikes,false,false,true, false, tofloatfunction
+                -0.05F, 0.01F, 0.012F, 0.05F, -0.03F, 0.011F,0.7F,-0.07F, 0.015F,0.015F,
+                spikes,false, false,false,false, false, tofloatfunction
         );
         CubicSpline<C, I> medium = buildErosionOffsetSpline(erosion, ridgesFolded, hillCurvature,
-                -0.05F, 0.03F, 0.06F, 0.1F, -0.03F, 0.035F,0.5F,-0.07F, 0.09F,0.1F,
-                spikes,false,false,false, false, tofloatfunction
+                -0.05F, 0.03F, 0.06F, 0.1F, -0.03F, 0.035F,0.6F,-0.07F, 0.09F,0.1F,
+                spikes,false,false,false,true, false, tofloatfunction
         );
         CubicSpline<C, I> highUp = buildErosionOffsetSpline(erosion, ridgesFolded, hillCurvature,
-                -0.07F, 0.06F, 0.1F, 0.7F, -0.05F, 0.065F,0.7F,-0.07F, 0.15F,0.2F,
-                spikes,false,true,true, true, tofloatfunction
+                -0.07F, 0.06F, 0.1F, 0.7F, -0.05F, 0.065F,0.5F,-0.07F, 0.15F,0.2F,
+                spikes,true,false,true,true, true, tofloatfunction
         );
         CubicSpline<C, I> mountainous = buildErosionOffsetSpline(erosion, ridgesFolded, hillCurvature,
-                -0.1F, 0.08F, 0.12F, 1.0F, -0.08F, 0.09F,0.3F,-0.08F, 0.2F, 0.2F,
-                spikes,true,true, true, true, tofloatfunction
+                -0.1F, 0.08F, 0.12F, 1.0F, -0.08F, 0.09F,0.4F,-0.08F, 0.2F, 0.2F,
+                spikes,true,true,true, true, true, tofloatfunction
         );
 
 
@@ -41,9 +47,10 @@ public class PackTerrainProvider {
                 .addPoint(-1.02F, -0.2222F)
                 .addPoint(-0.78F, -0.40F)
                 .addPoint(-0.51F, -0.2222F)
-                .addPoint(-0.19F, -0.005F)
+                .addPoint(-0.19F, -0.05F)
                 .addPoint(-0.17F, seaLevel)
-                .addPoint(-0.06F, medium)
+                .addPoint(-0.11F, seaLevel)
+                .addPoint(-0.02F, medium)
                 .addPoint(0.25F, highUp)
                 .addPoint(1.0F, mountainous)
                 .build();
@@ -220,15 +227,14 @@ public class PackTerrainProvider {
             float tallPeaks,
             float plateauHeight,
             I spikes,
+            boolean makePlateaus,
             boolean useSpikes,
             boolean usePeaksForPlateau,
             boolean extended,
             boolean useMaxSlope,
             ToFloatFunction<Float> transform
     ) {
-        float f = 0.6F;
-        float f1 = 0.5F;
-        float f2 = 0.5F;
+
         CubicSpline<C, I> mountainSplineM0 = buildMountainRidgeSplineWithPoints(ridgesFolded, Mth.lerp(magnitude, 0.6F, extended ? 2.3F : 1.5F), useMaxSlope, transform);
         CubicSpline<C, I> mountainSplineM0Alt = buildMountainRidgeSplineWithPoints(ridgesFolded, Mth.lerp(magnitude, 0.9F, extended ? 2.6F : 1.7F), useMaxSlope, transform);
         CubicSpline<C, I> mountainSplineM1 = buildMountainRidgeSplineWithPoints(ridgesFolded, Mth.lerp(magnitude, 0.6F, 1.2F), useMaxSlope, transform);
@@ -244,6 +250,7 @@ public class PackTerrainProvider {
         float tallValleyBetween = Mth.lerp(curvature, average, tallValleys);
         float tallPeakBetween = Mth.lerp(curvature, average, tallPeaks);
 
+
         CubicSpline<C, I> mountainM0Spikes = CubicSpline.<C, I>builder(spikes, transform)
                 .addPoint(-0.3F, mountainSplineM0)
                 .addPoint(1.0F, mountainSplineM0Alt)
@@ -256,8 +263,6 @@ public class PackTerrainProvider {
                 .addPoint(-0.3F, mountainSplineM2)
                 .addPoint(1.0F, mountainSplineM2Alt)
                 .build();
-
-
 
         CubicSpline<C, I> splineTall = curveSpline(ridgesFolded,
                 tallValleys, tallValleyBetween, average, tallPeakBetween, tallPeaks, 0.6F,
@@ -341,21 +346,6 @@ public class PackTerrainProvider {
                 .addPoint(-0.2F, mountainM2Spikes)
                 .addPoint(0.8F, splineMountainPlateau2)
                 .build();
-//        CubicSpline<C, I> ridgeSpline0 = curveSpline(
-//                ridgesFolded, valleys - 0.015F, 0.2F * magnitude, Mth.lerp(0.5F, 0.5F, 0.5F) * magnitude, 0.5F * magnitude, 0.6F * magnitude, 0.5F, transform
-//        );
-//        CubicSpline<C, I> ridgeSpline1 = curveSpline(
-//                ridgesFolded, valleys, Mth.lerp(0.5F,valleys,flatValley * magnitude), average * magnitude, 0.5F * magnitude, 0.6F * magnitude, 0.5F, transform
-//        );
-//        CubicSpline<C, I> ridgeSpline2 = curveSpline(ridgesFolded, valleys, Mth.lerp(0.5F,valleys,flatValley), flatValley, average, peaks, 0.5F, transform);
-//        CubicSpline<C, I> ridgeSpline3 = curveSpline(ridgesFolded, valleys, Mth.lerp(0.5F,valleys,flatValley), flatValley, average, peaks, 0.5F, transform);
-//        CubicSpline<C, I> ridgeSpline4 = CubicSpline.<C, I>builder(ridgesFolded, transform)
-//                .addPoint(-1.0F, valleys)
-//                .addPoint(-0.4F, ridgeSpline2)
-//                .addPoint(0.0F, peaks + 0.07F)
-//                .build();
-//        CubicSpline<C, I> ridgeSpline5 = curveSpline(ridgesFolded, -0.02F, flatPeak, flatPeak, average, peaks, 0.30F, transform);
-
 
         CubicSpline.Builder<C, I> builder = CubicSpline.<C, I>builder(erosion, transform);
 
@@ -375,12 +365,25 @@ public class PackTerrainProvider {
         if (extended) {
             builder.addPoint(0.4F, splineMedium).addPoint(0.45F, splinePlateau).addPoint(0.55F, splinePlateau).addPoint(0.58F, splineFlat);
         }
-
         builder.addPoint(0.7F, splineFlat);
 
         return builder.build();
+
     }
 
+    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> curveSpline(
+            I ridgesFolded, float fullNegative, float midNeg, float midpoint, float midPos, float fullPositive, float curvatureValley, float curvatureMountain, ToFloatFunction<Float> transform
+    ) {
+
+
+        return CubicSpline.<C, I>builder(ridgesFolded, transform)
+                .addPoint(-0.8F, fullNegative)
+                .addPoint(-0.4F, midNeg, curvatureValley)
+                .addPoint(0.0F, midpoint)
+                .addPoint(0.4F, midPos, curvatureMountain)
+                .addPoint(1.0F, fullPositive)
+                .build();
+    }
     private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> curveSpline(
             I ridgesFolded, float fullNegative, CubicSpline<C, I> midNeg, float midpoint, CubicSpline<C, I> midPos, float fullPositive, ToFloatFunction<Float> transform
     ) {
@@ -430,4 +433,17 @@ public class PackTerrainProvider {
     }
 
 
+    public static void registerTerrain(
+            BootstrapContext<DensityFunction> context,
+            HolderGetter<DensityFunction> densityLookup,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            ResourceKey<DensityFunction> terrain) {
+
+    }
+
+
+
+    static DensityFunction getFunction(HolderGetter<DensityFunction> densityFunctionRegistry, ResourceKey<DensityFunction> key) {
+        return new DensityFunctions.HolderHolder(densityFunctionRegistry.getOrThrow(key));
+    }
 }
