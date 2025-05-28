@@ -52,33 +52,33 @@ public class ModFarmBlock extends FarmBlock {
     }
 
     @Override
-    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, double d) {
+    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, double fallDistance) {
         if (level instanceof ServerLevel serverlevel) {
-            if (CommonHooks.onFarmlandTrample(serverlevel, pos, ModBlocks.CHALKY_SOIL.get().defaultBlockState(), d, entity)) {
+            if (CommonHooks.onFarmlandTrample(serverlevel, pos, Blocks.DIRT.defaultBlockState(), fallDistance, entity)) {
                 turnToDirt(entity, state, level, pos);
             }
-            super.fallOn(level, state, pos, entity, d);
+            entity.causeFallDamage(fallDistance, 1.0F, entity.damageSources().fall());
         }
     }
 
     public static void turnToDirt(@Nullable Entity entity, BlockState state, Level level, BlockPos pos) {
         Block block = state.getBlock();
-        if(block == ModBlocks.CHALKY_FARMLAND.get()) {
+        if (block == ModBlocks.CHALKY_FARMLAND.get()) {
             BlockState blockstate = pushEntitiesUp(state, ModBlocks.CHALKY_SOIL.get().defaultBlockState(), level, pos);
             level.setBlockAndUpdate(pos, blockstate);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, blockstate));
         }
-        else if(block == ModBlocks.CLAY_FARMLAND.get()) {
+        else if (block == ModBlocks.CLAY_FARMLAND.get()) {
             BlockState blockstate = pushEntitiesUp(state, ModBlocks.CLAY_SOIL.get().defaultBlockState(), level, pos);
             level.setBlockAndUpdate(pos, blockstate);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, blockstate));
         }
-        else if(block == ModBlocks.PEAT_FARMLAND.get()) {
+        else if (block == ModBlocks.PEAT_FARMLAND.get()) {
             BlockState blockstate = pushEntitiesUp(state, ModBlocks.PEAT.get().defaultBlockState(), level, pos);
             level.setBlockAndUpdate(pos, blockstate);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, blockstate));
         }
-        else if(block == ModBlocks.SANDY_FARMLAND.get()) {
+        else if (block == ModBlocks.SANDY_FARMLAND.get()) {
             BlockState blockstate = pushEntitiesUp(state, ModBlocks.SANDY_SOIL.get().defaultBlockState(), level, pos);
             level.setBlockAndUpdate(pos, blockstate);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, blockstate));
@@ -107,21 +107,8 @@ public class ModFarmBlock extends FarmBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        if(this == ModBlocks.CHALKY_FARMLAND.get()) {
             return !this.defaultBlockState().canSurvive(context.getLevel(), context.getClickedPos()) ? ModBlocks.CHALKY_SOIL.get().defaultBlockState() : super.getStateForPlacement(context);
-        }
-        else if(this == ModBlocks.CLAY_FARMLAND.get()) {
-            return !this.defaultBlockState().canSurvive(context.getLevel(), context.getClickedPos()) ? ModBlocks.CLAY_SOIL.get().defaultBlockState() : super.getStateForPlacement(context);
-        }
-        else if(this == ModBlocks.PEAT_FARMLAND.get()) {
-            return !this.defaultBlockState().canSurvive(context.getLevel(), context.getClickedPos()) ? ModBlocks.PEAT.get().defaultBlockState() : super.getStateForPlacement(context);
-        }
-        else if(this == ModBlocks.SANDY_FARMLAND.get()) {
-            return !this.defaultBlockState().canSurvive(context.getLevel(), context.getClickedPos()) ? ModBlocks.SANDY_SOIL.get().defaultBlockState() : super.getStateForPlacement(context);
-        }
-        else {
-            return !this.defaultBlockState().canSurvive(context.getLevel(), context.getClickedPos()) ? ModBlocks.SILT.get().defaultBlockState() : super.getStateForPlacement(context);
-        }
+
     }
 
 }

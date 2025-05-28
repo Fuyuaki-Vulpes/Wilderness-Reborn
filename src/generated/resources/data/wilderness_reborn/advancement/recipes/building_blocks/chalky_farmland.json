@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_chalk_dust": {
+      "conditions": {
+        "items": [
+          {
+            "items": "wilderness_reborn:chalk_dust"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "wilderness_reborn:chalky_farmland"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_chalk_dust"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "wilderness_reborn:chalky_farmland"
+    ]
+  }
+}

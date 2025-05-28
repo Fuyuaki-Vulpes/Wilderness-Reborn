@@ -1,6 +1,9 @@
 package com.fuyuaki.wilderness_reborn.data;
 
 
+import com.fuyuaki.wilderness_reborn.data.generation.lang.EN_US_LangProvider;
+import com.fuyuaki.wilderness_reborn.data.generation.other.GenLoot;
+import com.fuyuaki.wilderness_reborn.data.generation.other.GenRecipes;
 import com.fuyuaki.wilderness_reborn.data.generation.other.ModBuiltInEntries;
 import com.fuyuaki.wilderness_reborn.data.pack.PackBuiltInEntries;
 import net.minecraft.core.HolderLookup;
@@ -24,13 +27,13 @@ public class ModDataGenerator {
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         var datapackRegistries = new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), ModBuiltInEntries.BUILDER, Set.of(MODID));
-/*
+
 
         event.createProvider(GenRecipes.Runner::new);
 
         generator.addProvider(true, GenLoot.create(packOutput,lookupProvider));
 
-
+/*
         generator.addProvider(true,new ModModelProvider(packOutput));
 
         event.createBlockAndItemTags(GenBlockTags::new, GenItemTags::new);
@@ -47,11 +50,11 @@ public class ModDataGenerator {
 */
         generator.addProvider(true,
                 new ModBuiltInEntries(packOutput, lookupProvider));
-/*
+
         generator.addProvider(true,
                 new EN_US_LangProvider(packOutput));
 
-        generator.addProvider(true,
+ /*       generator.addProvider(true,
                 new GenSoundDefinition(packOutput));
 
         generator.addProvider(true,
