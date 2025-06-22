@@ -115,7 +115,7 @@
                         }
                       },
                       {
-                        "derivative": 0.8333328,
+                        "derivative": 0.19230758,
                         "location": -0.12,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base_smooth",
@@ -134,8 +134,8 @@
                         }
                       },
                       {
-                        "derivative": 0.013440864,
-                        "location": 0.35,
+                        "derivative": 0.055309746,
+                        "location": 0.45,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base_smooth",
                           "points": [
@@ -153,15 +153,15 @@
                         }
                       },
                       {
-                        "derivative": -0.14285713,
-                        "location": 0.7,
+                        "derivative": -0.16,
+                        "location": 0.8,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base_smooth",
                           "points": [
                             {
                               "derivative": 0.0,
                               "location": -1.5,
-                              "value": 0.0
+                              "value": 0.1
                             },
                             {
                               "derivative": 0.0,
@@ -276,7 +276,7 @@
                         }
                       },
                       {
-                        "derivative": 2.5,
+                        "derivative": 0.57692313,
                         "location": -0.12,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base",
@@ -296,7 +296,7 @@
                       },
                       {
                         "derivative": 0.0,
-                        "location": 0.35,
+                        "location": 0.45,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base",
                           "points": [
@@ -322,7 +322,7 @@
                             {
                               "derivative": 0.0,
                               "location": -1.5,
-                              "value": 0.0
+                              "value": 0.1
                             },
                             {
                               "derivative": 0.4,
@@ -427,7 +427,7 @@
                         }
                       },
                       {
-                        "derivative": 0.069444455,
+                        "derivative": 0.044642862,
                         "location": -0.12,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base_smooth",
@@ -446,8 +446,8 @@
                         }
                       },
                       {
-                        "derivative": 0.018115941,
-                        "location": 0.5,
+                        "derivative": 0.050675675,
+                        "location": 0.6,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base_smooth",
                           "points": [
@@ -465,7 +465,7 @@
                         }
                       },
                       {
-                        "derivative": -0.06666667,
+                        "derivative": -0.09375,
                         "location": 1.0,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base_smooth",
@@ -473,7 +473,7 @@
                             {
                               "derivative": 0.0,
                               "location": -1.5,
-                              "value": 0.0
+                              "value": 0.1
                             },
                             {
                               "derivative": 0.0,
@@ -569,7 +569,7 @@
                         }
                       },
                       {
-                        "derivative": 0.069444455,
+                        "derivative": 0.044642862,
                         "location": -0.12,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base",
@@ -589,7 +589,7 @@
                       },
                       {
                         "derivative": 0.0,
-                        "location": 0.5,
+                        "location": 0.6,
                         "value": {
                           "coordinate": "wilderness_reborn:terrain/base",
                           "points": [
@@ -614,13 +614,13 @@
                           "points": [
                             {
                               "derivative": 0.0,
-                              "location": -1.0,
-                              "value": 0.5
+                              "location": -1.5,
+                              "value": 0.1
                             },
                             {
                               "derivative": 0.4,
-                              "location": 1.0,
-                              "value": 1.5
+                              "location": 1.5,
+                              "value": 0.5
                             }
                           ]
                         }

@@ -21,7 +21,14 @@ public class ModNoiseData {
         register(context, ModNoises.TECTONIC_TERRAIN_BLENDER_SMOOTH,-8,2,5,5,5,7.5,10);
         register(context, ModNoises.TERRAIN_SMOOTHNESS,-6,1,2,1,1);
 
-        register(context, ModNoises.LAND_CONTINENTS,-10,1,1,2,2);
+        register(context,ModNoises.LAND_NOISE_A,-3,1,1,1,1);
+        register(context,ModNoises.LAND_NOISE_B,-3,1,1,1,1);
+        register(context,ModNoises.LAND_NOISE_C,-3,1,1,1,1);
+        register(context,ModNoises.LAND_NOISE_BLENDER,-5,2,1,1,1);
+        register(context,ModNoises.LAND_NOISE_BLENDER_2,-5,2,1,1,1);
+        register(context,ModNoises.LAND_NOISE_STRENGHT,-7,2,1,2,1);
+
+        register(context, ModNoises.LAND_CONTINENTS,-10,2,2,1,1);
         register(context, ModNoises.LAND_EROSION, -9,1,1,2,2);
 
         register(context, ModNoises.GEO_TECTONICS, -11,3,2,2,1,1);

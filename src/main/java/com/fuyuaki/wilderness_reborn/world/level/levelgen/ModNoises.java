@@ -24,6 +24,13 @@ public class ModNoises {
     public static final ResourceKey<NormalNoise.NoiseParameters> LAND_CONTINENTS = createKey("land/continents");
 
 
+    public static final ResourceKey<NormalNoise.NoiseParameters> LAND_NOISE_A = createKey("land/noise_a");
+    public static final ResourceKey<NormalNoise.NoiseParameters> LAND_NOISE_B = createKey("land/noise_b");
+    public static final ResourceKey<NormalNoise.NoiseParameters> LAND_NOISE_C = createKey("land/noise_c");
+    public static final ResourceKey<NormalNoise.NoiseParameters> LAND_NOISE_BLENDER = createKey("land/noise_blender");
+    public static final ResourceKey<NormalNoise.NoiseParameters> LAND_NOISE_BLENDER_2 = createKey("land/noise_blender_2");
+    public static final ResourceKey<NormalNoise.NoiseParameters> LAND_NOISE_STRENGHT = createKey("land/noise_strenght");
+
     public static final ResourceKey<NormalNoise.NoiseParameters> GEO_TECTONICS = createKey("geo/tectonics");
 
     public static final ResourceKey<NormalNoise.NoiseParameters> TECTONIC_RANDOMNESS = createKey("tectonic_plates/randomness");

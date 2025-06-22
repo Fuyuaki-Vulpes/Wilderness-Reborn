@@ -1,7 +1,18 @@
 {
   "type": "minecraft:cache_once",
   "argument": {
-    "type": "minecraft:cache_once",
-    "argument": "wilderness_reborn:router/initial_density_without_jaggedness"
+    "type": "minecraft:interpolated",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": 0.05000000074505806,
+        "argument2": "wilderness_reborn:land/noise"
+      },
+      "argument2": {
+        "type": "minecraft:cache_once",
+        "argument": "wilderness_reborn:router/initial_density_without_jaggedness"
+      }
+    }
   }
 }

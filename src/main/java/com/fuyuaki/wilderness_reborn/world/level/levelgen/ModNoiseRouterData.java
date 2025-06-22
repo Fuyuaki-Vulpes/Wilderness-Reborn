@@ -29,6 +29,7 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
 
     public static final ResourceKey<DensityFunction> LAND_CONTINENTS = createKey("land/continents");
     public static final ResourceKey<DensityFunction> LAND_EROSION = createKey("land/erosion");
+    public static final ResourceKey<DensityFunction> LAND_NOISE = createKey("land/noise");
 
     public static final ResourceKey<DensityFunction> GEO_TECTONIC_PLATES = createKey("geo/tectonic_plates");
 
@@ -132,6 +133,7 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
             )
         );
 
+
         context.register(TERRAIN_BASE_SMOOTH,DensityFunctions.flatCache(
                 DensityFunctions.interpolated(
                         DensityFunctions.lerp(
@@ -162,8 +164,11 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
         context.register(LAND_CONTINENTS,
                 DensityFunctions.flatCache(
                         DensityFunctions.interpolated(
+                                DensityFunctions.add(
+                                        DensityFunctions.constant(-0.2F),
                                         DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.LAND_CONTINENTS))
 
+                                )
                                 )
                 )
         );
@@ -224,16 +229,16 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
 
 
 
-        context.register(TECTONIC_EDGES,
+        context.register(  TECTONIC_EDGES,
                 DensityFunctions.flatCache(
                         DensityFunctions.mul(
-                                DensityFunctions.constant(-2.5F),
+                                DensityFunctions.constant(-1.8F),
                                 DensityFunctions.add(
                                         DensityFunctions.constant(
-                                        -0.35F
+                                        -0.45F
                                         ),
                                         DensityFunctions.mul(
-                                                DensityFunctions.constant(1.8F),
+                                                DensityFunctions.constant(2.75F),
                                                 DensityFunctions.shiftedNoise2d
                                                         (shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.GEO_TECTONICS)
                                                         ).abs()
@@ -272,6 +277,41 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
                         DensityFunctions.interpolated(
                                 DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TECTONIC_FACTOR_ACTIVITY))
                         )
+                )
+        );
+        context.register(LAND_NOISE,DensityFunctions.flatCache(
+                        DensityFunctions.interpolated(
+                                DensityFunctions.mul(
+                                        DensityFunctions.spline(
+                                                CubicSpline.builder(splineCoordinatesFrom(getCachedFunction(densityLookup,R_CONTINENTALNESS)))
+                                                        .addPoint(-1.0F,1.0F)
+                                                        .addPoint(-0.6F,-1.0F)
+                                                        .addPoint(-0.2F,-1.0F)
+                                                        .addPoint(0.0F,1.0F)
+                                                        .build()
+                                        ),
+                                        DensityFunctions.mul(
+                                                DensityFunctions.lerp(
+                                                        DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25,noiseLookup.getOrThrow(ModNoises.LAND_NOISE_BLENDER)).clamp(-1,1),
+                                                        DensityFunctions.lerp(
+                                                                DensityFunctions.shiftedNoise2d(
+                                                                        shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_BLENDER)
+                                                                ),
+
+                                                                DensityFunctions.shiftedNoise2d(
+                                                                        shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_A)
+                                                                ),
+
+                                                                DensityFunctions.shiftedNoise2d(
+                                                                        shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_B)
+                                                                )
+                                                        ),
+                                                        DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25,noiseLookup.getOrThrow(ModNoises.LAND_NOISE_C))
+                                                ),
+                                                DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.LAND_NOISE_STRENGHT)).clamp(-1,1)
+                                        )
+                                ).squeeze().abs()
+                                )
                 )
         );
 

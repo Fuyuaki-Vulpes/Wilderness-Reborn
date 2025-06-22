@@ -153,11 +153,12 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
         context.register(
                 elevationKey,
                 DensityFunctions.cacheOnce(
-                        DensityFunctions.add(
-                                getFunction(densityLookup,terrainPre),
-                                getFunction(densityLookup,tectonicTerrainKey)
+                                DensityFunctions.add(
+                                        getFunction(densityLookup,terrainPre),
+                                        getFunction(densityLookup,tectonicTerrainKey)
+                                )
                         )
-                )
+
         );
 
 
@@ -178,13 +179,61 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
         );
 
 
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> elevationContinentalOffset =
+                CubicSpline.builder(splineCoordinatesFrom(
+                                getCachedFunction(densityLookup,tectonicTerrainKey)
+                        ), NO_TRANSFORM)
+                        .addPoint(0.0F, 0.0F)
+                        .addPoint(0.1F, 0.1F)
+                        .addPoint(0.5F, 0.5F)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> elevationSeaOffset =
+                CubicSpline.builder(splineCoordinatesFrom(
+                                getCachedFunction(densityLookup,tectonicTerrainKey)
+                        ), NO_TRANSFORM)
+                        .addPoint(0.0F, 0.0F)
+                        .addPoint(0.1F, 0.5F)
+                        .addPoint(0.5F, 1.5F)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> elevationIslandOffset =
+                CubicSpline.builder(splineCoordinatesFrom(
+                                getCachedFunction(densityLookup,tectonicTerrainKey)
+                        ), NO_TRANSFORM)
+                        .addPoint(0.0F, 0.0F)
+                        .addPoint(0.1F, -0.5F)
+                        .addPoint(0.5F, -1.5F)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> elevationLandOffset =
+                CubicSpline.builder(splineCoordinatesFrom(
+                                getCachedFunction(densityLookup,tectonicTerrainKey)
+                        ), NO_TRANSFORM)
+                        .addPoint(-1.0F, -1.5F)
+                        .addPoint(-0.5F, -0.5F)
+                        .addPoint(0.0F, 0.0F)
+                        .addPoint(0.5F, 0.0F)
+                        .addPoint(1.0F, 0.25F)
+                        .build();
+
 
         context.register(
                 continentsKey,
                 DensityFunctions.cache2d(
-                        DensityFunctions.mul(
-                                DensityFunctions.constant(0.95F),
-                                getFunction(densityLookup,ModNoiseRouterData.LAND_CONTINENTS)
+                        DensityFunctions.add(
+                                DensityFunctions.mul(
+                                        DensityFunctions.constant(0.8F),
+                                        getFunction(densityLookup,ModNoiseRouterData.LAND_CONTINENTS)
+                                ),
+                                DensityFunctions.spline(
+                                        CubicSpline.builder(splineCoordinatesFrom(
+                                                        getCachedFunction(densityLookup,ModNoiseRouterData.LAND_CONTINENTS)
+                                                ), NO_TRANSFORM)
+                                                .addPoint(-1.5F, elevationIslandOffset)
+                                                .addPoint(-1.0F, elevationSeaOffset)
+                                                .addPoint(-0.15F, elevationContinentalOffset)
+                                                .addPoint(0.15F, 0.0F)
+                                                .addPoint(1.0F, elevationLandOffset)
+                                                .build()
+                                )
                         )
                 )
         );
@@ -238,8 +287,8 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                         Pair.of(-0.5F, terrainSea),
                         Pair.of(-0.20F, terrainCoastalSea),
                         Pair.of(-0.12F, splineMinMax(terrainBase,0.0F,0.1F,1.5F)),
-                        Pair.of(0.35F, splineMinMax(terrainBase,0.0F,0.5F,1.5F)),
-                        Pair.of(0.7F, splineMinMaxSharp(terrainBase,0.0F,0.9F,1.5F))
+                        Pair.of(0.45F, splineMinMax(terrainBase,0.0F,0.5F,1.5F)),
+                        Pair.of(0.7F, splineMinMaxSharp(terrainBase,0.1F,0.9F,1.5F))
                 );
 //                CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
 //                        .addPoint(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F))
@@ -260,8 +309,8 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                         Pair.of(-0.5F, terrainSea),
                         Pair.of(-0.20F, terrainCoastalSeaShallow),
                         Pair.of(-0.12F, splineMinMax(terrainBase,0.0F,0.05F,1.5F)),
-                        Pair.of(0.5F, splineMinMax(terrainBase,0.0F,0.2F,1.5F)),
-                        Pair.of(1.0F, splineMinMaxSharp(terrainBase,00.5F,1.5F))
+                        Pair.of(0.6F, splineMinMax(terrainBase,0.0F,0.2F,1.5F)),
+                        Pair.of(1.0F, splineMinMaxSharp(terrainBase,0.1F,0.5F,1.5F))
                 );
 //                CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
 //                        .addPoint(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F))
@@ -283,8 +332,8 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                         Pair.of(-0.5F, terrainSea),
                         Pair.of(-0.20F, terrainCoastalSea),
                         Pair.of(-0.12F, splineMinMax(terrainBaseSmooth,0.0F,0.075F,1.5F)),
-                        Pair.of(0.35F, splineMinMax(terrainBaseSmooth,0.0F,0.35F,1.5F)),
-                        Pair.of(0.7F, splineMinMax(terrainBaseSmooth,0.0F,0.65F,1.5F))
+                        Pair.of(0.45F, splineMinMax(terrainBaseSmooth,0.0F,0.35F,1.5F)),
+                        Pair.of(0.8F, splineMinMax(terrainBaseSmooth,0.1F,0.65F,1.5F))
                 );
 //                CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
 //                        .addPoint(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F))
@@ -305,8 +354,8 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                         Pair.of(-0.5F, terrainSea),
                         Pair.of(-0.20F, terrainCoastalSeaShallow),
                         Pair.of(-0.12F, splineMinMax(terrainBaseSmooth,0.0F,0.05F,1.5F)),
-                        Pair.of(0.5F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F)),
-                        Pair.of(1.0F, splineMinMax(terrainBaseSmooth,0.0F,0.4F,1.5F))
+                        Pair.of(0.6F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F)),
+                        Pair.of(1.0F, splineMinMax(terrainBaseSmooth,0.1F,0.4F,1.5F))
         );
 
 
@@ -373,8 +422,8 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainApart =
                 CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrainSmooth,0.2F,1.5F))
-                        .addPoint(1.0F, splineZeroMax(tectonicTerrainSmooth,0.1F,0.3F))
+                        .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrainSmooth,-0.75F,0.75F))
+                        .addPoint(1.0F, splineZeroMax(tectonicTerrainSmooth,-0.3F,0.3F))
                         .build();
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainFold =
@@ -382,6 +431,7 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                         .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrain,0.2F,2.0F))
                         .addPoint(1.0F, splineZeroMax(tectonicTerrainSmooth,0.2F,1.2F))
                         .build();
+
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdueLand =
                 CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
                         .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrain,0.7F,2.5F))
@@ -393,6 +443,13 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                         .addPoint(-1.0F, splineZeroMaxVerySharp(tectonicTerrain,-0.9F,-0.3F),1.0F)
                         .addPoint(1.0F, splineZeroMax(tectonicTerrain,-0.5F,-0.1F))
                         .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainTrench =
+                CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineZeroMaxVerySharp(tectonicTerrain,-0.9F,-0.7F))
+                        .addPoint(1.0F, splineZeroMax(tectonicTerrain,-0.8F,-0.5F))
+                        .build();
+
+
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdue =
                 CubicSpline.builder(splineCoordinatesFrom(tectonicPlates), NO_TRANSFORM)
                         .addPoint(-0.5F, terrainSubdueOcean)
@@ -412,6 +469,7 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainCollision =
                 CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
+                        .addPoint(-0.50F, terrainTrench)
                         .addPoint(-0.20F, terrainSubdueRandomized)
                         .addPoint(0.15F, terrainFold)
                         .build();
@@ -426,8 +484,8 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> tectonicActivityBasedTerrain =
                 CubicSpline.builder(splineCoordinatesFrom(tectonicActivity), NO_TRANSFORM)
-                        .addPoint(-0.75F, 0.0F)
-                        .addPoint(0.5F, terrainMovementBased)
+                        .addPoint(-0.5F, 0.0F)
+                        .addPoint(0.3F, terrainMovementBased)
                         .build();
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> tectonicEdgeTerrain =
                 CubicSpline.builder(splineCoordinatesFrom(tectonicEdges), NO_TRANSFORM)
@@ -979,7 +1037,15 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
         context.register(
                 slopedCheese,
                 DensityFunctions.cacheOnce(
-                                densityNoJaggedness
+                        DensityFunctions.interpolated(
+                                DensityFunctions.add(
+                                        DensityFunctions.mul(
+                                                DensityFunctions.constant(0.05F),
+                                                getFunction(densityLookup,ModNoiseRouterData.LAND_NOISE)
+                                        ),
+                                        densityNoJaggedness
+                                )
+                        )
                 )
 
         );
