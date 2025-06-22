@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:cache_once",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:add",
+      "argument1": 0.6000000238418579,
+      "argument2": {
+        "type": "minecraft:noise",
+        "noise": "wilderness_reborn:caves/grotto",
+        "xz_scale": 0.25,
+        "y_scale": 0.25
+      }
+    },
+    "argument2": {
+      "type": "minecraft:clamp",
+      "input": {
+        "type": "minecraft:noise",
+        "noise": "wilderness_reborn:caves/grotto_rarity",
+        "xz_scale": 0.25,
+        "y_scale": 0.25
+      },
+      "max": 1000.0,
+      "min": 0.0
+    }
+  }
+}

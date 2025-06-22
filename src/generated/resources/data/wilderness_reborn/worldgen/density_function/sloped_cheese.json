@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:cache_once",
+  "argument": {
+    "type": "minecraft:cache_once",
+    "argument": "wilderness_reborn:router/initial_density_without_jaggedness"
+  }
+}

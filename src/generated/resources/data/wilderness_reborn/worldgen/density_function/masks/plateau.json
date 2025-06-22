@@ -1,0 +1,49 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:spline",
+    "spline": {
+      "coordinate": {
+        "type": "minecraft:shifted_noise",
+        "noise": "wilderness_reborn:mask/plateaus",
+        "shift_x": "minecraft:shift_x",
+        "shift_y": 0.0,
+        "shift_z": "minecraft:shift_z",
+        "xz_scale": 0.5,
+        "y_scale": 0.0
+      },
+      "points": [
+        {
+          "derivative": 0.0,
+          "location": -0.1,
+          "value": -1.0
+        },
+        {
+          "derivative": 0.0,
+          "location": 0.0,
+          "value": -1.0
+        },
+        {
+          "derivative": 0.0,
+          "location": 0.2,
+          "value": 0.0
+        },
+        {
+          "derivative": 0.0,
+          "location": 0.5,
+          "value": 0.5
+        },
+        {
+          "derivative": 0.0,
+          "location": 0.8,
+          "value": 1.0
+        },
+        {
+          "derivative": 0.0,
+          "location": 1.0,
+          "value": 1.0
+        }
+      ]
+    }
+  }
+}

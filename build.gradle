@@ -10,9 +10,8 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
-    maven {
-        url = "https://api.modrinth.com/maven"
-    }
+    maven { url = 'https://maven.minecraftforge.net/' }
+
     maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
@@ -115,10 +114,16 @@ dependencies {
 
     // Example mod dependency using a file as dependency
     // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
-
+    implementation("com.github.glitchfiend:TerraBlender-neoforge:$minecraft_version-$terrablenderVersion")
     implementation("maven.modrinth:lithostitched:$lithostitchedVersion-neoforge-$minecraft_version")
     compileOnly ("maven.modrinth:DistantHorizonsApi:$dhAPIVersion")
     runtimeOnly("maven.modrinth:DistantHorizons:$dhVersion")
+    runtimeOnly("maven.modrinth:noisium:$noisiumVersion-neoforge")
+    runtimeOnly("maven.modrinth:scalablelux:$scalableLuxVersion")
+    runtimeOnly("maven.modrinth:lithium:$lithiumVersion")
+    runtimeOnly("maven.modrinth:c2me-neoforge:$c2meVersion")
+
+    runtimeOnly("maven.modrinth:chunky:$chunkyVersion")
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html

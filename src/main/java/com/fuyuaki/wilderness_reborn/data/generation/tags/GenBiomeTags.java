@@ -1,12 +1,14 @@
 package com.fuyuaki.wilderness_reborn.data.generation.tags;
 
 import com.fuyuaki.wilderness_reborn.api.WildernessRebornMod;
+import com.fuyuaki.wilderness_reborn.api.common.ModTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -20,6 +22,34 @@ public class GenBiomeTags extends IntrinsicHolderTagsProvider<Biome> {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+
+        this.tag(ModTags.Biomes.HAS_WATER_DELTAS_LARGE)
+                .add(
+                        Biomes.STONY_SHORE,
+                        Biomes.SWAMP,
+                        Biomes.MANGROVE_SWAMP
+                );
+        this.tag(ModTags.Biomes.HAS_WATER_DELTAS_COMMON)
+                .add(
+                        Biomes.STONY_SHORE
+        );
+        this.tag(ModTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON)
+                .add(
+                        Biomes.SWAMP,
+                        Biomes.MANGROVE_SWAMP
+        );
+        this.tag(ModTags.Biomes.HAS_WATER_DELTAS_REGULAR)
+                .add(
+                        Biomes.BEACH
+        );
+
+
+        this.tag(ModTags.Biomes.HAS_WATER_DELTAS)
+                .addTag(ModTags.Biomes.HAS_WATER_DELTAS_LARGE)
+                .addTag(ModTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON)
+                .addTag(ModTags.Biomes.HAS_WATER_DELTAS_COMMON)
+                .addTag(ModTags.Biomes.HAS_WATER_DELTAS_REGULAR)
+        ;
 
         addWolfTags();
     }

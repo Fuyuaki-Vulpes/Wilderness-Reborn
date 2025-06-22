@@ -41,6 +41,9 @@ public class EN_US_LangProvider extends LanguageProvider {
 
         //Others
 
+        add("system.wilderness_reborn.asleepMessage","%1$s out of %2$s players asleep, speeding up time to %3$s");
+        add("system.wilderness_reborn.cancel","No players are asleep. Returning time speed to normal");
+
         this.advancements();
         this.sounds();
         this.commands();

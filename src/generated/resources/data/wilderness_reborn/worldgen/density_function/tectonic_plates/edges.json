@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:mul",
+    "argument1": -2.5,
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": -0.3499999940395355,
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 1.7999999523162842,
+        "argument2": {
+          "type": "minecraft:abs",
+          "argument": {
+            "type": "minecraft:shifted_noise",
+            "noise": "wilderness_reborn:geo/tectonics",
+            "shift_x": "minecraft:shift_x",
+            "shift_y": 0.0,
+            "shift_z": "minecraft:shift_z",
+            "xz_scale": 0.25,
+            "y_scale": 0.0
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#wilderness_reborn:has_water_deltas_large",
+  "features": "wilderness_reborn:water_deltas_large",
+  "step": "surface_structures"
+}

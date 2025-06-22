@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:clamp",
+  "input": {
+    "type": "minecraft:cache_once",
+    "argument": "wilderness_reborn:router/depth"
+  },
+  "max": 64.0,
+  "min": -64.0
+}

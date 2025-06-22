@@ -2,448 +2,1267 @@ package com.fuyuaki.wilderness_reborn.data.worldgen;
 
 import com.fuyuaki.wilderness_reborn.data.pack.levelgen.PackNoiseRouterData;
 import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModNoiseRouterData;
+import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModNoises;
+import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModWorldGenConstants;
+import com.fuyuaki.wilderness_reborn.world.level.levelgen.NoiseRouterFunctions;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.CubicSpline;
-import net.minecraft.util.Mth;
 import net.minecraft.util.ToFloatFunction;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
+import net.minecraft.world.level.levelgen.Noises;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
-public class ModTerrainProvider {
+import java.util.Arrays;
+
+public class ModTerrainProvider extends NoiseRouterFunctions {
     private static final float DEEP_OCEAN_CONTINENTALNESS = -0.51F;
     private static final float OCEAN_CONTINENTALNESS = -0.4F;
     private static final float PLAINS_CONTINENTALNESS = 0.1F;
     private static final float BEACH_CONTINENTALNESS = -0.15F;
     private static final ToFloatFunction<Float> NO_TRANSFORM = ToFloatFunction.IDENTITY;
-    private static final ToFloatFunction<Float> AMPLIFIED_OFFSET = ToFloatFunction.createUnlimited(p_236651_ -> p_236651_ < 0.0F ? p_236651_ : p_236651_ * 2.0F);
-    private static final ToFloatFunction<Float> AMPLIFIED_FACTOR = ToFloatFunction.createUnlimited(p_236649_ -> 1.25F - 6.25F / (p_236649_ + 5.0F));
-    private static final ToFloatFunction<Float> AMPLIFIED_JAGGEDNESS = ToFloatFunction.createUnlimited(p_236641_ -> p_236641_ * 2.0F);
 
-    public static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> overworldOffset(I continents, I erosion, I ridgesFolded, I hillCurvature, I spikes, boolean amplified) {
-        ToFloatFunction<Float> tofloatfunction = amplified ? AMPLIFIED_OFFSET : NO_TRANSFORM;
-        CubicSpline<C, I> seaLevel = buildErosionOffsetSpline(erosion, ridgesFolded, hillCurvature,
-                -0.05F, 0.01F, 0.012F, 0.05F, -0.03F, 0.011F,0.7F,-0.07F, 0.015F,0.015F,
-                spikes,false, false,false,false, false, tofloatfunction
+
+    public static void makeNoiseRouter(BootstrapContext<DensityFunction> context,
+                                       HolderGetter<DensityFunction> densityLookup,
+                                       HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+                                       DensityFunction shiftX,
+                                       DensityFunction shiftZ,
+                                       ResourceKey<DensityFunction> elevationKey,
+                                       ResourceKey<DensityFunction> offsetKey,
+                                       ResourceKey<DensityFunction> barrierKey,
+                                       ResourceKey<DensityFunction> fluidLevelFloodednessKey,
+                                       ResourceKey<DensityFunction> fluidLevelSpreadKey,
+                                       ResourceKey<DensityFunction> lavaNoiseKey,
+                                       ResourceKey<DensityFunction> temperatureKey,
+                                       ResourceKey<DensityFunction> vegetationKey,
+                                       ResourceKey<DensityFunction> depthKey,
+                                       ResourceKey<DensityFunction> initialDensityWithoutJaggednessKey,
+                                       ResourceKey<DensityFunction> topographyFinalDensityKey,
+                                       ResourceKey<DensityFunction> veinToggleKey,
+                                       ResourceKey<DensityFunction> veinRidgedKey,
+                                       ResourceKey<DensityFunction> veinGapKey) {
+
+        context.register(barrierKey, DensityFunctions.noise(noiseLookup.getOrThrow(Noises.AQUIFER_BARRIER), 0.75, 0.5));
+        context.register(lavaNoiseKey, DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.AQUIFER_LAVA), 0.75, 0.75));
+        context.register(temperatureKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.TEMPERATURE)));
+        context.register(vegetationKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.VEGETATION)));
+        context.register(veinGapKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(Noises.ORE_GAP)));
+        context.register(veinRidgedKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(Noises.ORE_VEIN_A)));
+        context.register(veinToggleKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(Noises.ORE_VEININESS)));
+        context.register(fluidLevelFloodednessKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25,(noiseLookup.getOrThrow(ModNoises.AQUIFER_FLOOD))));
+        context.register(fluidLevelSpreadKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25,noiseLookup.getOrThrow(ModNoises.AQUIFER_SPREAD)));
+
+
+
+
+
+        DensityFunction worldOffset = registerAndWrap(context, offsetKey,
+                DensityFunctions.add(
+                        DensityFunctions.constant(-0.70F),
+                DensityFunctions.cacheOnce(
+                        getFunction(densityLookup, elevationKey)
+
+                )
+                )
+                );
+
+        DensityFunction depthGradient = registerAndWrap(context, depthKey,
+                DensityFunctions.add(
+                                        worldOffset,
+                        DensityFunctions.yClampedGradient(ModWorldGenConstants.WORLD_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT, ModWorldGenConstants.BOTTOM_DENSITY,ModWorldGenConstants.TOP_DENSITY)
+                )
         );
-        CubicSpline<C, I> medium = buildErosionOffsetSpline(erosion, ridgesFolded, hillCurvature,
-                -0.05F, 0.03F, 0.06F, 0.1F, -0.03F, 0.035F,0.6F,-0.07F, 0.09F,0.1F,
-                spikes,false,false,false,true, false, tofloatfunction
+
+        context.register(
+                initialDensityWithoutJaggednessKey,
+//                DensityFunctions.add(
+//                                       DensityFunctions.mul(
+//                                               DensityFunctions.spline(
+//                                                       CubicSpline.builder(splineCoordinatesFrom(getCachedFunction(densityLookup,continentsKey)))
+//                                                               .addPoint(0.0F,0.0F)
+//                                                               .addPoint(0.5F,1.0F)
+//                                                               .build()
+//                                               ),
+//                                               DensityFunctions.mul(
+//                                                       DensityFunctions.constant(
+//                                                               0.2F),
+//                                                       DensityFunctions.add(
+//                                                               DensityFunctions.add(
+//                                                                       getFunction(densityLookup, ModNoiseRouterData.SURFACE_NOISE_A),
+//                                                                       getFunction(densityLookup, ModNoiseRouterData.SURFACE_NOISE_B)
+//                                                               ),
+//                                                               getFunction(densityLookup, ModNoiseRouterData.SURFACE_NOISE_C)
+//                                                       ).squeeze().abs()
+//                                               )
+//                                       ),
+                                DensityFunctions.cacheOnce(depthGradient)
+//                )
+                .clamp(-64, 64)
         );
-        CubicSpline<C, I> highUp = buildErosionOffsetSpline(erosion, ridgesFolded, hillCurvature,
-                -0.07F, 0.06F, 0.1F, 0.7F, -0.05F, 0.065F,0.5F,-0.07F, 0.15F,0.2F,
-                spikes,true,false,true,true, true, tofloatfunction
+
+        context.register(
+                topographyFinalDensityKey,
+                DensityFunctions.interpolated(
+                                DensityFunctions.add(
+                                        DensityFunctions.constant(0.1),
+                                                DensityFunctions.add(
+                                                        DensityFunctions.constant(-0.1),
+                                                        DensityFunctions.rangeChoice(
+                                                                getFunction(densityLookup, initialDensityWithoutJaggednessKey),
+                                                                -1000000.0, 1.5625,
+                                                                getFunction(densityLookup, ModNoiseRouterData.R_SLOPED_CHEESE),
+                                                                getFunction(densityLookup, ModNoiseRouterData.CAVES)
+                                                        )
+                                                )
+
+
+                                )
+
+
+                )
+
         );
-        CubicSpline<C, I> mountainous = buildErosionOffsetSpline(erosion, ridgesFolded, hillCurvature,
-                -0.1F, 0.08F, 0.12F, 1.0F, -0.08F, 0.09F,0.4F,-0.08F, 0.2F, 0.2F,
-                spikes,true,true,true, true, true, tofloatfunction
+
+
+    }
+
+    public static void makeTerrain(
+            HolderGetter<DensityFunction> densityLookup,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            BootstrapContext<DensityFunction> context,
+            ResourceKey<DensityFunction> terrainPre,
+            ResourceKey<DensityFunction> elevationKey,
+            ResourceKey<DensityFunction> erosionKey,
+            ResourceKey<DensityFunction> continentsKey,
+            ResourceKey<DensityFunction> ridgesKey,
+            ResourceKey<DensityFunction> tectonicTerrainKey
+    ) {
+
+        Holder<DensityFunction> landErosion = densityLookup.getOrThrow(ModNoiseRouterData.LAND_EROSION);
+
+        makeTerrainPreTectonicActivity(densityLookup, context, terrainPre);
+
+        makeTectonicBasedTerrain(context,densityLookup, tectonicTerrainKey);
+
+
+        context.register(
+                elevationKey,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.add(
+                                getFunction(densityLookup,terrainPre),
+                                getFunction(densityLookup,tectonicTerrainKey)
+                        )
+                )
         );
 
 
-        return CubicSpline.<C, I>builder(continents, tofloatfunction)
-                .addPoint(-1.1F, 0.044F)
-                .addPoint(-1.02F, -0.2222F)
-                .addPoint(-0.78F, -0.40F)
-                .addPoint(-0.51F, -0.2222F)
-                .addPoint(-0.19F, -0.05F)
-                .addPoint(-0.17F, seaLevel)
-                .addPoint(-0.11F, seaLevel)
-                .addPoint(-0.02F, medium)
-                .addPoint(0.25F, highUp)
-                .addPoint(1.0F, mountainous)
-                .build();
+
+        context.register(
+                erosionKey,
+                DensityFunctions.cache2d(
+                        DensityFunctions.spline(
+                                CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
+                                        .addPoint(-1.5F, -1.5F)
+                                        .addPoint(-1.0F, -1.0F)
+                                        .addPoint(0.0F, 0.0F)
+                                        .addPoint(1.0F, 1.0F)
+                                        .addPoint(1.5F, 1.5F)
+                                        .build()
+                        )
+                )
+        );
+
+
+
+        context.register(
+                continentsKey,
+                DensityFunctions.cache2d(
+                        DensityFunctions.mul(
+                                DensityFunctions.constant(0.95F),
+                                getFunction(densityLookup,ModNoiseRouterData.LAND_CONTINENTS)
+                        )
+                )
+        );
+
+
+        context.register(
+                ridgesKey,
+                DensityFunctions.cache2d(
+                        DensityFunctions.spline(
+                                CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
+                                        .addPoint(-1.5F, -1.5F)
+                                        .addPoint(-1.0F, -1.0F)
+                                        .addPoint(0.0F, 0.0F)
+                                        .addPoint(1.0F, 1.0F)
+                                        .addPoint(1.5F, 1.5F)
+                                        .build()
+                        )
+                )
+        );
+
     }
 
-    public static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> overworldFactor(I continents, I erosion, I ridges, I ridgesFolded, boolean amplified) {
-        ToFloatFunction<Float> tofloatfunction = amplified ? AMPLIFIED_FACTOR : NO_TRANSFORM;
-        return CubicSpline.<C, I>builder(continents, NO_TRANSFORM)
-                .addPoint(-0.19F, 3.95F)
-                .addPoint(-0.15F, getErosionFactor(erosion, ridges, ridgesFolded, 6.25F, true, NO_TRANSFORM))
-                .addPoint(-0.1F, getErosionFactor(erosion, ridges, ridgesFolded, 5.47F, true, tofloatfunction))
-                .addPoint(0.03F, getErosionFactor(erosion, ridges, ridgesFolded, 5.08F, true, tofloatfunction))
-                .addPoint(0.06F, getErosionFactor(erosion, ridges, ridgesFolded, 4.69F, false, tofloatfunction))
-                .build();
+    private static void makeTerrainPreTectonicActivity(HolderGetter<DensityFunction> densityLookup, BootstrapContext<DensityFunction> context, ResourceKey<DensityFunction> terrainPre) {
+        Holder<DensityFunction> landContinents = densityLookup.getOrThrow(ModNoiseRouterData.LAND_CONTINENTS);
+        Holder<DensityFunction> landErosion = densityLookup.getOrThrow(ModNoiseRouterData.LAND_EROSION);
+
+        Holder<DensityFunction> terrainBase = densityLookup.getOrThrow(ModNoiseRouterData.TERRAIN_BASE);
+        Holder<DensityFunction> terrainBaseSmooth = densityLookup.getOrThrow(ModNoiseRouterData.TERRAIN_BASE_SMOOTH);
+
+        Holder<DensityFunction> terrainSmoothness = densityLookup.getOrThrow(ModNoiseRouterData.TERRAIN_SMOOTHNESS);
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainCoastalSeaShallow =
+                splineMinMax(terrainBaseSmooth,-0.05F,-0.025F,1.5F);
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainCoastalSea =
+                splineMinMax(terrainBaseSmooth,-0.1F,-0.05F,1.5F);
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSea =
+                splineMinMax(terrainBaseSmooth,-0.5F,-0.1F,1.5F);
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainDeep =
+                splineMinMax(terrainBaseSmooth,-1.0F,-0.2F,1.5F);
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainDeepEroded =
+                splineMinMax(terrainBaseSmooth,-1.0F,-0.8F,1.5F);
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainContinentsLowErosionJagged =
+                splineAutoDerivative(
+                        landContinents,
+                        Pair.of(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F)),
+                        Pair.of(-1.0F, terrainDeepEroded),
+                        Pair.of(-0.75F, terrainDeep),
+                        Pair.of(-0.5F, terrainSea),
+                        Pair.of(-0.20F, terrainCoastalSea),
+                        Pair.of(-0.12F, splineMinMax(terrainBase,0.0F,0.1F,1.5F)),
+                        Pair.of(0.35F, splineMinMax(terrainBase,0.0F,0.5F,1.5F)),
+                        Pair.of(0.7F, splineMinMaxSharp(terrainBase,0.0F,0.9F,1.5F))
+                );
+//                CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
+//                        .addPoint(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F))
+//                        .addPoint(-1.0F, terrainDeepEroded)
+//                        .addPoint(-0.75F, terrainDeep)
+//                        .addPoint(-0.5F, terrainSea,0.5F)
+//                        .addPoint(-0.20F, terrainCoastalSea,0.2F)
+//                        .addPoint(-0.10F, splineMinMax(terrainBase,0.0F,0.1F,1.5F),0.1F)
+//                        .addPoint(0.35F, splineMinMax(terrainBase,0.0F,0.5F,1.5F))
+//                        .addPoint(0.7F, splineMinMaxSharp(terrainBase,0.0F,0.9F,1.5F))
+//                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainContinentsHighErosionJagged =
+                splineAutoDerivative(
+                        landContinents,
+                        Pair.of(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.1F,1.5F)),
+                        Pair.of(-1.0F, terrainDeepEroded),
+                        Pair.of(-0.5F, terrainSea),
+                        Pair.of(-0.20F, terrainCoastalSeaShallow),
+                        Pair.of(-0.12F, splineMinMax(terrainBase,0.0F,0.05F,1.5F)),
+                        Pair.of(0.5F, splineMinMax(terrainBase,0.0F,0.2F,1.5F)),
+                        Pair.of(1.0F, splineMinMaxSharp(terrainBase,00.5F,1.5F))
+                );
+//                CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
+//                        .addPoint(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F))
+//                        .addPoint(-1.0F, terrainDeepEroded)
+//                        .addPoint(-0.5F, terrainSea,0.5F)
+//                        .addPoint(-0.20F, terrainCoastalSeaShallow,0.2F)
+//                        .addPoint(-0.10F, splineMinMax(terrainBase,0.0F,0.05F,1.5F),0.1F)
+//                        .addPoint(0.5F, splineMinMax(terrainBase,0.0F,0.2F,1.5F))
+//                        .addPoint(1.0F, splineMinMaxSharp(terrainBase,00.5F,1.5F))
+//                        .build();
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainContinentsLowErosionSmooth =
+                splineAutoDerivative(
+                        landContinents,
+                        Pair.of(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F)),
+                        Pair.of(-1.0F, terrainDeepEroded),
+                        Pair.of(-0.75F, terrainDeep),
+                        Pair.of(-0.5F, terrainSea),
+                        Pair.of(-0.20F, terrainCoastalSea),
+                        Pair.of(-0.12F, splineMinMax(terrainBaseSmooth,0.0F,0.075F,1.5F)),
+                        Pair.of(0.35F, splineMinMax(terrainBaseSmooth,0.0F,0.35F,1.5F)),
+                        Pair.of(0.7F, splineMinMax(terrainBaseSmooth,0.0F,0.65F,1.5F))
+                );
+//                CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
+//                        .addPoint(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F))
+//                        .addPoint(-1.0F, terrainDeepEroded)
+//                        .addPoint(-0.75F, terrainDeep)
+//                        .addPoint(-0.5F, terrainSea,0.5F)
+//                        .addPoint(-0.20F, terrainCoastalSea,0.2F)
+//                        .addPoint(-0.10F, splineMinMax(terrainBaseSmooth,0.0F,0.075F,1.5F),0.1F)
+//                        .addPoint(0.35F, splineMinMax(terrainBaseSmooth,0.0F,0.35F,1.5F))
+//                        .addPoint(0.7F, splineMinMax(terrainBaseSmooth,0.0F,0.65F,1.5F))
+//                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainContinentsHighErosionSmooth =
+                splineAutoDerivative(
+                        landContinents,
+                        Pair.of(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.1F,1.5F)),
+                        Pair.of(-1.0F, terrainDeepEroded),
+                        Pair.of(-0.5F, terrainSea),
+                        Pair.of(-0.20F, terrainCoastalSeaShallow),
+                        Pair.of(-0.12F, splineMinMax(terrainBaseSmooth,0.0F,0.05F,1.5F)),
+                        Pair.of(0.5F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F)),
+                        Pair.of(1.0F, splineMinMax(terrainBaseSmooth,0.0F,0.4F,1.5F))
+        );
+
+
+//                CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
+//                        .addPoint(-1.1F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F))
+//                        .addPoint(-1.0F, terrainDeepEroded)
+//                        .addPoint(-0.5F, terrainSea,0.5F)
+//                        .addPoint(-0.20F, terrainCoastalSeaShallow,0.2F)
+//                        .addPoint(-0.10F, splineMinMax(terrainBaseSmooth,0.0F,0.05F,1.5F),0.1F)
+//                        .addPoint(0.5F, splineMinMax(terrainBaseSmooth,0.0F,0.2F,1.5F))
+//                        .addPoint(1.0F, splineMinMax(terrainBaseSmooth,0.0F,0.4F,1.5F))
+//                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainHighErosion =
+                CubicSpline.builder(splineCoordinatesFrom(terrainSmoothness), NO_TRANSFORM)
+                        .addPoint(-0.7F, terrainContinentsHighErosionSmooth)
+                        .addPoint(0.7F, terrainContinentsHighErosionJagged)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainLowErosion =
+                CubicSpline.builder(splineCoordinatesFrom(terrainSmoothness), NO_TRANSFORM)
+                        .addPoint(-0.7F, terrainContinentsLowErosionSmooth)
+                        .addPoint(0.7F, terrainContinentsLowErosionJagged)
+                        .build();
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainErosion =
+                CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
+                        .addPoint(-0.7F, terrainLowErosion)
+                        .addPoint(0.7F, terrainHighErosion)
+                        .build();
+
+
+        context.register(
+                terrainPre,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.interpolated(
+                                DensityFunctions.spline(
+                                        terrainErosion
+                                )
+                        )
+                )
+        );
     }
 
-    public static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> overworldJaggedness(I continents, I erosion, I ridges, I ridgesFolded, boolean amplified) {
-        ToFloatFunction<Float> tofloatfunction = amplified ? AMPLIFIED_JAGGEDNESS : NO_TRANSFORM;
-        float f = 0.65F;
-        return CubicSpline.<C, I>builder(continents, tofloatfunction)
-                .addPoint(-0.11F, 0.0F)
-                .addPoint(0.03F, buildErosionJaggednessSpline(erosion, ridges, ridgesFolded, 1.0F, 0.5F, 0.0F, 0.0F, tofloatfunction))
-                .addPoint(0.65F, buildErosionJaggednessSpline(erosion, ridges, ridgesFolded, 1.0F, 1.0F, 1.0F, 0.0F, tofloatfunction))
-                .build();
+    private static void makeTectonicBasedTerrain(
+            BootstrapContext<DensityFunction> context,
+            HolderGetter<DensityFunction> densityLookup,
+            ResourceKey<DensityFunction> tectonicSurfaceKey) {
+
+        Holder<DensityFunction> landContinents = densityLookup.getOrThrow(ModNoiseRouterData.LAND_CONTINENTS);
+        Holder<DensityFunction> landErosion = densityLookup.getOrThrow(ModNoiseRouterData.LAND_EROSION);
+
+        Holder<DensityFunction> tectonicPlates = densityLookup.getOrThrow(ModNoiseRouterData.GEO_TECTONIC_PLATES);
+        Holder<DensityFunction> tectonicEdges = densityLookup.getOrThrow(ModNoiseRouterData.TECTONIC_EDGES);
+        Holder<DensityFunction> tectonicDirection = densityLookup.getOrThrow(ModNoiseRouterData.TECTONIC_DIRECTION);
+        Holder<DensityFunction> tectonicRandomness = densityLookup.getOrThrow(ModNoiseRouterData.TECTONIC_RANDOMNESS);
+        Holder<DensityFunction> tectonicActivity = densityLookup.getOrThrow(ModNoiseRouterData.TECTONIC_ACTIVITY);
+
+
+        Holder<DensityFunction> tectonicTerrain = densityLookup.getOrThrow(ModNoiseRouterData.TERRAIN_TECTONIC);
+        Holder<DensityFunction> tectonicTerrainSmooth = densityLookup.getOrThrow(ModNoiseRouterData.TERRAIN_TECTONIC_SMOOTH);
+
+        // DIRECTION -> Negative = Away from Each-other, Positive = Towards Each-other
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainApart =
+                CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrainSmooth,0.2F,1.5F))
+                        .addPoint(1.0F, splineZeroMax(tectonicTerrainSmooth,0.1F,0.3F))
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainFold =
+                CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrain,0.2F,2.0F))
+                        .addPoint(1.0F, splineZeroMax(tectonicTerrainSmooth,0.2F,1.2F))
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdueLand =
+                CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrain,0.7F,2.5F))
+                        .addPoint(1.0F, splineZeroMax(tectonicTerrain,0.2F,0.9F))
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdueOcean =
+                CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineZeroMaxVerySharp(tectonicTerrain,-0.9F,-0.3F),1.0F)
+                        .addPoint(1.0F, splineZeroMax(tectonicTerrain,-0.5F,-0.1F))
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdue =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicPlates), NO_TRANSFORM)
+                        .addPoint(-0.5F, terrainSubdueOcean)
+                        .addPoint(0.5F, terrainSubdueLand)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdueOpposite =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicPlates), NO_TRANSFORM)
+                        .addPoint(-0.1F, terrainSubdueOcean)
+                        .addPoint(0.1F, terrainSubdueLand)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdueRandomized =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicRandomness), NO_TRANSFORM)
+                        .addPoint(-0.1F, terrainSubdue)
+                        .addPoint(0.1F, terrainSubdueOpposite)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainCollision =
+                CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
+                        .addPoint(-0.20F, terrainSubdueRandomized)
+                        .addPoint(0.15F, terrainFold)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainMovementBased =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicDirection), NO_TRANSFORM)
+                        .addPoint(-0.5F, terrainApart)
+                        .addPoint(-0.15F,0.0F)
+                        .addPoint(0.15F,0.0F)
+                        .addPoint(0.5F, terrainCollision)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> tectonicActivityBasedTerrain =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicActivity), NO_TRANSFORM)
+                        .addPoint(-0.75F, 0.0F)
+                        .addPoint(0.5F, terrainMovementBased)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> tectonicEdgeTerrain =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicEdges), NO_TRANSFORM)
+                        .addPoint(0.0F, 0.0F)
+                        .addPoint(0.75F, tectonicActivityBasedTerrain)
+                        .build();
+
+
+        context.register(
+                tectonicSurfaceKey,
+                DensityFunctions.cacheOnce(
+                                DensityFunctions.spline(
+                                        tectonicEdgeTerrain
+                                )
+
+                        )
+        );
     }
 
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> buildErosionJaggednessSpline(
-            I erosion, I ridges, I ridgesFolded, float highErosionHighWeirdness, float lowErosionHighWeirdness, float highErosionMidWeirdness, float lowErosionMidWeirdness, ToFloatFunction<Float> transform
-    ) {
-        float f = -0.5775F;
-        CubicSpline<C, I> cubicspline = buildRidgeJaggednessSpline(ridges, ridgesFolded, highErosionHighWeirdness, highErosionMidWeirdness, transform);
-        CubicSpline<C, I> cubicspline1 = buildRidgeJaggednessSpline(ridges, ridgesFolded, lowErosionHighWeirdness, lowErosionMidWeirdness, transform);
-        return CubicSpline.<C, I>builder(erosion, transform)
-                .addPoint(-1.0F, cubicspline)
-                .addPoint(-0.78F, cubicspline1)
-                .addPoint(-0.5775F, cubicspline1)
-                .addPoint(-0.375F, 0.0F)
-                .build();
-    }
 
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> buildRidgeJaggednessSpline(
-            I ridges, I ridgesFolded, float highWeirdnessMagnitude, float midWeirdnessMagnitude, ToFloatFunction<Float> transform
-    ) {
-        float f = PackNoiseRouterData.peaksAndValleys(0.4F);
-        float f1 = PackNoiseRouterData.peaksAndValleys(0.56666666F);
-        float f2 = (f + f1) / 2.0F;
-        CubicSpline.Builder<C, I> builder = CubicSpline.builder(ridgesFolded, transform);
-        builder.addPoint(f, 0.0F);
-        if (midWeirdnessMagnitude > 0.0F) {
-            builder.addPoint(f2, buildWeirdnessJaggednessSpline(ridges, midWeirdnessMagnitude, transform));
-        } else {
-            builder.addPoint(f2, 0.0F);
-        }
+    @SafeVarargs
+    private static CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> splineAutoDerivative(Holder<DensityFunction> coordinate, Pair<Float,CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate>>... points){
+        CubicSpline.Builder<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> builder = CubicSpline.builder(splineCoordinatesFrom(coordinate),NO_TRANSFORM);
+        for (int i = 0; i < points.length; i++){
+            Pair<Float,CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate>> pair = Arrays.stream(points).toList().get(i);
+            float avg = (pair.getSecond().minValue() + pair.getSecond().maxValue()) / 2;
+            float derivative = 0;
+            float location = pair.getFirst();
+            if (i > 0 && i < points.length - 1){
+                Pair<Float,CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate>> pairBefore = Arrays.stream(points).toList().get(i - 1);
+                Pair<Float,CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate>> pairAfter = Arrays.stream(points).toList().get(i + 1);
 
-        if (highWeirdnessMagnitude > 0.0F) {
-            builder.addPoint(1.0F, buildWeirdnessJaggednessSpline(ridges, highWeirdnessMagnitude, transform));
-        } else {
-            builder.addPoint(1.0F, 0.0F);
-        }
+                float locationBefore = pairBefore.getFirst();
+                float locationAfter = pairAfter.getFirst();
 
-        return builder.build();
-    }
+                float beforeAvg = (pairBefore.getSecond().minValue() + pairBefore.getSecond().maxValue()) / 2;
+                float afterAvg = (pairAfter.getSecond().minValue() + pairAfter.getSecond().maxValue()) / 2;
 
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> buildWeirdnessJaggednessSpline(
-            I ridges, float magnitude, ToFloatFunction<Float> transform
-    ) {
-        float f = 0.63F * magnitude;
-        float f1 = 0.3F * magnitude;
-        return CubicSpline.<C, I>builder(ridges, transform).addPoint(-0.01F, f).addPoint(0.01F, f1).build();
-    }
+                float beforeDif = avg - beforeAvg;
+                float afterDif = avg - afterAvg;
 
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> getErosionFactor(
-            I erosion, I ridges, I ridgesFolded, float value, boolean higherValues, ToFloatFunction<Float> transform
-    ) {
-        CubicSpline<C, I> cubicspline = CubicSpline.<C, I>builder(ridges, transform).addPoint(-0.2F, 6.3F).addPoint(0.2F, value).build();
-        CubicSpline.Builder<C, I> builder = CubicSpline.<C, I>builder(erosion, transform)
-                .addPoint(-0.6F, cubicspline)
-                .addPoint(-0.5F, CubicSpline.<C, I>builder(ridges, transform).addPoint(-0.05F, 6.3F).addPoint(0.05F, 2.67F).build())
-                .addPoint(-0.35F, cubicspline)
-                .addPoint(-0.25F, cubicspline)
-                .addPoint(-0.1F, CubicSpline.<C, I>builder(ridges, transform).addPoint(-0.05F, 2.67F).addPoint(0.05F, 6.3F).build())
-                .addPoint(0.03F, cubicspline);
-        if (higherValues) {
-            CubicSpline<C, I> cubicspline1 = CubicSpline.<C, I>builder(ridges, transform).addPoint(0.0F, value).addPoint(0.1F, 0.625F).build();
-            CubicSpline<C, I> cubicspline2 = CubicSpline.<C, I>builder(ridgesFolded, transform).addPoint(-0.9F, value).addPoint(-0.69F, cubicspline1).build();
-            builder.addPoint(0.35F, value).addPoint(0.45F, cubicspline2).addPoint(0.55F, cubicspline2).addPoint(0.62F, value);
-        } else {
-            CubicSpline<C, I> cubicspline3 = CubicSpline.<C, I>builder(ridgesFolded, transform).addPoint(-0.7F, cubicspline).addPoint(-0.15F, 1.37F).build();
-            CubicSpline<C, I> cubicspline4 = CubicSpline.<C, I>builder(ridgesFolded, transform).addPoint(0.45F, cubicspline).addPoint(0.7F, 1.56F).build();
-            builder.addPoint(0.05F, cubicspline4)
-                    .addPoint(0.4F, cubicspline4)
-                    .addPoint(0.45F, cubicspline3)
-                    .addPoint(0.55F, cubicspline3)
-                    .addPoint(0.58F, value);
-        }
+                derivative = -(( afterDif + beforeDif) / ((locationBefore + location + locationAfter) / 2)) / 2;
 
-        return builder.build();
-    }
 
-    private static float calculateSlope(float y1, float y2, float x1, float x2) {
-        return (y2 - y1) / (x2 - x1);
-    }
 
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> buildMountainRidgeSplineWithPoints(
-            I ridgesFolded, float magnitude, boolean useMaxSlope, ToFloatFunction<Float> transform
-    ) {
-        CubicSpline.Builder<C, I> builder = CubicSpline.builder(ridgesFolded, transform);
-        float f = -0.7F;
-        float fact1 = -0.4F;
-        float f2 = mountainContinentalness(fact1, magnitude, -0.7F);
-        float f3 = 1.0F;
-        float f4 = mountainContinentalness(1.0F, magnitude, -0.7F);
-        float f5 = calculateMountainRidgeZeroContinentalnessPoint(magnitude);
-        float fact2 = -0.35F;
-        if (-0.65F < f5 && f5 < 1.0F) {
-            float f14 = mountainContinentalness(fact2, magnitude, -0.7F);
-            float fact3 = -0.25F;
-            float f9 = mountainContinentalness(fact3, magnitude, -0.7F);
-            float f10 = calculateSlope(f2, f9, -1.0F, -0.75F);
-            builder.addPoint(-1.0F, f2, f10);
-            builder.addPoint(-0.75F, f9);
-            builder.addPoint(-0.65F, f14);
-            float f11 = mountainContinentalness(f5, magnitude, -0.7F);
-            float f12 = calculateSlope(f11, f4, f5, 1.0F);
-            float f13 = 0.01F;
-            builder.addPoint(f5 - 0.01F, f11);
-            builder.addPoint(f5, f11, f12);
-            builder.addPoint(1.0F, f4, f12);
-        } else {
-            float f7 = calculateSlope(f2, f4, -1.0F, 1.0F);
-            if (useMaxSlope) {
-                builder.addPoint(-1.0F, Math.max(0.2F, f2));
-                builder.addPoint(0.0F, Mth.lerp(0.5F, f2, f4), f7);
-            } else {
-                builder.addPoint(-1.0F, f2, f7);
+
+            }else if (i > 0){
+                Pair<Float,CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate>> pairBefore = Arrays.stream(points).toList().get(i - 1);
+                float beforeAvg = (pairBefore.getSecond().minValue() + pairBefore.getSecond().maxValue()) / 2;
+                float beforeDif = avg - beforeAvg;
+                float locationBefore = pairBefore.getFirst();
+
+
+                derivative = -(beforeDif / ((locationBefore + location) / 2)) / 2;
+
+
+            }else if (i < points.length - 1){
+                Pair<Float,CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate>> pairAfter = Arrays.stream(points).toList().get(i + 1);
+                float afterAvg = (pairAfter.getSecond().minValue() + pairAfter.getSecond().maxValue()) / 2;
+                float afterDif = avg - afterAvg;
+                float locationAfter = pairAfter.getFirst();
+
+
+                derivative = -(afterDif / ((location + locationAfter) / 2)) / 2;
+
+            }
+            if (Float.isInfinite(derivative) || Float.isNaN(derivative)){
+                derivative = 0;
             }
 
-            builder.addPoint(1.0F, f4, f7);
+            builder.addPoint(pair.getFirst(),pair.getSecond(),derivative);
         }
-
         return builder.build();
     }
 
-    private static float mountainContinentalness(float heightFactor, float magnitude, float cutoffHeight) {
-        float f = 1.17F;
-        float f1 = 0.46082947F;
-        float f2 = 1.0F - (1.0F - magnitude) * 0.5F;
-        float f3 = 0.5F * (1.0F - magnitude);
-        float f4 = (heightFactor + 1.17F) * 0.46082947F;
-        float f5 = f4 * f2 - f3;
-        return heightFactor < cutoffHeight ? Math.max(f5, -0.2222F) : Math.max(f5, 0.0F);
-    }
+    @SafeVarargs
+    private static CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> splineAuto(Holder<DensityFunction> coordinate, Pair<Float,Float>... points){
+        CubicSpline.Builder<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> builder = CubicSpline.builder(splineCoordinatesFrom(coordinate),NO_TRANSFORM);
+        for (int i = 0; i < points.length; i++){
+            Pair<Float,Float> pair = Arrays.stream(points).toList().get(i);
+            float location = pair.getFirst();
+            float value = pair.getSecond();
+            double derivative = 0;
+            if (i > 0 && i < points.length - 1){
 
-    private static float calculateMountainRidgeZeroContinentalnessPoint(float input) {
-        float f = 1.17F;
-        float f1 = 0.46082947F;
-        float f2 = 1.0F - (1.0F - input) * 0.5F;
-        float f3 = 0.5F * (1.0F - input);
-        return f3 / (0.46082947F * f2) - 1.17F;
-    }
+                Pair<Float,Float> pairBefore = Arrays.stream(points).toList().get(i - 1);
+                Pair<Float,Float> pairAfter = Arrays.stream(points).toList().get(i + 1);
 
-    public static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> buildErosionOffsetSpline(
-            I erosion,
-            I ridgesFolded,
-            I hillPlateau,
-            float valleys,
-            float average,
-            float peaks,
-            float magnitude,
-            float flatValley,
-            float flatPeak,
-            float curvature,
-            float tallValleys,
-            float tallPeaks,
-            float plateauHeight,
-            I spikes,
-            boolean makePlateaus,
-            boolean useSpikes,
-            boolean usePeaksForPlateau,
-            boolean extended,
-            boolean useMaxSlope,
-            ToFloatFunction<Float> transform
-    ) {
+                float locationBefore = pairBefore.getFirst();
+                float locationAfter = pairAfter.getFirst();
 
-        CubicSpline<C, I> mountainSplineM0 = buildMountainRidgeSplineWithPoints(ridgesFolded, Mth.lerp(magnitude, 0.6F, extended ? 2.3F : 1.5F), useMaxSlope, transform);
-        CubicSpline<C, I> mountainSplineM0Alt = buildMountainRidgeSplineWithPoints(ridgesFolded, Mth.lerp(magnitude, 0.9F, extended ? 2.6F : 1.7F), useMaxSlope, transform);
-        CubicSpline<C, I> mountainSplineM1 = buildMountainRidgeSplineWithPoints(ridgesFolded, Mth.lerp(magnitude, 0.6F, 1.2F), useMaxSlope, transform);
-        CubicSpline<C, I> mountainSplineM1Alt = buildMountainRidgeSplineWithPoints(ridgesFolded, Mth.lerp(magnitude, 0.8F, 1.5F), useMaxSlope, transform);
-        CubicSpline<C, I> mountainSplineM2 = buildMountainRidgeSplineWithPoints(ridgesFolded, magnitude, useMaxSlope, transform);
-        CubicSpline<C, I> mountainSplineM2Alt = buildMountainRidgeSplineWithPoints(ridgesFolded, magnitude + 0.1F, useMaxSlope, transform);
+                float beforeValue = pairBefore.getSecond();
+                float afterValue = pairAfter.getSecond();
+                float beforeDif = value - beforeValue;
+                float afterDif = value - afterValue;
 
 
-        float midValley = Mth.lerp(curvature, average, valleys);
-        float midPeak = Mth.lerp(curvature, average, peaks);
-        float flatValleyBetween = Mth.lerp(curvature, average, flatValley);
-        float flatPeakBetween = Mth.lerp(curvature, average, flatPeak);
-        float tallValleyBetween = Mth.lerp(curvature, average, tallValleys);
-        float tallPeakBetween = Mth.lerp(curvature, average, tallPeaks);
+
+                derivative = -((beforeDif + afterDif) / ((pairBefore.getFirst() + pair.getFirst() + pairAfter.getFirst()) / 3)) / 2;
+
+            }else if (i > 0){
+                Pair<Float,Float> pairBefore = Arrays.stream(points).toList().get(i - 1);
+                float beforeValue = pairBefore.getSecond();
+                float beforeDif = value - beforeValue;
+
+                derivative = -(beforeDif / ((pairBefore.getFirst() + pair.getFirst()) / 2)) / 2;
 
 
-        CubicSpline<C, I> mountainM0Spikes = CubicSpline.<C, I>builder(spikes, transform)
-                .addPoint(-0.3F, mountainSplineM0)
-                .addPoint(1.0F, mountainSplineM0Alt)
-                .build();
-        CubicSpline<C, I> mountainM1Spikes = CubicSpline.<C, I>builder(spikes, transform)
-                .addPoint(-0.3F, mountainSplineM1)
-                .addPoint(1.0F, mountainSplineM1Alt)
-                .build();
-        CubicSpline<C, I> mountainM2Spikes = CubicSpline.<C, I>builder(spikes, transform)
-                .addPoint(-0.3F, mountainSplineM2)
-                .addPoint(1.0F, mountainSplineM2Alt)
-                .build();
+            }else if (i < points.length - 1){
+                Pair<Float,Float> pairAfter = Arrays.stream(points).toList().get(i + 1);
+                float afterValue = pairAfter.getSecond();
+                float afterDif = value - afterValue;
 
-        CubicSpline<C, I> splineTall = curveSpline(ridgesFolded,
-                tallValleys, tallValleyBetween, average, tallPeakBetween, tallPeaks, 0.6F,
-                transform);
 
-        CubicSpline<C, I> splineMountainPlateau0 = CubicSpline.<C, I>builder(ridgesFolded, transform)
-                .addPoint(-1.0F, valleys)
-                .addPoint(-0.4F, midValley,0.7F)
-                .addPoint(0.0F, plateauHeight)
-                .addPoint(0.4F, plateauHeight)
-                .addPoint(1.0F, plateauHeight)
-                .build();
-        CubicSpline<C, I> splineMountainPlateau1 = CubicSpline.<C, I>builder(ridgesFolded, transform)
-                .addPoint(-1.0F, valleys)
-                .addPoint(-0.4F, midValley,0.7F)
-                .addPoint(0.0F, plateauHeight)
-                .addPoint(0.2F, plateauHeight)
-                .addPoint(0.25F, Mth.lerp(magnitude,valleys,tallValleys))
-                .addPoint(0.3F, plateauHeight)
-                .addPoint(0.6F, plateauHeight)
-                .addPoint(0.65F, Mth.lerp(magnitude * 0.6F,valleys,tallValleys))
-                .addPoint(0.7F, plateauHeight)
-                .addPoint(1.0F, plateauHeight)
-                .build();
-        CubicSpline<C, I> splineMountainPlateau2 = CubicSpline.<C, I>builder(ridgesFolded, transform)
-                .addPoint(-1.0F, valleys)
-                .addPoint(-0.4F, midValley,0.7F)
-                .addPoint(0.0F, plateauHeight)
-                .addPoint(0.4F, plateauHeight)
-                .addPoint(1.0F, plateauHeight)
-                .build();
 
-        CubicSpline<C, I> splinePlateau;
+                derivative = -(afterDif / ((pair.getFirst() + pairAfter.getFirst()) / 2)) / 2;
 
-        if (usePeaksForPlateau) {
-            splinePlateau = curveSpline(ridgesFolded,
-                    valleys, midValley, average, peaks, peaks, 0.7F,
-                    transform);
+            }
+            if (Double.isInfinite(derivative) || Double.isNaN(derivative)){
+                derivative = 0;
+            }
 
-        } else {
-            splinePlateau = curveSpline(ridgesFolded,
-                    valleys, midValley, average, midPeak, midPeak, 0.5F,
-                    transform);
+            builder.addPoint(pair.getFirst(),pair.getSecond(), (float) derivative);
         }
-
-        CubicSpline<C, I> splineMedium = curveSpline(ridgesFolded,
-                valleys, midValley, average, midPeak, peaks, 0.4F,
-                transform);
-
-
-        CubicSpline<C, I> splineFlat = curveSpline(ridgesFolded,
-                flatValley, flatValleyBetween, average, flatPeakBetween, flatPeak, 0.5F,
-                transform);
-        CubicSpline<C, I> plateauHill = CubicSpline.<C, I>builder(hillPlateau, transform)
-                .addPoint(-1.0F, splineTall)
-                .addPoint(1.0F, splinePlateau)
-                .build();
-
-
-        CubicSpline<C, I> plateauM0 = CubicSpline.<C, I>builder(hillPlateau, transform)
-                .addPoint(-0.2F, mountainSplineM0)
-                .addPoint(0.8F, splineMountainPlateau0)
-                .build();
-        CubicSpline<C, I> plateauM1 = CubicSpline.<C, I>builder(hillPlateau, transform)
-                .addPoint(-0.2F, mountainSplineM1)
-                .addPoint(0.8F, splineMountainPlateau1)
-                .build();
-        CubicSpline<C, I> plateauM2 = CubicSpline.<C, I>builder(hillPlateau, transform)
-                .addPoint(-0.2F, mountainSplineM2)
-                .addPoint(0.8F, splineMountainPlateau2)
-                .build();
-        CubicSpline<C, I> plateauM0Spikes = CubicSpline.<C, I>builder(hillPlateau, transform)
-                .addPoint(-0.2F, mountainM0Spikes)
-                .addPoint(0.8F, splineMountainPlateau0)
-                .build();
-        CubicSpline<C, I> plateauM1Spikes = CubicSpline.<C, I>builder(hillPlateau, transform)
-                .addPoint(-0.2F, mountainM1Spikes)
-                .addPoint(0.8F, splineMountainPlateau1)
-                .build();
-        CubicSpline<C, I> plateauM2Spikes = CubicSpline.<C, I>builder(hillPlateau, transform)
-                .addPoint(-0.2F, mountainM2Spikes)
-                .addPoint(0.8F, splineMountainPlateau2)
-                .build();
-
-        CubicSpline.Builder<C, I> builder = CubicSpline.<C, I>builder(erosion, transform);
-
-        if (useSpikes) {
-            builder.addPoint(-0.85F, plateauM0Spikes)
-                    .addPoint(-0.7F, plateauM1Spikes)
-                    .addPoint(-0.4F, plateauM2Spikes);
-
-        } else {
-            builder.addPoint(-0.85F, plateauM0)
-                    .addPoint(-0.7F, plateauM1)
-                    .addPoint(-0.4F, plateauM2);
-        }
-        builder.addPoint(-0.35F, plateauHill)//ridgeSpline0)
-                .addPoint(-0.1F, plateauHill)//ridgeSpline1)
-                .addPoint(0.2F, splineMedium);//ridgeSpline2);
-        if (extended) {
-            builder.addPoint(0.4F, splineMedium).addPoint(0.45F, splinePlateau).addPoint(0.55F, splinePlateau).addPoint(0.58F, splineFlat);
-        }
-        builder.addPoint(0.7F, splineFlat);
-
         return builder.build();
-
     }
 
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> curveSpline(
-            I ridgesFolded, float fullNegative, float midNeg, float midpoint, float midPos, float fullPositive, float curvatureValley, float curvatureMountain, ToFloatFunction<Float> transform
-    ) {
+    private static void makeTerrainOld(
+            HolderGetter<DensityFunction> densityLookup,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            BootstrapContext<DensityFunction> context,
+            ResourceKey<DensityFunction> elevationKey,
+            ResourceKey<DensityFunction> erosionKey,
+            ResourceKey<DensityFunction> continentsKey,
+            ResourceKey<DensityFunction> ridgesKey) {
+
+        Holder<DensityFunction> continents = densityLookup.getOrThrow(ModNoiseRouterData.CONTINENT_LANDMASS);
+        Holder<DensityFunction> riverMask = densityLookup.getOrThrow(ModNoiseRouterData.GEO_RIVERS_AND_VALLEYS);
+        Holder<DensityFunction> biomeVariation = densityLookup.getOrThrow(ModNoiseRouterData.BIOME_VARIATION);
+        Holder<DensityFunction> elevationMedian = densityLookup.getOrThrow(ModNoiseRouterData.MOUNTAIN_ELEVATION_OFFSET);
+        Holder<DensityFunction> hillsAndMountains = densityLookup.getOrThrow(ModNoiseRouterData.HILLS_AND_MOUNTAINS);
+        Holder<DensityFunction> erosion = densityLookup.getOrThrow(ModNoiseRouterData.GEO_WEATHERING_EROSION);
+        Holder<DensityFunction> plateauValleys = densityLookup.getOrThrow(ModNoiseRouterData.GEO_RIVERS_AND_VALLEYS_PLATEAU);
+        Holder<DensityFunction> plateauValleyDepth = densityLookup.getOrThrow(ModNoiseRouterData.PLATEAU_VALLEY_DEPTH);
+        Holder<DensityFunction> plateauMask = densityLookup.getOrThrow(ModNoiseRouterData.PLATEAU_MASK);
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> riversAndValleys =
+                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
+                        .addPoint(-1, 0.05F)
+                        .addPoint(-0.75F, 0.05F)
+                        .addPoint(-0.50F, -0.1F, -0.3F)
+                        .addPoint(-0.35F, -0.2F)
+                        .addPoint(-0.15F, -0.1F, 0.3F)
+                        .addPoint(0.10F, 0.05F)
+                        .addPoint(1.0F, 0.05F)
+                        .build();
 
 
-        return CubicSpline.<C, I>builder(ridgesFolded, transform)
-                .addPoint(-0.8F, fullNegative)
-                .addPoint(-0.4F, midNeg, curvatureValley)
-                .addPoint(0.0F, midpoint)
-                .addPoint(0.4F, midPos, curvatureMountain)
-                .addPoint(1.0F, fullPositive)
+
+
+        context.register(
+                erosionKey,
+                DensityFunctions.cache2d(
+                        DensityFunctions.spline(
+                                CubicSpline.builder(splineCoordinatesFrom(erosion), NO_TRANSFORM)
+                                        .addPoint(-1.5F, -1.5F)
+                                        .addPoint(-1.0F, -1.0F)
+                                        .addPoint(0.0F, 0.0F)
+                                        .addPoint(1.0F, 1.0F)
+                                        .addPoint(1.5F, 1.5F)
+                                        .build()
+                        )
+                )
+        );
+
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> seaMountains =
+                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineMinMax(elevationMedian,-0.8F,-0.7F))
+                        .addPoint(-0.5F, splineMinMax(elevationMedian,-0.7F,-0.6F))
+                        .addPoint(0.5F, splineMinMax(elevationMedian,-0.4F,-0.3F), 0.3F)
+                        .addPoint(0.8F, splineMinMax(elevationMedian,-0.2F,-0.2F), 0.2F)
+                        .addPoint(1.0F, splineMinMax(elevationMedian,0.0F,0.1F), 0.5F)
+                        .addPoint(1.2F, splineMinMax(elevationMedian,0.3F,0.5F), 0.4F)
+                        .build();
+
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> deepSeaMountains =
+                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineMinMax(elevationMedian,-1.9F,-1.7F))
+                        .addPoint(-0.5F, splineMinMax(elevationMedian,-1.7F,-1.5F))
+                        .addPoint(0.5F, splineMinMax(elevationMedian,-0.4F,-0.3F), 0.3F)
+                        .addPoint(0.8F, splineMinMax(elevationMedian,0.1F,0.3F), 0.2F)
+                        .addPoint(1.0F, splineMinMax(elevationMedian,0.3F,0.5F), 0.5F)
+                        .addPoint(1.2F, splineMinMax(elevationMedian,0.5F,0.8F), 0.4F)
+                        .build();
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> shallowMountainsBaseSpline =
+                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineMinMax(elevationMedian,0.05F,0.05F))
+                        .addPoint(-0.5F, splineMinMax(elevationMedian,0.05F,0.08F))
+                        .addPoint(0.5F, splineMinMax(elevationMedian,0.05F,0.12F), 0.4F)
+                        .addPoint(1.0F, splineMinMax(elevationMedian,0.05F,0.3F), 0.4F)
+                        .addPoint(1.2F, splineMinMax(elevationMedian,0.1F,0.5F), 0.2F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> shallowMountains =
+                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
+                        .addPoint(-1.0F, shallowMountainsBaseSpline)
+                        .addPoint(-0.50F, -0.05F, -0.3F)
+                        .addPoint(-0.35F, -0.1F)
+                        .addPoint(-0.15F, -0.05F, 0.3F)
+                        .addPoint(0.4F, shallowMountainsBaseSpline)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> minorHillsBaseSpline =
+                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineMinMax(elevationMedian,0.05F,0.1F))
+                        .addPoint(-0.5F, splineMinMax(elevationMedian,0.05F,0.15F))
+                        .addPoint(0.5F, splineMinMax(elevationMedian,0.1F,0.15F))
+                        .addPoint(1.0F, splineMinMax(elevationMedian,0.1F,0.15F), 0.4F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> minorHills =
+                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
+                        .addPoint(-1.0F, minorHillsBaseSpline)
+                        .addPoint(-0.50F, -0.05F, -0.3F)
+                        .addPoint(-0.35F, -0.1F)
+                        .addPoint(-0.15F, -0.05F, 0.3F)
+                        .addPoint(0.4F, minorHillsBaseSpline)
+                        .build();
+
+
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> mediumMountains =
+                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineMinMax(elevationMedian,0.35F,0.7F))
+                        .addPoint(-0.5F,  splineMinMax(elevationMedian,0.6F,0.8F))
+                        .addPoint(0.5F, splineMinMax(elevationMedian,1.2F,1.6F), 0.3F)
+                        .addPoint(0.8F, splineMinMax(elevationMedian,1.5F,1.9F), 0.2F)
+                        .addPoint(1.0F, splineMinMax(elevationMedian,1.9F,2.1F), 0.5F)
+                        .addPoint(1.2F, splineMinMax(elevationMedian,2.1F,2.4F), 0.4F)
+                        .build();
+
+
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> highMountains =
+                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
+                        .addPoint(-1.0F, splineMinMax(elevationMedian,0.5F,0.8F))
+                        .addPoint(-0.5F, splineMinMax(elevationMedian,0.7F,0.9F))
+                        .addPoint(0.5F, splineMinMax(elevationMedian,1.5F,1.8F), 0.3F)
+                        .addPoint(0.8F, splineMinMax(elevationMedian,1.8F,2.4F), 0.2F)
+                        .addPoint(1.0F, splineMinMax(elevationMedian,2.1F,2.5F), 0.5F)
+                        .addPoint(1.2F, splineMinMax(elevationMedian,2.5F,2.8F), 0.4F)
+                        .build();
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> erosionMountainsSpline =
+                CubicSpline.builder(splineCoordinatesFrom(erosion), NO_TRANSFORM)
+                        .addPoint(-1.0F, highMountains)
+                        .addPoint(-0.75F, highMountains)
+                        .addPoint(-0.45F, mediumMountains)
+                        .addPoint(-0.15F, shallowMountains)
+                        .addPoint(0.3F, minorHills)
+                        .addPoint(0.75F, riversAndValleys)
+                        .addPoint(0.8F, 0.05F)
+                        .addPoint(0.9F, 0.01F)
+                        .addPoint(1.0F, -0.02F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> plateauBottoms =
+                CubicSpline.builder(splineCoordinatesFrom(plateauValleyDepth))
+                        .addPoint(-1.0F,-0.5F)
+                        .addPoint(0.0F,0.0F)
+                        .addPoint(1.0F,0.1F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> plateauSemiBottom =
+                CubicSpline.builder(splineCoordinatesFrom(plateauValleyDepth))
+                        .addPoint(-1.0F,-0.3F)
+                        .addPoint(0.0F,0.0F)
+                        .addPoint(1.0F,0.15F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> lowPlateauSpline =
+                CubicSpline.builder(splineCoordinatesFrom(plateauValleys), NO_TRANSFORM)
+                        .addPoint(-1.0F, plateauBottoms)
+                        .addPoint(-0.8F, plateauSemiBottom, 0.5F)
+                        .addPoint(-0.6F, 0.3F)
+                        .addPoint(1.0F, 0.4F)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> mediumPlateauSpline =
+                CubicSpline.builder(splineCoordinatesFrom(plateauValleys), NO_TRANSFORM)
+                        .addPoint(-1.0F, plateauBottoms)
+                        .addPoint(-0.8F, plateauSemiBottom, 0.5F)
+                        .addPoint(-0.6F, 0.5F)
+                        .addPoint(1.0F, 0.6F)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> tallPlateauSpline =
+                CubicSpline.builder(splineCoordinatesFrom(plateauValleys), NO_TRANSFORM)
+                        .addPoint(-1.0F, plateauBottoms)
+                        .addPoint(-0.8F, plateauSemiBottom, 0.5F)
+                        .addPoint(-0.5F, 0.7F)
+                        .addPoint(1.0F, 0.8F)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> veryTallPlateauSpline =
+                CubicSpline.builder(splineCoordinatesFrom(plateauValleys), NO_TRANSFORM)
+                        .addPoint(-1.0F, plateauBottoms)
+                        .addPoint(-0.8F, plateauSemiBottom, 0.5F)
+                        .addPoint(-0.5F, 1.0F)
+                        .addPoint(1.0F, 1.15F)
+                        .build();
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> erosionPlateauSpline =
+                CubicSpline.builder(splineCoordinatesFrom(erosion), NO_TRANSFORM)
+                        .addPoint(-1.0F, veryTallPlateauSpline)
+                        .addPoint(-0.85F, veryTallPlateauSpline)
+                        .addPoint(-0.8F, tallPlateauSpline)
+                        .addPoint(-0.7F, tallPlateauSpline)
+                        .addPoint(-0.6F, mediumPlateauSpline)
+                        .addPoint(-0.5F, mediumPlateauSpline)
+                        .addPoint(-0.4F, lowPlateauSpline)
+                        .addPoint(0.0F, shallowMountains)
+                        .addPoint(0.5F, minorHills)
+                        .addPoint(0.75F, 0.05F)
+                        .addPoint(1.0F, 0.05F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> riverPlateauSpline =
+                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
+                        .addPoint(-0.7F, erosionPlateauSpline)
+                        .addPoint(-0.50F, -0.05F, -0.3F)
+                        .addPoint(-0.35F, -0.1F)
+                        .addPoint(-0.15F, -0.05F, 0.3F)
+                        .addPoint(0.1F, erosionPlateauSpline)
+                        .build();
+
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> erosionSpline =
+                CubicSpline.builder(splineCoordinatesFrom(plateauMask), NO_TRANSFORM)
+                        .addPoint(-1.0F, erosionMountainsSpline)
+                        .addPoint(0.6F, erosionMountainsSpline)
+                        .addPoint(0.8F, riverPlateauSpline)
+                        .addPoint(1.0F, riverPlateauSpline)
+                        .build();
+
+
+        CubicSpline.Builder<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> baseElevation =
+                CubicSpline.builder(splineCoordinatesFrom(continents), NO_TRANSFORM)
+                        .addPoint(-1.5F, erosionSpline)
+                        .addPoint(-0.8F, seaMountains)
+                        .addPoint(-0.7F, deepSeaMountains)
+                        .addPoint(-0.45F, seaMountains)
+                        .addPoint(-0.16F, erosionSpline,0.2F)
+                        .addPoint(0.2F, erosionSpline)
+                        .addPoint(1.0F, erosionSpline);
+
+
+
+        context.register(
+                elevationKey,
+                DensityFunctions.flatCache(
+                        DensityFunctions.spline(
+                                baseElevation.build()
+                        )
+                )
+        );
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> islands =
+                CubicSpline.builder(splineCoordinatesFrom(densityLookup.getOrThrow(elevationKey)), NO_TRANSFORM)
+                        .addPoint(-1.0F, -0.6F)
+                        .addPoint(-0.5F, -0.75F)
+                        .addPoint(-0.1F, -0.9F)
+                        .addPoint(0.1F, -1.25F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> seas =
+                CubicSpline.builder(splineCoordinatesFrom(densityLookup.getOrThrow(elevationKey)), NO_TRANSFORM)
+                        .addPoint(-1.0F, -0.8F)
+                        .addPoint(-0.5F, -0.6F)
+                        .addPoint(-0.1F, -0.19F)
+                        .addPoint(0.05F, -0.12F)
+                        .addPoint(0.3F, 0.0F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> shores =
+                CubicSpline.builder(splineCoordinatesFrom(densityLookup.getOrThrow(elevationKey)), NO_TRANSFORM)
+                        .addPoint(-1.0F, -0.6F)
+                        .addPoint(-0.5F, -0.35F)
+                        .addPoint(-0.1F, -0.19F)
+                        .addPoint(0.1F, -0.05F)
+                        .addPoint(0.2F, 0.0F)
+                        .build();
+
+
+
+
+
+        context.register(
+                continentsKey,
+                DensityFunctions.cache2d(
+                        DensityFunctions.spline(
+                                CubicSpline.builder(splineCoordinatesFrom(continents), NO_TRANSFORM)
+                                        .addPoint(-1.2F, islands)
+                                        .addPoint(-1.0F, islands)
+                                        .addPoint(-0.8F, seas)
+                                        .addPoint(-0.4F, seas)
+                                        .addPoint(-0.25F, shores)
+                                        .addPoint(-0.15F, 0.0F)
+                                        .addPoint(0.3F, 0.2F)
+                                        .addPoint(1.0F, 1.5F)
+                                        .build()
+                        )
+                )
+        );
+
+
+        context.register(ridgesKey,
+                DensityFunctions.flatCache(
+                        DensityFunctions.cache2d(
+                                DensityFunctions.mul(
+                                        DensityFunctions.spline(
+                                                CubicSpline.builder(splineCoordinatesFrom(erosion), NO_TRANSFORM)
+                                                        .addPoint(-0.6F, 1.0F)
+                                                        .addPoint(-0.1F,
+                                                                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
+                                                                        .addPoint(-1.0F, 1.0F)
+                                                                        .addPoint(-0.75F, 1.0F)
+                                                                        .addPoint(-0.50F, 0.35F, -0.6F)
+                                                                        .addPoint(-0.35F, 0.0F)
+                                                                        .addPoint(-0.15F, 0.35F, 0.6F)
+                                                                        .addPoint(-0.05F, 1.0F)
+                                                                        .addPoint(1.0F, 1.0F)
+                                                                        .build())
+                                                        .build()
+                                        ),
+                                        DensityFunctions.mul(
+                                                DensityFunctions.spline(
+                                                        CubicSpline.builder(splineCoordinatesFrom(biomeVariation), NO_TRANSFORM)
+                                                                .addPoint(-0.0001F, -1)
+                                                                .addPoint(0.0001F, 1)
+                                                                .build()
+                                                ),
+                                                DensityFunctions.mul(
+
+                                                        DensityFunctions.spline(
+                                                                CubicSpline.builder(
+                                                                                splineCoordinatesFrom(
+                                                                                        DensityFunctions.cache2d(getFunction(densityLookup, ModNoiseRouterData.HILLS_AND_MOUNTAINS)
+                                                                                        )
+                                                                                ), NO_TRANSFORM)
+                                                                        .addPoint(-1.0F, 0.25F, 0.0F)
+                                                                        .addPoint(-0.5F, 0.25F, 0.7F)
+                                                                        .addPoint(0.0F, 0.3F)
+                                                                        .addPoint(0.4F, 0.3F)
+                                                                        .addPoint(0.85F, 0.62F, 1.05F)
+                                                                        .addPoint(1.0F, 0.63F)
+                                                                        .build()
+                                                        ),
+
+                                                        DensityFunctions.spline(
+                                                                CubicSpline.builder(
+                                                                                splineCoordinatesFrom(
+                                                                                        DensityFunctions.cache2d(getFunction(densityLookup, ModNoiseRouterData.PLATEAU_MASK)
+                                                                                        )
+                                                                                ), NO_TRANSFORM)
+                                                                        .addPoint(0.4F, 1.0F)
+                                                                        .addPoint(0.8F, 0.7F)
+                                                                        .build()
+                                                        )
+                                                )
+
+
+                                        )
+                                )
+                        )
+                )
+
+        );
+    }
+
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMax(Holder<DensityFunction> function, float min, float max) {
+         return splineAuto(function,
+                 Pair.of(-1.0F,min),
+                 Pair.of(1.0F,max)
+         );
+    }
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMax(Holder<DensityFunction> function, float min, float max,float range) {
+         return splineAuto(function,
+                 Pair.of(-range,min),
+                 Pair.of(range,max)
+         );
+    }
+
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineZeroMax(Holder<DensityFunction> function, float min, float max) {
+        return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(0.0F,min)
+                .addPoint(1.0F,max)
                 .build();
     }
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> curveSpline(
-            I ridgesFolded, float fullNegative, CubicSpline<C, I> midNeg, float midpoint, CubicSpline<C, I> midPos, float fullPositive, ToFloatFunction<Float> transform
-    ) {
-        return CubicSpline.<C, I>builder(ridgesFolded, transform)
-                .addPoint(-1.0F, fullNegative)
-                .addPoint(-0.4F, midNeg)
-                .addPoint(0.0F, midpoint)
-                .addPoint(0.4F, midPos)
-                .addPoint(1.0F, fullPositive)
-                .build();
-    }
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> curveSpline(
-            I ridgesFolded, float fullNegative, float midNeg, float midpoint, float midPos, float fullPositive, float minSmoothing, ToFloatFunction<Float> transform
-    ) {
 
-        float f = Math.max(0.5F * (midNeg - fullNegative), minSmoothing);
-        float f1 = 5.0F * (midpoint - midNeg);
-        return CubicSpline.<C, I>builder(ridgesFolded, transform)
-                .addPoint(-1.0F, fullNegative, f)
-                .addPoint(-0.4F, midNeg, Math.min(f, f1))
-                .addPoint(0.0F, midpoint, f1)
-                .addPoint(0.4F, midPos, 2.0F * (midPos - midpoint))
-                .addPoint(1.0F, fullPositive, 0.7F * (fullPositive - midPos))
-                .build();
-    }
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> curveSpline(
-            I ridgesFolded, CubicSpline<C, I> fullNegative, CubicSpline<C, I> midNeg, float midpoint, CubicSpline<C, I> midPos, CubicSpline<C, I> fullPositive, ToFloatFunction<Float> transform
-    ) {
-        return CubicSpline.<C, I>builder(ridgesFolded, transform)
-                .addPoint(-1.0F, fullNegative)
-                .addPoint(-0.4F, midNeg)
-                .addPoint(0.0F, midpoint)
-                .addPoint(0.4F, midPos)
-                .addPoint(1.0F, fullPositive)
-                .build();
-    }
-    private static <C, I extends ToFloatFunction<C>> CubicSpline<C, I> curveSpline(
-            I ridgesFolded, float fullNegative, CubicSpline<C, I> midNeg, float midpoint, CubicSpline<C, I> midPos, CubicSpline<C, I> fullPositive, ToFloatFunction<Float> transform
-    ) {
-        return CubicSpline.<C, I>builder(ridgesFolded, transform)
-                .addPoint(-1.0F, fullNegative)
-                .addPoint(-0.4F, midNeg)
-                .addPoint(0.0F, midpoint)
-                .addPoint(0.4F, midPos)
-                .addPoint(1.0F, fullPositive)
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineZeroMaxSharp(Holder<DensityFunction> function, float min, float max) {
+        return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(0.0F,min,0.5F)
+                .addPoint(1.0F,max, 1.2F)
                 .build();
     }
 
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineZeroMaxVerySharp(Holder<DensityFunction> function, float min, float max) {
 
-    public static void registerTerrain(
+        return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(0.0F,min,1.5F)
+                .addPoint(1.0F,max, 1.8F)
+                .build();
+    }
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMaxSharp(Holder<DensityFunction> function, float min, float max,float range) {
+         return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(-range,min)
+                .addPoint(range,max,0.4F)
+                .build();
+    }
+
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMaxSharp(Holder<DensityFunction> function, float min, float max) {
+         return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(-1.0F,min)
+                .addPoint(1.0F,max,0.4F)
+                .build();
+    }
+
+    public static void slopedCheeseAndCaves(
             BootstrapContext<DensityFunction> context,
             HolderGetter<DensityFunction> densityLookup,
             HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
-            ResourceKey<DensityFunction> terrain) {
+            DensityFunction shiftX,
+            DensityFunction shiftZ,
+            ResourceKey<DensityFunction> slopedCheese,
+            ResourceKey<DensityFunction> caves) {
+
+        DensityFunction densityNoJaggedness =
+                DensityFunctions.cacheOnce(getFunction(densityLookup,ModNoiseRouterData.R_INITIAL_DENSITY_WITHOUT_JAGGEDNESS));
+        
+
+        context.register(
+                slopedCheese,
+                DensityFunctions.cacheOnce(
+                                densityNoJaggedness
+                )
+
+        );
+
+
+        context.register(caves,
+                            DensityFunctions.constant(1.0F)
+//                        DensityFunctions.min(
+//                                DensityFunctions.add(
+//                                        DensityFunctions.add(
+//                                                DensityFunctions.constant(0.45F),
+//                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_ENTRANCES), 0.75F, 0.5F)
+//                                        ),
+//                                        DensityFunctions.yClampedGradient(-30, 30, 0.3, 0)
+//                                ),
+//                                DensityFunctions.add(
+//                                        DensityFunctions.mul(
+//                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_RARITY), 0.25, 0.25).abs(),
+//                                                DensityFunctions.constant(0.25)
+//                                                ),
+//                                        DensityFunctions.min(
+//                                                DensityFunctions.min(
+//                                                        DensityFunctions.min(
+//                                                                DensityFunctions.mul(
+//                                                                        DensityFunctions.constant(4.0),
+//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_NOODLES)
+//                                                                ),
+//                                                                DensityFunctions.mul(
+//                                                                        DensityFunctions.constant(4.0),
+//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_FRACTURE)
+//                                                                )
+//                                                        ),
+//                                                        DensityFunctions.min(
+//                                                                DensityFunctions.mul(
+//                                                                        DensityFunctions.constant(10.0),
+//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_GROTTO)
+//                                                                ),
+//                                                                DensityFunctions.mul(
+//                                                                        DensityFunctions.constant(4.0),
+//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_SPAGHETTI)
+//                                                                )
+//                                                        )
+//                                                ),
+//                                                DensityFunctions.min(
+//                                                                DensityFunctions.mul(
+//                                                                        DensityFunctions.constant(0.5),
+//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_CAVERNS)
+//                                                                )
+//                                                        ,
+//                                                        DensityFunctions.mul(
+//                                                                DensityFunctions.constant(4.0),
+//                                                                getFunction(densityLookup, ModNoiseRouterData.CAVE_PITS)
+//                                                        )
+//                                                )
+//                                        )
+//                                )
+//                        )
+
+        );
+
 
     }
 
+    public static void noodle(
+            BootstrapContext<DensityFunction> context,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            HolderGetter<DensityFunction> densityLookup,
+            ResourceKey<DensityFunction> branchesKey) {
+        DensityFunction densityfunction = getFunction(densityLookup, PackNoiseRouterData.Y);
 
+        context.register(branchesKey,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.rangeChoice(
+                                yLimitedInterpolatable(
+                                        densityfunction, DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_NOODLE), 1.0, 1.0), ModWorldGenConstants.CAVES_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT, -1
+                                ),
+                                -1000000,
+                                0,
+                                DensityFunctions.constant(64),
+                                DensityFunctions.add(
+                                        yLimitedInterpolatable(
+                                                densityfunction,
+                                                DensityFunctions.mappedNoise(noiseLookup.getOrThrow(ModNoises.CAVE_NOODLE_THICKNESS),
+                                                        1.0,
+                                                        1.0,
+                                                        -0.2,
+                                                        -0.4),
+                                                ModWorldGenConstants.CAVES_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT,
+                                                0
+                                        ),
+                                        DensityFunctions.mul(
+                                                DensityFunctions.constant(1.5),
+                                                DensityFunctions.max(
+                                                        yLimitedInterpolatable(
+                                                                densityfunction,
+                                                                DensityFunctions.noise(
+                                                                        noiseLookup.getOrThrow(ModNoises.CAVE_NOODLE_RIDGE_1),
+                                                                        2.5, 2.5),
+                                                                ModWorldGenConstants.CAVES_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT,
+                                                                0
+                                                        ).abs(),
+                                                        yLimitedInterpolatable(
+                                                                densityfunction,
+                                                                DensityFunctions.noise(
+                                                                        noiseLookup.getOrThrow(ModNoises.CAVE_NOODLE_RIDGE_2),
+                                                                        2.5, 2.5),
+                                                                ModWorldGenConstants.CAVES_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT,
+                                                                0
+                                                        ).abs()
+                                                )
+                                        )
+                                )
 
-    static DensityFunction getFunction(HolderGetter<DensityFunction> densityFunctionRegistry, ResourceKey<DensityFunction> key) {
-        return new DensityFunctions.HolderHolder(densityFunctionRegistry.getOrThrow(key));
+                        )
+                )
+        );
+
+    }
+
+    public static void spaghetti(
+            BootstrapContext<DensityFunction> context,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            HolderGetter<DensityFunction> densityLookup,
+            ResourceKey<DensityFunction> branchesLargeKey) {
+
+        DensityFunction function = DensityFunctions.cacheOnce(DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_RARITY),
+                2.0,
+                1.0)
+        );
+        context.register(branchesLargeKey,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.add(
+                                DensityFunctions.cacheOnce(
+                                        DensityFunctions.mul(
+                                                DensityFunctions.mappedNoise(noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_MODULATOR),
+                                                        0.0, -0.1),
+                                                DensityFunctions.add(
+                                                        DensityFunctions.constant(-0.4),
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_ROUGHNESS), 1, 1).abs()
+                                                )
+                                        )
+                                ),
+                                DensityFunctions.add(
+                                        DensityFunctions.max(
+                                                DensityFunctions.weirdScaledSampler(
+                                                        function,
+                                                        noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_1),
+                                                        DensityFunctions.WeirdScaledSampler.RarityValueMapper.TYPE1
+                                                ),
+                                                DensityFunctions.weirdScaledSampler(
+                                                        function,
+                                                        noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_2),
+                                                        DensityFunctions.WeirdScaledSampler.RarityValueMapper.TYPE1
+                                                )
+
+                                        ),
+                                        DensityFunctions.add(DensityFunctions.constant(-0.1F),
+                                                DensityFunctions.mul(
+                                                        DensityFunctions.constant(0.1),
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_THICKNESS))
+                                                ))
+                                ).clamp(-1, 1)
+                        )
+                )
+        );
+    }
+
+    public static void pits(
+            BootstrapContext<DensityFunction> context,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            ResourceKey<DensityFunction> pitsKey) {
+        context.register(pitsKey,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.add(
+                                DensityFunctions.yClampedGradient(ModWorldGenConstants.WORLD_BOTTOM, 120, 3, 1),
+                                DensityFunctions.add(
+                                        DensityFunctions.yClampedGradient(320, ModWorldGenConstants.BUILD_HEIGHT, 1, 10),
+                                        DensityFunctions.add(
+                                                DensityFunctions.mul(
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_PIT_RARITY), 10, 10),
+                                                        DensityFunctions.constant(2.0F)
+                                                ),
+                                                DensityFunctions.mul(
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_PITS), 3, 0.5),
+                                                        DensityFunctions.constant(2.5F)
+                                                )
+                                        )
+                                )
+
+                        )
+                )
+        );
+    }
+
+    public static void caverns(
+            BootstrapContext<DensityFunction> context,
+            HolderGetter<DensityFunction> densityLookup,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            DensityFunction shiftX,
+            DensityFunction shiftZ,
+            ResourceKey<DensityFunction> cavernsKey) {
+        context.register(cavernsKey,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.add(
+                                DensityFunctions.add(
+                                        DensityFunctions.yClampedGradient(
+                                                -10, ModWorldGenConstants.BUILD_HEIGHT, -0.05, 2.0F
+                                        ),
+                                        DensityFunctions.noise(
+                                                noiseLookup.getOrThrow(ModNoises.CAVE_CAVERNS), 0.25F, 0.25F
+                                        )
+                                ),
+                                DensityFunctions.mul(
+                                        DensityFunctions.add(
+                                                DensityFunctions.mul(
+                                                        DensityFunctions.constant(2),
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_CAVERN_PILLARS), 20, 0.3)
+                                                ),
+                                                DensityFunctions.add(
+                                                        DensityFunctions.constant(-1),
+                                                        DensityFunctions.mul(
+                                                                DensityFunctions.constant(-1),
+                                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_CAVERN_PILLARS_RARITY), 1, 1)
+                                                        )
+                                                )
+                                        ),
+                                        DensityFunctions.add(
+                                                DensityFunctions.constant(0.55),
+                                                DensityFunctions.mul(
+                                                        DensityFunctions.constant(0.55),
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_CAVERN_PILLARS_THICKNESS), 1, 1)
+                                                )
+                                        ).cube()
+                                )
+
+                        )
+                )
+        );
+    }
+
+    public static void grotto(
+            BootstrapContext<DensityFunction> context,
+            HolderGetter<DensityFunction> densityLookup,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            DensityFunction shiftX,
+            DensityFunction shiftZ,
+            ResourceKey<DensityFunction> grottoKey) {
+        context.register(grottoKey,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.add(
+                                DensityFunctions.add(
+                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_GROTTO), 0.25, 0.25),
+                                        DensityFunctions.constant(0.6F)
+                                ),
+                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_GROTTO_RARITY), 0.25, 0.25).clamp(0, 1000)
+                        )
+                )
+        );
+    }
+
+    public static void fracture(
+            BootstrapContext<DensityFunction> context,
+            HolderGetter<DensityFunction> densityLookup,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            DensityFunction shiftX,
+            DensityFunction shiftZ,
+            ResourceKey<DensityFunction> fractureKey) {
+        context.register(fractureKey,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.add(
+                                DensityFunctions.add(
+                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_FRACTURE_1), 5, 1).abs(),
+                                        DensityFunctions.mul(
+                                                DensityFunctions.add(
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_FRACTURE_2), 6, 6).clamp(0, 1),
+                                                        DensityFunctions.constant(-0.25)
+                                                ),
+                                                DensityFunctions.constant(0.5)
+                                        )
+                                ),
+                                DensityFunctions.constant(0.1)
+                        )
+                )
+        );
     }
 }

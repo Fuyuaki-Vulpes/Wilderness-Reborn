@@ -90,7 +90,7 @@ public record PackNoiseGeneratorSettings (
                 PackNoiseRouterData.overworld(context.lookup(Registries.DENSITY_FUNCTION), context.lookup(Registries.NOISE), amplified, large),
                 ModSurfaceRuleData.overworld(),
                 new OverworldBiomeBuilder().spawnTarget(),
-                63,
+                76,
                 false,
                 true,
                 true,

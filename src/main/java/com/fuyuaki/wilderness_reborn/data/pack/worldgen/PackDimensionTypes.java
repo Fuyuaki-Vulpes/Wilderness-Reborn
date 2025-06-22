@@ -1,5 +1,6 @@
 package com.fuyuaki.wilderness_reborn.data.pack.worldgen;
 
+import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModWorldGenConstants;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.ConstantInt;
@@ -22,9 +23,9 @@ public class PackDimensionTypes {
                         1.0,
                         true,
                         false,
-                        -256,
-                        1280,
-                        1280,
+                        ModWorldGenConstants.WORLD_BOTTOM,
+                        ModWorldGenConstants.WORLD_HEIGHT,
+                        ModWorldGenConstants.WORLD_HEIGHT,
                         BlockTags.INFINIBURN_OVERWORLD,
                         BuiltinDimensionTypes.OVERWORLD_EFFECTS,
                         0.0F,

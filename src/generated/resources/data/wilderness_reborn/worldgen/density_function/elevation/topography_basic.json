@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:cache_once",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": "wilderness_reborn:surface/base",
+    "argument2": "wilderness_reborn:surface/surface_mountains_tectonics"
+  }
+}

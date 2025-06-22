@@ -1,6 +1,8 @@
 package com.fuyuaki.wilderness_reborn.api;
 
 import com.fuyuaki.wilderness_reborn.data.worldgen.ModSurfaceRuleData;
+import com.fuyuaki.wilderness_reborn.init.ModFeatures;
+import com.fuyuaki.wilderness_reborn.init.ModSoundEvents;
 import com.fuyuaki.wilderness_reborn.world.item.ModCreativeModeTabs;
 import com.fuyuaki.wilderness_reborn.world.item.ModItems;
 import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
@@ -37,6 +39,8 @@ public class WildernessRebornMod {
         ModBlocks.init(modEventBus);
         ModItems.init(modEventBus);
         ModCreativeModeTabs.init(modEventBus);
+        ModSoundEvents.init(modEventBus);
+        ModFeatures.init(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 

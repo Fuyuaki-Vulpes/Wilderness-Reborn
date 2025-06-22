@@ -26,6 +26,9 @@ public class NoiseRouterFunctions {
         DensityFunction densityfunction = DensityFunctions.blendDensity(densityFunction);
         return DensityFunctions.mul(DensityFunctions.interpolated(densityfunction), DensityFunctions.constant(0.64)).squeeze();
     }
+
+
+
     public static NoiseRouter none() {
         return new NoiseRouter(
                 DensityFunctions.zero(),
@@ -68,9 +71,12 @@ public class NoiseRouterFunctions {
         DensityFunction densityfunction2 = DensityFunctions.yClampedGradient(minY + bottomStartOffset, minY + bottomEndOffset, 0.0, 1.0);
         return DensityFunctions.lerp(densityfunction2, bottomDelta, $$9);
     }
-    public static DensityFunction shiftedNoise3d(
-            DensityFunction shiftX, DensityFunction shiftZ, double xzScale,double yScale, Holder<NormalNoise.NoiseParameters> noiseData
-    ) {
-        return new DensityFunctions.ShiftedNoise(shiftX, DensityFunctions.zero(), shiftZ, xzScale, yScale, new DensityFunction.NoiseHolder(noiseData));
+
+
+    public static DensityFunctions.Spline.Coordinate splineCoordinatesFrom(Holder<DensityFunction> densityFunctionReference) {
+        return new DensityFunctions.Spline.Coordinate(densityFunctionReference);
+    }
+    public static DensityFunctions.Spline.Coordinate splineCoordinatesFrom(DensityFunction densityFunctionReference) {
+        return new DensityFunctions.Spline.Coordinate(Holder.direct(densityFunctionReference));
     }
 }

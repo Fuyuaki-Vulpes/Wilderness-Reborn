@@ -5,6 +5,7 @@ import com.fuyuaki.wilderness_reborn.data.generation.lang.EN_US_LangProvider;
 import com.fuyuaki.wilderness_reborn.data.generation.other.GenLoot;
 import com.fuyuaki.wilderness_reborn.data.generation.other.GenRecipes;
 import com.fuyuaki.wilderness_reborn.data.generation.other.ModBuiltInEntries;
+import com.fuyuaki.wilderness_reborn.data.generation.tags.GenBiomeTags;
 import com.fuyuaki.wilderness_reborn.data.pack.PackBuiltInEntries;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -40,10 +41,10 @@ public class ModDataGenerator {
 
         generator.addProvider(true,
                 new GenEnchantmentTags(packOutput, datapackRegistries.getRegistryProvider()));
-
+*/
         generator.addProvider(true,
                 new GenBiomeTags(packOutput, datapackRegistries.getRegistryProvider()));
-
+/*
         generator.addProvider(true,
                 new GenEntityTags(packOutput, datapackRegistries.getRegistryProvider()));
 

@@ -13,5 +13,7 @@
   "block.wilderness_reborn.silt": "Silt",
   "block.wilderness_reborn.silt_farmland": "Silt Farmland",
   "item.wilderness_reborn.chalk_dust": "Chalk Dust",
-  "item.wilderness_reborn.peat_ball": "Peat Ball"
+  "item.wilderness_reborn.peat_ball": "Peat Ball",
+  "system.wilderness_reborn.asleepMessage": "%1$s out of %2$s players asleep, speeding up time to %3$s",
+  "system.wilderness_reborn.cancel": "No players are asleep. Returning time speed to normal"
 }
