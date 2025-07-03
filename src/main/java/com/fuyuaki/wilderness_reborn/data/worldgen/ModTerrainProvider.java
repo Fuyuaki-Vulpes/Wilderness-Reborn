@@ -1,6 +1,5 @@
 package com.fuyuaki.wilderness_reborn.data.worldgen;
 
-import com.fuyuaki.wilderness_reborn.data.pack.levelgen.PackNoiseRouterData;
 import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModNoiseRouterData;
 import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModNoises;
 import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModWorldGenConstants;
@@ -47,83 +46,66 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                                        ResourceKey<DensityFunction> veinRidgedKey,
                                        ResourceKey<DensityFunction> veinGapKey) {
 
-        context.register(barrierKey, DensityFunctions.noise(noiseLookup.getOrThrow(Noises.AQUIFER_BARRIER), 0.75, 0.5));
         context.register(lavaNoiseKey, DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.AQUIFER_LAVA), 0.75, 0.75));
         context.register(temperatureKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.TEMPERATURE)));
         context.register(vegetationKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.VEGETATION)));
         context.register(veinGapKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(Noises.ORE_GAP)));
         context.register(veinRidgedKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(Noises.ORE_VEIN_A)));
         context.register(veinToggleKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(Noises.ORE_VEININESS)));
-        context.register(fluidLevelFloodednessKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25,(noiseLookup.getOrThrow(ModNoises.AQUIFER_FLOOD))));
-        context.register(fluidLevelSpreadKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25,noiseLookup.getOrThrow(ModNoises.AQUIFER_SPREAD)));
+        context.register(fluidLevelFloodednessKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, (noiseLookup.getOrThrow(ModNoises.AQUIFER_FLOOD))));
+        context.register(fluidLevelSpreadKey, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.AQUIFER_SPREAD)));
 
-
-
+        context.register(barrierKey,
+                DensityFunctions.add(
+                        DensityFunctions.mul(
+                                getCachedFunction(densityLookup,ModNoiseRouterData.CAVE_ENDOGENES),
+                                DensityFunctions.constant(-0.6F)
+                        ).clamp(0.0F,2.0F),
+                        DensityFunctions.noise(noiseLookup.getOrThrow(Noises.AQUIFER_BARRIER), 0.75, 0.5)
+                )
+        );
 
 
         DensityFunction worldOffset = registerAndWrap(context, offsetKey,
                 DensityFunctions.add(
                         DensityFunctions.constant(-0.70F),
-                DensityFunctions.cacheOnce(
-                        getFunction(densityLookup, elevationKey)
+                        DensityFunctions.cacheOnce(
+                                getFunction(densityLookup, elevationKey)
 
+                        )
                 )
-                )
-                );
+        );
 
         DensityFunction depthGradient = registerAndWrap(context, depthKey,
                 DensityFunctions.add(
-                                        worldOffset,
-                        DensityFunctions.yClampedGradient(ModWorldGenConstants.WORLD_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT, ModWorldGenConstants.BOTTOM_DENSITY,ModWorldGenConstants.TOP_DENSITY)
+                        worldOffset,
+                        DensityFunctions.yClampedGradient(ModWorldGenConstants.WORLD_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT, ModWorldGenConstants.BOTTOM_DENSITY, ModWorldGenConstants.TOP_DENSITY)
                 )
+
         );
 
         context.register(
                 initialDensityWithoutJaggednessKey,
-//                DensityFunctions.add(
-//                                       DensityFunctions.mul(
-//                                               DensityFunctions.spline(
-//                                                       CubicSpline.builder(splineCoordinatesFrom(getCachedFunction(densityLookup,continentsKey)))
-//                                                               .addPoint(0.0F,0.0F)
-//                                                               .addPoint(0.5F,1.0F)
-//                                                               .build()
-//                                               ),
-//                                               DensityFunctions.mul(
-//                                                       DensityFunctions.constant(
-//                                                               0.2F),
-//                                                       DensityFunctions.add(
-//                                                               DensityFunctions.add(
-//                                                                       getFunction(densityLookup, ModNoiseRouterData.SURFACE_NOISE_A),
-//                                                                       getFunction(densityLookup, ModNoiseRouterData.SURFACE_NOISE_B)
-//                                                               ),
-//                                                               getFunction(densityLookup, ModNoiseRouterData.SURFACE_NOISE_C)
-//                                                       ).squeeze().abs()
-//                                               )
-//                                       ),
                                 DensityFunctions.cacheOnce(depthGradient)
-//                )
-                .clamp(-64, 64)
+                        .clamp(-64, 64)
         );
 
         context.register(
                 topographyFinalDensityKey,
                 DensityFunctions.interpolated(
-                                DensityFunctions.add(
-                                        DensityFunctions.constant(0.1),
+                                DensityFunctions.min(
+                                        getFunction(densityLookup, ModNoiseRouterData.R_SLOPED_CHEESE),
+                                        DensityFunctions.add(
+                                                getFunction(densityLookup, ModNoiseRouterData.TERRAIN_CAVES),
                                                 DensityFunctions.add(
-                                                        DensityFunctions.constant(-0.1),
-                                                        DensityFunctions.rangeChoice(
-                                                                getFunction(densityLookup, initialDensityWithoutJaggednessKey),
-                                                                -1000000.0, 1.5625,
-                                                                getFunction(densityLookup, ModNoiseRouterData.R_SLOPED_CHEESE),
-                                                                getFunction(densityLookup, ModNoiseRouterData.CAVES)
+                                                        DensityFunctions.constant(2.0F),
+                                                        DensityFunctions.mul(
+                                                                DensityFunctions.constant(-10.0F),
+                                                                depthGradient.abs()
                                                         )
-                                                )
-
-
-                                )
-
-
+                                                ).clamp(0.0F,64.0F)
+                                        )
+                                        )
                 )
 
         );
@@ -417,48 +399,90 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
 
         Holder<DensityFunction> tectonicTerrain = densityLookup.getOrThrow(ModNoiseRouterData.TERRAIN_TECTONIC);
         Holder<DensityFunction> tectonicTerrainSmooth = densityLookup.getOrThrow(ModNoiseRouterData.TERRAIN_TECTONIC_SMOOTH);
+        Holder<DensityFunction> plateauTerrain = densityLookup.getOrThrow(ModNoiseRouterData.TERRAIN_PLATEAU);
 
         // DIRECTION -> Negative = Away from Each-other, Positive = Towards Each-other
 
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainApart =
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainDivergeLand =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicTerrain), NO_TRANSFORM)
+                        .addPoint(-1.0F, -0.75F)
+                        .addPoint(-0.6F, -0.6F)
+                        .addPoint(-0.25F, -0.55F)
+                        .addPoint(0.25F, -0.5F)
+                        .addPoint(0.6F, 0.0F)
+                        .addPoint(1.0F, 0.75F)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainDivergeLandEroded =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicTerrainSmooth), NO_TRANSFORM)
+                        .addPoint(-1.0F, -0.5F)
+                        .addPoint(-0.3F, -0.45F)
+                        .addPoint(0.3F, -0.5F)
+                        .addPoint(1.0F, 0.75F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainDivergeLandPlateau =
+                CubicSpline.builder(splineCoordinatesFrom(plateauTerrain), NO_TRANSFORM)
+                        .addPoint(-1.0F, -0.75F)
+                        .addPoint(1.0F, 0.75F)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainDivergeLandErodedPlateau =
+                CubicSpline.builder(splineCoordinatesFrom(plateauTerrain), NO_TRANSFORM)
+                        .addPoint(-1.0F, -0.25F)
+                        .addPoint(1.0F, 0.25F)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainDiverge =
                 CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrainSmooth,-0.75F,0.75F))
-                        .addPoint(1.0F, splineZeroMax(tectonicTerrainSmooth,-0.3F,0.3F))
+                        .addPoint(-1.0F, terrainDivergeLand)
+                        .addPoint(1.0F, terrainDivergeLandEroded)
+                        .build();
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainDivergePlateau =
+                CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
+                        .addPoint(-1.0F, terrainDivergeLandPlateau)
+                        .addPoint(1.0F, terrainDivergeLandErodedPlateau)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainDivergeRandomized =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicRandomness), NO_TRANSFORM)
+                        .addPoint(-0.1F, terrainDiverge)
+                        .addPoint(0.1F, terrainDivergePlateau)
                         .build();
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainFold =
                 CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrain,0.2F,2.0F))
-                        .addPoint(1.0F, splineZeroMax(tectonicTerrainSmooth,0.2F,1.2F))
+                        .addPoint(-1.0F, splineMinMaxSharp(tectonicTerrain,0.2F,2.0F))
+                        .addPoint(1.0F, splineMinMax(tectonicTerrainSmooth,0.2F,1.2F))
                         .build();
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdueLand =
                 CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineZeroMaxSharp(tectonicTerrain,0.7F,2.5F))
-                        .addPoint(1.0F, splineZeroMax(tectonicTerrain,0.2F,0.9F))
+                        .addPoint(-1.0F, splineMinMaxSharp(tectonicTerrain,0.7F,2.5F))
+                        .addPoint(1.0F, splineMinMax(tectonicTerrain,0.4F,0.9F))
                         .build();
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdueOcean =
                 CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineZeroMaxVerySharp(tectonicTerrain,-0.9F,-0.3F),1.0F)
-                        .addPoint(1.0F, splineZeroMax(tectonicTerrain,-0.5F,-0.1F))
+                        .addPoint(-1.0F, splineMinMaxSharp(tectonicTerrain,-0.9F,-0.3F),1.0F)
+                        .addPoint(1.0F, splineMinMax(tectonicTerrain,-0.5F,-0.1F))
                         .build();
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainTrench =
                 CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineZeroMaxVerySharp(tectonicTerrain,-0.9F,-0.7F))
-                        .addPoint(1.0F, splineZeroMax(tectonicTerrain,-0.8F,-0.5F))
+                        .addPoint(-1.0F, splineMinMaxSharp(tectonicTerrain,-0.9F,-0.7F))
+                        .addPoint(1.0F, splineMinMax(tectonicTerrain,-0.8F,-0.5F))
                         .build();
 
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdue =
                 CubicSpline.builder(splineCoordinatesFrom(tectonicPlates), NO_TRANSFORM)
-                        .addPoint(-0.5F, terrainSubdueOcean)
-                        .addPoint(0.5F, terrainSubdueLand)
+                        .addPoint(-0.2F, terrainSubdueOcean)
+                        .addPoint(0.15F, terrainSubdueLand)
+                        .addPoint(0.5F, splineMinMax(plateauTerrain,0.0F,0.4F,1.0F))
                         .build();
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdueOpposite =
                 CubicSpline.builder(splineCoordinatesFrom(tectonicPlates), NO_TRANSFORM)
-                        .addPoint(-0.1F, terrainSubdueOcean)
-                        .addPoint(0.1F, terrainSubdueLand)
+                        .addPoint(-0.5F, splineMinMax(plateauTerrain,0.0F,0.4F,1.0F))
+                        .addPoint(-0.2F, terrainSubdueLand)
+                        .addPoint(0.15F, terrainSubdueOcean)
                         .build();
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainSubdueRandomized =
@@ -470,13 +494,14 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainCollision =
                 CubicSpline.builder(splineCoordinatesFrom(landContinents), NO_TRANSFORM)
                         .addPoint(-0.50F, terrainTrench)
-                        .addPoint(-0.20F, terrainSubdueRandomized)
+                        .addPoint(-0.35F, terrainSubdueRandomized)
+                        .addPoint(-0.10F, terrainSubdueRandomized)
                         .addPoint(0.15F, terrainFold)
                         .build();
 
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> terrainMovementBased =
                 CubicSpline.builder(splineCoordinatesFrom(tectonicDirection), NO_TRANSFORM)
-                        .addPoint(-0.5F, terrainApart)
+                        .addPoint(-0.5F, terrainDivergeRandomized)
                         .addPoint(-0.15F,0.0F)
                         .addPoint(0.15F,0.0F)
                         .addPoint(0.5F, terrainCollision)
@@ -485,26 +510,163 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> tectonicActivityBasedTerrain =
                 CubicSpline.builder(splineCoordinatesFrom(tectonicActivity), NO_TRANSFORM)
                         .addPoint(-0.5F, 0.0F)
-                        .addPoint(0.3F, terrainMovementBased)
+                        .addPoint(0.15F, terrainMovementBased)
                         .build();
         CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> tectonicEdgeTerrain =
                 CubicSpline.builder(splineCoordinatesFrom(tectonicEdges), NO_TRANSFORM)
-                        .addPoint(0.0F, 0.0F)
+                        .addPoint(-0.1F, 0.0F)
                         .addPoint(0.75F, tectonicActivityBasedTerrain)
+                        .build();
+
+        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> tectonicTerrainNoise =
+                CubicSpline.builder(splineCoordinatesFrom(tectonicEdges), NO_TRANSFORM)
+                        .addPoint(-1.5F, 0.0F)
+                        .addPoint(0.50F,  splineZeroMax(tectonicTerrain,-0.15F,0.15F))
+                        .addPoint(0.75F,  splineZeroMaxSharp(tectonicTerrain,-0.15F,0.2F))
                         .build();
 
 
         context.register(
                 tectonicSurfaceKey,
                 DensityFunctions.cacheOnce(
+                        DensityFunctions.add(
                                 DensityFunctions.spline(
                                         tectonicEdgeTerrain
+                                ),
+                                DensityFunctions.spline(
+                                        tectonicTerrainNoise
                                 )
+                        )
 
                         )
         );
     }
 
+
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMax(Holder<DensityFunction> function, float min, float max) {
+         return splineAuto(function,
+                 Pair.of(-1.0F,min),
+                 Pair.of(1.0F,max)
+         );
+    }
+
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMax(Holder<DensityFunction> function, float min, float max,float range) {
+         return splineAuto(function,
+                 Pair.of(-range,min),
+                 Pair.of(range,max)
+         );
+    }
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineZeroMax(Holder<DensityFunction> function, float min, float max) {
+        return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(0.0F,min)
+                .addPoint(1.0F,max)
+                .build();
+    }
+
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineZeroMaxSharp(Holder<DensityFunction> function, float min, float max) {
+        return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(0.0F,min,0.5F)
+                .addPoint(1.0F,max, 1.2F)
+                .build();
+    }
+
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineZeroMaxVerySharp(Holder<DensityFunction> function, float min, float max) {
+
+        return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(0.0F,min,1.5F)
+                .addPoint(1.0F,max, 1.8F)
+                .build();
+    }
+
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMaxSharp(Holder<DensityFunction> function, float min, float max,float range) {
+         return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(-range,min)
+                .addPoint(range,max,0.4F)
+                .build();
+    }
+    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMaxSharp(Holder<DensityFunction> function, float min, float max) {
+         return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
+                .addPoint(-1.0F,min)
+                .addPoint(1.0F,max,0.4F)
+                .build();
+    }
+
+    public static void slopedCheeseAndCaves(
+            BootstrapContext<DensityFunction> context,
+            HolderGetter<DensityFunction> densityLookup,
+            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
+            DensityFunction shiftX,
+            DensityFunction shiftZ,
+            ResourceKey<DensityFunction> slopedCheese,
+            ResourceKey<DensityFunction> caves
+    ) {
+
+        DensityFunction densityNoJaggedness =
+                DensityFunctions.cacheOnce(getFunction(densityLookup, ModNoiseRouterData.R_INITIAL_DENSITY_WITHOUT_JAGGEDNESS));
+
+
+        context.register(
+                slopedCheese,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.interpolated(
+                                DensityFunctions.add(
+                                        DensityFunctions.mul(
+                                                DensityFunctions.constant(0.05F),
+                                                getFunction(densityLookup, ModNoiseRouterData.LAND_NOISE)
+                                        ),
+                                        densityNoJaggedness
+                                )
+                        )
+                )
+
+        );
+
+
+        context.register(caves,
+                DensityFunctions.add(
+                        DensityFunctions.add(
+                                DensityFunctions.add(
+                                        DensityFunctions.add(
+                                                DensityFunctions.yClampedGradient(ModWorldGenConstants.CAVES_BOTTOM, ModWorldGenConstants.CAVES_BOTTOM_CENTER, 1.5F, 0.0F),
+                                                DensityFunctions.yClampedGradient(ModWorldGenConstants.WORLD_BOTTOM, ModWorldGenConstants.CAVES_BOTTOM, 2.5F, 0.0F)
+                                        ),
+                                        DensityFunctions.yClampedGradient(ModWorldGenConstants.CAVES_TOP, ModWorldGenConstants.CAVES_BASE_TOP, 2.5F, 0.0F)
+                                ),
+                                DensityFunctions.mul(
+                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_DENSITY), 0.25F, 0.5F).abs().clamp(0.0F, 1000.0F),
+                                        DensityFunctions.constant(2.5F)
+                                )
+                        ),
+                        DensityFunctions.mul(
+                                DensityFunctions.constant(1.5F),
+                                DensityFunctions.min(
+                                        DensityFunctions.add(
+                                                DensityFunctions.min(
+
+                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_ENDOGENES),
+                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_EXOGENES)
+                                                ),
+                                                DensityFunctions.spline(
+                                                        CubicSpline.builder(splineCoordinatesFrom(getCachedFunction(densityLookup, ModNoiseRouterData.CAVE_FILTER)))
+                                                                .addPoint(-1.0F, 1.5F)
+                                                                .addPoint(0.0F, 0.0F)
+                                                                .addPoint(1.0F, 0.0F)
+                                                                .build()
+                                                )
+                                        ),
+                                        DensityFunctions.min(
+                                                getFunction(densityLookup, ModNoiseRouterData.CAVE_CRACKS),
+                                                getFunction(densityLookup, ModNoiseRouterData.CAVE_NOODLE)
+
+                                        )
+                                )
+                        )
+                )
+
+        );
+
+
+    }
 
     @SafeVarargs
     private static CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> splineAutoDerivative(Holder<DensityFunction> coordinate, Pair<Float,CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate>>... points){
@@ -611,724 +773,5 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
             builder.addPoint(pair.getFirst(),pair.getSecond(), (float) derivative);
         }
         return builder.build();
-    }
-
-    private static void makeTerrainOld(
-            HolderGetter<DensityFunction> densityLookup,
-            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
-            BootstrapContext<DensityFunction> context,
-            ResourceKey<DensityFunction> elevationKey,
-            ResourceKey<DensityFunction> erosionKey,
-            ResourceKey<DensityFunction> continentsKey,
-            ResourceKey<DensityFunction> ridgesKey) {
-
-        Holder<DensityFunction> continents = densityLookup.getOrThrow(ModNoiseRouterData.CONTINENT_LANDMASS);
-        Holder<DensityFunction> riverMask = densityLookup.getOrThrow(ModNoiseRouterData.GEO_RIVERS_AND_VALLEYS);
-        Holder<DensityFunction> biomeVariation = densityLookup.getOrThrow(ModNoiseRouterData.BIOME_VARIATION);
-        Holder<DensityFunction> elevationMedian = densityLookup.getOrThrow(ModNoiseRouterData.MOUNTAIN_ELEVATION_OFFSET);
-        Holder<DensityFunction> hillsAndMountains = densityLookup.getOrThrow(ModNoiseRouterData.HILLS_AND_MOUNTAINS);
-        Holder<DensityFunction> erosion = densityLookup.getOrThrow(ModNoiseRouterData.GEO_WEATHERING_EROSION);
-        Holder<DensityFunction> plateauValleys = densityLookup.getOrThrow(ModNoiseRouterData.GEO_RIVERS_AND_VALLEYS_PLATEAU);
-        Holder<DensityFunction> plateauValleyDepth = densityLookup.getOrThrow(ModNoiseRouterData.PLATEAU_VALLEY_DEPTH);
-        Holder<DensityFunction> plateauMask = densityLookup.getOrThrow(ModNoiseRouterData.PLATEAU_MASK);
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> riversAndValleys =
-                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
-                        .addPoint(-1, 0.05F)
-                        .addPoint(-0.75F, 0.05F)
-                        .addPoint(-0.50F, -0.1F, -0.3F)
-                        .addPoint(-0.35F, -0.2F)
-                        .addPoint(-0.15F, -0.1F, 0.3F)
-                        .addPoint(0.10F, 0.05F)
-                        .addPoint(1.0F, 0.05F)
-                        .build();
-
-
-
-
-        context.register(
-                erosionKey,
-                DensityFunctions.cache2d(
-                        DensityFunctions.spline(
-                                CubicSpline.builder(splineCoordinatesFrom(erosion), NO_TRANSFORM)
-                                        .addPoint(-1.5F, -1.5F)
-                                        .addPoint(-1.0F, -1.0F)
-                                        .addPoint(0.0F, 0.0F)
-                                        .addPoint(1.0F, 1.0F)
-                                        .addPoint(1.5F, 1.5F)
-                                        .build()
-                        )
-                )
-        );
-
-
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> seaMountains =
-                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineMinMax(elevationMedian,-0.8F,-0.7F))
-                        .addPoint(-0.5F, splineMinMax(elevationMedian,-0.7F,-0.6F))
-                        .addPoint(0.5F, splineMinMax(elevationMedian,-0.4F,-0.3F), 0.3F)
-                        .addPoint(0.8F, splineMinMax(elevationMedian,-0.2F,-0.2F), 0.2F)
-                        .addPoint(1.0F, splineMinMax(elevationMedian,0.0F,0.1F), 0.5F)
-                        .addPoint(1.2F, splineMinMax(elevationMedian,0.3F,0.5F), 0.4F)
-                        .build();
-
-
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> deepSeaMountains =
-                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineMinMax(elevationMedian,-1.9F,-1.7F))
-                        .addPoint(-0.5F, splineMinMax(elevationMedian,-1.7F,-1.5F))
-                        .addPoint(0.5F, splineMinMax(elevationMedian,-0.4F,-0.3F), 0.3F)
-                        .addPoint(0.8F, splineMinMax(elevationMedian,0.1F,0.3F), 0.2F)
-                        .addPoint(1.0F, splineMinMax(elevationMedian,0.3F,0.5F), 0.5F)
-                        .addPoint(1.2F, splineMinMax(elevationMedian,0.5F,0.8F), 0.4F)
-                        .build();
-
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> shallowMountainsBaseSpline =
-                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineMinMax(elevationMedian,0.05F,0.05F))
-                        .addPoint(-0.5F, splineMinMax(elevationMedian,0.05F,0.08F))
-                        .addPoint(0.5F, splineMinMax(elevationMedian,0.05F,0.12F), 0.4F)
-                        .addPoint(1.0F, splineMinMax(elevationMedian,0.05F,0.3F), 0.4F)
-                        .addPoint(1.2F, splineMinMax(elevationMedian,0.1F,0.5F), 0.2F)
-                        .build();
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> shallowMountains =
-                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
-                        .addPoint(-1.0F, shallowMountainsBaseSpline)
-                        .addPoint(-0.50F, -0.05F, -0.3F)
-                        .addPoint(-0.35F, -0.1F)
-                        .addPoint(-0.15F, -0.05F, 0.3F)
-                        .addPoint(0.4F, shallowMountainsBaseSpline)
-                        .build();
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> minorHillsBaseSpline =
-                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineMinMax(elevationMedian,0.05F,0.1F))
-                        .addPoint(-0.5F, splineMinMax(elevationMedian,0.05F,0.15F))
-                        .addPoint(0.5F, splineMinMax(elevationMedian,0.1F,0.15F))
-                        .addPoint(1.0F, splineMinMax(elevationMedian,0.1F,0.15F), 0.4F)
-                        .build();
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> minorHills =
-                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
-                        .addPoint(-1.0F, minorHillsBaseSpline)
-                        .addPoint(-0.50F, -0.05F, -0.3F)
-                        .addPoint(-0.35F, -0.1F)
-                        .addPoint(-0.15F, -0.05F, 0.3F)
-                        .addPoint(0.4F, minorHillsBaseSpline)
-                        .build();
-
-
-
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> mediumMountains =
-                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineMinMax(elevationMedian,0.35F,0.7F))
-                        .addPoint(-0.5F,  splineMinMax(elevationMedian,0.6F,0.8F))
-                        .addPoint(0.5F, splineMinMax(elevationMedian,1.2F,1.6F), 0.3F)
-                        .addPoint(0.8F, splineMinMax(elevationMedian,1.5F,1.9F), 0.2F)
-                        .addPoint(1.0F, splineMinMax(elevationMedian,1.9F,2.1F), 0.5F)
-                        .addPoint(1.2F, splineMinMax(elevationMedian,2.1F,2.4F), 0.4F)
-                        .build();
-
-
-
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> highMountains =
-                CubicSpline.builder(splineCoordinatesFrom(hillsAndMountains), NO_TRANSFORM)
-                        .addPoint(-1.0F, splineMinMax(elevationMedian,0.5F,0.8F))
-                        .addPoint(-0.5F, splineMinMax(elevationMedian,0.7F,0.9F))
-                        .addPoint(0.5F, splineMinMax(elevationMedian,1.5F,1.8F), 0.3F)
-                        .addPoint(0.8F, splineMinMax(elevationMedian,1.8F,2.4F), 0.2F)
-                        .addPoint(1.0F, splineMinMax(elevationMedian,2.1F,2.5F), 0.5F)
-                        .addPoint(1.2F, splineMinMax(elevationMedian,2.5F,2.8F), 0.4F)
-                        .build();
-
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> erosionMountainsSpline =
-                CubicSpline.builder(splineCoordinatesFrom(erosion), NO_TRANSFORM)
-                        .addPoint(-1.0F, highMountains)
-                        .addPoint(-0.75F, highMountains)
-                        .addPoint(-0.45F, mediumMountains)
-                        .addPoint(-0.15F, shallowMountains)
-                        .addPoint(0.3F, minorHills)
-                        .addPoint(0.75F, riversAndValleys)
-                        .addPoint(0.8F, 0.05F)
-                        .addPoint(0.9F, 0.01F)
-                        .addPoint(1.0F, -0.02F)
-                        .build();
-
-        CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> plateauBottoms =
-                CubicSpline.builder(splineCoordinatesFrom(plateauValleyDepth))
-                        .addPoint(-1.0F,-0.5F)
-                        .addPoint(0.0F,0.0F)
-                        .addPoint(1.0F,0.1F)
-                        .build();
-
-        CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> plateauSemiBottom =
-                CubicSpline.builder(splineCoordinatesFrom(plateauValleyDepth))
-                        .addPoint(-1.0F,-0.3F)
-                        .addPoint(0.0F,0.0F)
-                        .addPoint(1.0F,0.15F)
-                        .build();
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> lowPlateauSpline =
-                CubicSpline.builder(splineCoordinatesFrom(plateauValleys), NO_TRANSFORM)
-                        .addPoint(-1.0F, plateauBottoms)
-                        .addPoint(-0.8F, plateauSemiBottom, 0.5F)
-                        .addPoint(-0.6F, 0.3F)
-                        .addPoint(1.0F, 0.4F)
-                        .build();
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> mediumPlateauSpline =
-                CubicSpline.builder(splineCoordinatesFrom(plateauValleys), NO_TRANSFORM)
-                        .addPoint(-1.0F, plateauBottoms)
-                        .addPoint(-0.8F, plateauSemiBottom, 0.5F)
-                        .addPoint(-0.6F, 0.5F)
-                        .addPoint(1.0F, 0.6F)
-                        .build();
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> tallPlateauSpline =
-                CubicSpline.builder(splineCoordinatesFrom(plateauValleys), NO_TRANSFORM)
-                        .addPoint(-1.0F, plateauBottoms)
-                        .addPoint(-0.8F, plateauSemiBottom, 0.5F)
-                        .addPoint(-0.5F, 0.7F)
-                        .addPoint(1.0F, 0.8F)
-                        .build();
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> veryTallPlateauSpline =
-                CubicSpline.builder(splineCoordinatesFrom(plateauValleys), NO_TRANSFORM)
-                        .addPoint(-1.0F, plateauBottoms)
-                        .addPoint(-0.8F, plateauSemiBottom, 0.5F)
-                        .addPoint(-0.5F, 1.0F)
-                        .addPoint(1.0F, 1.15F)
-                        .build();
-
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> erosionPlateauSpline =
-                CubicSpline.builder(splineCoordinatesFrom(erosion), NO_TRANSFORM)
-                        .addPoint(-1.0F, veryTallPlateauSpline)
-                        .addPoint(-0.85F, veryTallPlateauSpline)
-                        .addPoint(-0.8F, tallPlateauSpline)
-                        .addPoint(-0.7F, tallPlateauSpline)
-                        .addPoint(-0.6F, mediumPlateauSpline)
-                        .addPoint(-0.5F, mediumPlateauSpline)
-                        .addPoint(-0.4F, lowPlateauSpline)
-                        .addPoint(0.0F, shallowMountains)
-                        .addPoint(0.5F, minorHills)
-                        .addPoint(0.75F, 0.05F)
-                        .addPoint(1.0F, 0.05F)
-                        .build();
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> riverPlateauSpline =
-                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
-                        .addPoint(-0.7F, erosionPlateauSpline)
-                        .addPoint(-0.50F, -0.05F, -0.3F)
-                        .addPoint(-0.35F, -0.1F)
-                        .addPoint(-0.15F, -0.05F, 0.3F)
-                        .addPoint(0.1F, erosionPlateauSpline)
-                        .build();
-
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> erosionSpline =
-                CubicSpline.builder(splineCoordinatesFrom(plateauMask), NO_TRANSFORM)
-                        .addPoint(-1.0F, erosionMountainsSpline)
-                        .addPoint(0.6F, erosionMountainsSpline)
-                        .addPoint(0.8F, riverPlateauSpline)
-                        .addPoint(1.0F, riverPlateauSpline)
-                        .build();
-
-
-        CubicSpline.Builder<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> baseElevation =
-                CubicSpline.builder(splineCoordinatesFrom(continents), NO_TRANSFORM)
-                        .addPoint(-1.5F, erosionSpline)
-                        .addPoint(-0.8F, seaMountains)
-                        .addPoint(-0.7F, deepSeaMountains)
-                        .addPoint(-0.45F, seaMountains)
-                        .addPoint(-0.16F, erosionSpline,0.2F)
-                        .addPoint(0.2F, erosionSpline)
-                        .addPoint(1.0F, erosionSpline);
-
-
-
-        context.register(
-                elevationKey,
-                DensityFunctions.flatCache(
-                        DensityFunctions.spline(
-                                baseElevation.build()
-                        )
-                )
-        );
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> islands =
-                CubicSpline.builder(splineCoordinatesFrom(densityLookup.getOrThrow(elevationKey)), NO_TRANSFORM)
-                        .addPoint(-1.0F, -0.6F)
-                        .addPoint(-0.5F, -0.75F)
-                        .addPoint(-0.1F, -0.9F)
-                        .addPoint(0.1F, -1.25F)
-                        .build();
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> seas =
-                CubicSpline.builder(splineCoordinatesFrom(densityLookup.getOrThrow(elevationKey)), NO_TRANSFORM)
-                        .addPoint(-1.0F, -0.8F)
-                        .addPoint(-0.5F, -0.6F)
-                        .addPoint(-0.1F, -0.19F)
-                        .addPoint(0.05F, -0.12F)
-                        .addPoint(0.3F, 0.0F)
-                        .build();
-
-        CubicSpline<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> shores =
-                CubicSpline.builder(splineCoordinatesFrom(densityLookup.getOrThrow(elevationKey)), NO_TRANSFORM)
-                        .addPoint(-1.0F, -0.6F)
-                        .addPoint(-0.5F, -0.35F)
-                        .addPoint(-0.1F, -0.19F)
-                        .addPoint(0.1F, -0.05F)
-                        .addPoint(0.2F, 0.0F)
-                        .build();
-
-
-
-
-
-        context.register(
-                continentsKey,
-                DensityFunctions.cache2d(
-                        DensityFunctions.spline(
-                                CubicSpline.builder(splineCoordinatesFrom(continents), NO_TRANSFORM)
-                                        .addPoint(-1.2F, islands)
-                                        .addPoint(-1.0F, islands)
-                                        .addPoint(-0.8F, seas)
-                                        .addPoint(-0.4F, seas)
-                                        .addPoint(-0.25F, shores)
-                                        .addPoint(-0.15F, 0.0F)
-                                        .addPoint(0.3F, 0.2F)
-                                        .addPoint(1.0F, 1.5F)
-                                        .build()
-                        )
-                )
-        );
-
-
-        context.register(ridgesKey,
-                DensityFunctions.flatCache(
-                        DensityFunctions.cache2d(
-                                DensityFunctions.mul(
-                                        DensityFunctions.spline(
-                                                CubicSpline.builder(splineCoordinatesFrom(erosion), NO_TRANSFORM)
-                                                        .addPoint(-0.6F, 1.0F)
-                                                        .addPoint(-0.1F,
-                                                                CubicSpline.builder(splineCoordinatesFrom(riverMask), NO_TRANSFORM)
-                                                                        .addPoint(-1.0F, 1.0F)
-                                                                        .addPoint(-0.75F, 1.0F)
-                                                                        .addPoint(-0.50F, 0.35F, -0.6F)
-                                                                        .addPoint(-0.35F, 0.0F)
-                                                                        .addPoint(-0.15F, 0.35F, 0.6F)
-                                                                        .addPoint(-0.05F, 1.0F)
-                                                                        .addPoint(1.0F, 1.0F)
-                                                                        .build())
-                                                        .build()
-                                        ),
-                                        DensityFunctions.mul(
-                                                DensityFunctions.spline(
-                                                        CubicSpline.builder(splineCoordinatesFrom(biomeVariation), NO_TRANSFORM)
-                                                                .addPoint(-0.0001F, -1)
-                                                                .addPoint(0.0001F, 1)
-                                                                .build()
-                                                ),
-                                                DensityFunctions.mul(
-
-                                                        DensityFunctions.spline(
-                                                                CubicSpline.builder(
-                                                                                splineCoordinatesFrom(
-                                                                                        DensityFunctions.cache2d(getFunction(densityLookup, ModNoiseRouterData.HILLS_AND_MOUNTAINS)
-                                                                                        )
-                                                                                ), NO_TRANSFORM)
-                                                                        .addPoint(-1.0F, 0.25F, 0.0F)
-                                                                        .addPoint(-0.5F, 0.25F, 0.7F)
-                                                                        .addPoint(0.0F, 0.3F)
-                                                                        .addPoint(0.4F, 0.3F)
-                                                                        .addPoint(0.85F, 0.62F, 1.05F)
-                                                                        .addPoint(1.0F, 0.63F)
-                                                                        .build()
-                                                        ),
-
-                                                        DensityFunctions.spline(
-                                                                CubicSpline.builder(
-                                                                                splineCoordinatesFrom(
-                                                                                        DensityFunctions.cache2d(getFunction(densityLookup, ModNoiseRouterData.PLATEAU_MASK)
-                                                                                        )
-                                                                                ), NO_TRANSFORM)
-                                                                        .addPoint(0.4F, 1.0F)
-                                                                        .addPoint(0.8F, 0.7F)
-                                                                        .build()
-                                                        )
-                                                )
-
-
-                                        )
-                                )
-                        )
-                )
-
-        );
-    }
-
-    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMax(Holder<DensityFunction> function, float min, float max) {
-         return splineAuto(function,
-                 Pair.of(-1.0F,min),
-                 Pair.of(1.0F,max)
-         );
-    }
-    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMax(Holder<DensityFunction> function, float min, float max,float range) {
-         return splineAuto(function,
-                 Pair.of(-range,min),
-                 Pair.of(range,max)
-         );
-    }
-
-    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineZeroMax(Holder<DensityFunction> function, float min, float max) {
-        return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
-                .addPoint(0.0F,min)
-                .addPoint(1.0F,max)
-                .build();
-    }
-
-    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineZeroMaxSharp(Holder<DensityFunction> function, float min, float max) {
-        return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
-                .addPoint(0.0F,min,0.5F)
-                .addPoint(1.0F,max, 1.2F)
-                .build();
-    }
-
-    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineZeroMaxVerySharp(Holder<DensityFunction> function, float min, float max) {
-
-        return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
-                .addPoint(0.0F,min,1.5F)
-                .addPoint(1.0F,max, 1.8F)
-                .build();
-    }
-    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMaxSharp(Holder<DensityFunction> function, float min, float max,float range) {
-         return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
-                .addPoint(-range,min)
-                .addPoint(range,max,0.4F)
-                .build();
-    }
-
-    private static CubicSpline<DensityFunctions.Spline.Point,DensityFunctions.Spline.Coordinate> splineMinMaxSharp(Holder<DensityFunction> function, float min, float max) {
-         return CubicSpline.builder(splineCoordinatesFrom(function), NO_TRANSFORM)
-                .addPoint(-1.0F,min)
-                .addPoint(1.0F,max,0.4F)
-                .build();
-    }
-
-    public static void slopedCheeseAndCaves(
-            BootstrapContext<DensityFunction> context,
-            HolderGetter<DensityFunction> densityLookup,
-            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
-            DensityFunction shiftX,
-            DensityFunction shiftZ,
-            ResourceKey<DensityFunction> slopedCheese,
-            ResourceKey<DensityFunction> caves) {
-
-        DensityFunction densityNoJaggedness =
-                DensityFunctions.cacheOnce(getFunction(densityLookup,ModNoiseRouterData.R_INITIAL_DENSITY_WITHOUT_JAGGEDNESS));
-        
-
-        context.register(
-                slopedCheese,
-                DensityFunctions.cacheOnce(
-                        DensityFunctions.interpolated(
-                                DensityFunctions.add(
-                                        DensityFunctions.mul(
-                                                DensityFunctions.constant(0.05F),
-                                                getFunction(densityLookup,ModNoiseRouterData.LAND_NOISE)
-                                        ),
-                                        densityNoJaggedness
-                                )
-                        )
-                )
-
-        );
-
-
-        context.register(caves,
-                            DensityFunctions.constant(1.0F)
-//                        DensityFunctions.min(
-//                                DensityFunctions.add(
-//                                        DensityFunctions.add(
-//                                                DensityFunctions.constant(0.45F),
-//                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_ENTRANCES), 0.75F, 0.5F)
-//                                        ),
-//                                        DensityFunctions.yClampedGradient(-30, 30, 0.3, 0)
-//                                ),
-//                                DensityFunctions.add(
-//                                        DensityFunctions.mul(
-//                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_RARITY), 0.25, 0.25).abs(),
-//                                                DensityFunctions.constant(0.25)
-//                                                ),
-//                                        DensityFunctions.min(
-//                                                DensityFunctions.min(
-//                                                        DensityFunctions.min(
-//                                                                DensityFunctions.mul(
-//                                                                        DensityFunctions.constant(4.0),
-//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_NOODLES)
-//                                                                ),
-//                                                                DensityFunctions.mul(
-//                                                                        DensityFunctions.constant(4.0),
-//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_FRACTURE)
-//                                                                )
-//                                                        ),
-//                                                        DensityFunctions.min(
-//                                                                DensityFunctions.mul(
-//                                                                        DensityFunctions.constant(10.0),
-//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_GROTTO)
-//                                                                ),
-//                                                                DensityFunctions.mul(
-//                                                                        DensityFunctions.constant(4.0),
-//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_SPAGHETTI)
-//                                                                )
-//                                                        )
-//                                                ),
-//                                                DensityFunctions.min(
-//                                                                DensityFunctions.mul(
-//                                                                        DensityFunctions.constant(0.5),
-//                                                                        getFunction(densityLookup, ModNoiseRouterData.CAVE_CAVERNS)
-//                                                                )
-//                                                        ,
-//                                                        DensityFunctions.mul(
-//                                                                DensityFunctions.constant(4.0),
-//                                                                getFunction(densityLookup, ModNoiseRouterData.CAVE_PITS)
-//                                                        )
-//                                                )
-//                                        )
-//                                )
-//                        )
-
-        );
-
-
-    }
-
-    public static void noodle(
-            BootstrapContext<DensityFunction> context,
-            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
-            HolderGetter<DensityFunction> densityLookup,
-            ResourceKey<DensityFunction> branchesKey) {
-        DensityFunction densityfunction = getFunction(densityLookup, PackNoiseRouterData.Y);
-
-        context.register(branchesKey,
-                DensityFunctions.cacheOnce(
-                        DensityFunctions.rangeChoice(
-                                yLimitedInterpolatable(
-                                        densityfunction, DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_NOODLE), 1.0, 1.0), ModWorldGenConstants.CAVES_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT, -1
-                                ),
-                                -1000000,
-                                0,
-                                DensityFunctions.constant(64),
-                                DensityFunctions.add(
-                                        yLimitedInterpolatable(
-                                                densityfunction,
-                                                DensityFunctions.mappedNoise(noiseLookup.getOrThrow(ModNoises.CAVE_NOODLE_THICKNESS),
-                                                        1.0,
-                                                        1.0,
-                                                        -0.2,
-                                                        -0.4),
-                                                ModWorldGenConstants.CAVES_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT,
-                                                0
-                                        ),
-                                        DensityFunctions.mul(
-                                                DensityFunctions.constant(1.5),
-                                                DensityFunctions.max(
-                                                        yLimitedInterpolatable(
-                                                                densityfunction,
-                                                                DensityFunctions.noise(
-                                                                        noiseLookup.getOrThrow(ModNoises.CAVE_NOODLE_RIDGE_1),
-                                                                        2.5, 2.5),
-                                                                ModWorldGenConstants.CAVES_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT,
-                                                                0
-                                                        ).abs(),
-                                                        yLimitedInterpolatable(
-                                                                densityfunction,
-                                                                DensityFunctions.noise(
-                                                                        noiseLookup.getOrThrow(ModNoises.CAVE_NOODLE_RIDGE_2),
-                                                                        2.5, 2.5),
-                                                                ModWorldGenConstants.CAVES_BOTTOM, ModWorldGenConstants.BUILD_HEIGHT,
-                                                                0
-                                                        ).abs()
-                                                )
-                                        )
-                                )
-
-                        )
-                )
-        );
-
-    }
-
-    public static void spaghetti(
-            BootstrapContext<DensityFunction> context,
-            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
-            HolderGetter<DensityFunction> densityLookup,
-            ResourceKey<DensityFunction> branchesLargeKey) {
-
-        DensityFunction function = DensityFunctions.cacheOnce(DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_RARITY),
-                2.0,
-                1.0)
-        );
-        context.register(branchesLargeKey,
-                DensityFunctions.cacheOnce(
-                        DensityFunctions.add(
-                                DensityFunctions.cacheOnce(
-                                        DensityFunctions.mul(
-                                                DensityFunctions.mappedNoise(noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_MODULATOR),
-                                                        0.0, -0.1),
-                                                DensityFunctions.add(
-                                                        DensityFunctions.constant(-0.4),
-                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_ROUGHNESS), 1, 1).abs()
-                                                )
-                                        )
-                                ),
-                                DensityFunctions.add(
-                                        DensityFunctions.max(
-                                                DensityFunctions.weirdScaledSampler(
-                                                        function,
-                                                        noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_1),
-                                                        DensityFunctions.WeirdScaledSampler.RarityValueMapper.TYPE1
-                                                ),
-                                                DensityFunctions.weirdScaledSampler(
-                                                        function,
-                                                        noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_2),
-                                                        DensityFunctions.WeirdScaledSampler.RarityValueMapper.TYPE1
-                                                )
-
-                                        ),
-                                        DensityFunctions.add(DensityFunctions.constant(-0.1F),
-                                                DensityFunctions.mul(
-                                                        DensityFunctions.constant(0.1),
-                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_SPAGHETTI_3D_THICKNESS))
-                                                ))
-                                ).clamp(-1, 1)
-                        )
-                )
-        );
-    }
-
-    public static void pits(
-            BootstrapContext<DensityFunction> context,
-            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
-            ResourceKey<DensityFunction> pitsKey) {
-        context.register(pitsKey,
-                DensityFunctions.cacheOnce(
-                        DensityFunctions.add(
-                                DensityFunctions.yClampedGradient(ModWorldGenConstants.WORLD_BOTTOM, 120, 3, 1),
-                                DensityFunctions.add(
-                                        DensityFunctions.yClampedGradient(320, ModWorldGenConstants.BUILD_HEIGHT, 1, 10),
-                                        DensityFunctions.add(
-                                                DensityFunctions.mul(
-                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_PIT_RARITY), 10, 10),
-                                                        DensityFunctions.constant(2.0F)
-                                                ),
-                                                DensityFunctions.mul(
-                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_PITS), 3, 0.5),
-                                                        DensityFunctions.constant(2.5F)
-                                                )
-                                        )
-                                )
-
-                        )
-                )
-        );
-    }
-
-    public static void caverns(
-            BootstrapContext<DensityFunction> context,
-            HolderGetter<DensityFunction> densityLookup,
-            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
-            DensityFunction shiftX,
-            DensityFunction shiftZ,
-            ResourceKey<DensityFunction> cavernsKey) {
-        context.register(cavernsKey,
-                DensityFunctions.cacheOnce(
-                        DensityFunctions.add(
-                                DensityFunctions.add(
-                                        DensityFunctions.yClampedGradient(
-                                                -10, ModWorldGenConstants.BUILD_HEIGHT, -0.05, 2.0F
-                                        ),
-                                        DensityFunctions.noise(
-                                                noiseLookup.getOrThrow(ModNoises.CAVE_CAVERNS), 0.25F, 0.25F
-                                        )
-                                ),
-                                DensityFunctions.mul(
-                                        DensityFunctions.add(
-                                                DensityFunctions.mul(
-                                                        DensityFunctions.constant(2),
-                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_CAVERN_PILLARS), 20, 0.3)
-                                                ),
-                                                DensityFunctions.add(
-                                                        DensityFunctions.constant(-1),
-                                                        DensityFunctions.mul(
-                                                                DensityFunctions.constant(-1),
-                                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_CAVERN_PILLARS_RARITY), 1, 1)
-                                                        )
-                                                )
-                                        ),
-                                        DensityFunctions.add(
-                                                DensityFunctions.constant(0.55),
-                                                DensityFunctions.mul(
-                                                        DensityFunctions.constant(0.55),
-                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_CAVERN_PILLARS_THICKNESS), 1, 1)
-                                                )
-                                        ).cube()
-                                )
-
-                        )
-                )
-        );
-    }
-
-    public static void grotto(
-            BootstrapContext<DensityFunction> context,
-            HolderGetter<DensityFunction> densityLookup,
-            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
-            DensityFunction shiftX,
-            DensityFunction shiftZ,
-            ResourceKey<DensityFunction> grottoKey) {
-        context.register(grottoKey,
-                DensityFunctions.cacheOnce(
-                        DensityFunctions.add(
-                                DensityFunctions.add(
-                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_GROTTO), 0.25, 0.25),
-                                        DensityFunctions.constant(0.6F)
-                                ),
-                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_GROTTO_RARITY), 0.25, 0.25).clamp(0, 1000)
-                        )
-                )
-        );
-    }
-
-    public static void fracture(
-            BootstrapContext<DensityFunction> context,
-            HolderGetter<DensityFunction> densityLookup,
-            HolderGetter<NormalNoise.NoiseParameters> noiseLookup,
-            DensityFunction shiftX,
-            DensityFunction shiftZ,
-            ResourceKey<DensityFunction> fractureKey) {
-        context.register(fractureKey,
-                DensityFunctions.cacheOnce(
-                        DensityFunctions.add(
-                                DensityFunctions.add(
-                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_FRACTURE_1), 5, 1).abs(),
-                                        DensityFunctions.mul(
-                                                DensityFunctions.add(
-                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVE_FRACTURE_2), 6, 6).clamp(0, 1),
-                                                        DensityFunctions.constant(-0.25)
-                                                ),
-                                                DensityFunctions.constant(0.5)
-                                        )
-                                ),
-                                DensityFunctions.constant(0.1)
-                        )
-                )
-        );
     }
 }

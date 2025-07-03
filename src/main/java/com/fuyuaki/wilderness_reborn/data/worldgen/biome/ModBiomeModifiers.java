@@ -2,6 +2,7 @@ package com.fuyuaki.wilderness_reborn.data.worldgen.biome;
 
 import com.fuyuaki.wilderness_reborn.api.WildernessRebornMod;
 import com.fuyuaki.wilderness_reborn.api.common.ModTags;
+import com.fuyuaki.wilderness_reborn.data.ModCarvers;
 import com.fuyuaki.wilderness_reborn.data.worldgen.features.ModAquaticFeatures;
 import com.fuyuaki.wilderness_reborn.data.worldgen.features.ModFrozenFeatures;
 import com.fuyuaki.wilderness_reborn.data.worldgen.placement.ModAquaticPlacements;
@@ -16,6 +17,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.carver.CarverConfiguration;
+import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.world.BiomeModifier;
@@ -26,6 +29,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 public class ModBiomeModifiers {
+    public static final ResourceKey<BiomeModifier> ADD_LARGE_CAVES = registerKey("add_large_caves");
     public static final ResourceKey<BiomeModifier> REMOVE_BLOBS = registerKey("remove_blobs");
     public static final ResourceKey<BiomeModifier> SPIKES_FROZEN_PEAKS = registerKey("spikes_frozen_peaks");
     public static final ResourceKey<BiomeModifier> SPIKES_BEACH = registerKey("spikes_beach");
@@ -37,6 +41,7 @@ public class ModBiomeModifiers {
     public static void bootstrap(BootstrapContext<BiomeModifier> context) {
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
+        HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.BIOME);
 
         context.register(REMOVE_BLOBS,
                 new BiomeModifiers.RemoveFeaturesBiomeModifier(
@@ -90,6 +95,12 @@ public class ModBiomeModifiers {
                 biomes.getOrThrow(ModTags.Biomes.HAS_WATER_DELTAS_LARGE),
                         getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_LARGE),
                         GenerationStep.Decoration.SURFACE_STRUCTURES
+                )
+        );
+        context.register(ADD_LARGE_CAVES,
+                new BiomeModifiers.AddCarversBiomeModifier(
+                biomes.getOrThrow(ModTags.Biomes.HAS_WATER_DELTAS_LARGE),
+
                 )
         );
 

@@ -9,7 +9,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.CubicSpline;
-import net.minecraft.util.ToFloatFunction;
 import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
@@ -22,6 +21,8 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
     public static final ResourceKey<DensityFunction> TERRAIN_SMOOTHNESS = createKey("terrain/smoothness");
     public static final ResourceKey<DensityFunction> TERRAIN_TECTONIC = createKey("terrain/tectonic");
     public static final ResourceKey<DensityFunction> TERRAIN_TECTONIC_SMOOTH = createKey("terrain/tectonic_smooth");
+    public static final ResourceKey<DensityFunction> TERRAIN_PLATEAU = createKey("terrain/plateau");
+    public static final ResourceKey<DensityFunction> TERRAIN_CAVES = createKey("terrain/caves");
 
 
     public static final ResourceKey<DensityFunction> SURFACE_BASE = createKey("surface/base");
@@ -38,6 +39,14 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
     public static final ResourceKey<DensityFunction> TECTONIC_DIRECTION = createKey("tectonic_plates/direction");
     public static final ResourceKey<DensityFunction> TECTONIC_RANDOMNESS = createKey("tectonic_plates/randomness");
     public static final ResourceKey<DensityFunction> TECTONIC_ACTIVITY = createKey("tectonic_plates/activity");
+
+
+    public static final ResourceKey<DensityFunction> CAVE_NOODLE = createKey("cave/noodle");
+    public static final ResourceKey<DensityFunction> CAVE_FILTER = createKey("cave/filter");
+    public static final ResourceKey<DensityFunction> CAVE_PILLARS = createKey("cave/detail/pillars");
+    public static final ResourceKey<DensityFunction> CAVE_CRACKS = createKey("cave/cracks");
+    public static final ResourceKey<DensityFunction> CAVE_EXOGENES = createKey("cave/exogenes");
+    public static final ResourceKey<DensityFunction> CAVE_ENDOGENES = createKey("cave/endogenes");
 
 
     //ROUTER PARAMETERS
@@ -59,51 +68,11 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
 
     public static final ResourceKey<DensityFunction> R_SLOPED_CHEESE = createKey("sloped_cheese");
 
-    //CAVES
-    public static final ResourceKey<DensityFunction> CAVES = createKey("caves/caves_final");
-    public static final ResourceKey<DensityFunction> CAVE_NOODLES = createKey("caves/noodle");
-    public static final ResourceKey<DensityFunction> CAVE_SPAGHETTI = createKey("caves/spaghetti");
-    public static final ResourceKey<DensityFunction> CAVE_PITS = createKey("caves/pits");
-    public static final ResourceKey<DensityFunction> CAVE_CAVERNS = createKey("caves/caverns");
-    public static final ResourceKey<DensityFunction> CAVE_GROTTO = createKey("caves/grotto");
-    public static final ResourceKey<DensityFunction> CAVE_FRACTURE = createKey("caves/fracture");
 
-    //DETAILS
-    public static final ResourceKey<DensityFunction> TECTONIC_ACTIVITY_OLD = createKey("detail/tectonic_activity");
-    public static final ResourceKey<DensityFunction> BIOME_VARIATION = createKey("detail/biome_variation");
-    public static final ResourceKey<DensityFunction> JAGGEDNESS = createKey("detail/jaggedness");
-    public static final ResourceKey<DensityFunction> PLATEAU_VALLEY_DEPTH = createKey("detail/plateau_valley_depth");
-
-
-    //MASKS
-    public static final ResourceKey<DensityFunction> RIVER_MASK = createKey("masks/river_mask");
-    public static final ResourceKey<DensityFunction> PLATEAU_MASK = createKey("masks/plateau");
-
-
-    //SPLINE BASES
-    public static final ResourceKey<DensityFunction> PLATE_NOISE = createKey("spline_bases/plates");
-    public static final ResourceKey<DensityFunction> CRATERS_NOISE = createKey("spline_bases/craters");
 
     //ELEVATION
-    public static final ResourceKey<DensityFunction> TECTONIC_FORMATION = createKey("elevation/tectonic_formation");
-    public static final ResourceKey<DensityFunction> TOPOGRAPHY = createKey("elevation/topography");
-    public static final ResourceKey<DensityFunction> TOPOGRAPHY_BASIC = createKey("elevation/topography_basic");
-    public static final ResourceKey<DensityFunction> BASIC_ELEVATION = createKey("elevation/basic_elevation");
-    public static final ResourceKey<DensityFunction> SURFACE_NOISE_A = createKey("elevation/noise_a");
-    public static final ResourceKey<DensityFunction> SURFACE_NOISE_B = createKey("elevation/noise_b");
-    public static final ResourceKey<DensityFunction> SURFACE_NOISE_C = createKey("elevation/noise_c");
-    public static final ResourceKey<DensityFunction> GENERAL_LANDMASS = createKey("elevation/landmass");
-    public static final ResourceKey<DensityFunction> CONTINENT_LANDMASS = createKey("elevation/continent_landmass");
-
-    public static final ResourceKey<DensityFunction> HILLS_AND_MOUNTAINS = createKey("elevation/mountains");
-    public static final ResourceKey<DensityFunction> MOUNTAIN_ELEVATION_OFFSET = createKey("elevation/mountain_elevation_offset");
-
-
-    public static final ResourceKey<DensityFunction> GEO_WEATHERING_EROSION = createKey("geomorphology/weathering_and_erosion");
-    public static final ResourceKey<DensityFunction> GEO_CRATERS = createKey("geomorphology/craters");
-    public static final ResourceKey<DensityFunction> GEO_RIDGES = createKey("geomorphology/ridges");
-    public static final ResourceKey<DensityFunction> GEO_RIVERS_AND_VALLEYS = createKey("geomorphology/rivers_and_valleys");
-    public static final ResourceKey<DensityFunction> GEO_RIVERS_AND_VALLEYS_PLATEAU = createKey("geomorphology/rivers_and_valleys_plateau");
+    public static final ResourceKey<DensityFunction> OFFSET = createKey("offset");
+    public static final ResourceKey<DensityFunction> ELEVATION = createKey("elevation");
 
 
 
@@ -227,18 +196,37 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
                 )
         );
 
+context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
+                        DensityFunctions.interpolated(
+                                                        DensityFunctions.lerp(
+                                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.TERRAIN_PLATEAU_BLENDER),
+                                                                        0.25F,0.05F
+                                                                ),
+                                                                DensityFunctions.shiftedNoise2d(
+                                                                        shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_PLATEAU_A)
+                                                                ),
+                                                                DensityFunctions.shiftedNoise2d(
+                                                                        shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_PLATEAU_B)
+                                                                )
+                                                        ).clamp(-2.0F,2.0F)
+
+                        )
+                )
+        );
 
 
-        context.register(  TECTONIC_EDGES,
+
+        context.register(
+                TECTONIC_EDGES,
                 DensityFunctions.flatCache(
                         DensityFunctions.mul(
-                                DensityFunctions.constant(-1.8F),
+                                DensityFunctions.constant(-1.2F),
                                 DensityFunctions.add(
                                         DensityFunctions.constant(
-                                        -0.45F
+                                        -0.52F
                                         ),
                                         DensityFunctions.mul(
-                                                DensityFunctions.constant(2.75F),
+                                                DensityFunctions.constant(7.0F),
                                                 DensityFunctions.shiftedNoise2d
                                                         (shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.GEO_TECTONICS)
                                                         ).abs()
@@ -316,232 +304,176 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
         );
 
 
-        context.register(SURFACE_NOISE_A, DensityFunctions.flatCache(DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.NOISE_A))));
 
-        context.register(SURFACE_NOISE_B, DensityFunctions.flatCache(DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.NOISE_B))));
 
-        context.register(SURFACE_NOISE_C, DensityFunctions.flatCache(DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.NOISE_C))));
-
-        context.register(BASIC_ELEVATION,
-                DensityFunctions.flatCache(
-                        DensityFunctions.lerp(
+        context.register(CAVE_FILTER,DensityFunctions.cacheOnce(
+                        DensityFunctions.interpolated(
                                 DensityFunctions.add(
-                                        DensityFunctions.constant(-0.5F),
+                                        DensityFunctions.constant(-1.0F),
                                         DensityFunctions.mul(
-                                                getFunction(densityLookup, R_CONTINENTALNESS),
-                                                DensityFunctions.constant(2.0F)
-                                        ).clamp(-0.5,2)
-                                ),
-                                DensityFunctions.constant(0.02F),
-                                DensityFunctions.mul(
+                                                DensityFunctions.constant(2.0F),
+                                                DensityFunctions.lerp(
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_FILTER)
+                                                        ).clamp(-1.0F,1.0F),
+                                                        DensityFunctions.noise(
+                                                                noiseLookup.getOrThrow(ModNoises.CAVES_FILTER_A)
+                                                        ),
+                                                        DensityFunctions.noise(
+                                                                noiseLookup.getOrThrow(ModNoises.CAVES_FILTER_B)
+                                                        )
+                                                ).abs()
+                                        )
+                                )
+
+                        )
+                )
+        );
+
+
+        context.register(CAVE_NOODLE,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.add(
+                                DensityFunctions.constant(0.1F),
+                                DensityFunctions.add(
+                                        DensityFunctions.mul(
+                                                DensityFunctions.constant(3.0F),
+                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_NOODLES_FILTER)).abs()
+                                                ),
                                         DensityFunctions.add(
-                                                DensityFunctions.add(
-                                                        DensityFunctions.constant(0.35F),
-                                                        getFunction(densityLookup,RIVER_MASK)).abs(),
-                                                DensityFunctions.constant(0.5F)
-                                        ).clamp(0.0F,1.0F),
-                                        DensityFunctions.spline(
-                                                CubicSpline.builder(splineCoordinatesFrom(
-                                                                DensityFunctions.shiftedNoise2d(
-                                                                        shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.ELEVATION)
-                                                                )))
-                                                        .addPoint(-1.0F,0.0F)
-                                                        .addPoint(-0.65F,0.0F)
-                                                        .addPoint(0.0F,0.05F)
-                                                        .addPoint(0.5F,0.1F)
-                                                        .addPoint(1.5F,0.2F)
-                                                        .build()
+                                                DensityFunctions.mul(
+                                                        DensityFunctions.constant(5.0F),
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_NOODLES_DENSITY),
+                                                                0.25F,0.75F
+                                                        )
+                                                ).clamp(-0.5F,10.0F),
+                                                DensityFunctions.mul(
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_NOODLES),
+                                                                        0.75F,1.5F)
+                                                                .abs(),
+                                                        DensityFunctions.constant(2.5F)
+                                                )
+                                        )
+                                        )
+                        ).clamp(-1.0F,1.0F)
+
+
+                )
+        );
+
+
+        context.register(CAVE_PILLARS,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.mul(
+                                DensityFunctions.add(
+                                        DensityFunctions.mul(
+                                                DensityFunctions.constant(2.0F),
+                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_PILLAR),10,0.5F)
+                                        ),
+                                        DensityFunctions.add(
+                                                DensityFunctions.constant(-2.0F),
+                                                DensityFunctions.mul(
+                                                        DensityFunctions.constant(-1.0F),
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_PILLAR_RARITY),1.5F,1.5F)
+                                                )
+                                        )
+                                ),
+                                DensityFunctions.add(
+                                        DensityFunctions.constant(0.55F),
+                                        DensityFunctions.mul(
+                                                DensityFunctions.constant(0.55F),
+                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_PILLAR_DENSITY))
+                                        )
+                                ).cube()
+                        ).clamp(-5.0F,100.0F)
+                )
+        );
+
+
+
+
+        context.register(CAVE_CRACKS,
+                DensityFunctions.cacheOnce(
+                                DensityFunctions.add(
+                                        DensityFunctions.mul(
+                                                DensityFunctions.constant(
+                                                        1.5F
+                                                ),
+                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_CRACKS_FREQUENCY),
+                                                        0.25F,1.5F
+                                                )
+                                        ).clamp(0.0F,2.0F),
+                                        DensityFunctions.add(
+                                                DensityFunctions.constant(0.65F),
+                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_CRACKS),
+                                                        0.5F,10.0F)
+                                        )
+                                )
+                )
+        );
+
+        context.register(CAVE_EXOGENES,
+                DensityFunctions.cacheOnce(
+                        DensityFunctions.add(
+                                DensityFunctions.constant(0.5F),
+                                DensityFunctions.mul(
+                                        DensityFunctions.constant(1.5F),
+                                        DensityFunctions.add(
+                                                DensityFunctions.constant(0.25F),
+                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_EXOGENES),
+                                                        1.0F,5.0F)
                                         )
                                 )
                         )
                 )
-        );
-
-
-        context.register(RIVER_MASK,
-                DensityFunctions.flatCache(
-                        DensityFunctions.spline(
-                                CubicSpline.builder(
-                                        splineCoordinatesFrom(
-                                                        DensityFunctions.shiftedNoise2d(
-                                                                shiftX, shiftZ, 0.25F, noiseLookup.getOrThrow(ModNoises.RIVER_MASK)
-                                                        )
-                                        ),ToFloatFunction.IDENTITY)
-                                        .addPoint(-0.1F,0.0F)
-                                        .addPoint(0.5F,0.2F,0.3F)
-                                        .addPoint(1.0F,1.0F,0.6F)
-                                        .build()
-                        )
-                )
-        );
-        context.register(PLATEAU_MASK,
-                DensityFunctions.flatCache(
-                        DensityFunctions.spline(
-                                CubicSpline.builder(
-                                        splineCoordinatesFrom(
-                                                        DensityFunctions.shiftedNoise2d(
-                                                                shiftX, shiftZ, 0.5F, noiseLookup.getOrThrow(ModNoises.PLATEAU_MASK)
-                                                        )
-                                        ),ToFloatFunction.IDENTITY)
-                                        .addPoint(-0.1F,-1.0F)
-                                        .addPoint(0.0F,-1.0F)
-                                        .addPoint(0.2F,0.0F)
-                                        .addPoint(0.5F,0.5F)
-                                        .addPoint(0.8F,1.0F)
-                                        .addPoint(1.0F,1.0F)
-                                        .build()
-                        )
-                )
-        );
-
-
-        context.register(PLATE_NOISE,
-                DensityFunctions.cache2d(DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25F, noiseLookup.getOrThrow(ModNoises.PLATES))));
-
-        context.register(BIOME_VARIATION,
-                DensityFunctions.cache2d(DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.5F, noiseLookup.getOrThrow(ModNoises.BIOME_VARIATION))));
-
-        context.register(JAGGEDNESS,
-                DensityFunctions.cache2d(
-                        DensityFunctions.shiftedNoise2d(
-                                shiftX, shiftZ, 0.25F, noiseLookup.getOrThrow(ModNoises.JAGGEDNESS)
-                        ).abs()
-                )
-        );
-
-        context.register(PLATEAU_VALLEY_DEPTH,
-                DensityFunctions.cache2d(
-                        DensityFunctions.shiftedNoise2d(
-                                shiftX, shiftZ, 0.25F, noiseLookup.getOrThrow(ModNoises.PLATEAU_VALLEY_DEPTH)
-                        )
-                )
-        );
-
-
-        context.register(GENERAL_LANDMASS,
-                DensityFunctions.cache2d(DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.35F, noiseLookup.getOrThrow(ModNoises.LANDMASS))));
-
-
-        context.register(HILLS_AND_MOUNTAINS,
-                DensityFunctions.flatCache(
-                        DensityFunctions.spline(
-                                CubicSpline.builder(
-                                                splineCoordinatesFrom(
-                                                        DensityFunctions.shiftedNoise2d(
-                                                                shiftX, shiftZ, 0.25F, noiseLookup.getOrThrow(ModNoises.HILLS_AND_MOUNTAINS)
-                                                        )
-                                                ),ToFloatFunction.IDENTITY)
-                                        .addPoint(-1.4F,-1.2F,0.9F)
-                                        .addPoint(-1.0F,-1.0F,-0.3F)
-                                        .addPoint(0.0F,0.0F,0.05F)
-                                        .addPoint(1.0F,1.0F,0.3F)
-                                        .addPoint(1.4F,1.2F,-0.9F)
-                                        .build()
-                        )
-                )
 
         );
 
-        context.register(MOUNTAIN_ELEVATION_OFFSET,
-                DensityFunctions.flatCache(
-                        DensityFunctions.shiftedNoise2d(
-                                shiftX, shiftZ, 0.25F, noiseLookup.getOrThrow(ModNoises.MOUNTAIN_ELEVATION_OFFSET)
-                        )
-                )
-        );
-
-        context.register(TECTONIC_FORMATION,
-                DensityFunctions.flatCache(DensityFunctions.spline(CubicSpline.builder(
-                                splineCoordinatesFrom(densityLookup.getOrThrow(PLATE_NOISE)), ToFloatFunction.IDENTITY)
-                        .addPoint(-1.5F, -0.5F, 0.1F)
-                        .addPoint(-1.0F, -0.4F, 0.3F)
-                        .addPoint(-0.995F, -0.05F, 0.2F)
-                        .addPoint(-0.990F, -0.2F, 0.1F)
-                        .addPoint(-0.5F, 0.0F, 0.05F)
-                        .addPoint(0.0F, 0.1F, 0.01F)
-                        .addPoint(0.5F, 0.15F)
-                        .addPoint(1.0F, 0.25F)
-                        .build())));
-
-
-        context.register(CONTINENT_LANDMASS,
-                DensityFunctions.cache2d(
+        context.register(CAVE_ENDOGENES,
+                DensityFunctions.cacheOnce(
                         DensityFunctions.mul(
-                                DensityFunctions.constant(1.4F),
-                                DensityFunctions.add(
+                                DensityFunctions.constant(5.0F),
+                                DensityFunctions.max(
                                         DensityFunctions.mul(
-                                                DensityFunctions.constant(0.8F),
-                                                getFunction(densityLookup, GENERAL_LANDMASS)
+                                                DensityFunctions.constant(5.0F),
+                                                DensityFunctions.add(
+                                                        DensityFunctions.constant(0.75F),
+                                                        DensityFunctions.mul(
+                                                                DensityFunctions.constant(1.5F),
+                                                                DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_ENDOGENES),
+                                                                        0.25F,1.0F)
+                                                        )
+                                                )
                                         ),
-                                        getFunction(densityLookup, TECTONIC_FORMATION)
+                                        getFunction(densityLookup,CAVE_PILLARS)
                                 )
                         )
+
                 )
-        );
 
-        context.register(GEO_WEATHERING_EROSION, DensityFunctions.flatCache(
-                        DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25,noiseLookup.getOrThrow(ModNoises.WEATHERING))
-        ));
-        context.register(CRATERS_NOISE,
-                DensityFunctions.flatCache(DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.CRATERS))));
-
-        context.register(GEO_CRATERS,
-                DensityFunctions.flatCache(DensityFunctions.spline(CubicSpline.builder(
-                                splineCoordinatesFrom(densityLookup.getOrThrow(CRATERS_NOISE)), ToFloatFunction.IDENTITY)
-                        .addPoint(0.0F, 0.0F)
-                        .addPoint(1.0F, 0.0F)
-                        .addPoint(1.5F, -0.5F)
-                        .addPoint(2.0F, -1.0F)
-                        .build())));
-
-        context.register(GEO_RIDGES,
-                DensityFunctions.flatCache(DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.5, noiseLookup.getOrThrow(ModNoises.RIDGES))));
-
-        context.register(GEO_RIVERS_AND_VALLEYS,
-                DensityFunctions.add(
-                        valleyMask(getFunction(densityLookup, GEO_RIDGES)),
-                        getFunction(densityLookup,RIVER_MASK)
-                )
-        );
-
-        context.register(GEO_RIVERS_AND_VALLEYS_PLATEAU,
-                DensityFunctions.cache2d(
-                        DensityFunctions.add(
-                                DensityFunctions.constant(-0.55F),
-                                DensityFunctions.mul(
-                                        DensityFunctions.constant(2.0F),
-                                        DensityFunctions.noise(
-                                                noiseLookup.getOrThrow(ModNoises.PLATEAU_VALLEYS)
-                                        ).abs()
-                                )
-                        )
-                )
         );
 
 
-        ModTerrainProvider.noodle(context, noiseLookup, densityLookup, CAVE_NOODLES);
-        ModTerrainProvider.spaghetti(context, noiseLookup, densityLookup, CAVE_SPAGHETTI);
-        ModTerrainProvider.pits(context, noiseLookup, CAVE_PITS);
-        ModTerrainProvider.caverns(context, densityLookup, noiseLookup, shiftX, shiftZ, CAVE_CAVERNS);
-        ModTerrainProvider.grotto(context, densityLookup, noiseLookup, shiftX, shiftZ, CAVE_GROTTO);
-        ModTerrainProvider.fracture(context, densityLookup, noiseLookup, shiftX, shiftZ, CAVE_FRACTURE);
+        ModTerrainProvider.slopedCheeseAndCaves(context, densityLookup, noiseLookup, shiftX, shiftZ, R_SLOPED_CHEESE, TERRAIN_CAVES);
 
-        ModTerrainProvider.slopedCheeseAndCaves(context, densityLookup, noiseLookup, shiftX, shiftZ, R_SLOPED_CHEESE, CAVES);
-
-        ModTerrainProvider.makeNoiseRouter(context, densityLookup, noiseLookup, shiftX, shiftZ, TOPOGRAPHY_BASIC,TOPOGRAPHY, R_BARRIER, R_FLUID_LEVEL_FLOODEDNESS, R_FLUID_LEVEL_SPREAD, R_LAVA_NOISE, R_TEMPERATURE, R_VEGETATION, R_DEPTH, R_INITIAL_DENSITY_WITHOUT_JAGGEDNESS, R_TOPOGRAPHY_FINAL_DENSITY, R_VEIN_TOGGLE, R_VEIN_RIDGED, R_VEIN_GAP);
+        ModTerrainProvider.makeNoiseRouter(context, densityLookup, noiseLookup, shiftX, shiftZ, ELEVATION, OFFSET, R_BARRIER, R_FLUID_LEVEL_FLOODEDNESS, R_FLUID_LEVEL_SPREAD, R_LAVA_NOISE, R_TEMPERATURE, R_VEGETATION, R_DEPTH, R_INITIAL_DENSITY_WITHOUT_JAGGEDNESS, R_TOPOGRAPHY_FINAL_DENSITY, R_VEIN_TOGGLE, R_VEIN_RIDGED, R_VEIN_GAP);
 
         ModTerrainProvider.makeTerrain(
                 densityLookup, noiseLookup, context,
-                SURFACE_BASE, TOPOGRAPHY_BASIC, R_EROSION, R_CONTINENTALNESS, R_RIDGES,
+                SURFACE_BASE, ELEVATION, R_EROSION, R_CONTINENTALNESS, R_RIDGES,
                 SURFACE_MOUNTAINS_TECTONICS
         );
 
-        return context.register(TECTONIC_ACTIVITY_OLD, DensityFunctions.shiftedNoise2d(shiftX, shiftZ, 0.25, noiseLookup.getOrThrow(ModNoises.TECTONIC_ACTIVITY)));
+        return densityLookup.getOrThrow(R_TOPOGRAPHY_FINAL_DENSITY);
 
     }
 
     private static ResourceKey<DensityFunction> createKey(String location) {
         return ResourceKey.create(Registries.DENSITY_FUNCTION, WildernessRebornMod.mod(location));
+    }
+
+
+    private static ResourceKey<DensityFunction> old(String location) {
+        return createKey("old/" + location);
     }
 
 

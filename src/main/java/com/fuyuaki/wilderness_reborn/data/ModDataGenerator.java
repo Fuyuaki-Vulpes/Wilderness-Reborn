@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.fuyuaki.wilderness_reborn.api.WildernessRebornMod.MODID;
 
-@EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = MODID)
 public class ModDataGenerator {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent.Client event){

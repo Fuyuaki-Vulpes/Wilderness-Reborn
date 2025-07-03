@@ -28,7 +28,7 @@
     "lava_level": {
       "above_bottom": 8
     },
-    "probability": 0.01,
+    "probability": 0.002,
     "replaceable": "#minecraft:overworld_carver_replaceables",
     "shape": {
       "distance_factor": {
@@ -43,7 +43,7 @@
       },
       "thickness": {
         "type": "minecraft:trapezoid",
-        "max": 6.0,
+        "max": 5.0,
         "min": 0.0,
         "plateau": 2.0
       },

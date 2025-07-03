@@ -1,6 +1,6 @@
 {
   "type": "minecraft:add",
-  "argument1": "wilderness_reborn:elevation/topography",
+  "argument1": "wilderness_reborn:offset",
   "argument2": {
     "type": "minecraft:y_clamped_gradient",
     "from_value": 2.5,

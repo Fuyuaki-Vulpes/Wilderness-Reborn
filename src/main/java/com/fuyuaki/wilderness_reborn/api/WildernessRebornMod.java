@@ -5,6 +5,7 @@ import com.fuyuaki.wilderness_reborn.init.ModFeatures;
 import com.fuyuaki.wilderness_reborn.init.ModSoundEvents;
 import com.fuyuaki.wilderness_reborn.world.item.ModCreativeModeTabs;
 import com.fuyuaki.wilderness_reborn.world.item.ModItems;
+import com.fuyuaki.wilderness_reborn.world.level.biome.BiomeRanges;
 import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -45,11 +46,14 @@ public class WildernessRebornMod {
         NeoForge.EVENT_BUS.register(this);
 
 
+
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        BiomeRanges.bootstrap();
+
 //        LOGGER.info("HELLO FROM COMMON SETUP");
 //
 //        if (Config.logDirtBlock) LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
@@ -64,7 +68,7 @@ public class WildernessRebornMod {
     public void onServerStarting(ServerStartingEvent event) {
     }
 
-    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {

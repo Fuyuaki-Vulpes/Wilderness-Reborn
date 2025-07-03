@@ -1,6 +1,6 @@
 {
   "type": "minecraft:noise",
-  "noise": "wilderness_reborn:aquifers/lava_noise",
+  "noise": "wilderness_reborn:old/aquifers/lava_noise",
   "xz_scale": 0.75,
   "y_scale": 0.75
 }
