@@ -1,5 +1,6 @@
 package com.fuyuaki.wilderness_reborn.data.generation.other;
 
+import com.fuyuaki.wilderness_reborn.data.ModCarvers;
 import com.fuyuaki.wilderness_reborn.data.worldgen.biome.ModBiomeData;
 import com.fuyuaki.wilderness_reborn.data.worldgen.biome.ModBiomeModifiers;
 import com.fuyuaki.wilderness_reborn.data.worldgen.features.ModFeatureUtils;
@@ -22,6 +23,7 @@ import static com.fuyuaki.wilderness_reborn.api.WildernessRebornMod.MODID;
 public class ModBuiltInEntries extends DatapackBuiltinEntriesProvider {
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.CONFIGURED_FEATURE, ModFeatureUtils::bootstrap)
+            .add(Registries.CONFIGURED_CARVER, ModCarvers::bootstrap)
             .add(Registries.PLACED_FEATURE, ModPlacementUtils::bootstrap)
             .add(Registries.NOISE, ModNoiseData::bootstrap)
             .add(Registries.DENSITY_FUNCTION, ModNoiseRouterData::bootstrap)

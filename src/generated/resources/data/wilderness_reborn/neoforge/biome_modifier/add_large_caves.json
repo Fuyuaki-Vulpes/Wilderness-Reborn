@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_carvers",
+  "biomes": "#c:is_overworld",
+  "carvers": "wilderness_reborn:large_caves"
+}

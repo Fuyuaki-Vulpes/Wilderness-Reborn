@@ -5,10 +5,7 @@
     "input": {
       "type": "minecraft:mul",
       "argument1": -0.6000000238418579,
-      "argument2": {
-        "type": "minecraft:cache_2d",
-        "argument": "wilderness_reborn:cave/endogenes"
-      }
+      "argument2": "wilderness_reborn:cave/endogenes"
     },
     "max": 2.0,
     "min": 0.0

@@ -84,7 +84,6 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
         DensityFunction shiftZ = getFunction(densityLookup, PackNoiseRouterData.SHIFT_Z);
 
         context.register(TERRAIN_BASE,DensityFunctions.flatCache(
-                DensityFunctions.interpolated(
                         DensityFunctions.lerp(
                                         DensityFunctions.shiftedNoise2d(
                                                 shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_BLENDER)
@@ -98,13 +97,12 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
                                                         shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_B)
                                                 )
                         )
-                )
+
             )
         );
 
 
         context.register(TERRAIN_BASE_SMOOTH,DensityFunctions.flatCache(
-                DensityFunctions.interpolated(
                         DensityFunctions.lerp(
                                         DensityFunctions.shiftedNoise2d(
                                                 shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_BLENDER_SMOOTH)
@@ -115,7 +113,7 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
                                                 DensityFunctions.shiftedNoise2d(
                                                         shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_B)
                                                 )
-                        )
+
                 )
             )
         );
@@ -124,44 +122,39 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
 
         context.register(TERRAIN_SMOOTHNESS,
                 DensityFunctions.flatCache(
-                        DensityFunctions.interpolated(
                             DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TERRAIN_SMOOTHNESS))
-                        )
+
                 )
         );
 
         context.register(LAND_CONTINENTS,
                 DensityFunctions.flatCache(
-                        DensityFunctions.interpolated(
                                 DensityFunctions.add(
                                         DensityFunctions.constant(-0.2F),
                                         DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.LAND_CONTINENTS))
 
-                                )
+
                                 )
                 )
         );
 
         context.register(LAND_EROSION,
                 DensityFunctions.flatCache(
-                        DensityFunctions.interpolated(
                             DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.LAND_EROSION))
                         )
-                )
+
         );
         context.register(GEO_TECTONIC_PLATES,
                 DensityFunctions.flatCache(
-                        DensityFunctions.interpolated(
                                 DensityFunctions.mul(
                                         DensityFunctions.constant(10.0F),
                                         DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.GEO_TECTONICS))
                                 ).clamp(-1.0F,1.0F)
-                        )
+
                 )
         );
 
         context.register(TERRAIN_TECTONIC,DensityFunctions.cacheOnce(
-                        DensityFunctions.interpolated(
                                                         DensityFunctions.lerp(
                                                                 DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.TECTONIC_TERRAIN_BLENDER),
                                                                         0.25F,0.05F
@@ -175,11 +168,10 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
                                                         )
 
                         )
-                )
+
         );
 
         context.register(TERRAIN_TECTONIC_SMOOTH,DensityFunctions.cacheOnce(
-                        DensityFunctions.interpolated(
                                                         DensityFunctions.lerp(
                                                                 DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.TECTONIC_TERRAIN_BLENDER_SMOOTH),
                                                                         0.25F,0.05F
@@ -193,11 +185,10 @@ public class ModNoiseRouterData extends NoiseRouterFunctions{
                                                         )
 
                         )
-                )
+
         );
 
 context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
-                        DensityFunctions.interpolated(
                                                         DensityFunctions.lerp(
                                                                 DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.TERRAIN_PLATEAU_BLENDER),
                                                                         0.25F,0.05F
@@ -211,7 +202,7 @@ context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
                                                         ).clamp(-2.0F,2.0F)
 
                         )
-                )
+
         );
 
 
@@ -238,37 +229,32 @@ context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
 
 
         context.register(TECTONIC_DIRECTION,DensityFunctions.flatCache(
-                        DensityFunctions.interpolated(
-
                                         DensityFunctions.shiftedNoise2d(
                                                 shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TECTONIC_DIRECTION)
                                         )
 
-                        )
+
                 )
         );
 
 
 
         context.register(TECTONIC_RANDOMNESS,DensityFunctions.flatCache(
-                        DensityFunctions.interpolated(
                                         DensityFunctions.shiftedNoise2d(
                                                 shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TECTONIC_RANDOMNESS)
                                         )
 
-                        )
+
                 )
         );
 
         context.register(TECTONIC_ACTIVITY,
                 DensityFunctions.flatCache(
-                        DensityFunctions.interpolated(
                                 DensityFunctions.shiftedNoise2d(shiftX,shiftZ,0.25F,noiseLookup.getOrThrow(ModNoises.TECTONIC_FACTOR_ACTIVITY))
-                        )
+
                 )
         );
         context.register(LAND_NOISE,DensityFunctions.flatCache(
-                        DensityFunctions.interpolated(
                                 DensityFunctions.mul(
                                         DensityFunctions.spline(
                                                 CubicSpline.builder(splineCoordinatesFrom(getCachedFunction(densityLookup,R_CONTINENTALNESS)))
@@ -300,38 +286,34 @@ context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
                                         )
                                 ).squeeze().abs()
                                 )
-                )
+
         );
 
 
 
 
-        context.register(CAVE_FILTER,DensityFunctions.cacheOnce(
-                        DensityFunctions.interpolated(
+        context.register(CAVE_FILTER,
                                 DensityFunctions.add(
                                         DensityFunctions.constant(-1.0F),
                                         DensityFunctions.mul(
                                                 DensityFunctions.constant(2.0F),
                                                 DensityFunctions.lerp(
-                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_FILTER)
+                                                        DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_FILTER),1.0F,3.0F
                                                         ).clamp(-1.0F,1.0F),
                                                         DensityFunctions.noise(
-                                                                noiseLookup.getOrThrow(ModNoises.CAVES_FILTER_A)
+                                                                noiseLookup.getOrThrow(ModNoises.CAVES_FILTER_A),1.0F,3.0F
                                                         ),
                                                         DensityFunctions.noise(
-                                                                noiseLookup.getOrThrow(ModNoises.CAVES_FILTER_B)
+                                                                noiseLookup.getOrThrow(ModNoises.CAVES_FILTER_B),1.0F,3.0F
                                                         )
                                                 ).abs()
                                         )
                                 )
 
-                        )
-                )
         );
 
 
         context.register(CAVE_NOODLE,
-                DensityFunctions.cacheOnce(
                         DensityFunctions.add(
                                 DensityFunctions.constant(0.1F),
                                 DensityFunctions.add(
@@ -357,12 +339,11 @@ context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
                         ).clamp(-1.0F,1.0F)
 
 
-                )
+
         );
 
 
         context.register(CAVE_PILLARS,
-                DensityFunctions.cacheOnce(
                         DensityFunctions.mul(
                                 DensityFunctions.add(
                                         DensityFunctions.mul(
@@ -385,14 +366,13 @@ context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
                                         )
                                 ).cube()
                         ).clamp(-5.0F,100.0F)
-                )
+
         );
 
 
 
 
         context.register(CAVE_CRACKS,
-                DensityFunctions.cacheOnce(
                                 DensityFunctions.add(
                                         DensityFunctions.mul(
                                                 DensityFunctions.constant(
@@ -408,11 +388,10 @@ context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
                                                         0.5F,10.0F)
                                         )
                                 )
-                )
+
         );
 
         context.register(CAVE_EXOGENES,
-                DensityFunctions.cacheOnce(
                         DensityFunctions.add(
                                 DensityFunctions.constant(0.5F),
                                 DensityFunctions.mul(
@@ -424,12 +403,12 @@ context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
                                         )
                                 )
                         )
-                )
+
 
         );
 
         context.register(CAVE_ENDOGENES,
-                DensityFunctions.cacheOnce(
+                        DensityFunctions.cacheOnce(
                         DensityFunctions.mul(
                                 DensityFunctions.constant(5.0F),
                                 DensityFunctions.max(
@@ -440,15 +419,15 @@ context.register(TERRAIN_PLATEAU,DensityFunctions.cacheOnce(
                                                         DensityFunctions.mul(
                                                                 DensityFunctions.constant(1.5F),
                                                                 DensityFunctions.noise(noiseLookup.getOrThrow(ModNoises.CAVES_ENDOGENES),
-                                                                        0.25F,1.0F)
+                                                                        0.75F,3.0F)
                                                         )
                                                 )
                                         ),
                                         getFunction(densityLookup,CAVE_PILLARS)
                                 )
                         )
+                        )
 
-                )
 
         );
 

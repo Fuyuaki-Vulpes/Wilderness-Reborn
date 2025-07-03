@@ -58,7 +58,7 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
         context.register(barrierKey,
                 DensityFunctions.add(
                         DensityFunctions.mul(
-                                getCachedFunction(densityLookup,ModNoiseRouterData.CAVE_ENDOGENES),
+                                getFunction(densityLookup,ModNoiseRouterData.CAVE_ENDOGENES),
                                 DensityFunctions.constant(-0.6F)
                         ).clamp(0.0F,2.0F),
                         DensityFunctions.noise(noiseLookup.getOrThrow(Noises.AQUIFER_BARRIER), 0.75, 0.5)
@@ -69,10 +69,9 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
         DensityFunction worldOffset = registerAndWrap(context, offsetKey,
                 DensityFunctions.add(
                         DensityFunctions.constant(-0.70F),
-                        DensityFunctions.cacheOnce(
                                 getFunction(densityLookup, elevationKey)
 
-                        )
+
                 )
         );
 
@@ -92,7 +91,6 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
 
         context.register(
                 topographyFinalDensityKey,
-                DensityFunctions.interpolated(
                                 DensityFunctions.min(
                                         getFunction(densityLookup, ModNoiseRouterData.R_SLOPED_CHEESE),
                                         DensityFunctions.add(
@@ -104,7 +102,6 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                                                                 depthGradient.abs()
                                                         )
                                                 ).clamp(0.0F,64.0F)
-                                        )
                                         )
                 )
 
@@ -140,14 +137,13 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                                         getFunction(densityLookup,tectonicTerrainKey)
                                 )
                         )
-
         );
 
 
 
         context.register(
                 erosionKey,
-                DensityFunctions.cache2d(
+                DensityFunctions.flatCache(
                         DensityFunctions.spline(
                                 CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
                                         .addPoint(-1.5F, -1.5F)
@@ -199,7 +195,7 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
 
         context.register(
                 continentsKey,
-                DensityFunctions.cache2d(
+                DensityFunctions.flatCache(
                         DensityFunctions.add(
                                 DensityFunctions.mul(
                                         DensityFunctions.constant(0.8F),
@@ -223,7 +219,7 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
 
         context.register(
                 ridgesKey,
-                DensityFunctions.cache2d(
+                DensityFunctions.flatCache(
                         DensityFunctions.spline(
                                 CubicSpline.builder(splineCoordinatesFrom(landErosion), NO_TRANSFORM)
                                         .addPoint(-1.5F, -1.5F)
@@ -373,12 +369,11 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
         context.register(
                 terrainPre,
                 DensityFunctions.cacheOnce(
-                        DensityFunctions.interpolated(
                                 DensityFunctions.spline(
                                         terrainErosion
                                 )
                         )
-                )
+
         );
     }
 
@@ -528,7 +523,6 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
 
         context.register(
                 tectonicSurfaceKey,
-                DensityFunctions.cacheOnce(
                         DensityFunctions.add(
                                 DensityFunctions.spline(
                                         tectonicEdgeTerrain
@@ -538,7 +532,7 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                                 )
                         )
 
-                        )
+
         );
     }
 
@@ -607,7 +601,6 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
 
         context.register(
                 slopedCheese,
-                DensityFunctions.cacheOnce(
                         DensityFunctions.interpolated(
                                 DensityFunctions.add(
                                         DensityFunctions.mul(
@@ -616,7 +609,7 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                                         ),
                                         densityNoJaggedness
                                 )
-                        )
+
                 )
 
         );
@@ -661,7 +654,7 @@ public class ModTerrainProvider extends NoiseRouterFunctions {
                                         )
                                 )
                         )
-                )
+                ).clamp(-1.0F,1.0F)
 
         );
 

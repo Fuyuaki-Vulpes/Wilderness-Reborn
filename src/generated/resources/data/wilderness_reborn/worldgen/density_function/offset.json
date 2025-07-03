@@ -1,8 +1,5 @@
 {
   "type": "minecraft:add",
   "argument1": -0.699999988079071,
-  "argument2": {
-    "type": "minecraft:cache_once",
-    "argument": "wilderness_reborn:elevation"
-  }
+  "argument2": "wilderness_reborn:elevation"
 }

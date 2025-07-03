@@ -41,7 +41,7 @@ public class ModBiomeModifiers {
     public static void bootstrap(BootstrapContext<BiomeModifier> context) {
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
-        HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.BIOME);
+        HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
 
         context.register(REMOVE_BLOBS,
                 new BiomeModifiers.RemoveFeaturesBiomeModifier(
@@ -99,7 +99,8 @@ public class ModBiomeModifiers {
         );
         context.register(ADD_LARGE_CAVES,
                 new BiomeModifiers.AddCarversBiomeModifier(
-                biomes.getOrThrow(ModTags.Biomes.HAS_WATER_DELTAS_LARGE),
+                biomes.getOrThrow(Tags.Biomes.IS_OVERWORLD),
+                        HolderSet.direct(carvers.getOrThrow(ModCarvers.LARGE_CAVES))
 
                 )
         );

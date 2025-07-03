@@ -28,7 +28,7 @@ public class ModCarvers {
                 WorldCarver.CAVE
                         .configured(
                                 new CaveCarverConfiguration(
-                                        0.001F,
+                                        0.05F,
                                         UniformHeight.of(VerticalAnchor.aboveBottom(8), VerticalAnchor.belowTop(64)),
                                         UniformFloat.of(0.2F, 1.9F),
                                         VerticalAnchor.aboveBottom(12),

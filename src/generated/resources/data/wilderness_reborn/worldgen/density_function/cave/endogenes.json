@@ -17,8 +17,8 @@
             "argument2": {
               "type": "minecraft:noise",
               "noise": "wilderness_reborn:cave/endogene",
-              "xz_scale": 0.25,
-              "y_scale": 1.0
+              "xz_scale": 0.75,
+              "y_scale": 3.0
             }
           }
         }

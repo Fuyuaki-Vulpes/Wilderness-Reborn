@@ -31,7 +31,7 @@ public class PackCarvers {
                 WorldCarver.CAVE
                         .configured(
                                 new CaveCarverConfiguration(
-                                        0.12F,
+                                        0.2F,
                                         UniformHeight.of(VerticalAnchor.aboveBottom(8), VerticalAnchor.absolute(320)),
                                         UniformFloat.of(0.1F, 0.9F),
                                         VerticalAnchor.aboveBottom(8),
@@ -48,7 +48,7 @@ public class PackCarvers {
                 WorldCarver.CAVE
                         .configured(
                                 new CaveCarverConfiguration(
-                                        0.015F,
+                                        0.15F,
                                         UniformHeight.of(VerticalAnchor.aboveBottom(8), VerticalAnchor.absolute(47)),
                                         UniformFloat.of(0.15F, 1.2F),
                                         VerticalAnchor.aboveBottom(8),
