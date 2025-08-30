@@ -2,12 +2,8 @@ package com.fuyuaki.wilderness_reborn.data.pack.levelgen;
 
 
 import com.fuyuaki.wilderness_reborn.data.worldgen.ModSurfaceRuleData;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Climate;
@@ -31,46 +27,13 @@ public record PackNoiseGeneratorSettings (
         boolean oreVeinsEnabled,
         boolean useLegacyRandomSource
 ) {
-    public static final Codec<NoiseGeneratorSettings> DIRECT_CODEC = RecordCodecBuilder.create(
-            p_64475_ -> p_64475_.group(
-                            NoiseSettings.CODEC.fieldOf("noise").forGetter(NoiseGeneratorSettings::noiseSettings),
-                            BlockState.CODEC.fieldOf("default_block").forGetter(NoiseGeneratorSettings::defaultBlock),
-                            BlockState.CODEC.fieldOf("default_fluid").forGetter(NoiseGeneratorSettings::defaultFluid),
-                            NoiseRouter.CODEC.fieldOf("noise_router").forGetter(NoiseGeneratorSettings::noiseRouter),
-                            SurfaceRules.RuleSource.CODEC.fieldOf("surface_rule").forGetter(NoiseGeneratorSettings::surfaceRule),
-                            Climate.ParameterPoint.CODEC.listOf().fieldOf("spawn_target").forGetter(NoiseGeneratorSettings::spawnTarget),
-                            Codec.INT.fieldOf("sea_level").forGetter(NoiseGeneratorSettings::seaLevel),
-                            Codec.BOOL.fieldOf("disable_mob_generation").forGetter(NoiseGeneratorSettings::disableMobGeneration),
-                            Codec.BOOL.fieldOf("aquifers_enabled").forGetter(NoiseGeneratorSettings::isAquifersEnabled),
-                            Codec.BOOL.fieldOf("ore_veins_enabled").forGetter(NoiseGeneratorSettings::oreVeinsEnabled),
-                            Codec.BOOL.fieldOf("legacy_random_source").forGetter(NoiseGeneratorSettings::useLegacyRandomSource)
-                    )
-                    .apply(p_64475_, NoiseGeneratorSettings::new)
-    );
-    public static final Codec<Holder<NoiseGeneratorSettings>> CODEC = RegistryFileCodec.create(Registries.NOISE_SETTINGS, DIRECT_CODEC);
     public static final ResourceKey<NoiseGeneratorSettings> OVERWORLD = ResourceKey.create(
             Registries.NOISE_SETTINGS, ResourceLocation.withDefaultNamespace("overworld")
     );
     public static final ResourceKey<NoiseGeneratorSettings> LARGE_BIOMES = ResourceKey.create(
             Registries.NOISE_SETTINGS, ResourceLocation.withDefaultNamespace("large_biomes")
     );
-    public static final ResourceKey<NoiseGeneratorSettings> AMPLIFIED = ResourceKey.create(
-            Registries.NOISE_SETTINGS, ResourceLocation.withDefaultNamespace("amplified")
-    );
-    public static final ResourceKey<NoiseGeneratorSettings> NETHER = ResourceKey.create(
-            Registries.NOISE_SETTINGS, ResourceLocation.withDefaultNamespace("nether")
-    );
-    public static final ResourceKey<NoiseGeneratorSettings> END = ResourceKey.create(Registries.NOISE_SETTINGS, ResourceLocation.withDefaultNamespace("end"));
-    public static final ResourceKey<NoiseGeneratorSettings> CAVES = ResourceKey.create(
-            Registries.NOISE_SETTINGS, ResourceLocation.withDefaultNamespace("caves")
-    );
-    public static final ResourceKey<NoiseGeneratorSettings> FLOATING_ISLANDS = ResourceKey.create(
-            Registries.NOISE_SETTINGS, ResourceLocation.withDefaultNamespace("floating_islands")
-    );
 
-    public boolean isAquifersEnabled() {
-        return this.aquifersEnabled;
-    }
 
     public WorldgenRandom.Algorithm getRandomSource() {
         return this.useLegacyRandomSource ? WorldgenRandom.Algorithm.LEGACY : WorldgenRandom.Algorithm.XOROSHIRO;
@@ -90,7 +53,7 @@ public record PackNoiseGeneratorSettings (
                 PackNoiseRouterData.overworld(context.lookup(Registries.DENSITY_FUNCTION), context.lookup(Registries.NOISE), amplified, large),
                 ModSurfaceRuleData.overworld(),
                 new OverworldBiomeBuilder().spawnTarget(),
-                76,
+                68,
                 false,
                 true,
                 true,

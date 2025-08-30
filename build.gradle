@@ -47,6 +47,7 @@ neoForge {
     runs {
         client {
             client()
+            jvmArgument("-Xmx4G")
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
@@ -109,35 +110,21 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
 
-    // Example mod dependency using a mod jar from ./libs with a flat dir repository
-    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
 
-    // Example mod dependency using a file as dependency
-    // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
-    implementation("com.github.glitchfiend:TerraBlender-neoforge:$minecraft_version-$terrablenderVersion")
-    implementation("maven.modrinth:lithostitched:$lithostitchedVersion-neoforge-$minecraft_version")
+//    implementation("maven.modrinth:lithostitched:$lithostitchedVersion-neoforge-$minecraft_version")
     compileOnly ("maven.modrinth:DistantHorizonsApi:$dhAPIVersion")
     runtimeOnly("maven.modrinth:DistantHorizons:$dhVersion")
-    runtimeOnly("maven.modrinth:noisium:$noisiumVersion-neoforge")
-    runtimeOnly("maven.modrinth:scalablelux:$scalableLuxVersion")
-    runtimeOnly("maven.modrinth:lithium:$lithiumVersion")
-    runtimeOnly("maven.modrinth:c2me-neoforge:$c2meVersion")
 
     runtimeOnly("maven.modrinth:chunky:$chunkyVersion")
-    // For more info:
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
 
-// This block of code expands all declared replace properties in the specified resource targets.
-// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [minecraft_version      : minecraft_version,
                              minecraft_version_range: minecraft_version_range,
                              neo_version            : neo_version,
                              neo_version_range      : neo_version_range,
-                             lithostitchedRange      : lithostitchedRange,
-                             lithostitchedVersion      : lithostitchedVersion,
+                             lithostitchedRange     : lithostitchedRange,
+                             lithostitchedVersion   : lithostitchedVersion,
                              loader_version_range   : loader_version_range,
                              mod_id                 : mod_id,
                              mod_name               : mod_name,

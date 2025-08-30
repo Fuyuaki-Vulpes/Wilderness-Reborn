@@ -31,15 +31,15 @@ public class PackCarvers {
                 WorldCarver.CAVE
                         .configured(
                                 new CaveCarverConfiguration(
-                                        0.2F,
+                                        0.1F,
                                         UniformHeight.of(VerticalAnchor.aboveBottom(8), VerticalAnchor.absolute(320)),
                                         UniformFloat.of(0.1F, 0.9F),
                                         VerticalAnchor.aboveBottom(8),
                                         CarverDebugSettings.of(false, Blocks.CRIMSON_BUTTON.defaultBlockState()),
                                         holdergetter.getOrThrow(BlockTags.OVERWORLD_CARVER_REPLACEABLES),
-                                        UniformFloat.of(0.3F, 1.1F),
-                                        UniformFloat.of(0.2F, 1.0F),
-                                        UniformFloat.of(-1.0F, -0.4F)
+                                        UniformFloat.of(0.3F, 1.8F),
+                                        UniformFloat.of(0.2F, 1.7F),
+                                        UniformFloat.of(-1.0F, -0.3F)
                                 )
                         )
         );
@@ -48,8 +48,8 @@ public class PackCarvers {
                 WorldCarver.CAVE
                         .configured(
                                 new CaveCarverConfiguration(
-                                        0.15F,
-                                        UniformHeight.of(VerticalAnchor.aboveBottom(8), VerticalAnchor.absolute(47)),
+                                        0.2F,
+                                        UniformHeight.of(VerticalAnchor.aboveBottom(8), VerticalAnchor.absolute(64)),
                                         UniformFloat.of(0.15F, 1.2F),
                                         VerticalAnchor.aboveBottom(8),
                                         CarverDebugSettings.of(false, Blocks.OAK_BUTTON.defaultBlockState()),
@@ -66,14 +66,14 @@ public class PackCarvers {
                         .configured(
                                 new CanyonCarverConfiguration(
                                         0.005F,
-                                        UniformHeight.of(VerticalAnchor.absolute(10), VerticalAnchor.absolute(82)),
+                                        UniformHeight.of(VerticalAnchor.absolute(10), VerticalAnchor.absolute(256)),
                                         ConstantFloat.of(3.0F),
                                         VerticalAnchor.aboveBottom(8),
                                         CarverDebugSettings.of(false, Blocks.WARPED_BUTTON.defaultBlockState()),
                                         holdergetter.getOrThrow(BlockTags.OVERWORLD_CARVER_REPLACEABLES),
-                                        UniformFloat.of(-0.125F, 0.125F),
+                                        UniformFloat.of(-1.75F, 1.75F),
                                         new CanyonCarverConfiguration.CanyonShapeConfiguration(
-                                                UniformFloat.of(0.75F, 1.9F), TrapezoidFloat.of(0.0F, 5.2F, 2.3F), 3, UniformFloat.of(0.75F, 1.2F), 1.0F, 0.0F
+                                                UniformFloat.of(0.5F, 1.9F), TrapezoidFloat.of(0.0F, 6.0F, 2.3F), 3, UniformFloat.of(0.75F, 1.2F), 1.5F, 0.0F
                                         )
                                 )
                         )

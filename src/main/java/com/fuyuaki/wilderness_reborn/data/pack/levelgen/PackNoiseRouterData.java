@@ -2,7 +2,7 @@ package com.fuyuaki.wilderness_reborn.data.pack.levelgen;
 
 import com.fuyuaki.wilderness_reborn.api.WildernessRebornMod;
 import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModNoiseRouterData;
-import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModWorldGenConstants;
+import com.fuyuaki.wilderness_reborn.data.worldgen.ModWorldGenConstants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;

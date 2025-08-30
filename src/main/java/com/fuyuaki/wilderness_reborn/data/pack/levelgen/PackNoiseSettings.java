@@ -1,6 +1,6 @@
 package com.fuyuaki.wilderness_reborn.data.pack.levelgen;
 
-import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModWorldGenConstants;
+import com.fuyuaki.wilderness_reborn.data.worldgen.ModWorldGenConstants;
 import net.minecraft.world.level.levelgen.NoiseSettings;
 
 public class PackNoiseSettings {

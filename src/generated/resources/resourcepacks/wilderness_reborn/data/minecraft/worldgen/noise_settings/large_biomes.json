@@ -12,7 +12,7 @@
   "disable_mob_generation": false,
   "legacy_random_source": false,
   "noise": {
-    "height": 1344,
+    "height": 1040,
     "min_y": -320,
     "size_horizontal": 1,
     "size_vertical": 2
@@ -35,7 +35,7 @@
     "vein_toggle": "wilderness_reborn:router/vein_toggle"
   },
   "ore_veins_enabled": true,
-  "sea_level": 76,
+  "sea_level": 68,
   "spawn_target": [
     {
       "continentalness": [

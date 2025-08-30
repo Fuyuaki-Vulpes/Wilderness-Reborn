@@ -8,137 +8,20 @@
       "argument2": "wilderness_reborn:land/continents"
     },
     "argument2": {
-      "type": "minecraft:spline",
-      "spline": {
-        "coordinate": {
-          "type": "minecraft:cache_2d",
-          "argument": "wilderness_reborn:land/continents"
-        },
-        "points": [
-          {
-            "derivative": 0.0,
-            "location": -1.5,
-            "value": {
-              "coordinate": {
-                "type": "minecraft:cache_2d",
-                "argument": "wilderness_reborn:surface/surface_mountains_tectonics"
-              },
-              "points": [
-                {
-                  "derivative": 0.0,
-                  "location": 0.0,
-                  "value": 0.0
-                },
-                {
-                  "derivative": 0.0,
-                  "location": 0.1,
-                  "value": -0.5
-                },
-                {
-                  "derivative": 0.0,
-                  "location": 0.5,
-                  "value": -1.5
-                }
-              ]
-            }
+      "type": "minecraft:mul",
+      "argument1": "wilderness_reborn:land/continents",
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 0.5,
+        "argument2": {
+          "type": "minecraft:clamp",
+          "input": {
+            "type": "minecraft:cache_once",
+            "argument": "wilderness_reborn:surface/surface_mountains_tectonics"
           },
-          {
-            "derivative": 0.0,
-            "location": -1.0,
-            "value": {
-              "coordinate": {
-                "type": "minecraft:cache_2d",
-                "argument": "wilderness_reborn:surface/surface_mountains_tectonics"
-              },
-              "points": [
-                {
-                  "derivative": 0.0,
-                  "location": 0.0,
-                  "value": 0.0
-                },
-                {
-                  "derivative": 0.0,
-                  "location": 0.1,
-                  "value": 0.5
-                },
-                {
-                  "derivative": 0.0,
-                  "location": 0.5,
-                  "value": 1.5
-                }
-              ]
-            }
-          },
-          {
-            "derivative": 0.0,
-            "location": -0.15,
-            "value": {
-              "coordinate": {
-                "type": "minecraft:cache_2d",
-                "argument": "wilderness_reborn:surface/surface_mountains_tectonics"
-              },
-              "points": [
-                {
-                  "derivative": 0.0,
-                  "location": 0.0,
-                  "value": 0.0
-                },
-                {
-                  "derivative": 0.0,
-                  "location": 0.1,
-                  "value": 0.1
-                },
-                {
-                  "derivative": 0.0,
-                  "location": 0.5,
-                  "value": 0.5
-                }
-              ]
-            }
-          },
-          {
-            "derivative": 0.0,
-            "location": 0.15,
-            "value": 0.0
-          },
-          {
-            "derivative": 0.0,
-            "location": 1.0,
-            "value": {
-              "coordinate": {
-                "type": "minecraft:cache_2d",
-                "argument": "wilderness_reborn:surface/surface_mountains_tectonics"
-              },
-              "points": [
-                {
-                  "derivative": 0.0,
-                  "location": -1.0,
-                  "value": -1.5
-                },
-                {
-                  "derivative": 0.0,
-                  "location": -0.5,
-                  "value": -0.5
-                },
-                {
-                  "derivative": 0.0,
-                  "location": 0.0,
-                  "value": 0.0
-                },
-                {
-                  "derivative": 0.0,
-                  "location": 0.5,
-                  "value": 0.0
-                },
-                {
-                  "derivative": 0.0,
-                  "location": 1.0,
-                  "value": 0.25
-                }
-              ]
-            }
-          }
-        ]
+          "max": 1.0,
+          "min": 0.0
+        }
       }
     }
   }

@@ -27,6 +27,7 @@ public class ModSurfaceRuleData {
     private static final SurfaceRules.RuleSource WHITE_TERRACOTTA = makeStateRule(Blocks.WHITE_TERRACOTTA);
     private static final SurfaceRules.RuleSource ORANGE_TERRACOTTA = makeStateRule(Blocks.ORANGE_TERRACOTTA);
     private static final SurfaceRules.RuleSource TERRACOTTA = makeStateRule(Blocks.TERRACOTTA);
+    private static final SurfaceRules.RuleSource GLASS = makeStateRule(Blocks.GLASS);
     private static final SurfaceRules.RuleSource RED_SAND = makeStateRule(Blocks.RED_SAND);
     private static final SurfaceRules.RuleSource RED_SANDSTONE = makeStateRule(Blocks.RED_SANDSTONE);
     private static final SurfaceRules.RuleSource STONE = makeStateRule(Blocks.STONE);
@@ -63,10 +64,10 @@ public class ModSurfaceRuleData {
     }
 
     public static SurfaceRules.RuleSource overworld() {
-        return overworldLike(true, false, true);
+        return overworldLike(true, true);
     }
 
-    public static SurfaceRules.RuleSource overworldLike(boolean aboveGround, boolean bedrockRoof, boolean bedrockFloor) {
+    public static SurfaceRules.RuleSource overworldLike(boolean aboveGround, boolean bedrockFloor) {
 
         SurfaceRules.ConditionSource y97 = SurfaceRules.yBlockCheck(VerticalAnchor.absolute(97), 2);
         SurfaceRules.ConditionSource y256 = SurfaceRules.yBlockCheck(VerticalAnchor.absolute(256), 0);
@@ -331,6 +332,8 @@ public class ModSurfaceRuleData {
         SurfaceRules.RuleSource surfacerules$rulesource9 = SurfaceRules.ifTrue(SurfaceRules.abovePreliminarySurface(), badlandsAndSurfaces);
         builder.add(aboveGround ? surfacerules$rulesource9 : badlandsAndSurfaces);
         builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("deepslate", VerticalAnchor.absolute(0), VerticalAnchor.absolute(8)), DEEPSLATE));
+
+
         return SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
     }
 

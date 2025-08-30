@@ -7,6 +7,8 @@ import com.fuyuaki.wilderness_reborn.world.item.ModCreativeModeTabs;
 import com.fuyuaki.wilderness_reborn.world.item.ModItems;
 import com.fuyuaki.wilderness_reborn.world.level.biome.BiomeRanges;
 import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
+import com.fuyuaki.wilderness_reborn.world.level.levelgen.carver.ModWorldCarvers;
+import com.fuyuaki.wilderness_reborn.world.level.levelgen.placement.ModPlacementModifierTypes;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
@@ -42,6 +44,8 @@ public class WildernessRebornMod {
         ModCreativeModeTabs.init(modEventBus);
         ModSoundEvents.init(modEventBus);
         ModFeatures.init(modEventBus);
+        ModWorldCarvers.init(modEventBus);
+        ModPlacementModifierTypes.init(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 

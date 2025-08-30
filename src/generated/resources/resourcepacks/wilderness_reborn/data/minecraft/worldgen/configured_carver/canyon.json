@@ -34,7 +34,7 @@
       "distance_factor": {
         "type": "minecraft:uniform",
         "max_exclusive": 1.9,
-        "min_inclusive": 0.75
+        "min_inclusive": 0.5
       },
       "horizontal_radius_factor": {
         "type": "minecraft:uniform",
@@ -43,23 +43,23 @@
       },
       "thickness": {
         "type": "minecraft:trapezoid",
-        "max": 5.2,
+        "max": 6.0,
         "min": 0.0,
         "plateau": 2.3
       },
       "vertical_radius_center_factor": 0.0,
-      "vertical_radius_default_factor": 1.0,
+      "vertical_radius_default_factor": 1.5,
       "width_smoothness": 3
     },
     "vertical_rotation": {
       "type": "minecraft:uniform",
-      "max_exclusive": 0.125,
-      "min_inclusive": -0.125
+      "max_exclusive": 1.75,
+      "min_inclusive": -1.75
     },
     "y": {
       "type": "minecraft:uniform",
       "max_inclusive": {
-        "absolute": 82
+        "absolute": 256
       },
       "min_inclusive": {
         "absolute": 10

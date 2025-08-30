@@ -1,36 +1,4 @@
 {
   "type": "minecraft:flat_cache",
-  "argument": {
-    "type": "minecraft:spline",
-    "spline": {
-      "coordinate": "wilderness_reborn:land/erosion",
-      "points": [
-        {
-          "derivative": 0.0,
-          "location": -1.5,
-          "value": -1.5
-        },
-        {
-          "derivative": 0.0,
-          "location": -1.0,
-          "value": -1.0
-        },
-        {
-          "derivative": 0.0,
-          "location": 0.0,
-          "value": 0.0
-        },
-        {
-          "derivative": 0.0,
-          "location": 1.0,
-          "value": 1.0
-        },
-        {
-          "derivative": 0.0,
-          "location": 1.5,
-          "value": 1.5
-        }
-      ]
-    }
-  }
+  "argument": "wilderness_reborn:land/erosion"
 }

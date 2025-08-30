@@ -5,16 +5,12 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "wilderness_reborn.refmap.json",
   "mixins": [
-    "SurfaceRuleContextMixin",
     "BiomeMixin",
-    "MixinTerrablenderSurfaceRuleData",
     "NoiseBasedChunkGeneratorMixin",
     "OverworldBiomeBuilderMixin",
     "ServerWorldMixin",
     "SoundEventMixin",
-    "SurfaceRulesSteepConditionMixin",
-    "TerrablenderDefaultOverworldRegionMixin",
-    "WorldCarverMixin"
+    "SurfaceRulesSteepConditionMixin"
   ],
   "client": [
   ],

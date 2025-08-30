@@ -1,6 +1,23 @@
 {
-  "type": "minecraft:clamp",
-  "input": {
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:y_clamped_gradient",
+      "from_value": 0.0,
+      "from_y": 32,
+      "to_value": -1.5,
+      "to_y": 72
+    },
+    "argument2": {
+      "type": "minecraft:y_clamped_gradient",
+      "from_value": 0.0,
+      "from_y": 72,
+      "to_value": -2.5,
+      "to_y": 128
+    }
+  },
+  "argument2": {
     "type": "minecraft:mul",
     "argument1": {
       "type": "minecraft:add",
@@ -11,12 +28,12 @@
           "type": "minecraft:noise",
           "noise": "wilderness_reborn:cave/pillar",
           "xz_scale": 10.0,
-          "y_scale": 0.5
+          "y_scale": 0.10000000149011612
         }
       },
       "argument2": {
         "type": "minecraft:add",
-        "argument1": -2.0,
+        "argument1": -1.25,
         "argument2": {
           "type": "minecraft:mul",
           "argument1": -1.0,
@@ -46,7 +63,5 @@
         }
       }
     }
-  },
-  "max": 100.0,
-  "min": -5.0
+  }
 }

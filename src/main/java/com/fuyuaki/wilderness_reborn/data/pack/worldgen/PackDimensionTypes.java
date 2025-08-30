@@ -1,9 +1,8 @@
 package com.fuyuaki.wilderness_reborn.data.pack.worldgen;
 
-import com.fuyuaki.wilderness_reborn.world.level.levelgen.ModWorldGenConstants;
+import com.fuyuaki.wilderness_reborn.data.worldgen.ModWorldGenConstants;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;

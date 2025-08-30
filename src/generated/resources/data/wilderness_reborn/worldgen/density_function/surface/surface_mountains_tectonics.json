@@ -1,842 +1,349 @@
 {
-  "type": "minecraft:add",
-  "argument1": {
-    "type": "minecraft:spline",
-    "spline": {
-      "coordinate": "wilderness_reborn:tectonic_plates/edges",
-      "points": [
-        {
-          "derivative": 0.0,
-          "location": -0.1,
-          "value": 0.0
-        },
-        {
-          "derivative": 0.0,
-          "location": 0.75,
-          "value": {
-            "coordinate": "wilderness_reborn:tectonic_plates/activity",
-            "points": [
-              {
-                "derivative": 0.0,
-                "location": -0.5,
-                "value": 0.0
-              },
-              {
-                "derivative": 0.0,
-                "location": 0.15,
-                "value": {
-                  "coordinate": "wilderness_reborn:tectonic_plates/direction",
-                  "points": [
-                    {
-                      "derivative": 0.0,
-                      "location": -0.5,
-                      "value": {
-                        "coordinate": "wilderness_reborn:tectonic_plates/randomness",
-                        "points": [
-                          {
-                            "derivative": 0.0,
-                            "location": -0.1,
-                            "value": {
-                              "coordinate": "wilderness_reborn:land/erosion",
-                              "points": [
-                                {
-                                  "derivative": 0.0,
-                                  "location": -1.0,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:terrain/tectonic",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -1.0,
-                                        "value": -0.75
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -0.6,
-                                        "value": -0.6
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -0.25,
-                                        "value": -0.55
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 0.25,
-                                        "value": -0.5
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 0.6,
-                                        "value": 0.0
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 1.0,
-                                        "value": 0.75
-                                      }
-                                    ]
+  "type": "minecraft:cache_once",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "wilderness_reborn:tectonic_plates/edges",
+        "points": [
+          {
+            "derivative": 0.0,
+            "location": -0.1,
+            "value": 0.0
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.75,
+            "value": {
+              "coordinate": "wilderness_reborn:tectonic_plates/activity",
+              "points": [
+                {
+                  "derivative": 0.0,
+                  "location": -0.5,
+                  "value": 0.0
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 0.15,
+                  "value": {
+                    "coordinate": "wilderness_reborn:tectonic_plates/direction",
+                    "points": [
+                      {
+                        "derivative": 0.0,
+                        "location": -0.5,
+                        "value": {
+                          "coordinate": "wilderness_reborn:tectonic_plates/randomness",
+                          "points": [
+                            {
+                              "derivative": 0.0,
+                              "location": -0.1,
+                              "value": {
+                                "coordinate": "wilderness_reborn:terrain/tectonic",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -1.0,
+                                    "value": -0.75
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -0.6,
+                                    "value": -0.6
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -0.25,
+                                    "value": -0.55
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.25,
+                                    "value": -0.5
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.6,
+                                    "value": 0.0
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 1.0,
+                                    "value": 0.75
                                   }
-                                },
-                                {
-                                  "derivative": 0.0,
-                                  "location": 1.0,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:terrain/tectonic_smooth",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -1.0,
-                                        "value": -0.5
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -0.3,
-                                        "value": -0.45
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 0.3,
-                                        "value": -0.5
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 1.0,
-                                        "value": 0.75
-                                      }
-                                    ]
+                                ]
+                              }
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": 0.1,
+                              "value": {
+                                "coordinate": "wilderness_reborn:terrain/plateau",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -1.0,
+                                    "value": -0.5
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 1.0,
+                                    "value": 0.5
                                   }
-                                }
-                              ]
+                                ]
+                              }
                             }
-                          },
-                          {
-                            "derivative": 0.0,
-                            "location": 0.1,
-                            "value": {
-                              "coordinate": "wilderness_reborn:land/erosion",
-                              "points": [
-                                {
-                                  "derivative": 0.0,
-                                  "location": -1.0,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:terrain/plateau",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -1.0,
-                                        "value": -0.75
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 1.0,
-                                        "value": 0.75
-                                      }
-                                    ]
+                          ]
+                        }
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": -0.15,
+                        "value": 0.0
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.15,
+                        "value": 0.0
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.5,
+                        "value": {
+                          "coordinate": "wilderness_reborn:land/continents",
+                          "points": [
+                            {
+                              "derivative": 0.0,
+                              "location": -0.5,
+                              "value": {
+                                "coordinate": "wilderness_reborn:terrain/tectonic",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -1.0,
+                                    "value": -0.9
+                                  },
+                                  {
+                                    "derivative": 0.4,
+                                    "location": 1.0,
+                                    "value": -0.5
                                   }
-                                },
-                                {
-                                  "derivative": 0.0,
-                                  "location": 1.0,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:terrain/plateau",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -1.0,
-                                        "value": -0.25
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 1.0,
-                                        "value": 0.25
-                                      }
-                                    ]
+                                ]
+                              }
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": -0.35,
+                              "value": {
+                                "coordinate": "wilderness_reborn:geo/tectonic_plates",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -0.05,
+                                    "value": {
+                                      "coordinate": "wilderness_reborn:terrain/tectonic",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": -0.9
+                                        },
+                                        {
+                                          "derivative": 0.4,
+                                          "location": 1.0,
+                                          "value": -0.1
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.05,
+                                    "value": {
+                                      "coordinate": "wilderness_reborn:terrain/tectonic",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": 0.7
+                                        },
+                                        {
+                                          "derivative": 0.4,
+                                          "location": 1.0,
+                                          "value": 2.15
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.5,
+                                    "value": {
+                                      "coordinate": "wilderness_reborn:terrain/plateau",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": 0.0
+                                        },
+                                        {
+                                          "derivative": 0.0,
+                                          "location": 1.0,
+                                          "value": 0.4
+                                        }
+                                      ]
+                                    }
                                   }
-                                }
-                              ]
+                                ]
+                              }
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": -0.1,
+                              "value": {
+                                "coordinate": "wilderness_reborn:geo/tectonic_plates",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -0.05,
+                                    "value": {
+                                      "coordinate": "wilderness_reborn:terrain/tectonic",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": -0.9
+                                        },
+                                        {
+                                          "derivative": 0.4,
+                                          "location": 1.0,
+                                          "value": -0.1
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.05,
+                                    "value": {
+                                      "coordinate": "wilderness_reborn:terrain/tectonic",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": 0.7
+                                        },
+                                        {
+                                          "derivative": 0.4,
+                                          "location": 1.0,
+                                          "value": 2.15
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.5,
+                                    "value": {
+                                      "coordinate": "wilderness_reborn:terrain/plateau",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": 0.0
+                                        },
+                                        {
+                                          "derivative": 0.0,
+                                          "location": 1.0,
+                                          "value": 0.4
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": 0.15,
+                              "value": {
+                                "coordinate": "wilderness_reborn:terrain/tectonic",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -1.0,
+                                    "value": 0.2
+                                  },
+                                  {
+                                    "derivative": 0.4,
+                                    "location": 1.0,
+                                    "value": 1.6
+                                  }
+                                ]
+                              }
                             }
-                          }
-                        ]
+                          ]
+                        }
                       }
-                    },
-                    {
-                      "derivative": 0.0,
-                      "location": -0.15,
-                      "value": 0.0
-                    },
-                    {
-                      "derivative": 0.0,
-                      "location": 0.15,
-                      "value": 0.0
-                    },
-                    {
-                      "derivative": 0.0,
-                      "location": 0.5,
-                      "value": {
-                        "coordinate": "wilderness_reborn:land/continents",
-                        "points": [
-                          {
-                            "derivative": 0.0,
-                            "location": -0.5,
-                            "value": {
-                              "coordinate": "wilderness_reborn:land/erosion",
-                              "points": [
-                                {
-                                  "derivative": 0.0,
-                                  "location": -1.0,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:terrain/tectonic",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -1.0,
-                                        "value": -0.9
-                                      },
-                                      {
-                                        "derivative": 0.4,
-                                        "location": 1.0,
-                                        "value": -0.7
-                                      }
-                                    ]
-                                  }
-                                },
-                                {
-                                  "derivative": 0.0,
-                                  "location": 1.0,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:terrain/tectonic",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -1.0,
-                                        "value": -0.8
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 1.0,
-                                        "value": -0.5
-                                      }
-                                    ]
-                                  }
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "derivative": 0.0,
-                            "location": -0.35,
-                            "value": {
-                              "coordinate": "wilderness_reborn:tectonic_plates/randomness",
-                              "points": [
-                                {
-                                  "derivative": 0.0,
-                                  "location": -0.1,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:geo/tectonic_plates",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -0.2,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:land/erosion",
-                                          "points": [
-                                            {
-                                              "derivative": 1.0,
-                                              "location": -1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": -0.9
-                                                  },
-                                                  {
-                                                    "derivative": 0.4,
-                                                    "location": 1.0,
-                                                    "value": -0.3
-                                                  }
-                                                ]
-                                              }
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": -0.5
-                                                  },
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": 1.0,
-                                                    "value": -0.1
-                                                  }
-                                                ]
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 0.15,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:land/erosion",
-                                          "points": [
-                                            {
-                                              "derivative": 0.0,
-                                              "location": -1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": 0.7
-                                                  },
-                                                  {
-                                                    "derivative": 0.4,
-                                                    "location": 1.0,
-                                                    "value": 2.5
-                                                  }
-                                                ]
-                                              }
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": 0.4
-                                                  },
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": 1.0,
-                                                    "value": 0.9
-                                                  }
-                                                ]
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 0.5,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:terrain/plateau",
-                                          "points": [
-                                            {
-                                              "derivative": 0.0,
-                                              "location": -1.0,
-                                              "value": 0.0
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": 0.4
-                                            }
-                                          ]
-                                        }
-                                      }
-                                    ]
-                                  }
-                                },
-                                {
-                                  "derivative": 0.0,
-                                  "location": 0.1,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:geo/tectonic_plates",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -0.5,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:terrain/plateau",
-                                          "points": [
-                                            {
-                                              "derivative": 0.0,
-                                              "location": -1.0,
-                                              "value": 0.0
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": 0.4
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -0.2,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:land/erosion",
-                                          "points": [
-                                            {
-                                              "derivative": 0.0,
-                                              "location": -1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": 0.7
-                                                  },
-                                                  {
-                                                    "derivative": 0.4,
-                                                    "location": 1.0,
-                                                    "value": 2.5
-                                                  }
-                                                ]
-                                              }
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": 0.4
-                                                  },
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": 1.0,
-                                                    "value": 0.9
-                                                  }
-                                                ]
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 0.15,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:land/erosion",
-                                          "points": [
-                                            {
-                                              "derivative": 1.0,
-                                              "location": -1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": -0.9
-                                                  },
-                                                  {
-                                                    "derivative": 0.4,
-                                                    "location": 1.0,
-                                                    "value": -0.3
-                                                  }
-                                                ]
-                                              }
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": -0.5
-                                                  },
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": 1.0,
-                                                    "value": -0.1
-                                                  }
-                                                ]
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      }
-                                    ]
-                                  }
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "derivative": 0.0,
-                            "location": -0.1,
-                            "value": {
-                              "coordinate": "wilderness_reborn:tectonic_plates/randomness",
-                              "points": [
-                                {
-                                  "derivative": 0.0,
-                                  "location": -0.1,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:geo/tectonic_plates",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -0.2,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:land/erosion",
-                                          "points": [
-                                            {
-                                              "derivative": 1.0,
-                                              "location": -1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": -0.9
-                                                  },
-                                                  {
-                                                    "derivative": 0.4,
-                                                    "location": 1.0,
-                                                    "value": -0.3
-                                                  }
-                                                ]
-                                              }
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": -0.5
-                                                  },
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": 1.0,
-                                                    "value": -0.1
-                                                  }
-                                                ]
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 0.15,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:land/erosion",
-                                          "points": [
-                                            {
-                                              "derivative": 0.0,
-                                              "location": -1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": 0.7
-                                                  },
-                                                  {
-                                                    "derivative": 0.4,
-                                                    "location": 1.0,
-                                                    "value": 2.5
-                                                  }
-                                                ]
-                                              }
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": 0.4
-                                                  },
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": 1.0,
-                                                    "value": 0.9
-                                                  }
-                                                ]
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 0.5,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:terrain/plateau",
-                                          "points": [
-                                            {
-                                              "derivative": 0.0,
-                                              "location": -1.0,
-                                              "value": 0.0
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": 0.4
-                                            }
-                                          ]
-                                        }
-                                      }
-                                    ]
-                                  }
-                                },
-                                {
-                                  "derivative": 0.0,
-                                  "location": 0.1,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:geo/tectonic_plates",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -0.5,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:terrain/plateau",
-                                          "points": [
-                                            {
-                                              "derivative": 0.0,
-                                              "location": -1.0,
-                                              "value": 0.0
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": 0.4
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -0.2,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:land/erosion",
-                                          "points": [
-                                            {
-                                              "derivative": 0.0,
-                                              "location": -1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": 0.7
-                                                  },
-                                                  {
-                                                    "derivative": 0.4,
-                                                    "location": 1.0,
-                                                    "value": 2.5
-                                                  }
-                                                ]
-                                              }
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": 0.4
-                                                  },
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": 1.0,
-                                                    "value": 0.9
-                                                  }
-                                                ]
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 0.15,
-                                        "value": {
-                                          "coordinate": "wilderness_reborn:land/erosion",
-                                          "points": [
-                                            {
-                                              "derivative": 1.0,
-                                              "location": -1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": -0.9
-                                                  },
-                                                  {
-                                                    "derivative": 0.4,
-                                                    "location": 1.0,
-                                                    "value": -0.3
-                                                  }
-                                                ]
-                                              }
-                                            },
-                                            {
-                                              "derivative": 0.0,
-                                              "location": 1.0,
-                                              "value": {
-                                                "coordinate": "wilderness_reborn:terrain/tectonic",
-                                                "points": [
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": -1.0,
-                                                    "value": -0.5
-                                                  },
-                                                  {
-                                                    "derivative": 0.0,
-                                                    "location": 1.0,
-                                                    "value": -0.1
-                                                  }
-                                                ]
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      }
-                                    ]
-                                  }
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "derivative": 0.0,
-                            "location": 0.15,
-                            "value": {
-                              "coordinate": "wilderness_reborn:land/erosion",
-                              "points": [
-                                {
-                                  "derivative": 0.0,
-                                  "location": -1.0,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:terrain/tectonic",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -1.0,
-                                        "value": 0.2
-                                      },
-                                      {
-                                        "derivative": 0.4,
-                                        "location": 1.0,
-                                        "value": 2.0
-                                      }
-                                    ]
-                                  }
-                                },
-                                {
-                                  "derivative": 0.0,
-                                  "location": 1.0,
-                                  "value": {
-                                    "coordinate": "wilderness_reborn:terrain/tectonic_smooth",
-                                    "points": [
-                                      {
-                                        "derivative": 0.0,
-                                        "location": -1.0,
-                                        "value": 0.2
-                                      },
-                                      {
-                                        "derivative": 0.0,
-                                        "location": 1.0,
-                                        "value": 1.2
-                                      }
-                                    ]
-                                  }
-                                }
-                              ]
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ]
+                    ]
+                  }
                 }
-              }
-            ]
+              ]
+            }
           }
-        }
-      ]
-    }
-  },
-  "argument2": {
-    "type": "minecraft:spline",
-    "spline": {
-      "coordinate": "wilderness_reborn:tectonic_plates/edges",
-      "points": [
-        {
-          "derivative": 0.0,
-          "location": -1.5,
-          "value": 0.0
-        },
-        {
-          "derivative": 0.0,
-          "location": 0.5,
-          "value": {
-            "coordinate": "wilderness_reborn:terrain/tectonic",
-            "points": [
-              {
-                "derivative": 0.0,
-                "location": 0.0,
-                "value": -0.15
-              },
-              {
-                "derivative": 0.0,
-                "location": 1.0,
-                "value": 0.15
-              }
-            ]
+        ]
+      }
+    },
+    "argument2": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "wilderness_reborn:tectonic_plates/edges",
+        "points": [
+          {
+            "derivative": 0.0,
+            "location": -1.5,
+            "value": 0.0
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.5,
+            "value": {
+              "coordinate": "wilderness_reborn:terrain/tectonic",
+              "points": [
+                {
+                  "derivative": 0.0,
+                  "location": 0.0,
+                  "value": -0.15
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 1.0,
+                  "value": 0.15
+                }
+              ]
+            }
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.75,
+            "value": {
+              "coordinate": "wilderness_reborn:terrain/tectonic",
+              "points": [
+                {
+                  "derivative": 0.5,
+                  "location": 0.0,
+                  "value": -0.15
+                },
+                {
+                  "derivative": 1.2,
+                  "location": 1.0,
+                  "value": 0.2
+                }
+              ]
+            }
           }
-        },
-        {
-          "derivative": 0.0,
-          "location": 0.75,
-          "value": {
-            "coordinate": "wilderness_reborn:terrain/tectonic",
-            "points": [
-              {
-                "derivative": 0.5,
-                "location": 0.0,
-                "value": -0.15
-              },
-              {
-                "derivative": 1.2,
-                "location": 1.0,
-                "value": 0.2
-              }
-            ]
-          }
-        }
-      ]
+        ]
+      }
     }
   }
 }

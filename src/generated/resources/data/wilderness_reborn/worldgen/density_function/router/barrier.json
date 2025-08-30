@@ -1,19 +1,6 @@
 {
-  "type": "minecraft:add",
-  "argument1": {
-    "type": "minecraft:clamp",
-    "input": {
-      "type": "minecraft:mul",
-      "argument1": -0.6000000238418579,
-      "argument2": "wilderness_reborn:cave/endogenes"
-    },
-    "max": 2.0,
-    "min": 0.0
-  },
-  "argument2": {
-    "type": "minecraft:noise",
-    "noise": "minecraft:aquifer_barrier",
-    "xz_scale": 0.75,
-    "y_scale": 0.5
-  }
+  "type": "minecraft:noise",
+  "noise": "minecraft:aquifer_barrier",
+  "xz_scale": 0.75,
+  "y_scale": 0.5
 }

@@ -20,7 +20,7 @@ public class NoiseRouterFunctions {
         return new DensityFunctions.HolderHolder(densityFunctionRegistry.getOrThrow(key));
     }
     public static DensityFunction getCachedFunction(HolderGetter<DensityFunction> densityFunctionRegistry, ResourceKey<DensityFunction> key) {
-        return DensityFunctions.cache2d(new DensityFunctions.HolderHolder(densityFunctionRegistry.getOrThrow(key)));
+        return DensityFunctions.flatCache(new DensityFunctions.HolderHolder(densityFunctionRegistry.getOrThrow(key)));
     }
     public static DensityFunction getRawFunction(HolderGetter<DensityFunction> densityFunctionRegistry, ResourceKey<DensityFunction> key) {
         return densityFunctionRegistry.getOrThrow(key).value();
