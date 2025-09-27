@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.fuyuaki.r_wilderness.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "r_wilderness.refmap.json",
+  "mixins": [
+    "ChunkMapMixin",
+    "RandomStateMixin",
+    "ServerWorldMixin",
+    "SoundEventMixin",
+    "SurfaceRulesSteepConditionMixin",
+    "WorldDimensionsMixin",
+    "WorldPresetsMixin",
+    "accessor.ChunkAccessAccessor",
+    "accessor.ChunkGeneratorAccessor",
+    "accessor.ChunkMapAccessor",
+    "accessor.NoiseChunkAccessor"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

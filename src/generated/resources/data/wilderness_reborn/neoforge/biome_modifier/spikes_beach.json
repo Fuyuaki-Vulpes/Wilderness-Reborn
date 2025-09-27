@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_features",
-  "biomes": "minecraft:snowy_beach",
-  "features": "wilderness_reborn:sharp_ice_spikes",
-  "step": "surface_structures"
-}

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:noise",
+  "noise": "r_wilderness:aquifers/lava_noise",
+  "xz_scale": 0.75,
+  "y_scale": 0.75
+}

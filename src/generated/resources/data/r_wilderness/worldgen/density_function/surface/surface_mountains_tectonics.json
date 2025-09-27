@@ -1,0 +1,349 @@
+{
+  "type": "minecraft:cache_once",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "r_wilderness:tectonic_plates/edges",
+        "points": [
+          {
+            "derivative": 0.0,
+            "location": -0.1,
+            "value": 0.0
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.75,
+            "value": {
+              "coordinate": "r_wilderness:tectonic_plates/activity",
+              "points": [
+                {
+                  "derivative": 0.0,
+                  "location": -0.5,
+                  "value": 0.0
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 0.15,
+                  "value": {
+                    "coordinate": "r_wilderness:tectonic_plates/direction",
+                    "points": [
+                      {
+                        "derivative": 0.0,
+                        "location": -0.5,
+                        "value": {
+                          "coordinate": "r_wilderness:tectonic_plates/randomness",
+                          "points": [
+                            {
+                              "derivative": 0.0,
+                              "location": -0.1,
+                              "value": {
+                                "coordinate": "r_wilderness:terrain/tectonic",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -1.0,
+                                    "value": -0.75
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -0.6,
+                                    "value": -0.6
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -0.25,
+                                    "value": -0.55
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.25,
+                                    "value": -0.5
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.6,
+                                    "value": 0.0
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 1.0,
+                                    "value": 0.75
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": 0.1,
+                              "value": {
+                                "coordinate": "r_wilderness:terrain/plateau",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -1.0,
+                                    "value": -0.5
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 1.0,
+                                    "value": 0.5
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": -0.15,
+                        "value": 0.0
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.15,
+                        "value": 0.0
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.5,
+                        "value": {
+                          "coordinate": "r_wilderness:land/continents",
+                          "points": [
+                            {
+                              "derivative": 0.0,
+                              "location": -0.5,
+                              "value": {
+                                "coordinate": "r_wilderness:terrain/tectonic",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -1.0,
+                                    "value": -0.9
+                                  },
+                                  {
+                                    "derivative": 0.4,
+                                    "location": 1.0,
+                                    "value": -0.5
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": -0.35,
+                              "value": {
+                                "coordinate": "r_wilderness:geo/tectonic_plates",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -0.05,
+                                    "value": {
+                                      "coordinate": "r_wilderness:terrain/tectonic",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": -0.9
+                                        },
+                                        {
+                                          "derivative": 0.4,
+                                          "location": 1.0,
+                                          "value": -0.1
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.05,
+                                    "value": {
+                                      "coordinate": "r_wilderness:terrain/tectonic",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": 0.7
+                                        },
+                                        {
+                                          "derivative": 0.4,
+                                          "location": 1.0,
+                                          "value": 2.15
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.5,
+                                    "value": {
+                                      "coordinate": "r_wilderness:terrain/plateau",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": 0.0
+                                        },
+                                        {
+                                          "derivative": 0.0,
+                                          "location": 1.0,
+                                          "value": 0.4
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": -0.1,
+                              "value": {
+                                "coordinate": "r_wilderness:geo/tectonic_plates",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -0.05,
+                                    "value": {
+                                      "coordinate": "r_wilderness:terrain/tectonic",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": -0.9
+                                        },
+                                        {
+                                          "derivative": 0.4,
+                                          "location": 1.0,
+                                          "value": -0.1
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.05,
+                                    "value": {
+                                      "coordinate": "r_wilderness:terrain/tectonic",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": 0.7
+                                        },
+                                        {
+                                          "derivative": 0.4,
+                                          "location": 1.0,
+                                          "value": 2.15
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.5,
+                                    "value": {
+                                      "coordinate": "r_wilderness:terrain/plateau",
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": -1.0,
+                                          "value": 0.0
+                                        },
+                                        {
+                                          "derivative": 0.0,
+                                          "location": 1.0,
+                                          "value": 0.4
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": 0.15,
+                              "value": {
+                                "coordinate": "r_wilderness:terrain/tectonic",
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -1.0,
+                                    "value": 0.2
+                                  },
+                                  {
+                                    "derivative": 0.4,
+                                    "location": 1.0,
+                                    "value": 1.6
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "argument2": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "r_wilderness:tectonic_plates/edges",
+        "points": [
+          {
+            "derivative": 0.0,
+            "location": -1.5,
+            "value": 0.0
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.5,
+            "value": {
+              "coordinate": "r_wilderness:terrain/tectonic",
+              "points": [
+                {
+                  "derivative": 0.0,
+                  "location": 0.0,
+                  "value": -0.15
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 1.0,
+                  "value": 0.15
+                }
+              ]
+            }
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.75,
+            "value": {
+              "coordinate": "r_wilderness:terrain/tectonic",
+              "points": [
+                {
+                  "derivative": 0.5,
+                  "location": 0.0,
+                  "value": -0.15
+                },
+                {
+                  "derivative": 1.2,
+                  "location": 1.0,
+                  "value": 0.2
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

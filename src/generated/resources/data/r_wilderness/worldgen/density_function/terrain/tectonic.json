@@ -1,0 +1,56 @@
+{
+  "type": "minecraft:cache_once",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:mul",
+      "argument1": {
+        "type": "minecraft:shifted_noise",
+        "noise": "r_wilderness:terrain/tectonic_base_a",
+        "shift_x": "minecraft:shift_x",
+        "shift_y": 0.0,
+        "shift_z": "minecraft:shift_z",
+        "xz_scale": 0.25,
+        "y_scale": 0.0
+      },
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": 1.0,
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": -1.0,
+          "argument2": {
+            "type": "minecraft:cache_once",
+            "argument": {
+              "type": "minecraft:noise",
+              "noise": "r_wilderness:terrain/tectonic_blender",
+              "xz_scale": 0.25,
+              "y_scale": 0.10000000149011612
+            }
+          }
+        }
+      }
+    },
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": {
+        "type": "minecraft:shifted_noise",
+        "noise": "r_wilderness:terrain/tectonic_base_b",
+        "shift_x": "minecraft:shift_x",
+        "shift_y": 0.0,
+        "shift_z": "minecraft:shift_z",
+        "xz_scale": 0.25,
+        "y_scale": 0.0
+      },
+      "argument2": {
+        "type": "minecraft:cache_once",
+        "argument": {
+          "type": "minecraft:noise",
+          "noise": "r_wilderness:terrain/tectonic_blender",
+          "xz_scale": 0.25,
+          "y_scale": 0.10000000149011612
+        }
+      }
+    }
+  }
+}

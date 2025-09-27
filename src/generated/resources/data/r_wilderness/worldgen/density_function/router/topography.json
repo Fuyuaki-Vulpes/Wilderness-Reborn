@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:min",
+  "argument1": {
+    "type": "minecraft:interpolated",
+    "argument": "r_wilderness:sloped_cheese"
+  },
+  "argument2": "r_wilderness:terrain/caves"
+}

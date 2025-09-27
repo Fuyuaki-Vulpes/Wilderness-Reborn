@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "brown_dye",
+  "ingredients": [
+    "r_wilderness:chalky_soil",
+    "#c:seeds"
+  ],
+  "result": {
+    "count": 1,
+    "id": "r_wilderness:chalky_farmland"
+  }
+}

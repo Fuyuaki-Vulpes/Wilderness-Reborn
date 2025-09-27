@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:add",
+  "argument1": 0.15000000596046448,
+  "argument2": {
+    "type": "minecraft:mul",
+    "argument1": 1.5,
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": 0.25,
+      "argument2": {
+        "type": "minecraft:noise",
+        "noise": "r_wilderness:cave/exogene",
+        "xz_scale": 0.5,
+        "y_scale": 3.0
+      }
+    }
+  }
+}

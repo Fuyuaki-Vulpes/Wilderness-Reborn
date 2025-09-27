@@ -1,0 +1,146 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:abs",
+    "argument": {
+      "type": "minecraft:mul",
+      "argument1": "r_wilderness:router/continentalness",
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": {
+              "type": "minecraft:add",
+              "argument1": {
+                "type": "minecraft:mul",
+                "argument1": {
+                  "type": "minecraft:shifted_noise",
+                  "noise": "r_wilderness:terrain/base_a",
+                  "shift_x": "minecraft:shift_x",
+                  "shift_y": 0.0,
+                  "shift_z": "minecraft:shift_z",
+                  "xz_scale": 0.25,
+                  "y_scale": 0.0
+                },
+                "argument2": {
+                  "type": "minecraft:add",
+                  "argument1": 1.0,
+                  "argument2": {
+                    "type": "minecraft:mul",
+                    "argument1": -1.0,
+                    "argument2": {
+                      "type": "minecraft:cache_once",
+                      "argument": {
+                        "type": "minecraft:shifted_noise",
+                        "noise": "r_wilderness:land/noise_blender",
+                        "shift_x": "minecraft:shift_x",
+                        "shift_y": 0.0,
+                        "shift_z": "minecraft:shift_z",
+                        "xz_scale": 0.25,
+                        "y_scale": 0.0
+                      }
+                    }
+                  }
+                }
+              },
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": {
+                  "type": "minecraft:shifted_noise",
+                  "noise": "r_wilderness:terrain/base_b",
+                  "shift_x": "minecraft:shift_x",
+                  "shift_y": 0.0,
+                  "shift_z": "minecraft:shift_z",
+                  "xz_scale": 0.25,
+                  "y_scale": 0.0
+                },
+                "argument2": {
+                  "type": "minecraft:cache_once",
+                  "argument": {
+                    "type": "minecraft:shifted_noise",
+                    "noise": "r_wilderness:land/noise_blender",
+                    "shift_x": "minecraft:shift_x",
+                    "shift_y": 0.0,
+                    "shift_z": "minecraft:shift_z",
+                    "xz_scale": 0.25,
+                    "y_scale": 0.0
+                  }
+                }
+              }
+            },
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": 1.0,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": -1.0,
+                "argument2": {
+                  "type": "minecraft:cache_once",
+                  "argument": {
+                    "type": "minecraft:clamp",
+                    "input": {
+                      "type": "minecraft:shifted_noise",
+                      "noise": "r_wilderness:land/noise_blender_2",
+                      "shift_x": "minecraft:shift_x",
+                      "shift_y": 0.0,
+                      "shift_z": "minecraft:shift_z",
+                      "xz_scale": 0.25,
+                      "y_scale": 0.0
+                    },
+                    "max": 1.0,
+                    "min": -1.0
+                  }
+                }
+              }
+            }
+          },
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": {
+              "type": "minecraft:shifted_noise",
+              "noise": "r_wilderness:land/noise_c",
+              "shift_x": "minecraft:shift_x",
+              "shift_y": 0.0,
+              "shift_z": "minecraft:shift_z",
+              "xz_scale": 0.25,
+              "y_scale": 0.0
+            },
+            "argument2": {
+              "type": "minecraft:cache_once",
+              "argument": {
+                "type": "minecraft:clamp",
+                "input": {
+                  "type": "minecraft:shifted_noise",
+                  "noise": "r_wilderness:land/noise_blender_2",
+                  "shift_x": "minecraft:shift_x",
+                  "shift_y": 0.0,
+                  "shift_z": "minecraft:shift_z",
+                  "xz_scale": 0.25,
+                  "y_scale": 0.0
+                },
+                "max": 1.0,
+                "min": -1.0
+              }
+            }
+          }
+        },
+        "argument2": {
+          "type": "minecraft:clamp",
+          "input": {
+            "type": "minecraft:shifted_noise",
+            "noise": "r_wilderness:land/noise_strenght",
+            "shift_x": "minecraft:shift_x",
+            "shift_y": 0.0,
+            "shift_z": "minecraft:shift_z",
+            "xz_scale": 0.25,
+            "y_scale": 0.0
+          },
+          "max": 1.0,
+          "min": -1.0
+        }
+      }
+    }
+  }
+}

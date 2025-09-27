@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "brown_dye",
+  "ingredients": [
+    "minecraft:dirt",
+    "r_wilderness:chalk_dust"
+  ],
+  "result": {
+    "count": 1,
+    "id": "r_wilderness:chalky_soil"
+  }
+}
