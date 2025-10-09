@@ -6,12 +6,15 @@ import com.fuyuaki.r_wilderness.world.generation.chunk.ChunkData;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
 import com.fuyuaki.r_wilderness.world.generation.noise.ChunkNoiseSamplingSettings;
 import com.fuyuaki.r_wilderness.world.generation.noise.NoiseSampler;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ChunkMap;
@@ -19,6 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.*;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.block.Blocks;
@@ -31,6 +35,7 @@ import net.minecraft.world.level.levelgen.blending.Blender;
 import org.apache.commons.lang3.mutable.MutableObject;
 
 import javax.annotation.Nullable;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.Set;
@@ -95,6 +100,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     public void buildSurface(WorldGenRegion level, StructureManager structureManager, RandomState random, ChunkAccess chunk) {
 
     }
+
 
     @Override
     public void spawnOriginalMobs(WorldGenRegion level) {
@@ -236,10 +242,20 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
     @Override
     public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
+        DecimalFormat decimalformat = new DecimalFormat("0.000");
         TerrainParameters.Sampled sampled = this.parameters.samplerAt(pos.getX(),pos.getZ());
-        info.add("Continentalness: " + sampled.continentalness());
-;        info.add("Terrain Offset: " + sampled.terrainOffset());
-        info.add("Terrain Offset Large: " + sampled.terrainOffsetLarge());
+
+        info.add("Continentalness: " + decimalformat.format(sampled.continentalness()));
+;        info.add("Terrain Offset: " + decimalformat.format(sampled.terrainOffset()));
+        info.add("Terrain Offset Large: " + decimalformat.format(sampled.terrainOffsetLarge()));
+        info.add("Erosion: " + decimalformat.format(sampled.erosion()));
+        info.add("Tectonic Activity: " +  decimalformat.format((1 - Math.abs(sampled.tectonicActivity()))));
+        info.add("Mountain Core: " +  decimalformat.format(sampled.mountainsCore()));
+        info.add("Mountain: " + decimalformat.format(sampled.mountains()));
+        info.add("Mountain Detail: " +  decimalformat.format(sampled.mountainDetails()));
+        info.add("Terrain Type: A: " +  decimalformat.format(sampled.terrainTypeA()) + " B: " + decimalformat.format(sampled.terrainTypeB()));
+        info.add("Post: A: " +   decimalformat.format(Math.clamp((sampled.terrainTypeA() + 1) /2,0,1)) + " B: " +  decimalformat.format(Math.clamp((sampled.terrainTypeB() + 1) /2,0,1)));
+
 
     }
 

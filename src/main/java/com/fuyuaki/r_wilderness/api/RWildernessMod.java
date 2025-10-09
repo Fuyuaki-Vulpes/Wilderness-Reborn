@@ -5,6 +5,7 @@ import com.fuyuaki.r_wilderness.init.ModAttachments;
 import com.fuyuaki.r_wilderness.init.ModChunkGenerators;
 import com.fuyuaki.r_wilderness.init.ModFeatures;
 import com.fuyuaki.r_wilderness.init.ModSoundEvents;
+import com.fuyuaki.r_wilderness.world.generation.distant_horizons.DHApiEventHandler;
 import com.fuyuaki.r_wilderness.world.item.ModCreativeModeTabs;
 import com.fuyuaki.r_wilderness.world.item.ModItems;
 import com.fuyuaki.r_wilderness.world.level.biome.BiomeRanges;
@@ -12,6 +13,10 @@ import com.fuyuaki.r_wilderness.world.level.block.ModBlocks;
 import com.fuyuaki.r_wilderness.world.level.levelgen.carver.ModWorldCarvers;
 import com.fuyuaki.r_wilderness.world.level.levelgen.placement.ModPlacementModifierTypes;
 import com.mojang.logging.LogUtils;
+import com.seibel.distanthorizons.api.methods.events.DhApiEventRegister;
+import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiAfterDhInitEvent;
+import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiBeforeRenderEvent;
+import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiLevelLoadEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -56,6 +61,9 @@ public class RWildernessMod {
 
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        DhApiEventRegister.on(DhApiLevelLoadEvent.class, new DHApiEventHandler());
+
 
     }
 

@@ -209,10 +209,10 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         int minBlockZ = chunkpos.getMinBlockZ();
         this.initializeForFirstCellX();
         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-        int cellWidth1 = this.cellWidth();
+        int cellWidth = this.cellWidth();
         int cellHeight1 = this.cellHeight();
-        int cellCountX = 16 / cellWidth1;
-        int cellCountZ = 16 / cellWidth1;
+        int cellCountX = 16 / cellWidth;
+        int cellCountZ = 16 / cellWidth;
 
         for (int cellX= 0; cellX < cellCountX; cellX++) {
             this.advanceCellX(cellX);
@@ -221,42 +221,49 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                 int chunkSectionsCount = chunk.getSectionsCount() - 1;
                 LevelChunkSection levelchunksection = chunk.getSection(chunkSectionsCount);
 
-                for (int cellY = cellCountY - 1; cellY >= 0; cellY--) {
-                    this.selectCellYZ(cellY, cellZ);
 
-                    for (int verticalCell = cellHeight1 - 1; verticalCell >= 0; verticalCell--) {
-                        int y = (minCellY + cellY) * cellHeight1 + verticalCell;
-                        int regionalY = y & 15;
-                        int cellIndex = chunk.getSectionIndex(y);
-                        if (chunkSectionsCount != cellIndex) {
-                            chunkSectionsCount = cellIndex;
-                            levelchunksection = chunk.getSection(cellIndex);
-                        }
+                for (int cellFractionX = 0; cellFractionX < cellWidth; cellFractionX++) {
+                    int x = minBlockX + cellX * cellWidth + cellFractionX;
+                    int regionalX = x & 15;
+                    double d1 = (double) cellFractionX / cellWidth;
+                    this.updateForX(x, d1);
 
-                        double cellY1 = (double)verticalCell / cellHeight1;
-                        this.updateForY(y, cellY1);
+                    for (int cellFractionZ = 0; cellFractionZ < cellWidth; cellFractionZ++) {
+                        int z = minBlockZ + cellZ * cellWidth + cellFractionZ;
+                        int regionalZ = z & 15;
+                        double d2 = (double) cellFractionZ / cellWidth;
+                        this.updateForZ(z, d2);
+                        double yLevelGen = this.terrainParameters.yLevelAt(x, z);
 
-                        for (int cellFractionX = 0; cellFractionX < cellWidth1; cellFractionX++) {
-                            int x = minBlockX + cellX * cellWidth1 + cellFractionX;
-                            int regionalX = x & 15;
-                            double d1 = (double)cellFractionX / cellWidth1;
-                            this.updateForX(x, d1);
+                        for (int cellY = cellCountY - 1; cellY >= 0; cellY--) {
+                            this.selectCellYZ(cellY, cellZ);
 
-                            for (int cellFractionZ = 0; cellFractionZ < cellWidth1; cellFractionZ++) {
-                                int z = minBlockZ + cellZ * cellWidth1 + cellFractionZ;
-                                int regionalZ = z & 15;
-                                double d2 = (double)cellFractionZ / cellWidth1;
-                                this.updateForZ(z, d2);
-                                float yLevelGen = this.terrainParameters.yLevelAt(x,z);
-                                 
+                            for (int verticalCell = cellHeight1 - 1; verticalCell >= 0; verticalCell--) {
+                                int y = (minCellY + cellY) * cellHeight1 + verticalCell;
+                                int regionalY = y & 15;
+                                int cellIndex = chunk.getSectionIndex(y);
+                                if (chunkSectionsCount != cellIndex) {
+                                    chunkSectionsCount = cellIndex;
+                                    levelchunksection = chunk.getSection(cellIndex);
+                                }
+
+                                double cellY1 = (double) verticalCell / cellHeight1;
+                                this.updateForY(y, cellY1);
                                 BlockState blockstate = this.getInterpolatedState();
                                 if (blockstate == null) {
                                     blockstate = defaultBlock;
                                 }
 
-                                if (blockstate == Blocks.AIR.defaultBlockState() || !blockstate.getFluidState().isEmpty()){
-                                    if (y < yLevelGen){
+                                if (blockstate == Blocks.AIR.defaultBlockState() || !blockstate.getFluidState().isEmpty()) {
+                                    if (y < yLevelGen) {
                                         blockstate = defaultBlock;
+                                    }
+                                }
+                                if (y > yLevelGen) {
+                                    if (y < seaLevel && this.terrainParameters.samplerAt(x,z).continentalness() < 0.2 && blockstate.getFluidState().isEmpty()) {
+                                        blockstate = Blocks.WATER.defaultBlockState();
+                                    }else if (!blockstate.isAir() && (y > seaLevel || this.terrainParameters.samplerAt(x,z).continentalness() > 0.2)){
+                                        blockstate = Blocks.AIR.defaultBlockState();
                                     }
                                 }
                                 if (blockstate != Blocks.AIR.defaultBlockState() && !SharedConstants.debugVoidTerrain(chunk.getPos())) {

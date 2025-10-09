@@ -1,11 +1,19 @@
 package com.fuyuaki.r_wilderness.world.generation;
 
+import com.fuyuaki.r_wilderness.api.RWildernessMod;
+import com.fuyuaki.r_wilderness.world.generation.noise.Noise2D;
+import com.fuyuaki.r_wilderness.world.generation.noise.OpenSimplex2D;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
+import net.minecraft.world.level.levelgen.PositionalRandomFactory;
+import net.minecraft.world.level.levelgen.synth.PerlinNoise;
+import net.minecraft.world.level.levelgen.synth.PerlinNoise;
 
 public class TerrainParameters {
     private static final float baseContinentSize = 1.5F;
+    private static final float baseTectonicSize = 1.0F;
+    private static final float mountainCoordsSize = 1.0F;
     private final float continentScale;
     private final float terrainScale;
     private final Seed seed;
@@ -18,131 +26,234 @@ public class TerrainParameters {
         this.settings = settings;
         this.continentScale = 1.0F;
         this.terrainScale = 1.0F;
-        this.shapers = makeShapers(seed.fork(), settings);
-        this.climate = makeClimate(seed.fork(), settings);
+        this.shapers = makeShapers(seed.fork().forkPositional(), settings);
+        this.climate = makeClimate(seed.fork().forkPositional(), settings);
 
     }
-    private Shapers makeShapers(RandomSource randomSource, WildGeneratorSettings settings) {
+    private Shapers makeShapers(PositionalRandomFactory randomSource, WildGeneratorSettings settings) {
         return new Shapers(
-                getErodedTerrainShaper(randomSource),
-                getContinentalness(randomSource),
-                getErosion(randomSource),
-                getTectonicActivity(randomSource),
-                getMountains(randomSource),
-                getPlateauMap(randomSource),
-                getTerrainOffset(randomSource),
-                getTerrainOffsetLarge(randomSource),
-                getTerrainType(randomSource),
-                getTerrainType(randomSource)
+                getContinentalness(randomSource, "continentalness"),
+                getErosion(randomSource, "erosion"),
+                getTectonicActivity(randomSource, "tectonic_activity"),
+                new Shapers.Mountain(
+                        getMountainsCore(randomSource, "mountain_core"),
+                        getMountains(randomSource, "mountain_shape"),
+                        getMountainDetails(randomSource, "mountain_detail"),
+                        getMountains(randomSource, "mountain_peaks")
+                ),
+                getPlateauMap(randomSource, "plateaus"),
+                getTerrainOffset(randomSource, "terrain_offset"),
+                getTerrainOffsetLarge(randomSource, "terrain_offset_large"),
+                getTerrainType(randomSource, "terrain_type_a"),
+                getTerrainType(randomSource, "terrain_type_b")
         );
 
     }
 
-    private NormalNoise getTerrainType(RandomSource randomSource) {
-//        return simplex(seed,10F / this.continentalScale);
-        return NormalNoise.create(randomSource,-9,1);
+    private PerlinNoise getTerrainType(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-11,40);
     }
 
-    private NormalNoise getTerrainOffsetLarge(RandomSource randomSource) {
-//        return simplex(seed, 10F / this.landDetailScale).octaves(3);
-        return NormalNoise.create(randomSource,-6,1);
+    private PerlinNoise getTerrainOffsetLarge(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-7,1);
     }
 
-    private NormalNoise getTerrainOffset(RandomSource randomSource) {
-//        return simplex(seed,30F / this.landDetailScale).octaves(2);
-        return NormalNoise.create(randomSource,-5,1);
+    private PerlinNoise getTerrainOffset(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-7,1);
     }
 
-    private NormalNoise getPlateauMap(RandomSource randomSource) {
-//        return simplex(seed,5.0F / this.continentalScale);
-        return NormalNoise.create(randomSource,-10,1);
+    private PerlinNoise getPlateauMap(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-10,1);
     }
 
-    private NormalNoise getMountains(RandomSource randomSource) {
-//        return simplex(seed, 40.0F / this.continentalScale).octaves(1).clamped(0.0F, 1.0F);
-        return NormalNoise.create(randomSource,-9,1,1);
+    private PerlinNoise getMountainsCore(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-7,1);
     }
-/*
-    private static @NotNull NormalNoise simplex(RandomSource randomSource, float spread) {
+    private PerlinNoise getMountains(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-6,1);
+    }
+    private PerlinNoise getMountainDetails(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-5,1);
+    }
+
+    private static Noise2D simplex(Seed seed, float spread) {
         return new OpenSimplex2D(seed.next()).spread(spread);
     }
-    private static @NotNull NormalNoise simplex(RandomSource randomSource, float spread, int iteration) {
-        NormalNoise simplex = simplex(seed,spread);
-        for (int i = 0; i < iteration; i++){
-            simplex.add(simplex(seed, (float) Math.pow(spread,iteration)).scaled(-1.0D / (iteration * 4.0D), 1.0D / (iteration * 4.0D)));
-        }
-        return simplex;
-    }
-*/
-    private NormalNoise getTectonicActivity(RandomSource randomSource) {
-//        return simplex(seed,1.5F / this.continentalScale);
-        return NormalNoise.create(randomSource,-10,1,1);
+    private PerlinNoise getTectonicActivity(PositionalRandomFactory randomSource, String name) {
+        return  PerlinNoise.create(noiseRandom(name, randomSource), -12,7,8);
     }
 
-    private NormalNoise getErosion(RandomSource randomSource) {
-//        return simplex(seed,5.0F / this.continentalScale);
-        return NormalNoise.create(randomSource,-10,1);
+    private PerlinNoise getErosion(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-10,1);
     }
 
-    private NormalNoise getContinentalness(RandomSource randomSource) {
-//        return simplex(seed,1F / this.continentalScale).add(simplex(seed,5.0F / this.continentalScale).scaled(-0.25F,0.25F));
-        return NormalNoise.create(randomSource,-11,1.5,1);
+    private PerlinNoise getContinentalness(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-11,1.5,1);
     }
 
-    private NormalNoise getErodedTerrainShaper(RandomSource randomSource) {
-//        return simplex(seed,30F / this.continentalScale).octaves(3).map(operand -> Math.cos(operand * Math.PI));
-        return NormalNoise.create(randomSource,-10,1,1);
-    }
 
-    private Climate makeClimate(RandomSource randomSource, WildGeneratorSettings settings) {
+    private Climate makeClimate(PositionalRandomFactory randomSource, WildGeneratorSettings settings) {
         return new Climate(
-//                simplex(seed,0.2F,2),
-//                simplex(seed,0.2F,2),
-//                simplex(seed,0.2F,2),
-//                simplex(seed,0.4F,2)
-                NormalNoise.create(randomSource,-10,1),
-                NormalNoise.create(randomSource,-10,1),
-                NormalNoise.create(randomSource,-10,1),
-                NormalNoise.create(randomSource,-10,1)
+                PerlinNoise.create(noiseRandom("temperature", randomSource),-10,1),
+                PerlinNoise.create(noiseRandom("humidity", randomSource),-10,1),
+                PerlinNoise.create(noiseRandom("vegetation_density", randomSource),-10,1),
+                PerlinNoise.create(noiseRandom("rockyness", randomSource),-10,1)
         );
+    }
 
+    private RandomSource noiseRandom(String name, PositionalRandomFactory randomSource) {
+        return randomSource.fromHashOf((RWildernessMod.modLocation("terrain_parameters/noises/" + name)));
     }
 
 
-    public float yLevelAt(int xPos, int zPos){
+    public double yLevelAt(int xPos, int zPos){
         float x = xPos * terrainScale;
         float z = zPos * terrainScale;
-        double continentalness = this.shapers.continentalness.getValue(xPos * continentScale * baseContinentSize, 0, zPos * continentScale * baseContinentSize);
-        float seaSample = sampleOceans(continentalness);
-        float erosionShaper = sampleErosionMap(x,z);
+        float xContinental = xPos * continentScale;
+        float zContinental = zPos * continentScale;
+        TerrainType terrainType = new TerrainType(
+                terrainType(this.shapers.terrainTypeA.getValue(xContinental / baseTectonicSize, 0, zContinental / baseTectonicSize)),
+                terrainType(this.shapers.terrainTypeB.getValue(xContinental / baseTectonicSize, 0, zContinental / baseTectonicSize))
+        );
+        double continentalness = this.shapers.continentalness.getValue(xContinental * baseContinentSize, 0, zContinental * baseContinentSize);
+        double seaSample = sampleOceans(continentalness);
+        double erosionShaper = sampleErosionMap(x,z);
+        double terrainSample = sampleTerrain(x,z, continentalness,erosionShaper);
+       double tectonicSample = this.shapers.tectonicActivity.getValue(xPos / baseTectonicSize,  0,zPos / baseTectonicSize);
+       double mountainLayer = sampleMountains(x,z,tectonicSample,continentalness,terrainType, erosionShaper);
 
-        float terrainSample = sampleTerrain(x,z, continentalness) / 2;
-       float terrainSamplePost = (erosionShaper * terrainSample) + terrainSample;
-       return seaSample + terrainSamplePost;
+       // Adds the different terrain Layers together.
+       return seaSample + terrainSample + mountainLayer;
     }
 
-    private float sampleTerrain(float x, float z, double continentalness) {
-        int amplitude = 8;
-        double base = this.shapers.terrainOffset.getValue(x,0,z);
-        double large = this.shapers.terrainOffsetLarge.getValue(x,0,z);
-        double alpha = this.shapers.erosion.getValue(x,0,z);
-        return (float) ((Mth.clamp( continentalness * 5F ,-1.2F,0.8F) + 0.2F) * lerp(alpha,base,large) * amplitude);
+    private double terrainType(double value) {
+        return Math.clamp((value + 1) /2,0,1);
     }
 
-    private float sampleErosionMap(float x, float z){
-        double alpha = this.shapers.erodedTerrainShaper.getValue(x,0,z);
-        return (float) alpha;
+
+    /* Samples Terrain Offset and Terrain Offset large, mixes the two so that the higher erosion terrain (smoother and flatter)
+    * has larger and less detailed hills and shapes (Terrain Offset Large).
+    * Then, makes it so the Continentalness (how close we are to the shore) makes it inverse near the beaches,
+    * that serves two purposes:
+    * 1- The beaches will become smoother and have a more realistic and logical shape.
+    * 2- It avoids weird islands in seashores
+    *
+    * Amplitude = The size of the mini hills
+     */
+    private double sampleTerrain(float x, float z, double continentalness, double erosion) {
+        int amplitude = 16;
+        int eAmp = 5;
+        double base = this.shapers.terrainOffset.getValue(x,0,z) * amplitude;
+        double large = this.shapers.terrainOffsetLarge.getValue(x,0,z) * eAmp;
+        double terrain = erosionMapped(erosion,base,large,1.0F);
+        // Imagine extremity as 1/x, the higher the offset is, the more the terrain will be affected by terrain offset
+        // the value is like this so that beaches and shores remain mostly flat.
+        // The value here leads to a 0.2 continentalness becoming the point where the offset becomes normal.
+        // offset makes it so that the terrain "point zero" is offset towards the sea, so shores look more natural, otherwise
+        // you'll see completely flat beaches and shores and the terrain won't have any variation there.
+        float extremity = 1 / 0.5F;
+        float offset = 0.2F;
+        return Math.abs((Mth.clamp( Math.abs(continentalness) * extremity,-1 - offset,1 - offset) + offset) * terrain);
     }
 
-    private float sampleMountains(int x, int z){
-        int amplitude = 80;
-        double alpha = Math.pow(this.shapers.mountains.getValue(x,0,z),3);
-
-
-        return (float) Mth.lerp(alpha,0,amplitude);
+    private double sampleErosionMap(float x, float z){
+        return this.shapers.erosion.getValue(x,0,z);
     }
 
-    private float sampleOceans(double continentalness){
+    /* Samples the Tectonic Activity noise, and folds it so it becomes ridged, and inverses it's value so the closer
+    * it is to 0, the stronger it is.
+    * Then, if it is greater than 0 (so we avoid unnecessary sampling), it multiplies the mountain size by that.
+    * Perhaps I might make it so it is a curve instead of a linear value.
+    * I'll also add erosion based
+    */
+    private double sampleMountains(float x, float z, double tectonicActivity, double continentalness, TerrainType terrainType, double erosion){
+
+        double tA = 1 - Math.abs(tectonicActivity);
+        if (tA <= 0) return 0;
+
+
+
+        float powerCurve = 1.75F;
+
+        double mountainsCore = Math.pow(Math.clamp(((this.shapers.mountains.core.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize) + 1) / 2),0,1), 1.25);
+        double mountains = Math.pow(Math.clamp(((this.shapers.mountains.shape.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize) + 1) / 2),0,1), powerCurve);
+
+        double detail = Math.abs(
+                (1 - Math.abs(this.shapers.mountains.detail.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize)))
+                - 0.5 ) * 2;
+
+        double mountainDetail = detail * ((mountainsCore + mountains) / 2);
+
+
+
+        double ridges = 0.75D + (0.25D * detail);
+
+        double alphaCore = mountainsCore * tA * ridges;
+        double alpha = (mountains) * tA * ridges;
+        double alphaEroded = mountains * tA;
+        double alphaDetail = mountainDetail * tA;
+
+
+
+        double erodedMountainMap = NaNCheck(mountainEroded(alphaEroded, alphaCore, continentalness));
+        double mountainMap = NaNCheck(mountain(alpha, alphaDetail,alphaCore, continentalness));
+        double divergentMap = NaNCheck(divergent((mountains), mountainsCore, tA));
+        double transform = NaNCheck(transform(mountainsCore, detail, mountains, continentalness,tA));
+        double terrainMap = terrainType.mapValues(divergentMap, transform, mountainMap);
+        return erosionMapped(erosion,terrainMap,erodedMountainMap,0.2);
+
+
+    }
+
+    private double erosionMapped(double erosion, double base, double eroded,double range) {
+        if (erosion > range){
+            return eroded;
+        } else if (erosion < -range) {
+            return base;
+        }
+        double e = (Math.clamp(erosion * (1/range),-1,1) + 1)/2;
+        return Mth.lerp(e,base,eroded);
+    }
+
+    private static double NaNCheck(double v) {
+        return Double.isNaN(v) ? 0 : v;
+    }
+
+    private double transform(double mountains, double detail, double modifier, double continentalness, double tA) {
+        double t = Math.clamp((5 * tA) - (2 + (modifier * 0.5)),0,1);
+        double terrain = (NaNCheck(detail) * 50) + (NaNCheck( mountains) * 80);
+        if (continentalness <= 0){
+            return t * (terrain + (continentalness * 30));
+        }
+        return t * terrain;
+    }
+
+    private double divergent(double mountains, double core, double tA) {
+        double ta2 = Math.clamp(tA * 4,0,1);
+        double tM = tA > 0.5 ? 1.5 - (2 * tA): tA;
+        double amp = 50 + (mountains * 70) + (core * 80);
+        return amp * ta2 * tM;
+    }
+
+    private double mountainEroded(double alpha, double alphaCore, double continentalness) {
+        double c = Math.clamp(continentalness * 1.1F - 0.1F, 0.0F, 1.0F);
+        // Controls the height of the mountains (peaks / max height, not average)
+        double amplitudeCore = 100 * c;
+        double amplitude = 100 * c;
+
+        return (alpha * amplitude) + (alphaCore * amplitudeCore);
+    }
+    private double mountain(double alpha, double alphaDetail, double alphaCore, double continentalness) {
+        double c = Math.clamp(Math.abs(continentalness) + 0.2F, 0.2F, 1.0F);
+        // Controls the height of the mountains (peaks / max height, not average)
+        double amplitudeCore = 130 * c;
+        double amplitude = 130 * c;
+        double detailAmp = 20 * c;
+        //TOTAL = 280
+        return (alpha * amplitude) + (alphaDetail * detailAmp) + (alphaCore * amplitudeCore);
+    }
+
+    private double sampleOceans(double continentalness){
         int seaBottom = 0;
         int median = 63;
         int continentalTop = 120;
@@ -151,23 +262,11 @@ public class TerrainParameters {
     }
 
 
-    private float lerp(float alpha, float a, float b){
-        return Mth.lerp(alpha,a,b);
-    }
-
-    private float lerp(double alpha, int a, int b){
-        return (float) Mth.lerp((alpha + 1.0D) / 2,a,b);
-    }
-
-    private float lerp(double alpha, double a, double b){
-        return (float) Mth.lerp((alpha + 1.0D) / 2,a,b);
-    }
-
-    private float lerp(boolean curved, float curve, double alpha, int bottom, int median, int top){
+    private double lerp(boolean curved, float curve, double alpha, int bottom, int median, int top){
         if (alpha > 0){
-            return (float) Mth.lerp( curved ? Math.pow(alpha,curve) : alpha, median,top);
+            return Mth.lerp( curved ? Math.pow(alpha,curve) : alpha, median,top);
         }
-        return (float) Mth.lerp(curved ? Math.pow(alpha * -1 ,curve) : alpha * -1, median, bottom);
+        return Mth.lerp(curved ? Math.pow(alpha * -1 ,curve) : alpha * -1, median, bottom);
     }
 
 
@@ -175,10 +274,12 @@ public class TerrainParameters {
         float x = xPos * terrainScale;
         float z = zPos * terrainScale;
         return new Sampled(
-                this.shapers.erodedTerrainShaper.getValue(x,0,z),
-                this.shapers.continentalness.getValue(xPos * continentScale * baseContinentSize, 0, zPos * continentScale * baseContinentSize),                this.shapers.erosion.getValue(x,0,z),
-                this.shapers.tectonicActivity.getValue(x,0,z),
-                this.shapers.mountains.getValue(x,0,z),
+                this.shapers.continentalness.getValue(xPos * continentScale * baseContinentSize, 0, zPos * continentScale * baseContinentSize),
+                this.shapers.erosion.getValue(x,0,z),
+                this.shapers.tectonicActivity.getValue(xPos * baseTectonicSize, 0,zPos * baseTectonicSize),
+                this.shapers.mountains.core.getValue(xPos * continentScale * mountainCoordsSize, 0, zPos * continentScale * mountainCoordsSize),
+                this.shapers.mountains.shape.getValue(xPos * continentScale * mountainCoordsSize, 0, zPos * continentScale * mountainCoordsSize),
+                this.shapers.mountains.detail.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize),
                 this.shapers.plateauMap.getValue(x,0,z),
                 this.shapers.terrainOffset.getValue(x,0,z),
                 this.shapers.terrainOffsetLarge.getValue(x,0,z),
@@ -192,25 +293,33 @@ public class TerrainParameters {
     }
 
     private record Shapers(
-        NormalNoise erodedTerrainShaper,
-        NormalNoise continentalness,
-        NormalNoise erosion,
-        NormalNoise tectonicActivity,
-        NormalNoise mountains,
-        NormalNoise plateauMap,
-        NormalNoise terrainOffset,
-        NormalNoise terrainOffsetLarge,
-        NormalNoise terrainTypeA,
-        NormalNoise terrainTypeB
+        PerlinNoise continentalness,
+        PerlinNoise erosion,
+        PerlinNoise tectonicActivity,
+        Mountain mountains,
+        PerlinNoise plateauMap,
+        PerlinNoise terrainOffset,
+        PerlinNoise terrainOffsetLarge,
+        PerlinNoise terrainTypeA,
+        PerlinNoise terrainTypeB
+        ){
+
+        public record Mountain(
+                PerlinNoise core,
+                PerlinNoise shape,
+                PerlinNoise detail,
+                PerlinNoise peak
         ){}
+    }
 
 
     public record Sampled(
-        double erodedTerrainShaper,
         double continentalness,
         double erosion,
         double tectonicActivity,
+        double mountainsCore,
         double mountains,
+        double mountainDetails,
         double plateauMap,
         double terrainOffset,
         double terrainOffsetLarge,
@@ -223,11 +332,22 @@ public class TerrainParameters {
         ){}
 
 
+    record TerrainType(double a, double b){
+        double mapValues(double aa, double ab, double ba, double bb){
+            double aValue = Mth.lerp(a,aa,ab);
+            double bValue = Mth.lerp(a,ba,bb);
+            return Mth.lerp(b,aValue,bValue);
+        }
+        double mapValues(double aa, double ab, double b2){
+            double aValue = Mth.lerp(a,aa,ab);
+            return Mth.lerp(b,aValue,b2);
+        }
+    }
     private record Climate(
-            NormalNoise temperature,
-            NormalNoise humidity,
-            NormalNoise vegetationDensity,
-            NormalNoise rockyness
+            PerlinNoise temperature,
+            PerlinNoise humidity,
+            PerlinNoise vegetationDensity,
+            PerlinNoise rockyness
     ){}
 
 }
