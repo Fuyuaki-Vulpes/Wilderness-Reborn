@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.world.level.levelgen;
 
+import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
@@ -23,13 +24,14 @@ public class WildOreVeins {
     private WildOreVeins() {
     }
 
-    public static NoiseChunk.BlockStateFiller create(
+    public static WRNoiseChunk.BlockStateFiller create(
             DensityFunction veinToggle, DensityFunction veinRidged, DensityFunction veinGap, PositionalRandomFactory random
     ) {
         BlockState blockstate = null;
-        return p_209666_ -> {
-            double d0 = veinToggle.compute(p_209666_);
-            int i = p_209666_.blockY();
+
+        return (context) -> {
+            double d0 = veinToggle.compute(context);
+            int i = context.blockY();
             WildOreVeins.VeinType oreveinifier$veintype = d0 > 0.0 ? WildOreVeins.VeinType.COPPER : WildOreVeins.VeinType.IRON;
             double d1 = Math.abs(d0);
             int j = oreveinifier$veintype.maxY - i;
@@ -40,14 +42,14 @@ public class WildOreVeins {
                 if (d1 + d2 < 0.4F) {
                     return blockstate;
                 } else {
-                    RandomSource randomsource = random.at(p_209666_.blockX(), i, p_209666_.blockZ());
+                    RandomSource randomsource = random.at(context.blockX(), i, context.blockZ());
                     if (randomsource.nextFloat() > 0.7F) {
                         return blockstate;
-                    } else if (veinRidged.compute(p_209666_) >= 0.0) {
+                    } else if (veinRidged.compute(context) >= 0.0) {
                         return blockstate;
                     } else {
                         double d3 = Mth.clampedMap(d1, 0.4F, 0.6F, 0.1F, 0.3F);
-                        if (randomsource.nextFloat() < d3 && veinGap.compute(p_209666_) > -0.3F) {
+                        if (randomsource.nextFloat() < d3 && veinGap.compute(context) > -0.3F) {
                             return randomsource.nextFloat() < 0.02F ? oreveinifier$veintype.rawOreBlock : oreveinifier$veintype.ore;
                         } else {
                             return oreveinifier$veintype.filler;

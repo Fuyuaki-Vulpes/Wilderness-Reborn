@@ -119,7 +119,6 @@ public class WRAquifer implements Aquifer {
         return sampleState(context.blockX(), context.blockY(), context.blockZ(), baseNoise);
     }
 
-
     @Nullable
     public BlockState sampleState(int x, int y, int z, double terrainNoise)
     {
@@ -262,6 +261,152 @@ public class WRAquifer implements Aquifer {
         }
         this.shouldScheduleFluidUpdate = false;
         return null;
+    }
+
+
+    @Nullable
+    public BlockState sampleState(int x, int y, int z, double terrainNoise, BlockState oldState)
+    {
+        if (oldState != null  || !oldState.isAir()) return oldState;
+        // Noise values < 0 indicate air, > 0 indicate solid blocks.
+        if (terrainNoise <= 0)
+        {
+            // < 0 would generate air block (and we checked the modified noise, including contributions from caves)
+            final AquiferEntry global = globalAquifer(y);
+
+            double aquiferNoiseContribution; // The contribution from aquifer borders to the noise
+            BlockState state; // The result aquifer state
+            boolean isSurfaceLevelAquifer; // If the aquifer is a surface/sea level one, which needs to be affected by the water type
+
+            if (Helpers.isBlock(global.at(y), Blocks.LAVA))
+            {
+                // Always lava below lava level, and don't generate adjacent borders.
+                state = Blocks.LAVA.defaultBlockState();
+                aquiferNoiseContribution = 0;
+                isSurfaceLevelAquifer = false;
+                shouldScheduleFluidUpdate = false;
+            }
+            else
+            {
+                final int lowerGridX = Math.floorDiv(x - XZ_RANGE / 2, GRID_WIDTH);
+                final int lowerGridY = Math.floorDiv(y, GRID_HEIGHT);
+                final int lowerGridZ = Math.floorDiv(z - XZ_RANGE / 2, GRID_WIDTH);
+
+                // The closest three aquifers, by distance
+                int distance1 = Integer.MAX_VALUE, distance2 = Integer.MAX_VALUE, distance3 = Integer.MAX_VALUE;
+                long aquifer1 = 0L, aquifer2 = 0L, aquifer3 = 0L;
+
+                // Iterate nearby aquifers
+                for (int offsetGridX = 0; offsetGridX <= 1; ++offsetGridX)
+                {
+                    for (int offsetGridY = -1; offsetGridY <= 1; ++offsetGridY)
+                    {
+                        for (int offsetGridZ = 0; offsetGridZ <= 1; ++offsetGridZ)
+                        {
+                            final int adjGridX = lowerGridX + offsetGridX;
+                            final int adjGridY = lowerGridY + offsetGridY;
+                            final int adjGridZ = lowerGridZ + offsetGridZ;
+                            final int adjIndex = getIndex(adjGridX, adjGridY, adjGridZ);
+
+                            long adjAquifer = aquiferLocations[adjIndex];
+                            if (adjAquifer == Long.MAX_VALUE)
+                            {
+                                // Compute and cache the aquifer location at this index
+                                final RandomSource random = fork.at(adjGridX, adjGridY, adjGridZ);
+                                adjAquifer = BlockPos.asLong(
+                                        adjGridX * GRID_WIDTH + random.nextInt(XZ_RANGE) + (GRID_WIDTH - XZ_RANGE) / 2,
+                                        adjGridY * GRID_HEIGHT + random.nextInt(Y_RANGE) + (GRID_HEIGHT - Y_RANGE) / 2,
+                                        adjGridZ * GRID_WIDTH + random.nextInt(XZ_RANGE) + (GRID_WIDTH - XZ_RANGE) / 2);
+                                aquiferLocations[adjIndex] = adjAquifer;
+                            }
+
+                            final int dx = BlockPos.getX(adjAquifer) - x;
+                            final int dy = BlockPos.getY(adjAquifer) - y;
+                            final int dz = BlockPos.getZ(adjAquifer) - z;
+                            final int distance = dx * dx + dy * dy + dz * dz;
+
+                            // Update the closest three aquifers
+                            if (distance <= distance1)
+                            {
+                                aquifer3 = aquifer2;
+                                aquifer2 = aquifer1;
+                                aquifer1 = adjAquifer;
+
+                                distance3 = distance2;
+                                distance2 = distance1;
+                                distance1 = distance;
+                            }
+                            else if (distance <= distance2)
+                            {
+                                aquifer3 = aquifer2;
+                                aquifer2 = adjAquifer;
+
+                                distance3 = distance2;
+                                distance2 = distance;
+                            }
+                            else if (distance <= distance3)
+                            {
+                                aquifer3 = adjAquifer;
+                                distance3 = distance;
+                            }
+                        }
+                    }
+                }
+
+                // The status of the closest three aquifers (1, 2, 3 in order)
+                final AquiferEntry entry1 = getOrCreateAquifer(aquifer1);
+                final AquiferEntry entry2 = getOrCreateAquifer(aquifer2);
+                final AquiferEntry entry3 = getOrCreateAquifer(aquifer3);
+
+                // Similarity between each pair of aquifers
+                final double similarity12 = similarity(distance1, distance2);
+                final double similarity13 = similarity(distance1, distance3);
+                final double similarity23 = similarity(distance2, distance3);
+
+                if (Helpers.isBlock(entry1.at(y), Blocks.WATER) && Helpers.isBlock(globalAquifer(y - 1).at(y - 1), Blocks.LAVA))
+                {
+                    // Border lava and water with solid blocks.
+                    aquiferNoiseContribution = 1;
+                }
+                else if (similarity12 > -1)
+                {
+                    final MutableDouble barrierNoise = new MutableDouble(Double.NaN);
+
+                    // Pressure between each pair of aquifers
+                    final double pressure12 = calculatePressure(x, y, z, barrierNoise, entry1, entry2);
+                    final double pressure13 = calculatePressure(x, y, z, barrierNoise, entry1, entry3);
+                    final double pressure23 = calculatePressure(x, y, z, barrierNoise, entry2, entry3);
+
+                    // Clamped to [0, 1]
+                    // When the aquifers are equidistant apart, similarity will be close to 1
+                    final double clampedSimilarity12 = Math.max(0, similarity12);
+                    final double clampedSimilarity13 = Math.max(0, similarity13);
+                    final double clampedSimilarity23 = Math.max(0, similarity23);
+
+                    // Magic formula. Mojang how did you come up with this
+                    aquiferNoiseContribution = Math.max(0, 2 * clampedSimilarity12 * Math.max(pressure12, Math.max(pressure13 * clampedSimilarity13, pressure23 * clampedSimilarity23)));
+                }
+                else
+                {
+                    aquiferNoiseContribution = 0;
+                }
+
+                state = entry1.at(y);
+                isSurfaceLevelAquifer = entry1.fluidY == WildChunkGenerator.SEA_LEVEL_Y;
+                shouldScheduleFluidUpdate = similarity12 >= FLOWING_UPDATE_SIMILARITY; // Heuristic if we should schedule a fluid update
+            }
+
+            if (terrainNoise + aquiferNoiseContribution <= 0)
+            {
+//                if (isSurfaceLevelAquifer)
+//                {
+//                    state = baseBlockSource.modifyFluid(state, x, z);
+//                }
+                return state;
+            }
+        }
+        this.shouldScheduleFluidUpdate = false;
+        return oldState;
     }
 
     public boolean shouldScheduleFluidUpdate()

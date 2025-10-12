@@ -6,15 +6,12 @@ import com.fuyuaki.r_wilderness.world.generation.chunk.ChunkData;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
 import com.fuyuaki.r_wilderness.world.generation.noise.ChunkNoiseSamplingSettings;
 import com.fuyuaki.r_wilderness.world.generation.noise.NoiseSampler;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ChunkMap;
@@ -22,7 +19,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.block.Blocks;
@@ -245,16 +241,26 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         DecimalFormat decimalformat = new DecimalFormat("0.000");
         TerrainParameters.Sampled sampled = this.parameters.samplerAt(pos.getX(),pos.getZ());
 
-        info.add("Continentalness: " + decimalformat.format(sampled.continentalness()));
-;        info.add("Terrain Offset: " + decimalformat.format(sampled.terrainOffset()));
-        info.add("Terrain Offset Large: " + decimalformat.format(sampled.terrainOffsetLarge()));
-        info.add("Erosion: " + decimalformat.format(sampled.erosion()));
-        info.add("Tectonic Activity: " +  decimalformat.format((1 - Math.abs(sampled.tectonicActivity()))));
-        info.add("Mountain Core: " +  decimalformat.format(sampled.mountainsCore()));
-        info.add("Mountain: " + decimalformat.format(sampled.mountains()));
-        info.add("Mountain Detail: " +  decimalformat.format(sampled.mountainDetails()));
-        info.add("Terrain Type: A: " +  decimalformat.format(sampled.terrainTypeA()) + " B: " + decimalformat.format(sampled.terrainTypeB()));
-        info.add("Post: A: " +   decimalformat.format(Math.clamp((sampled.terrainTypeA() + 1) /2,0,1)) + " B: " +  decimalformat.format(Math.clamp((sampled.terrainTypeB() + 1) /2,0,1)));
+        String continentalness = decimalformat.format(sampled.continentalness());
+        String terrainOffset = decimalformat.format(sampled.terrainOffset());
+        String terrainOffsetLarge = decimalformat.format(sampled.terrainOffsetLarge());
+        String erosion = decimalformat.format(sampled.erosion());
+        String tectonicActivity = decimalformat.format((1 - Math.abs(sampled.tectonicActivity())));
+        String mountainCore = decimalformat.format(sampled.mountainsCore());
+        String mountain = decimalformat.format(sampled.mountains());
+        String mountainDetail = decimalformat.format(sampled.mountainDetails());
+        String plateau = decimalformat.format( Math.pow(Math.clamp(sampled.plateauMap(),0,1),5));
+        String hill = decimalformat.format(sampled.hills());
+        String terrainTypeA = decimalformat.format(sampled.terrainTypeA());
+        String terrainTypeB = decimalformat.format(sampled.terrainTypeB());
+        String postTerrainA = decimalformat.format(Math.clamp((sampled.terrainTypeA() + 1) /2,0,1));
+        String postTerrainB = decimalformat.format(Math.clamp((sampled.terrainTypeB() + 1) /2,0,1));
+
+        info.add("TO: " + terrainOffset + " TOL: " + terrainOffsetLarge);
+        info.add("C: " + continentalness + " E: " + erosion + " TA: " +  tectonicActivity);
+        info.add("Mountain: M: " +  mountain + " C: " + mountainCore + " D: " + mountainDetail);
+        info.add("H: " +  hill + " P: " + plateau);
+        info.add("Type: A: " + terrainTypeA  + " B: " + terrainTypeB  + " Post: A: " + postTerrainA  + " B: " + postTerrainB );
 
 
     }
@@ -296,30 +302,23 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
             @Nullable Predicate<BlockState> stoppingState
     ) {
         NoiseSettings noisesettings = this.settings.noiseSettings().clampToHeightAccessor(level);
-        int i = noisesettings.getCellHeight();
-        int j = noisesettings.minY();
-        int k = Mth.floorDiv(j, i);
-        int l = Mth.floorDiv(noisesettings.height(), i);
-        if (l <= 0) {
+        int cellHeight = noisesettings.getCellHeight();
+        int minY = noisesettings.minY();
+        int heightDiv = Mth.floorDiv(noisesettings.height(), cellHeight);
+        if (heightDiv <= 0) {
             return OptionalInt.empty();
         } else {
             BlockState[] ablockstate;
-            if (column == null) {
-                ablockstate = null;
-            } else {
+            if (column != null) {
                 ablockstate = new BlockState[noisesettings.height()];
-                column.setValue(new NoiseColumn(j, ablockstate));
+                column.setValue(new NoiseColumn(minY, ablockstate));
             }
 
             int i1 = noisesettings.getCellWidth();
             int j1 = Math.floorDiv(x, i1);
             int k1 = Math.floorDiv(z, i1);
-            int l1 = Math.floorMod(x, i1);
-            int i2 = Math.floorMod(z, i1);
             int j2 = j1 * i1;
             int k2 = k1 * i1;
-            double d0 = (double)l1 / i1;
-            double d1 = (double)i2 / i1;
             WRNoiseChunk noisechunk = new WRNoiseChunk(
                     this.parameters,
                     1,
@@ -334,34 +333,9 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
                     DensityFunctions.BeardifierMarker.INSTANCE,
                     Blender.empty()
             );
-            noisechunk.initializeForFirstCellX();
-            noisechunk.advanceCellX(0);
 
-            for (int l2 = l - 1; l2 >= 0; l2--) {
-                noisechunk.selectCellYZ(l2, 0);
-
-                for (int i3 = i - 1; i3 >= 0; i3--) {
-                    int j3 = (k + l2) * i + i3;
-                    double d2 = (double)i3 / i;
-                    noisechunk.updateForY(j3, d2);
-                    noisechunk.updateForX(x, d0);
-                    noisechunk.updateForZ(z, d1);
-                    BlockState blockstate = noisechunk.getInterpolatedState();
-                    BlockState blockstate1 = blockstate == null ? this.settings.defaultBlock() : blockstate;
-                    if (ablockstate != null) {
-                        int k3 = l2 * i + i3;
-                        ablockstate[k3] = blockstate1;
-                    }
-
-                    if (stoppingState != null && stoppingState.test(blockstate1)) {
-                        noisechunk.stopInterpolation();
-                        return OptionalInt.of(j3 + 1);
-                    }
-                }
-            }
-
-            noisechunk.stopInterpolation();
-            return OptionalInt.empty();
+                    int height = (int) noisechunk.getTerrainPeakAt(x,z);
+                    return OptionalInt.of(height);
         }
     }
 }
