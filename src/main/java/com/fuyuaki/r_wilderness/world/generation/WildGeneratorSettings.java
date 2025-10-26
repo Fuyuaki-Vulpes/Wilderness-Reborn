@@ -1,6 +1,5 @@
 package com.fuyuaki.r_wilderness.world.generation;
 
-import com.fuyuaki.r_wilderness.world.generation.noise.WorldGenerationNoiseStorage;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.block.state.BlockState;
@@ -9,7 +8,6 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
 
 public record WildGeneratorSettings(
         NoiseSettings noiseSettings,
-        WorldGenerationNoiseStorage storage,
         BlockState defaultBlock,
         BlockState defaultFluid,
         SurfaceRules.RuleSource surfaceRule,
@@ -19,7 +17,6 @@ public record WildGeneratorSettings(
     public static final Codec<WildGeneratorSettings> CODEC = RecordCodecBuilder.create(
             p_64475_ -> p_64475_.group(
                     NoiseSettings.CODEC.fieldOf("noise").forGetter(WildGeneratorSettings::noiseSettings),
-                            WorldGenerationNoiseStorage.CODEC.fieldOf("noise_storage").forGetter(WildGeneratorSettings::storage),
                             BlockState.CODEC.fieldOf("default_block").forGetter(WildGeneratorSettings::defaultBlock),
                             BlockState.CODEC.fieldOf("default_fluid").forGetter(WildGeneratorSettings::defaultFluid),
                             SurfaceRules.RuleSource.CODEC.fieldOf("surface_rule").forGetter(WildGeneratorSettings::surfaceRule),

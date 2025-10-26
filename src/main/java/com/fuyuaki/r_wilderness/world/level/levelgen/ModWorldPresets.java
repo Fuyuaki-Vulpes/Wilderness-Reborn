@@ -4,7 +4,6 @@
  import com.fuyuaki.r_wilderness.data.worldgen.ModSurfaceRuleData;
  import com.fuyuaki.r_wilderness.world.generation.WildChunkGenerator;
  import com.fuyuaki.r_wilderness.world.generation.WildGeneratorSettings;
- import com.fuyuaki.r_wilderness.world.generation.noise.WorldGenerationNoiseStorage;
  import net.minecraft.core.Holder;
  import net.minecraft.core.HolderGetter;
  import net.minecraft.core.registries.Registries;
@@ -73,10 +72,6 @@
                                  noiseSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD),
                                  new WildGeneratorSettings(
                                          WildWorldSettings.OVERWORLD_NOISE_SETTINGS,
-                                         new WorldGenerationNoiseStorage(
-                                                 getFunction(densityFunctions,ModNoiseRouterData.TERRAIN_CAVES),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.AQUIFERS)
-                                         ),
                                          Blocks.STONE.defaultBlockState(),
                                          Blocks.WATER.defaultBlockState(),
                                          ModSurfaceRuleData.overworld(),
