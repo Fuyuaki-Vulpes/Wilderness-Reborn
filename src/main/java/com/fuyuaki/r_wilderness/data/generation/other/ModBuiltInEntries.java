@@ -34,7 +34,6 @@ public class ModBuiltInEntries extends DatapackBuiltinEntriesProvider {
             .add(Registries.ENCHANTMENT, ModEnchantments::bootstrap)
             .add(Registries.WORLD_PRESET, ModWorldPresets::bootstrap)
             .add(Registries.DIMENSION_TYPE, WildWorldSettings.DimensionTypes::bootstrap)
-            .add(Registries.NOISE_SETTINGS, WildWorldSettings.NoiseGenerator::bootstrap)
 
             ;
 

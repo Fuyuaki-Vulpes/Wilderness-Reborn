@@ -37,7 +37,6 @@ public interface ChunkGeneratorExtension {
     void applySettings(UnaryOperator<WildGeneratorSettings> settings);
 
 
-    Aquifer getOrCreateAquifer(ChunkAccess chunk);
 
 
     /**

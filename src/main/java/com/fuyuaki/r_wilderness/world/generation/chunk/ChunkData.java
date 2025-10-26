@@ -103,40 +103,9 @@ public class ChunkData {
 
 
 
-    /**
-     * Generate the chunk data from empty to {@link Status#PARTIAL}. Populated lazily on first creation, and guaranteed to be done by structure stage.
-     */
-    public void generatePartial(LerpFloatLayer rainfallLayer, LerpFloatLayer rainVarianceLayer, LerpFloatLayer baseGroundwaterLayer, LerpFloatLayer temperatureLayer)
-    {
-        assert status == Status.EMPTY;
-        this.status = Status.PARTIAL;
-    }
-
-    public void generateFull(int[] surfaceHeight, int[] aquiferSurfaceHeight)
-    {
-        assert status == Status.PARTIAL;
-
-        this.aquiferSurfaceHeight = aquiferSurfaceHeight;
-        this.status = Status.FULL;
-    }
 
 
 
-
-//    public ChunkWatchPacket getUpdatePacket()
-//    {
-//        assert status == Status.FULL;
-//
-//        return new ChunkWatchPacket(pos);
-//    }
-
-    public void onUpdatePacket(LerpFloatLayer rainfallLayer, LerpFloatLayer rainVarianceLayer, LerpFloatLayer baseGroundwaterLayer, LerpFloatLayer temperatureLayer, float accumulatedRainfall)
-    {
-        assert status == Status.EMPTY || status == Status.CLIENT;
-
-
-        this.status = Status.CLIENT;
-    }
 
     public void serializeNBT(ValueOutput nbt)
     {
@@ -198,24 +167,6 @@ public class ChunkData {
         private Immutable()
         {
             super(new ChunkPos(ChunkPos.INVALID_CHUNK_POS));
-        }
-
-        @Override
-        public void generatePartial(LerpFloatLayer rainfallLayer, LerpFloatLayer rainVarianceLayer, LerpFloatLayer baseGroundwaterLayer, LerpFloatLayer temperatureLayer)
-        {
-            error();
-        }
-
-        @Override
-        public void generateFull(int[] surfaceHeight, int[] aquiferSurfaceHeight)
-        {
-            error();
-        }
-
-        @Override
-        public void onUpdatePacket(LerpFloatLayer rainfallLayer, LerpFloatLayer rainVarianceLayer, LerpFloatLayer baseGroundwaterLayer, LerpFloatLayer temperatureLayer, float accumulatedRainfall)
-        {
-            error();
         }
 
         @Override

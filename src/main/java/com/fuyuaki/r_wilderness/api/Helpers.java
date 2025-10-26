@@ -247,7 +247,7 @@ public class Helpers {
         }
         final float rot = (entity.getYHeadRot() + speed) % 360f;
         entity.setYRot(rot);
-        if (level.isClientSide && entity instanceof Player)
+        if (level.isClientSide() && entity instanceof Player)
         {
             final Vec3 offset = entity.position().subtract(origin).normalize();
             final Vec3 movement = new Vec3(-offset.z, 0, offset.x).scale(speed / 48f);
@@ -299,7 +299,7 @@ public class Helpers {
      */
     public static void damageItem(ItemStack stack, int amount, LivingEntity entity, InteractionHand hand)
     {
-        stack.hurtAndBreak(amount, entity, LivingEntity.getSlotForHand(hand));
+        stack.hurtAndBreak(amount, entity, hand.asEquipmentSlot());
     }
 
     /**
@@ -307,7 +307,7 @@ public class Helpers {
      */
     public static void damageItem(ItemStack stack, LivingEntity entity, InteractionHand hand)
     {
-        stack.hurtAndBreak(1, entity, LivingEntity.getSlotForHand(hand));
+        stack.hurtAndBreak(1, entity, hand.asEquipmentSlot());
     }
 
     /**

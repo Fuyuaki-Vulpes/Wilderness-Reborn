@@ -1,13 +1,8 @@
 package com.fuyuaki.r_wilderness.world.generation.chunk;
 
-import com.fuyuaki.r_wilderness.world.generation.MutableDensityFunctionContext;
-import com.fuyuaki.r_wilderness.world.generation.TerrainParameters;
 import com.fuyuaki.r_wilderness.world.generation.WildGeneratorSettings;
-import com.fuyuaki.r_wilderness.world.generation.aquifer.WRAquifer;
-import com.fuyuaki.r_wilderness.world.generation.noise.ChunkNoiseSamplingSettings;
-import com.fuyuaki.r_wilderness.world.generation.noise.NoiseSampler;
+import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildOreVeins;
-import com.fuyuaki.r_wilderness.world.level.levelgen.material.MaterialRuleFiller;
 import com.google.common.collect.Lists;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
@@ -26,10 +21,11 @@ import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.levelgen.blending.Blender;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static net.minecraft.world.level.block.Blocks.WATER;
 
 public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFunction.FunctionContext {
     private final NoiseSettings noiseSettings;
@@ -96,22 +92,16 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
     protected int blockX, blockZ; // Absolute x/z positions
     protected int localX, localZ; // Chunk-local x/z
 
-    final ChunkNoiseSamplingSettings settings;
     private final DensityFunctions.BeardifierOrMarker  beardifier;
-    private final MutableDensityFunctionContext mutableDensityFunctionContext;
 
-    protected final WRAquifer aquifer;
 
-    private final int[] surfaceHeight; // 16x16, block pos resolution
     protected final int seaLevel;
 
     // Current local position / context
     double cellDeltaX, cellDeltaZ; // Delta within a noise cell
     int lastCellZ; // Last cell Z, needed due to a quick in noise interpolator
 
-    protected final DensityFunction initialDensityNoJaggedness;
     private final BlockStateFiller veinFiller;
-    private final BlockStateFiller aquiferFiller;
 
     public static WRNoiseChunk forChunk(
             TerrainParameters parameters,
@@ -120,14 +110,12 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             DensityFunctions.BeardifierOrMarker beardifierOrMarker,
             WildGeneratorSettings noiseGeneratorSettings,
             Blender blender,
-            NoiseSampler sampler,
-            ChunkNoiseSamplingSettings settings,
             int seaLevel
     ) {
         NoiseSettings noisesettings = noiseGeneratorSettings.noiseSettings().clampToHeightAccessor(chunk);
         ChunkPos chunkpos = chunk.getPos();
         int i = 16 / noisesettings.getCellWidth();
-        return new WRNoiseChunk(parameters, i, state, chunkpos.getMinBlockX(), chunkpos.getMinBlockZ(),(ProtoChunk) chunk, sampler, noisesettings, settings,seaLevel,beardifierOrMarker, blender);
+        return new WRNoiseChunk(parameters, i, state, chunkpos.getMinBlockX(), chunkpos.getMinBlockZ(),(ProtoChunk) chunk, noisesettings, seaLevel,beardifierOrMarker, blender, noiseGeneratorSettings);
     }
 
     public WRNoiseChunk(
@@ -137,12 +125,11 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             int firstNoiseX,
             int firstNoiseZ,
             ProtoChunk chunk,
-            NoiseSampler sampler,
             NoiseSettings noiseSettings,
-            ChunkNoiseSamplingSettings settings,
             int seaLevel,
             DensityFunctions.BeardifierOrMarker  beardifier,
-            Blender blendifier
+            Blender blendifier,
+            WildGeneratorSettings noiseGeneratorSettings
     ){
         this.terrainParameters = parameters;
         this.noiseSettings = noiseSettings;
@@ -167,7 +154,6 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             this.chunkMinX = chunk.getPos().getMinBlockX();
             this.chunkMinZ = chunk.getPos().getMinBlockZ();
             this.airCarvingMask = chunk.getOrCreateCarvingMask();
-            this.aquifer = new WRAquifer(chunk.getPos(), settings, seaLevel, sampler.positionalRandomFactory, sampler.barrierNoise);
         }else {
             int x = SectionPos.blockToSectionCoord(firstNoiseX);
             int z = SectionPos.blockToSectionCoord(firstNoiseZ);
@@ -176,35 +162,23 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             this.chunkMinX = 0;
             this.chunkMinZ = 0;
             this.airCarvingMask = new CarvingMask(0,0);
-            this.aquifer = new WRAquifer(new ChunkPos(x,z), settings, seaLevel, sampler.positionalRandomFactory, sampler.barrierNoise);
         }
         NoiseRouter noiserouter = random.router();
         NoiseRouter noiserouter1 = noiserouter.mapAll(this::wrap);
 
-        DensityFunction cachedFunction = DensityFunctions.cacheAllInCell(
-                        DensityFunctions.add(noiserouter1.finalDensity(), DensityFunctions.BeardifierMarker.INSTANCE)
-                )
-                .mapAll(this::wrap);
-        this.mutableDensityFunctionContext = new MutableDensityFunctionContext(new BlockPos.MutableBlockPos());
 
-        this.settings = settings;
 
-        this.surfaceHeight = new int[16 * 16];
         this.seaLevel = seaLevel;
         this.veinFiller = WildOreVeins.create(noiserouter1.veinToggle(), noiserouter1.veinRidged(), noiserouter1.veinGap(), random.oreRandom());
-        this.aquiferFiller = context -> this.aquifer.computeSubstance(context, cachedFunction.compute(context));
 
 
-        this.initialDensityNoJaggedness = noiserouter1.initialDensityWithoutJaggedness();
     }
 
     public ChunkAccess buildNoise(ChunkAccess chunk, int minCellY, BlockState defaultBlock) {
 
         Heightmap oceanFloor = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.OCEAN_FLOOR_WG);
         Heightmap worldSurface = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.WORLD_SURFACE_WG);
-        ChunkPos chunkpos = chunk.getPos();
-        int minBlockX = chunkpos.getMinBlockX();
-        int minBlockZ = chunkpos.getMinBlockZ();
+
         this.initializeForFirstCellX();
         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
         int cellWidth = this.cellWidth();
@@ -221,17 +195,18 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
 
 
                 for (int cellFractionX = 0; cellFractionX < cellWidth; cellFractionX++) {
-                    int x = minBlockX + cellX * cellWidth + cellFractionX;
+                    int x = this.chunkMinX + cellX * cellWidth + cellFractionX;
                     int regionalX = x & 15;
                     double d1 = (double) cellFractionX / cellWidth;
                     this.updateForX(x, d1);
 
                     for (int cellFractionZ = 0; cellFractionZ < cellWidth; cellFractionZ++) {
-                        int z = minBlockZ + cellZ * cellWidth + cellFractionZ;
+                        int z = this.chunkMinZ + cellZ * cellWidth + cellFractionZ;
                         int regionalZ = z & 15;
                         double d2 = (double) cellFractionZ / cellWidth;
                         this.updateForZ(z, d2);
-                        double yLevelGen = this.terrainParameters.yLevelAt(x, z);
+                        int yLevelGen = Mth.floor(this.terrainParameters.yLevelAt(x, z,false));
+                        TerrainParameters.Sampled sampled = this.terrainParameters.samplerAt(x,z);
 
                         for (int cellY = cellCountY - 1; cellY >= 0; cellY--) {
                             this.selectCellYZ(cellY, cellZ);
@@ -247,22 +222,24 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
 
                                 double cellY1 = (double) verticalCell / cellHeight1;
                                 this.updateForY(y, cellY1);
+
                                 BlockState finalState;
                                 BlockState worldState;
                                 BlockState veinState =
                                         veinFiller
                                                 .calculate(this);
-                                if (y < yLevelGen){
+                                if (y <= yLevelGen){
                                     worldState = veinState == null ? defaultBlock : veinState;
                                 }else {
                                     worldState = Blocks.AIR.defaultBlockState();
                                 }
-                                BlockState aquiferState = this.aquifer.computeSubstance(this,worldState.isAir() ? -1 : 1);
+
+                                if (sampled.continentalness() < 0.2 && worldState.isAir() && y <= seaLevel){
+                                    worldState = WATER.defaultBlockState();
+                                }
+
                                 finalState = worldState;
 
-                                if (aquiferState != null && finalState.isAir()){
-                                    finalState = aquiferState;
-                                }
                                 if (finalState == null){
                                     finalState = defaultBlock;
                                 }
@@ -272,10 +249,10 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                                     levelchunksection.setBlockState(regionalX, regionalY, regionalZ, finalState, false);
                                     oceanFloor.update(regionalX, y, regionalZ, finalState);
                                     worldSurface.update(regionalX, y, regionalZ, finalState);
-                                    if (this.aquifer.shouldScheduleFluidUpdate() && !finalState.getFluidState().isEmpty()) {
-                                        blockpos$mutableblockpos.set(x, y, z);
-                                        chunk.markPosForPostprocessing(blockpos$mutableblockpos);
-                                    }
+//                                    if (this.aquifer.shouldScheduleFluidUpdate() && !finalState.getFluidState().isEmpty()) {
+//                                        blockpos$mutableblockpos.set(x, y, z);
+//                                        chunk.markPosForPostprocessing(blockpos$mutableblockpos);
+//                                    }
                                 }
                             }
                         }
@@ -290,26 +267,37 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         return chunk;
     }
 
-    private void fillColumn(BlockPos.MutableBlockPos mutablePos, int cellX, int cellZ) {
+    public BlockState testBlockAt(int x, int y, int z, BlockState defaultBlock) {
+        if (defaultBlock == null) defaultBlock = Blocks.STONE.defaultBlockState();
+        int yLevelGen = Mth.floor(this.terrainParameters.yLevelAt(x, z,false));
+        TerrainParameters.Sampled sampled = this.terrainParameters.samplerAt(x,z);
 
 
-        
+        BlockState finalState;
+        BlockState worldState;
+        BlockState veinState =
+                veinFiller
+                        .calculate(this);
+        if (y <= yLevelGen){
+            worldState = veinState == null ? defaultBlock : veinState;
+        }else {
+            worldState = Blocks.AIR.defaultBlockState();
+        }
+
+        if (sampled.continentalness() < 0.2 && worldState.isAir() && y <= seaLevel){
+            worldState = WATER.defaultBlockState();
+        }
+
+        finalState = worldState;
+
+        if (finalState == null){
+            finalState = defaultBlock;
+        }
+
+        return finalState;
     }
 
 
-
-
-    public int[] surfaceHeight()
-    {
-        return surfaceHeight;
-    }
-    protected void setupColumn(int x, int z)
-    {
-        this.blockX = x;
-        this.blockZ = z;
-        this.localX = x & 15;
-        this.localZ = z & 15;
-    }
 
 
     @Override
@@ -464,6 +452,7 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
 
     public void updateForY(int cellEndBlockY, double y) {
         this.inCellY = cellEndBlockY - this.cellStartBlockY;
+        this.interpolationCounter++;
 
         for (WRNoiseChunk.NoiseInterpolator noisechunk$noiseinterpolator : this.interpolators) {
             noisechunk$noiseinterpolator.updateForY(y);
@@ -480,7 +469,6 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
 
     public void updateForZ(int cellEndBlockZ, double z) {
         this.inCellZ = cellEndBlockZ - this.cellStartBlockZ;
-        this.interpolationCounter++;
 
         for (WRNoiseChunk.NoiseInterpolator noisechunk$noiseinterpolator : this.interpolators) {
             noisechunk$noiseinterpolator.updateForZ(z);
@@ -551,8 +539,8 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         }
     }
 
-    public double getTerrainPeakAt(int x, int z) {
-        return this.terrainParameters.yLevelAt(x,z);
+    public int getSurfaceY(int x, int z,boolean surfaceOnly) {
+        return Mth.floor(this.terrainParameters.yLevelAt(x,z,surfaceOnly));
     }
 
 

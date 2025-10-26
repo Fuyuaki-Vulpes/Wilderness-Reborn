@@ -1,24 +1,24 @@
 package com.fuyuaki.r_wilderness.world.generation;
 
+import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.mixin.accessor.ChunkMapAccessor;
-import com.fuyuaki.r_wilderness.world.generation.aquifer.WRAquifer;
-import com.fuyuaki.r_wilderness.world.generation.chunk.ChunkData;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
-import com.fuyuaki.r_wilderness.world.generation.noise.ChunkNoiseSamplingSettings;
-import com.fuyuaki.r_wilderness.world.generation.noise.NoiseSampler;
+import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
+import com.fuyuaki.r_wilderness.world.generation.terrain.WRSurfaceSystemUtil;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.SectionPos;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.*;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.block.Blocks;
@@ -30,13 +30,11 @@ import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import org.apache.commons.lang3.mutable.MutableObject;
 
-import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 public class WildChunkGenerator extends ChunkGenerator implements ChunkGeneratorExtension {
@@ -54,22 +52,19 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     private final Holder<NoiseGeneratorSettings> noiseSettings;
 
     public static final int DECORATION_STEPS = GenerationStep.Decoration.values().length;
-    public static final int SEA_LEVEL_Y = ModWorldGenConstants.SEA_LEVEL;
+    public static final int SEA_LEVEL_Y = WildernessConstants.SEA_LEVEL;
 
     private Seed seed;
     private WildGeneratorSettings settings;
 
-    private final FastConcurrentCache<WRAquifer> aquiferCache;
 
     private TerrainParameters parameters;
-    private NoiseSampler noiseSampler;
 
     public WildChunkGenerator(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> noiseSettings, WildGeneratorSettings generatorSettings) {
         super(biomeSource);
         this.noiseSettings = noiseSettings;
         this.settings = generatorSettings;
         this.vanillaChunkGenerator = new NoiseBasedChunkGenerator(biomeSource, this.noiseSettings);
-        this.aquiferCache = new FastConcurrentCache<>(256);
 
     }
 
@@ -95,12 +90,49 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     @Override
     public void buildSurface(WorldGenRegion level, StructureManager structureManager, RandomState random, ChunkAccess chunk) {
 
+        WorldGenerationContext worldgenerationcontext = new WorldGenerationContext(this, level);
+        this.buildSurface(
+                chunk,
+                worldgenerationcontext,
+                random,
+                structureManager,
+                level.getBiomeManager(),
+                level.registryAccess().lookupOrThrow(Registries.BIOME),
+                Blender.of(level)
+        );
+
+    }
+
+    public void buildSurface(
+            ChunkAccess chunk,
+            WorldGenerationContext context,
+            RandomState random,
+            StructureManager structureManager,
+            BiomeManager biomeManager,
+            Registry<Biome> biomes,
+            Blender blender
+    ) {
+
+        WRSurfaceSystemUtil
+                .buildSurface(
+                        random,
+                        biomeManager,
+                        biomes,
+                        context,
+                        chunk,
+                        createWRNoiseChunk(chunk, structureManager, blender, random),
+                        this.settings.surfaceRule()
+                );
     }
 
 
     @Override
     public void spawnOriginalMobs(WorldGenRegion level) {
-
+        ChunkPos chunkpos = level.getCenter();
+        Holder<Biome> holder = level.getBiome(chunkpos.getWorldPosition().atY(level.getMaxY()));
+        WorldgenRandom worldgenrandom = new WorldgenRandom(new LegacyRandomSource(RandomSupport.generateUniqueSeed()));
+        worldgenrandom.setDecorationSeed(level.getSeed(), chunkpos.getMinBlockX(), chunkpos.getMinBlockZ());
+        NaturalSpawner.spawnMobsForChunkGeneration(level, holder, chunkpos, worldgenrandom);
     }
 
     @Override
@@ -110,7 +142,6 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
     @Override
     public CompletableFuture<ChunkAccess> fillFromNoise(Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunk) {
-        final ChunkNoiseSamplingSettings settings = createNoiseSamplingSettingsForChunk(chunk);
         final ChunkPos chunkPos = chunk.getPos();
         NoiseSettings noisesettings = this.settings.noiseSettings().clampToHeightAccessor(chunk.getHeightAccessorForGeneration());
 
@@ -118,7 +149,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         int minY = noisesettings.minY();
         int minCellY = Mth.floorDiv(minY, noisesettings.getCellHeight());
         int maxCellY = Mth.floorDiv(noisesettings.height(), noisesettings.getCellHeight());
-        final WRNoiseChunk noiseChunk = createWRNoiseChunk(chunk,structureManager,blender,randomState,settings);
+        final WRNoiseChunk noiseChunk = createWRNoiseChunk(chunk, structureManager, blender, randomState);
 
         return CompletableFuture.supplyAsync(() -> {
             int cellRange = chunk.getSectionIndex(maxCellY * noisesettings.getCellHeight() - 1 + minY);
@@ -143,7 +174,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         }, Util.backgroundExecutor().forName("wgen_fill_noise"));
     }
 
-    private WRNoiseChunk createWRNoiseChunk(ChunkAccess chunk, StructureManager structureManager, Blender blender, RandomState random, ChunkNoiseSamplingSettings settings) {
+    private WRNoiseChunk createWRNoiseChunk(ChunkAccess chunk, StructureManager structureManager, Blender blender, RandomState random) {
         return WRNoiseChunk.forChunk(
                 this.parameters,
                 chunk,
@@ -151,8 +182,6 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
                 Beardifier.forStructuresInChunk(structureManager, chunk.getPos()),
                 this.settings,
                 blender,
-                noiseSampler,
-                settings,
                 getSeaLevel()
         );
     }
@@ -164,7 +193,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
     @Override
     public int getMinY() {
-        return ModWorldGenConstants.WORLD_BOTTOM;
+        return WildernessConstants.WORLD_BOTTOM;
 
     }
 
@@ -181,40 +210,22 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     }
 
     @Override
-    public Aquifer getOrCreateAquifer(ChunkAccess chunk) {
-
-        final ChunkNoiseSamplingSettings settings = createNoiseSamplingSettingsForChunk(chunk);
-        return getOrCreateAquifer(chunk, settings);
-    }
-
-    private WRAquifer getOrCreateAquifer(ChunkAccess chunk, ChunkNoiseSamplingSettings settings) {
-
-        final ChunkPos chunkPos = chunk.getPos();
-
-        WRAquifer aquifer = aquiferCache.getIfPresent(chunkPos.x, chunkPos.z);
-        if (aquifer == null)
-        {
-            final ChunkData chunkData = ChunkData.get(chunk);
-
-            aquifer = new WRAquifer(chunkPos, settings, getSeaLevel(), noiseSampler.positionalRandomFactory, noiseSampler.barrierNoise);
-            aquifer.setSurfaceHeights(chunkData.getAquiferSurfaceHeight());
-
-            aquiferCache.set(chunkPos.x, chunkPos.z, aquifer);
-        }
-        return aquifer;
-    }
-
-    @Override
     @SuppressWarnings("ConstantConditions")
-    public void initRandomState(ChunkMap chunkMap, ServerLevel level)
-    {
+    public void initRandomState(ChunkMap chunkMap, ServerLevel level) {
 
+
+        if (parameters != null) {
+            final WildChunkGenerator copy = copy();
+
+            ((ChunkMapBridge) chunkMap).updateGenerator(copy);
+            copy.initRandomState(chunkMap, level);
+            return;
+        }
         final Seed seed = Seed.of(level.getSeed());
 
         this.seed = seed;
-        this.noiseSampler = new NoiseSampler(seed.next(), level.registryAccess().lookupOrThrow(Registries.NOISE), level.registryAccess().lookupOrThrow(Registries.DENSITY_FUNCTION));
 
-        this.parameters = new TerrainParameters(seed,this.settings);
+        this.parameters = new TerrainParameters(seed, this.settings);
 
         // Update the cached chunk generator extension on the RandomState
         // This is done here when we initialize this chunk generator, and have ensured we are unique to this state and chunk map
@@ -225,13 +236,13 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
     @Override
     public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor level, RandomState random) {
-        return iterateNoiseColumn(level,random,x,z,null,type.isOpaque()).orElse(level.getMinY());
+        return iterateNoiseColumn(level, random, x, z, null).orElse(level.getMinY());
     }
 
     @Override
     public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor height, RandomState random) {
         MutableObject<NoiseColumn> mutableobject = new MutableObject<>();
-        this.iterateNoiseColumn(height,random,x,z, mutableobject, null);
+        this.iterateNoiseColumn(height, random, x, z, mutableobject);
         return mutableobject.getValue();
     }
 
@@ -239,103 +250,104 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     @Override
     public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
         DecimalFormat decimalformat = new DecimalFormat("0.000");
-        TerrainParameters.Sampled sampled = this.parameters.samplerAt(pos.getX(),pos.getZ());
+        TerrainParameters.Sampled sampled = this.parameters.samplerAt(pos.getX(), pos.getZ());
 
         String continentalness = decimalformat.format(sampled.continentalness());
         String terrainOffset = decimalformat.format(sampled.terrainOffset());
-        String terrainOffsetLarge = decimalformat.format(sampled.terrainOffsetLarge());
         String erosion = decimalformat.format(sampled.erosion());
         String tectonicActivity = decimalformat.format((1 - Math.abs(sampled.tectonicActivity())));
         String mountainCore = decimalformat.format(sampled.mountainsCore());
         String mountain = decimalformat.format(sampled.mountains());
         String mountainDetail = decimalformat.format(sampled.mountainDetails());
-        String plateau = decimalformat.format( Math.pow(Math.clamp(sampled.plateauMap(),0,1),5));
+        String plateau = decimalformat.format(Math.pow(Math.clamp(sampled.plateauMap(), 0, 1), 5));
         String hill = decimalformat.format(sampled.hills());
         String terrainTypeA = decimalformat.format(sampled.terrainTypeA());
         String terrainTypeB = decimalformat.format(sampled.terrainTypeB());
-        String postTerrainA = decimalformat.format(Math.clamp((sampled.terrainTypeA() + 1) /2,0,1));
-        String postTerrainB = decimalformat.format(Math.clamp((sampled.terrainTypeB() + 1) /2,0,1));
+        String postTerrainA = decimalformat.format(sampled.terrainType().a());
+        String postTerrainB = decimalformat.format(sampled.terrainType().b());
 
-        info.add("TO: " + terrainOffset + " TOL: " + terrainOffsetLarge);
-        info.add("C: " + continentalness + " E: " + erosion + " TA: " +  tectonicActivity);
-        info.add("Mountain: M: " +  mountain + " C: " + mountainCore + " D: " + mountainDetail);
-        info.add("H: " +  hill + " P: " + plateau);
-        info.add("Type: A: " + terrainTypeA  + " B: " + terrainTypeB  + " Post: A: " + postTerrainA  + " B: " + postTerrainB );
+        info.add("C: " + continentalness + " E: " + erosion + " TA: " + tectonicActivity);
+        info.add("Mountain: M: " + mountain + " C: " + mountainCore + " D: " + mountainDetail);
+        info.add("H: " + hill + " P: " + plateau + " TO: " + terrainOffset);
+        info.add("Type: A: " + terrainTypeA + " B: " + terrainTypeB + " Post: A: " + postTerrainA + " B: " + postTerrainB);
+        info.add("X: " + pos.getX() + " Y: " + pos.getY() + " Z: " + pos.getZ());
 
 
     }
 
 
-    //Borrowed from TerraFirmaCraft
-    private ChunkNoiseSamplingSettings createNoiseSamplingSettingsForChunk(ChunkAccess chunk) {
-        return createNoiseSamplingSettingsForChunk(chunk.getPos(), chunk.getHeightAccessorForGeneration());
-    }
-
-    //Borrowed from TerraFirmaCraft
-    private ChunkNoiseSamplingSettings createNoiseSamplingSettingsForChunk(ChunkPos pos, LevelHeightAccessor level) {
-        final NoiseSettings noiseSettings = this.settings.noiseSettings();
-
-        final int cellWidth = noiseSettings.getCellWidth();
-        final int cellHeight = noiseSettings.getCellHeight();
-
-        final int minY = Math.max(noiseSettings.minY(), level.getMinY());
-        final int maxY = Math.min(noiseSettings.minY() + noiseSettings.height(), level.getMaxY());
-
-        final int cellCountY = Math.floorDiv(maxY - minY, noiseSettings.getCellHeight());
-
-        final int firstCellX = Math.floorDiv(pos.getMinBlockX(), cellWidth);
-        final int firstCellY = Math.floorDiv(minY, cellHeight);
-        final int firstCellZ = Math.floorDiv(pos.getMinBlockZ(), cellWidth);
-
-        return new ChunkNoiseSamplingSettings(minY, 16 / cellWidth, cellCountY, cellWidth, cellHeight, firstCellX, firstCellY, firstCellZ);
-    }
 
     private WildChunkGenerator copy() {
         return new WildChunkGenerator(biomeSource, noiseSettings, settings);
     }
+
     protected OptionalInt iterateNoiseColumn(
             LevelHeightAccessor level,
             RandomState random,
             int x,
             int z,
-            @Nullable MutableObject<NoiseColumn> column,
-            @Nullable Predicate<BlockState> stoppingState
+            MutableObject<NoiseColumn> column
     ) {
         NoiseSettings noisesettings = this.settings.noiseSettings().clampToHeightAccessor(level);
         int cellHeight = noisesettings.getCellHeight();
-        int minY = noisesettings.minY();
         int heightDiv = Mth.floorDiv(noisesettings.height(), cellHeight);
         if (heightDiv <= 0) {
             return OptionalInt.empty();
         } else {
             BlockState[] ablockstate;
-            if (column != null) {
-                ablockstate = new BlockState[noisesettings.height()];
-                column.setValue(new NoiseColumn(minY, ablockstate));
-            }
+            int cellWidth = noisesettings.getCellWidth();
+            int cellX = Math.floorDiv(x, cellWidth);
+            int cellZ = Math.floorDiv(z, cellWidth);
+            int firstCellX = cellX * cellWidth;
+            int firstCellZ = cellZ * cellWidth;
+            int cellXPos = Math.floorMod(x, cellWidth);
+            int cellZPos = Math.floorMod(z, cellWidth);
+            double cellXPercent = (double) cellXPos / cellWidth;
+            double cellZPercent = (double) cellZPos / cellWidth;
 
-            int i1 = noisesettings.getCellWidth();
-            int j1 = Math.floorDiv(x, i1);
-            int k1 = Math.floorDiv(z, i1);
-            int j2 = j1 * i1;
-            int k2 = k1 * i1;
+            int minY = noisesettings.minY();
+            int bottomCellY = Mth.floorDiv(minY, cellHeight);
+            int cellYCount = Mth.floorDiv(noisesettings.height(), cellHeight);
+
             WRNoiseChunk noisechunk = new WRNoiseChunk(
                     this.parameters,
                     1,
                     random,
-                    j2,
-                    k2,
+                    firstCellX,
+                    firstCellZ,
                     null,
-                    noiseSampler,
                     noisesettings,
-                    createNoiseSamplingSettingsForChunk( new ChunkPos(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z)), level),
                     SEA_LEVEL_Y,
                     DensityFunctions.BeardifierMarker.INSTANCE,
-                    Blender.empty()
+                    Blender.empty(),
+                    this.settings
             );
 
-                    int height = (int) noisechunk.getTerrainPeakAt(x,z);
-                    return OptionalInt.of(height);
+            if (column != null) {
+                ablockstate = new BlockState[noisesettings.height()];
+                column.setValue(new NoiseColumn(minY, ablockstate));
+                for (int cellY = cellYCount - 1; cellY >= 0; cellY--) {
+                    noisechunk.selectCellYZ(cellY, 0);
+
+                    for (int cellBlock = cellHeight - 1; cellBlock >= 0; cellBlock--) {
+                        int yLevel = (bottomCellY + cellY) * cellHeight + cellBlock;
+                        double cellYPercent = (double) cellBlock / cellHeight;
+
+                        noisechunk.updateForY(yLevel, cellYPercent);
+                        noisechunk.updateForX(x, cellXPercent);
+                        noisechunk.updateForZ(z, cellZPercent);
+
+                        int yCellIndex = cellY * cellHeight + cellBlock;
+                        BlockState blockstate = noisechunk.testBlockAt(x,cellBlock,z,settings.defaultBlock());
+                        BlockState blockstate1 = blockstate == null ? this.settings.defaultBlock() : blockstate;
+                        ablockstate[yCellIndex] = blockstate1;
+                    }
+                }
+            }
+
+
+            int height = noisechunk.getSurfaceY(x, z,false);
+            return OptionalInt.of(height);
         }
     }
 }

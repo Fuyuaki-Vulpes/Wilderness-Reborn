@@ -85,7 +85,7 @@ public class ModSurfaceRuleData {
         SurfaceRules.RuleSource dirtNoSteep = SurfaceRules.ifTrue(SurfaceRules.not(isSteep),DIRT);
         SurfaceRules.RuleSource coarseDirtNoSteep = SurfaceRules.ifTrue(SurfaceRules.not(isSteep),COARSE_DIRT);
         SurfaceRules.RuleSource podzolNoSteep = SurfaceRules.ifTrue(SurfaceRules.not(isSteep),PODZOL);
-        SurfaceRules.RuleSource makeGrassSurfance = SurfaceRules.sequence(SurfaceRules.ifTrue(surfacerules$conditionsource8, GRASS_BLOCK), dirtNoSteep);
+        SurfaceRules.RuleSource makeGrassSurfance = SurfaceRules.sequence(SurfaceRules.ifTrue(surfacerules$conditionsource8, GRASS_BLOCK), DIRT);
         SurfaceRules.RuleSource grassSurfaceNoSteep = SurfaceRules.ifTrue(SurfaceRules.not(isSteep),makeGrassSurfance);
         SurfaceRules.RuleSource makeSandSurface = SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, SANDSTONE), SAND);
         SurfaceRules.RuleSource makeGravelSurface = SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, STONE), GRAVEL);
@@ -206,7 +206,7 @@ public class ModSurfaceRuleData {
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MUSHROOM_FIELDS), MYCELIUM),
                 SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.RIVER,Biomes.FROZEN_RIVER),
                         SurfaceRules.ifTrue(ModSurfaceRuleData.continental_threshold(NoiseRouterData.CONTINENTS,-0.2F,-0.1F), makeSandSurface)),
-                makeGrassSurfance
+                grassSurfaceNoSteep
         );
         SurfaceRules.ConditionSource surfaceNoiseVeryNegative = SurfaceRules.noiseCondition(Noises.SURFACE, -0.909, -0.5454);
         SurfaceRules.ConditionSource surfaceNoiseMedian = SurfaceRules.noiseCondition(Noises.SURFACE, -0.1818, 0.1818);

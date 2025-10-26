@@ -20,26 +20,13 @@
           },
           "legacy_random_source": false,
           "noise": {
-            "height": 816,
+            "height": 976,
             "min_y": -256,
             "size_horizontal": 1,
             "size_vertical": 2
           },
           "noise_storage": {
-            "age": "r_wilderness:router/erosion",
-            "barrier": "r_wilderness:router/barrier",
-            "caves": "r_wilderness:terrain/caves",
-            "continentalness": "r_wilderness:router/continentalness",
-            "erosion": "r_wilderness:router/erosion",
-            "flat_map": "r_wilderness:router/erosion",
-            "fluid_level_floodedness": "r_wilderness:router/fluid_level_floodedness",
-            "fluid_level_spread": "r_wilderness:router/fluid_level_spread",
-            "hills_map": "r_wilderness:elevation",
-            "humidity": "r_wilderness:router/vegetation",
-            "lava": "r_wilderness:router/lava_noise",
-            "mountain_map": "r_wilderness:elevation",
-            "temperature": "r_wilderness:router/temperature",
-            "vegetation_density": "r_wilderness:router/vegetation"
+            "caves": "r_wilderness:aquifers"
           },
           "sea_level": 68,
           "surface_rule": {
@@ -215,18 +202,9 @@
                                             }
                                           },
                                           {
-                                            "type": "minecraft:condition",
-                                            "if_true": {
-                                              "type": "minecraft:not",
-                                              "invert": {
-                                                "type": "minecraft:steep"
-                                              }
-                                            },
-                                            "then_run": {
-                                              "type": "minecraft:block",
-                                              "result_state": {
-                                                "Name": "minecraft:dirt"
-                                              }
+                                            "type": "minecraft:block",
+                                            "result_state": {
+                                              "Name": "minecraft:dirt"
                                             }
                                           }
                                         ]
@@ -1332,18 +1310,9 @@
                                                 }
                                               },
                                               {
-                                                "type": "minecraft:condition",
-                                                "if_true": {
-                                                  "type": "minecraft:not",
-                                                  "invert": {
-                                                    "type": "minecraft:steep"
-                                                  }
-                                                },
-                                                "then_run": {
-                                                  "type": "minecraft:block",
-                                                  "result_state": {
-                                                    "Name": "minecraft:dirt"
-                                                  }
+                                                "type": "minecraft:block",
+                                                "result_state": {
+                                                  "Name": "minecraft:dirt"
                                                 }
                                               }
                                             ]
@@ -1526,42 +1495,42 @@
                                   }
                                 },
                                 {
-                                  "type": "minecraft:sequence",
-                                  "sequence": [
-                                    {
-                                      "type": "minecraft:condition",
-                                      "if_true": {
-                                        "type": "minecraft:water",
-                                        "add_stone_depth": false,
-                                        "offset": 0,
-                                        "surface_depth_multiplier": 0
-                                      },
-                                      "then_run": {
-                                        "type": "minecraft:block",
-                                        "result_state": {
-                                          "Name": "minecraft:grass_block",
-                                          "Properties": {
-                                            "snowy": "false"
+                                  "type": "minecraft:condition",
+                                  "if_true": {
+                                    "type": "minecraft:not",
+                                    "invert": {
+                                      "type": "minecraft:steep"
+                                    }
+                                  },
+                                  "then_run": {
+                                    "type": "minecraft:sequence",
+                                    "sequence": [
+                                      {
+                                        "type": "minecraft:condition",
+                                        "if_true": {
+                                          "type": "minecraft:water",
+                                          "add_stone_depth": false,
+                                          "offset": 0,
+                                          "surface_depth_multiplier": 0
+                                        },
+                                        "then_run": {
+                                          "type": "minecraft:block",
+                                          "result_state": {
+                                            "Name": "minecraft:grass_block",
+                                            "Properties": {
+                                              "snowy": "false"
+                                            }
                                           }
                                         }
-                                      }
-                                    },
-                                    {
-                                      "type": "minecraft:condition",
-                                      "if_true": {
-                                        "type": "minecraft:not",
-                                        "invert": {
-                                          "type": "minecraft:steep"
-                                        }
                                       },
-                                      "then_run": {
+                                      {
                                         "type": "minecraft:block",
                                         "result_state": {
                                           "Name": "minecraft:dirt"
                                         }
                                       }
-                                    }
-                                  ]
+                                    ]
+                                  }
                                 }
                               ]
                             }
@@ -2464,7 +2433,7 @@
             ]
           }
         },
-        "vanilla_settings": "r_wilderness:overworld"
+        "vanilla_settings": "minecraft:overworld"
       }
     },
     "minecraft:the_end": {

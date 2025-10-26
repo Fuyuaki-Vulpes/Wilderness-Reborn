@@ -1,62 +1,39 @@
 {
-  "type": "minecraft:add",
-  "argument1": {
+  "type": "minecraft:flat_cache",
+  "argument": {
     "type": "minecraft:add",
     "argument1": {
-      "type": "minecraft:add",
-      "argument1": {
-        "type": "minecraft:add",
-        "argument1": {
-          "type": "minecraft:y_clamped_gradient",
-          "from_value": 1.0,
-          "from_y": -240,
-          "to_value": 0.0,
-          "to_y": -192
-        },
-        "argument2": {
-          "type": "minecraft:y_clamped_gradient",
-          "from_value": 2.5,
-          "from_y": -256,
-          "to_value": 0.0,
-          "to_y": -240
-        }
-      },
-      "argument2": {
-        "type": "minecraft:y_clamped_gradient",
-        "from_value": 1.0,
-        "from_y": 416,
-        "to_value": 0.0,
-        "to_y": 32
-      }
+      "type": "minecraft:y_clamped_gradient",
+      "from_value": 0.0,
+      "from_y": 32,
+      "to_value": 1.0,
+      "to_y": 256
     },
     "argument2": {
-      "type": "minecraft:mul",
-      "argument1": 0.75,
-      "argument2": {
-        "type": "minecraft:abs",
-        "argument": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:clamp",
+        "input": {
           "type": "minecraft:noise",
           "noise": "r_wilderness:cave/density",
-          "xz_scale": 0.25,
-          "y_scale": 0.5
-        }
-      }
-    }
-  },
-  "argument2": {
-    "type": "minecraft:add",
-    "argument1": "r_wilderness:cave/detail/pillars_secondary",
-    "argument2": {
-      "type": "minecraft:min",
-      "argument1": {
-        "type": "minecraft:min",
-        "argument1": "r_wilderness:cave/endogenes",
-        "argument2": "r_wilderness:cave/exogenes"
+          "xz_scale": 1.0,
+          "y_scale": 1.0
+        },
+        "max": 1.0,
+        "min": 0.0
       },
       "argument2": {
         "type": "minecraft:min",
-        "argument1": "r_wilderness:cave/cracks",
-        "argument2": "r_wilderness:cave/noodle"
+        "argument1": {
+          "type": "minecraft:min",
+          "argument1": "r_wilderness:cave/noodle",
+          "argument2": "r_wilderness:cave/cracks"
+        },
+        "argument2": {
+          "type": "minecraft:min",
+          "argument1": "r_wilderness:cave/endogenes",
+          "argument2": "r_wilderness:cave/exogenes"
+        }
       }
     }
   }

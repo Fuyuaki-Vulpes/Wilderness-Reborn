@@ -23,31 +23,6 @@ import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 @EventBusSubscriber(modid = MODID)
 public class ModCommonEvents {
 
-    @SubscribeEvent
-    public static void onAddPackFinders(AddPackFindersEvent event) {
-        if (event.getPackType() == PackType.SERVER_DATA) {
-            Path resourcePath = ModList.get().getModFileById("r_wilderness").getFile().findResource("resourcepacks/r_wilderness");
-
-            Pack dataPack = Pack.readMetaAndCreate(
-                    new PackLocationInfo(
-                            resourcePath.getFileName().toString(),
-                            Component.literal("Reborn: Wilderness"),
-                            PackSource.BUILT_IN,
-                            Optional.of(new KnownPack(MODID, "data", SharedConstants.getCurrentVersion().id()))
-                    ),
-                    new PathPackResources.PathResourcesSupplier(resourcePath),
-                    PackType.SERVER_DATA,
-                    new PackSelectionConfig(
-                            true,
-                            Pack.Position.TOP,
-                            false
-                    )
-            );
-
-            event.addRepositorySource((packConsumer) -> packConsumer.accept(dataPack));
-        }
-    }
-
 
     @SubscribeEvent
     public static void onDatapackRegistry(DataPackRegistryEvent.NewRegistry event){

@@ -9,13 +9,13 @@
     "RandomStateMixin",
     "ServerWorldMixin",
     "SoundEventMixin",
+    "SurfaceRulesContextMixin",
     "SurfaceRulesSteepConditionMixin",
     "WorldDimensionsMixin",
     "WorldPresetsMixin",
     "accessor.ChunkAccessAccessor",
     "accessor.ChunkGeneratorAccessor",
-    "accessor.ChunkMapAccessor",
-    "accessor.NoiseChunkAccessor"
+    "accessor.ChunkMapAccessor"
   ],
   "client": [
   ],

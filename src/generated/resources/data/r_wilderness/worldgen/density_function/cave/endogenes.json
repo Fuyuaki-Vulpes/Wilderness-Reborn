@@ -18,23 +18,16 @@
     }
   },
   "argument2": {
-    "type": "minecraft:range_choice",
-    "input": "r_wilderness:cave/detail/pillars",
-    "max_exclusive": 1000.0,
-    "min_inclusive": 0.0010000000474974513,
-    "when_in_range": "r_wilderness:cave/detail/pillars",
-    "when_out_of_range": {
-      "type": "minecraft:add",
-      "argument1": 0.550000011920929,
+    "type": "minecraft:add",
+    "argument1": 0.550000011920929,
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": 1.5,
       "argument2": {
-        "type": "minecraft:mul",
-        "argument1": 1.5,
-        "argument2": {
-          "type": "minecraft:noise",
-          "noise": "r_wilderness:cave/endogene",
-          "xz_scale": 0.75,
-          "y_scale": 3.0
-        }
+        "type": "minecraft:noise",
+        "noise": "r_wilderness:cave/endogene",
+        "xz_scale": 0.75,
+        "y_scale": 3.0
       }
     }
   }

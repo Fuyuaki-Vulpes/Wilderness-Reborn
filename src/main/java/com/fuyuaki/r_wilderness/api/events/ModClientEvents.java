@@ -1,7 +1,6 @@
 package com.fuyuaki.r_wilderness.api.events;
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
-import com.fuyuaki.r_wilderness.client.gui.ModDebugScreen;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -30,7 +29,6 @@ public class ModClientEvents {
 
         event.registerAboveAll(RWildernessMod.modLocation("debug_ui"),((guiGraphics, deltaTracker) -> {
             Minecraft minecraft = Minecraft.getInstance();
-            ModDebugScreen debugScreen = new ModDebugScreen(minecraft);
             if (minecraft.player != null && !minecraft.options.hideGui){
 //                debugScreen.render(guiGraphics);
             }

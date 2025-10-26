@@ -16,7 +16,10 @@
  import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.levelgen.*;
+ import net.minecraft.world.level.levelgen.DensityFunction;
+ import net.minecraft.world.level.levelgen.DensityFunctions;
+ import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
+ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
  import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  import net.minecraft.world.level.levelgen.presets.WorldPreset;
  import net.minecraft.world.level.levelgen.structure.StructureSet;
@@ -67,25 +70,12 @@
                          overworldDimensionType,
                          new WildChunkGenerator(
                                  MultiNoiseBiomeSource.createFromPreset(referenceOverworld),
-                                 noiseSettings.getOrThrow(WildWorldSettings.NoiseGenerator.OVERWORLD),
+                                 noiseSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD),
                                  new WildGeneratorSettings(
                                          WildWorldSettings.OVERWORLD_NOISE_SETTINGS,
                                          new WorldGenerationNoiseStorage(
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_BARRIER),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_FLUID_LEVEL_FLOODEDNESS),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_FLUID_LEVEL_SPREAD),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_LAVA_NOISE),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_TEMPERATURE),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_VEGETATION),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_EROSION),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_EROSION),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_VEGETATION),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.ELEVATION),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.ELEVATION),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_EROSION),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.R_CONTINENTALNESS),
-                                                 getFunction(densityFunctions,ModNoiseRouterData.TERRAIN_CAVES)
-
+                                                 getFunction(densityFunctions,ModNoiseRouterData.TERRAIN_CAVES),
+                                                 getFunction(densityFunctions,ModNoiseRouterData.AQUIFERS)
                                          ),
                                          Blocks.STONE.defaultBlockState(),
                                          Blocks.WATER.defaultBlockState(),

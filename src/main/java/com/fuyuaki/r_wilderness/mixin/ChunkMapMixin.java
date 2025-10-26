@@ -6,7 +6,6 @@ import com.fuyuaki.r_wilderness.world.generation.ChunkMapBridge;
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.level.TicketStorage;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -34,7 +33,7 @@ public class ChunkMapMixin implements ChunkMapBridge {
     private WorldGenContext worldGenContext;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void createRandomStateExtension(ServerLevel level, LevelStorageSource.LevelStorageAccess levelStorageAccess, DataFixer fixerUpper, StructureTemplateManager structureManager, Executor dispatcher, BlockableEventLoop mainThreadExecutor, LightChunkGetter lightChunk, ChunkGenerator generator, ChunkProgressListener progressListener, ChunkStatusUpdateListener chunkStatusListener, Supplier overworldDataStorage, TicketStorage ticketStorage, int serverViewDistance, boolean sync, CallbackInfo ci)
+    private void createRandomStateExtension(ServerLevel level, LevelStorageSource.LevelStorageAccess storageSource, DataFixer fixerUpper, StructureTemplateManager structureManager, Executor dispatcher, BlockableEventLoop mainThreadExecutor, LightChunkGetter lightChunk, ChunkGenerator generator, ChunkStatusUpdateListener chunkStatusListener, Supplier overworldDataStorage, TicketStorage ticketStorage, int serverViewDistance, boolean sync, CallbackInfo ci)
     {
         if (generator instanceof ChunkGeneratorExtension ex)
         {
