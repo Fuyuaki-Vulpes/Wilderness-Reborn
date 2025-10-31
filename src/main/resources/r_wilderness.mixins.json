@@ -6,6 +6,7 @@
   "refmap": "r_wilderness.refmap.json",
   "mixins": [
     "ChunkMapMixin",
+    "MinecraftServerMixin",
     "RandomStateMixin",
     "ServerWorldMixin",
     "SoundEventMixin",

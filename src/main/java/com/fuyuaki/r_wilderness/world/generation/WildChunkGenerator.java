@@ -74,6 +74,8 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     }
 
 
+
+
     @Override
     public CompletableFuture<ChunkAccess> createBiomes(RandomState randomState, Blender blender, StructureManager structureManager, ChunkAccess chunk) {
         return CompletableFuture.supplyAsync(() -> {
@@ -204,6 +206,11 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     }
 
     @Override
+    public TerrainParameters terrainParameters() {
+        return this.parameters;
+    }
+
+    @Override
     public void applySettings(UnaryOperator<WildGeneratorSettings> settings) {
         this.settings = settings.apply(this.settings);
 
@@ -259,6 +266,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         String mountainCore = decimalformat.format(sampled.mountainsCore());
         String mountain = decimalformat.format(sampled.mountains());
         String mountainDetail = decimalformat.format(sampled.mountainDetails());
+        String mountainNoise = decimalformat.format(sampled.mountainNoise());
         String plateau = decimalformat.format(Math.pow(Math.clamp(sampled.plateauMap(), 0, 1), 5));
         String hill = decimalformat.format(sampled.hills());
         String terrainTypeA = decimalformat.format(sampled.terrainTypeA());
@@ -267,7 +275,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         String postTerrainB = decimalformat.format(sampled.terrainType().b());
 
         info.add("C: " + continentalness + " E: " + erosion + " TA: " + tectonicActivity);
-        info.add("Mountain: M: " + mountain + " C: " + mountainCore + " D: " + mountainDetail);
+        info.add("Mountain: M: " + mountain + " C: " + mountainCore + " D: " + mountainDetail + " N: " + mountainNoise);
         info.add("H: " + hill + " P: " + plateau + " TO: " + terrainOffset);
         info.add("Type: A: " + terrainTypeA + " B: " + terrainTypeB + " Post: A: " + postTerrainA + " B: " + postTerrainB);
         info.add("X: " + pos.getX() + " Y: " + pos.getY() + " Z: " + pos.getZ());
@@ -349,5 +357,10 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
             int height = noisechunk.getSurfaceY(x, z,false);
             return OptionalInt.of(height);
         }
+    }
+
+    @Override
+    public int getSpawnHeight(LevelHeightAccessor level) {
+        return super.getSpawnHeight(level);
     }
 }

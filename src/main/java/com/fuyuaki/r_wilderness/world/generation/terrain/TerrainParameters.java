@@ -4,14 +4,36 @@ import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import com.fuyuaki.r_wilderness.world.generation.Seed;
 import com.fuyuaki.r_wilderness.world.generation.WildGeneratorSettings;
 import com.fuyuaki.r_wilderness.world.level.levelgen.util.DistortionSpline;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.QuartPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 import net.minecraft.world.level.levelgen.synth.PerlinNoise;
 
+import java.util.List;
+
 public class TerrainParameters {
-    private static final float baseContinentSize = 0.85F;
-    private static final float baseTectonicSize = 0.5F;
+    public static final Range NEUTRAL = range(-0.5,0.5);
+    public static final Range FULL = range(-1.0,1.0);
+
+    public static final Target SPAWN_TARGET =
+            new Target(
+                    NEUTRAL, //Temperature
+                    NEUTRAL, //Humidity
+                    NEUTRAL, //Vegetation Density
+                    NEUTRAL, //Rockiness
+                    range(0.1,0.75), //Continentalness
+                    range(-9,0.15), //Tectonic Activity
+                    range(0,0,1), //Plateau
+                    NEUTRAL, //Erosion
+                    range(64,160) // Terrain Height
+            );
+
+
+    private static final float baseContinentSize = 1.25F;
+    private static final float baseTectonicSize = 1.25F;
     private static final float plateauScale = 1 / 0.75F;
     private static final float terrainTypeScale = 1 / 0.5F;
     private static final float mountainCoordsSize = 1.0F;
@@ -41,7 +63,7 @@ public class TerrainParameters {
                         getMountainsCore(randomSource, "mountain_core"),
                         getMountains(randomSource, "mountain_shape"),
                         getMountainDetails(randomSource, "mountain_detail"),
-                        getMountains(randomSource, "mountain_peaks")
+                        getMountainNoise(randomSource, "mountain_noise")
                 ),
                 getPlateauMap(randomSource, "plateaus"),
                 getHills(randomSource, "hills"),
@@ -77,7 +99,7 @@ public class TerrainParameters {
     }
 
     private PerlinNoise getHills(PositionalRandomFactory randomSource, String name) {
-        return PerlinNoise.create(noiseRandom(name, randomSource),-7,1,1);
+        return PerlinNoise.create(noiseRandom(name, randomSource),-6,1.5,1);
     }
 
     private PerlinNoise getMountainsCore(PositionalRandomFactory randomSource, String name) {
@@ -86,12 +108,15 @@ public class TerrainParameters {
     private PerlinNoise getMountains(PositionalRandomFactory randomSource, String name) {
         return PerlinNoise.create(noiseRandom(name, randomSource),-6,1);
     }
+    private PerlinNoise getMountainNoise(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-3,1,1);
+    }
     private PerlinNoise getMountainDetails(PositionalRandomFactory randomSource, String name) {
         return PerlinNoise.create(noiseRandom(name, randomSource),-5,1);
     }
 
     private PerlinNoise getTectonicActivity(PositionalRandomFactory randomSource, String name) {
-        return  PerlinNoise.create(noiseRandom(name, randomSource), -13,12,12,12);
+        return  PerlinNoise.create(noiseRandom(name, randomSource), -13,18,12,12);
     }
 
     private PerlinNoise getErosion(PositionalRandomFactory randomSource, String name) {
@@ -99,7 +124,7 @@ public class TerrainParameters {
     }
 
     private PerlinNoise getContinentalness(PositionalRandomFactory randomSource, String name) {
-        return PerlinNoise.create(noiseRandom(name, randomSource),-10,1.5,1,1,1);
+        return PerlinNoise.create(noiseRandom(name, randomSource),-12,1.5,1,1,1,1,1);
     }
 
 
@@ -109,7 +134,7 @@ public class TerrainParameters {
                 PerlinNoise.create(noiseRandom("humidity", randomSource),-10,1),
                 PerlinNoise.create(noiseRandom("vegetation_density", randomSource),-10,1),
                 PerlinNoise.create(noiseRandom("aquifers", randomSource),-9,1.5,1),
-                PerlinNoise.create(noiseRandom("rockyness", randomSource),-10,1)
+                PerlinNoise.create(noiseRandom("rockiness", randomSource),-10,1)
         );
     }
 
@@ -162,7 +187,7 @@ public class TerrainParameters {
      */
     private double sampleTerrain(float x, float z, double continentalness, double erosion) {
         int amplitude = 32;
-        int eAmp = 8;
+        int eAmp = 2;
         double base = Math.abs(this.shapers.terrainOffset.getValue(x,0,z));
         double large = Math.abs(this.shapers.terrainOffsetLarge.getValue(x,0,z));
         double noise = Math.abs(this.shapers.terrainNoise.getValue(x,0,z)) * 0.04;
@@ -208,7 +233,7 @@ public class TerrainParameters {
         float x = xPos * mountainCoordsSize;
         float z = zPos * mountainCoordsSize;
         double hills = Math.pow(Math.abs(this.shapers.hills.getValue(x,0, z)),1.25);
-        double hillSize = 40;
+        double hillSize = 42 * (1-Math.clamp((erosion+1)/2,0,1));
         double hillShape = (Math.min((tA + hillPlateausStart), 1)) * hills * hillSize * Math.clamp(( 1 + erosion) / 2,0,1) * continentalFilter;
 
         double plateauFilter = (1 - plateau) * 0.5 + 0.5;
@@ -224,12 +249,33 @@ public class TerrainParameters {
 
         double mountainsCore = Math.pow(Math.clamp(((this.shapers.mountains.core.getValue(x, 0, z) + 1) / 2),0,1), 1.25);
         double mountains = Math.pow(Math.clamp(((this.shapers.mountains.shape.getValue(x, 0, z) + 1) / 2),0,1), powerCurve);
+        double mountainNoise = Math.pow(Math.abs(this.shapers.mountains.noise.getValue(x, 0, z)), powerCurve);
 
         double detail = Math.abs(
                 (1 - Math.abs(this.shapers.mountains.detail.getValue(x, 0, z)))
                 - 0.5 ) * 2;
 
         double mountainDetail = detail * ((mountainsCore + mountains) / 2);
+
+        double offset = 12;
+
+        double mc1 = Math.pow(Math.clamp(((this.shapers.mountains.core.getValue(x+offset, 0, z) + 1) / 2),0,1), 1.25);
+        double m1 = Math.pow(Math.clamp(((this.shapers.mountains.shape.getValue(x+offset, 0, z) + 1) / 2),0,1), powerCurve);
+
+        double mc2 = Math.pow(Math.clamp(((this.shapers.mountains.core.getValue(x-offset, 0, z) + 1) / 2),0,1), 1.25);
+        double m2 = Math.pow(Math.clamp(((this.shapers.mountains.shape.getValue(x-offset, 0, z) + 1) / 2),0,1), powerCurve);
+
+        double mc3 = Math.pow(Math.clamp(((this.shapers.mountains.core.getValue(x, 0, z+offset) + 1) / 2),0,1), 1.25);
+        double m3 = Math.pow(Math.clamp(((this.shapers.mountains.shape.getValue(x, 0, z+offset) + 1) / 2),0,1), powerCurve);
+
+        double mc4 = Math.pow(Math.clamp(((this.shapers.mountains.core.getValue(x, 0, z-offset) + 1) / 2),0,1), 1.25);
+        double m4 = Math.pow(Math.clamp(((this.shapers.mountains.shape.getValue(x, 0, z-offset) + 1) / 2),0,1), powerCurve);
+
+        double[] mc = new double[4];
+        mc[0] = mc1 + m1;
+        mc[1] = mc2 + m2;
+        mc[2] = mc3 + m3;
+        mc[3] = mc4 + m4;
 
 
 
@@ -239,14 +285,15 @@ public class TerrainParameters {
         double alpha = (mountains) * tectonicFilter1 * ridges;
         double alphaEroded = mountains * tA;
         double alphaDetail = mountainDetail * tectonicFilter;
+        double alphaNoise = mountainNoise * tectonicFilter;
 
-        double filter = Math.clamp(Math.pow(((continentalness + 0.3) * (1/0.5)), 1.5), 0,2);
+        double filter = Math.clamp(Math.pow(((continentalness + 0.3) * (1/0.1)), 1.5), 0,2);
         double rift = Math.abs(filter-1);
 
 
         double erodedMountainMap = NaNCheck(mountainEroded(alphaEroded, alphaCore, continentalness));
-        double mountainMap = NaNCheck(mountain(alpha, alphaDetail,alphaCore, continentalness));
-        double mountainCliffMap = NaNCheck(mountainSeaCliff(alpha, alphaDetail,alphaCore, continentalness));
+        double mountainMap = NaNCheck(mountain(alpha, alphaDetail,alphaCore,alphaNoise, continentalness,mountains + mountainsCore,mc));
+        double mountainCliffMap = NaNCheck(mountainSeaCliff(alpha, alphaDetail,alphaCore,alphaNoise, continentalness,mountains + mountainsCore,mc));
         double divergentMap = divergent((mountains), mountainsCore, tA,surfaceOnly,rift);
         if (plateau > 0){
             double dA = Math.max(divergentMap, 0);
@@ -335,37 +382,47 @@ public class TerrainParameters {
     }
 
     private double mountainEroded(double alpha, double alphaCore, double continentalness) {
-        double c = Math.clamp(continentalness * 1.1 - 0.1, 0.25, 1.0);
+        double c = Math.clamp(Math.abs(continentalness) * 2, 0.0, 1.0);
 
         double seaDelta = continentalnessFade(continentalness,0.2,0.2,false);
 
         double amplitudeCore = 150 * c;
-        amplitudeCore = (seaDelta * amplitudeCore) / 1.5 + amplitudeCore;
+        amplitudeCore = seaDelta * amplitudeCore;
 
         double amplitude = 150 * c;
-        amplitude = (seaDelta * amplitude) / 1.5 + amplitude;
+        amplitude = seaDelta * amplitude;
 
         return (alpha * amplitude) + (alphaCore * amplitudeCore);
     }
-    private double mountain(double alpha, double alphaDetail, double alphaCore, double continentalness) {
-        double c = Math.clamp(Math.abs(continentalness) + 0.2, 0.5, 1.0);
+    private double mountain(double alpha, double alphaDetail, double alphaCore, double alphaNoise, double continentalness, double m, double[] mc) {
+        double c = Math.clamp(Math.abs(continentalness) * 4, 0.0, 1.0);
         // Controls the height of the mountains (peaks / max height, not average)
         double amplitudeCore = 160 * c;
         double amplitude = 140 * c;
         double detailAmp = 20 * c;
-        //TOTAL = 320
+        double noiseAmp = 32 * c;
+        //TOTAL = 352
+        double maxCurve = 1 / 0.4F;
+        double xM = Math.max(Math.abs(m - mc[0]), Math.abs(m - mc[1])) * maxCurve;
+        double zM = Math.max(Math.abs(m - mc[2]), Math.abs(m - mc[3])) * maxCurve;
+        double mA = Math.min(Math.max(xM,zM), 1);
+
+
 
         double seaDelta = continentalnessFade(continentalness,0.2,0.1,false);
+        double seaDeltaB = continentalnessFade(continentalness,0.2,0.1,true);
 
-        amplitudeCore = (seaDelta * amplitudeCore) / 1.5 + amplitudeCore;
-        amplitude = (seaDelta * amplitude) / 1.5 + amplitude;
-        detailAmp = (seaDelta * detailAmp) / 1.5 + detailAmp;
+        amplitudeCore = seaDelta * amplitudeCore;
+        amplitude = seaDelta * amplitude;
+        detailAmp = seaDelta * detailAmp;
+        noiseAmp = seaDelta * noiseAmp;
 
 
-        return (alpha * amplitude) + (alphaDetail * detailAmp) + (alphaCore * amplitudeCore) - Mth.lerp(seaDelta,120,0);
+
+        return (alpha * amplitude) + (alphaDetail * detailAmp) + (alphaCore * amplitudeCore) + (noiseAmp * mA * alphaNoise) - Mth.lerp(seaDeltaB,120,0);
     }
-    private double mountainSeaCliff(double alpha, double alphaDetail, double alphaCore, double continentalness) {
-        double c = Math.clamp((continentalness * 30) + Math.min(alphaDetail,0.3), -0.35, 1.0);
+    private double mountainSeaCliff(double alpha, double alphaDetail, double alphaCore, double alphaNoise, double continentalness, double m, double[] mc) {
+        double c = Math.clamp((continentalness * 30) + Math.min(alphaDetail,0.2), -0.35, 1.0);
         if (c < 0){
             c = Math.sin((c * (1/0.35) * Mth.HALF_PI)) * 0.35;
         }else{
@@ -375,9 +432,16 @@ public class TerrainParameters {
         double amplitudeCore = 150 * c;
         double amplitude = 150 * c;
         double detailAmp = 20 * c;
-        //TOTAL = 320
+        double noiseAmp = 32 * c;
+        //TOTAL = 352
+        double maxCurve = 1 / 0.4F;
+        double xM = Math.max(Math.abs(m - mc[0]), Math.abs(m - mc[1])) * maxCurve;
+        double zM = Math.max(Math.abs(m - mc[2]), Math.abs(m - mc[3])) * maxCurve;
+        double mA = Math.min(Math.max(xM,zM), 1);
 
-        return (alpha * amplitude) + (alphaDetail * detailAmp) + (alphaCore * amplitudeCore);
+
+
+        return (alpha * amplitude) + (alphaDetail * detailAmp) + (alphaCore * amplitudeCore) + (noiseAmp * mA * alphaNoise);
     }
 
     private double sampleOceans(double continentalness){
@@ -390,9 +454,10 @@ public class TerrainParameters {
                         .addPoint(-1.5F,median + 16)
                         .addPoint(-1.15F,median)
                         .addPoint(-1.0F,seaBottom)
-                        .addPoint(-0.315F,40)
-                        .addPoint(-0.15F,60)
-                        .addPoint(-0.1F,median-1)
+                        .addPoint(-0.175F,32)
+                        .addPoint(-0.075F,48)
+                        .addPoint(-0.05F,58)
+                        .addPoint(-0.01F,median-1)
                         .addPoint(0.0F,median)
                         .addPoint(0.4F,68)
                         .addPoint(0.65F,90)
@@ -417,11 +482,14 @@ public class TerrainParameters {
                 this.shapers.continentalness.getValue(xContinental * baseContinentSize, 0, zPos * continentScale * baseContinentSize)  + 0.2,
                 this.shapers.erosion.getValue(x,0,z),
                 this.shapers.tectonicActivity.getValue(xPos / baseTectonicSize, 0,zPos / baseTectonicSize),
-                this.shapers.mountains.core.getValue(x * mountainCoordsSize, 0, z *  mountainCoordsSize),
-                this.shapers.mountains.shape.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize),
-                this.shapers.mountains.detail.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize),
+                foldZeroToOne(this.shapers.mountains.core.getValue(x * mountainCoordsSize, 0, z *  mountainCoordsSize)),
+                foldZeroToOne(this.shapers.mountains.shape.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize)),
+                Math.abs(
+                        (1 - Math.abs(this.shapers.mountains.detail.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize)))
+                                - 0.5 ) * 2,
+                Math.abs(this.shapers.mountains.noise.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize)),
                 this.shapers.plateauMap.getValue(xPos / baseTectonicSize / plateauScale,0,zPos / baseTectonicSize / plateauScale),
-                this.shapers.hills.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize),
+                Math.abs(this.shapers.hills.getValue(x * mountainCoordsSize, 0, z * mountainCoordsSize)),
                 Math.max(Math.abs(this.shapers.terrainOffset.getValue(x,0,z))
                         , Math.abs(this.shapers.terrainOffsetLarge.getValue(x,0,z)))
                         + (Math.abs(this.shapers.terrainNoise.getValue(x,0,z)) * 0.125),
@@ -432,6 +500,17 @@ public class TerrainParameters {
                 this.climate.vegetationDensity.getValue(x,0,z),
                 this.climate.rockyness.getValue(x,0,z)
         );
+    }
+
+    private double foldZeroToOne(double value) {
+        return Math.clamp((value+1)/2,0,1);
+    }
+    public static Range range(double min, double max){
+        double r = max - min;
+        return new Range(min, min + r/2,max);
+    }
+    public static Range range(double min, double mean, double max){
+        return new Range(min,mean,max);
     }
 
     public record Shapers(
@@ -452,7 +531,7 @@ public class TerrainParameters {
                 PerlinNoise core,
                 PerlinNoise shape,
                 PerlinNoise detail,
-                PerlinNoise peak
+                PerlinNoise noise
         ){}
     }
 
@@ -464,6 +543,7 @@ public class TerrainParameters {
         double mountainsCore,
         double mountains,
         double mountainDetails,
+        double mountainNoise,
         double plateauMap,
         double hills,
         double terrainOffset,
@@ -516,4 +596,146 @@ public class TerrainParameters {
             PerlinNoise rockyness
     ){}
 
+
+    public record Range(double min, double mean, double max){
+
+
+
+        public boolean accepts(double v){
+            return v < min || v > max;
+        }
+
+        public double affinity(double v, boolean extremeNegative){
+
+
+            double p;
+            double a;
+
+            if (v > mean){
+                p = max - mean;
+                a = v - mean;
+
+            }else{
+                p = mean - min;
+                a = v - min;
+
+            }
+            if (p == 0){
+                if (!accepts(v) && extremeNegative) return a -1000;
+                return a;
+            }
+
+            if (!accepts(v) && extremeNegative) return (a/p) -1000;
+
+            return a / p;
+
+        }
+    }
+
+    public record Target(
+            Range temperature,
+            Range humidity,
+            Range vegetationDensity,
+            Range rockiness,
+            Range continentalness,
+            Range tectonicActivity,
+            Range plateau,
+            Range erosion,
+            Range terrainHeight
+    ){
+        boolean test(TerrainParameters.Sampled parameters, double yLevel){
+            boolean t = temperature.accepts(parameters.temperature);
+            boolean h = humidity.accepts(parameters.humidity);
+            boolean v = vegetationDensity.accepts(parameters.vegetationDensity);
+            boolean r = rockiness.accepts(parameters.rockyness);
+            boolean c = continentalness.accepts(parameters.continentalness);
+            boolean tA = tectonicActivity.accepts(parameters.tectonicActivity);
+            boolean p = plateau.accepts(parameters.plateauMap);
+            boolean e = erosion.accepts(parameters.erosion);
+            boolean height = terrainHeight.accepts(yLevel);
+            return t && h && v && r && c && tA && p && e && height;
+        }
+
+        double affinity(TerrainParameters.Sampled parameters, double yLevel, boolean extremeNegative){
+            double t = temperature.affinity(parameters.temperature,extremeNegative);
+            double h = humidity.affinity(parameters.humidity,extremeNegative);
+            double v = vegetationDensity.affinity(parameters.vegetationDensity,extremeNegative);
+            double r = rockiness.affinity(parameters.rockyness,extremeNegative);
+            double c = continentalness.affinity(parameters.continentalness,extremeNegative);
+            double tA = tectonicActivity.affinity(parameters.tectonicActivity,extremeNegative);
+            double p = plateau.affinity(parameters.plateauMap,extremeNegative);
+            double e = erosion.affinity(parameters.erosion,extremeNegative);
+            double height = terrainHeight.affinity(yLevel,extremeNegative);
+//            System.out.println("T: " + t);
+//            System.out.println("H: " + h);
+//            System.out.println("V: " + v);
+//            System.out.println("R: " + r);
+//            System.out.println("C: " + c);
+//            System.out.println("TA: " + tA);
+//            System.out.println("P: " + p);
+//            System.out.println("E: " + e);
+//            System.out.println("H: " + h);
+            double affinity = (t + h + v + r + c + tA + p + e + height) / 9;
+            if (!test(parameters,yLevel) && extremeNegative) return affinity -1000;
+
+            return affinity;
+        }
+
+        double affinity(TerrainParameters.Sampled parameters, BlockPos pos, boolean extremeNegative){
+            return affinity(parameters,pos.getCenter().y,extremeNegative);
+        }
+
+    }
+
+    public static BlockPos findSpawnPosition(Target points, TerrainParameters parameters) {
+        SpawnFinder spawnFinder = new SpawnFinder(points, parameters,BlockPos.ZERO);
+        return spawnFinder.result.location();
+    }
+
+
+    static class SpawnFinder {
+        Result result;
+
+        SpawnFinder(Target points, TerrainParameters parameters, BlockPos pos) {
+            this.result = Result.of(pos,points.affinity(parameters.samplerAt(pos.getX(),pos.getZ()),pos.atY(Mth.floor(parameters.yLevelAt(pos.getX(),pos.getZ(),false)) + 1),false));
+//            System.out.println("Affinity 0,0: " + result.affinity);
+            this.radialSearch(points, parameters, 4096.0F, 512.0F);
+            this.radialSearch(points, parameters, 512.0F, 32.0F);
+            if (this.result.affinity < 0.5){
+                this.radialSearch(points,parameters,16384,2048);
+            }
+        }
+
+        private void radialSearch(Target point, TerrainParameters parameters, float max, float min) {
+            float f = 0.0F;
+            float f1 = min;
+            BlockPos blockpos = this.result.location();
+
+            while (f1 <= max) {
+                int x = blockpos.getX() + (int)(Math.sin(f) * f1);
+                int z = blockpos.getZ() + (int)(Math.cos(f) * f1);
+                Sampled sampled = parameters.samplerAt(x,z);
+                int y = Mth.floor(parameters.yLevelAt(x,z,false) + 1);
+                double affinity = point.affinity(sampled,y,false);
+//                System.out.println("Affinity "+ x + ","+ z + ": " + affinity);
+
+                if (affinity > this.result.affinity) {
+                    this.result = Result.of(new BlockPos(x,y,z), affinity);
+                }
+
+                f += min / f1;
+                if (f > Math.PI * 2) {
+                    f = 0.0F;
+                    f1 += min;
+                }
+            }
+        }
+
+        record Result(BlockPos location, double affinity) {
+            static Result of (BlockPos location, double affinity){
+                return new Result(location,affinity);
+            }
+        }
+
+    }
 }

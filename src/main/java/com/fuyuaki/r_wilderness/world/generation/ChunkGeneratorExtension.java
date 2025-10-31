@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation;
 
+import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -29,6 +30,8 @@ public interface ChunkGeneratorExtension {
      */
     WildGeneratorSettings settings();
 
+
+    TerrainParameters terrainParameters();
 
     /**
      * Used on client to set the settings via the preset configuration screen.
