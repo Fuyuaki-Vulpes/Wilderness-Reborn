@@ -1,0 +1,9 @@
+{
+  "parent": "r_wilderness:block/template_grass_block",
+  "textures": {
+    "dirt": "minecraft:block/dirt",
+    "grass": "minecraft:block/grass_block_top",
+    "overlay": "minecraft:block/grass_block_overlay",
+    "particle": "minecraft:block/dirt"
+  }
+}

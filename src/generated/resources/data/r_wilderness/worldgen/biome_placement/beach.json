@@ -1,0 +1,64 @@
+{
+  "biome": "minecraft:beach",
+  "name": "r_wilderness:beach",
+  "target": {
+    "continentalness": {
+      "max": 0.1,
+      "mean": 0.0,
+      "min": -0.1
+    },
+    "erosion": {
+      "max": -1.5,
+      "mean": 0.2,
+      "min": -0.1
+    },
+    "highlands": {
+      "max": 0.25,
+      "mean": 0.125,
+      "min": 0.0
+    },
+    "humidity": {
+      "max": 0.0,
+      "mean": -0.5,
+      "min": -2.5
+    },
+    "magicalness": {
+      "max": 0.15,
+      "mean": -0.675,
+      "min": -1.5
+    },
+    "rockiness": {
+      "max": 0.0,
+      "mean": -0.5,
+      "min": -2.5
+    },
+    "tectonic_activity": {
+      "max": 0.0,
+      "mean": -5.0,
+      "min": -10.0
+    },
+    "temperature": {
+      "max": 0.75,
+      "mean": 0.55,
+      "min": 0.35
+    },
+    "terrain_height": {
+      "max": 92.0,
+      "mean": 64.0,
+      "min": -256.0
+    },
+    "vegetation_density": {
+      "max": -0.6,
+      "mean": -0.725,
+      "min": -0.85
+    },
+    "weirdness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    }
+  },
+  "valid_terrain_types": [
+    "shore"
+  ]
+}

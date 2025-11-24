@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_farmland",
+  "textures": {
+    "dirt": "r_wilderness:block/silt",
+    "top": "r_wilderness:block/silt_farmland_moist"
+  }
+}

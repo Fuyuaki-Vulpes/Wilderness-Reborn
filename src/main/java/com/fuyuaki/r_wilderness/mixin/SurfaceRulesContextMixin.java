@@ -4,10 +4,8 @@ package com.fuyuaki.r_wilderness.mixin;
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
 import com.fuyuaki.r_wilderness.world.generation.terrain.SurfaceRulesContextExtension;
-import net.minecraft.world.level.levelgen.NoiseChunk;
-import net.minecraft.world.level.levelgen.RandomState;
-import net.minecraft.world.level.levelgen.SurfaceRules;
-import net.minecraft.world.level.levelgen.WorldGenerationContext;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.levelgen.*;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,6 +30,7 @@ public abstract class SurfaceRulesContextMixin implements SurfaceRulesContextExt
     @Shadow @Final public WorldGenerationContext context;
     @Shadow @Final public RandomState randomState;
     @Shadow public int blockY;
+    @Shadow @Final public ChunkAccess chunk;
     @Unique
     @Nullable
     private WRNoiseChunk wildNoiseChunk = null;
@@ -55,7 +54,7 @@ public abstract class SurfaceRulesContextMixin implements SurfaceRulesContextExt
         if (this.noiseChunk == null && this.wildNoiseChunk != null){
             if (this.lastMinSurfaceLevelUpdate != this.lastUpdateXZ) {
                 this.lastMinSurfaceLevelUpdate = this.lastUpdateXZ;
-                int l = Math.max(this.wildNoiseChunk.getSurfaceY(this.blockX,this.blockZ,true),
+                int l = Math.max(this.wildNoiseChunk.getSurfaceYSurface(this.blockX,this.blockZ),
                         this.randomState.getOrCreateRandomFactory(RWildernessMod.modLocation("surface_depth_bottom")).at(this.blockX,this.blockY,this.blockZ).nextIntBetweenInclusive(4,12)
 
                         );

@@ -8,8 +8,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.placement.CountPlacement;
-import net.minecraft.world.level.levelgen.placement.NoiseBasedCountPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.placement.RepeatingPlacement;
 
@@ -53,6 +51,6 @@ public class DensityFunctionIncrementalPlacement extends RepeatingPlacement {
 
     @Override
     public PlacementModifierType<?> type() {
-        return ModPlacementModifierTypes.DENSITY_FUNCTION_INCREMENTAL_PLACEMENT.get();
+        return RPlacementModifierTypes.DENSITY_FUNCTION_INCREMENTAL_PLACEMENT.get();
     }
 }

@@ -1,22 +1,12 @@
 package com.fuyuaki.r_wilderness.api.events;
 
-import net.minecraft.SharedConstants;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.packs.PackLocationInfo;
-import net.minecraft.server.packs.PackSelectionConfig;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.PathPackResources;
-import net.minecraft.server.packs.repository.KnownPack;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackSource;
+import com.fuyuaki.r_wilderness.api.WildRegistries;
+import com.fuyuaki.r_wilderness.server.commands.ModCommands;
+import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomePlacement;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
-
-import java.nio.file.Path;
-import java.util.Optional;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
@@ -26,5 +16,18 @@ public class ModCommonEvents {
 
     @SubscribeEvent
     public static void onDatapackRegistry(DataPackRegistryEvent.NewRegistry event){
+        event.dataPackRegistry(
+                WildRegistries.REBORN_BIOME_PLACEMENT_KEY,
+                RebornBiomePlacement.CODEC,
+                RebornBiomePlacement.CODEC
+
+        );
     }
+
+    @SubscribeEvent
+    public static void commandRegistry(RegisterCommandsEvent event){
+        ModCommands.init(event.getCommandSelection(),event.getBuildContext(),event.getDispatcher());
+    }
+
+
 }

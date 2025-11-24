@@ -1,11 +1,17 @@
 package com.fuyuaki.r_wilderness.mixin;
 
+import com.fuyuaki.r_wilderness.world.generation.WildChunkGenerator;
+import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildWorldSettings;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterLists;
+import net.minecraft.world.level.biome.TheEndBiomeSource;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,6 +25,9 @@ public class WorldDimensionsMixin {
     private static void isStableOverworldMixin(LevelStem levelStem, CallbackInfoReturnable<Boolean> cir){
         Holder<DimensionType> holder = levelStem.type();
         if (holder.is(WildWorldSettings.DimensionTypes.OVERWORLD)){
+            if(levelStem.generator().getBiomeSource() instanceof RebornBiomeSource){
+                cir.setReturnValue(true);
+            }
             cir.setReturnValue(!(
                     levelStem.generator().getBiomeSource() instanceof MultiNoiseBiomeSource multinoisebiomesource
                             && !multinoisebiomesource.stable(MultiNoiseBiomeSourceParameterLists.OVERWORLD)));

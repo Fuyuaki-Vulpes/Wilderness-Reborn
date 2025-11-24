@@ -1,9 +1,10 @@
  package com.fuyuaki.r_wilderness.world.level.levelgen;
 
  import com.fuyuaki.r_wilderness.api.RWildernessMod;
- import com.fuyuaki.r_wilderness.data.worldgen.ModSurfaceRuleData;
+ import com.fuyuaki.r_wilderness.data.worldgen.RSurfaceRuleData;
  import com.fuyuaki.r_wilderness.world.generation.WildChunkGenerator;
  import com.fuyuaki.r_wilderness.world.generation.WildGeneratorSettings;
+ import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
  import net.minecraft.core.Holder;
  import net.minecraft.core.HolderGetter;
  import net.minecraft.core.registries.Registries;
@@ -33,6 +34,7 @@
      public static void bootstrap(BootstrapContext<WorldPreset> context) {
          HolderGetter<DimensionType> holdergetter = context.lookup(Registries.DIMENSION_TYPE);
 
+
          HolderGetter<NoiseGeneratorSettings> noiseSettings  = context.lookup(Registries.NOISE_SETTINGS);
          HolderGetter<DensityFunction> densityFunctions  = context.lookup(Registries.DENSITY_FUNCTION);
          HolderGetter<Biome> biomes  = context.lookup(Registries.BIOME);
@@ -54,13 +56,13 @@
          Holder<DimensionType> holder2 = holdergetter.getOrThrow(BuiltinDimensionTypes.END);
          Holder<NoiseGeneratorSettings> holder3 = noiseSettings.getOrThrow(NoiseGeneratorSettings.END);
 
+
+
          LevelStem endStem  = new LevelStem(holder2, new NoiseBasedChunkGenerator(TheEndBiomeSource.create(biomes), holder3));
 
 
 
-         Holder.Reference<MultiNoiseBiomeSourceParameterList> referenceOverworld =
-                 multiNoiseBiomeSourceParameterLists
-                         .getOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD);
+         RebornBiomeSource biomeSource = new RebornBiomeSource();
 
          registerCustomOverworldPreset(
                  context,
@@ -68,15 +70,14 @@
                  makeOverworld(
                          overworldDimensionType,
                          new WildChunkGenerator(
-                                 MultiNoiseBiomeSource.createFromPreset(referenceOverworld),
+                                 biomeSource,
                                  noiseSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD),
                                  new WildGeneratorSettings(
                                          WildWorldSettings.OVERWORLD_NOISE_SETTINGS,
                                          Blocks.STONE.defaultBlockState(),
                                          Blocks.WATER.defaultBlockState(),
-                                         ModSurfaceRuleData.overworld(),
-                                         68,
-                                         false
+                                         RSurfaceRuleData.overworld(),
+                                         68
                                  )
                          )
                  ),

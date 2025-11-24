@@ -1,0 +1,6 @@
+{
+  "parent": "r_wilderness:block/foliage",
+  "textures": {
+    "cross": "minecraft:block/bush"
+  }
+}

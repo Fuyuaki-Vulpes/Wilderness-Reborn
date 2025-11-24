@@ -33,7 +33,8 @@ public class MinecraftServerMixin {
         if (generator instanceof ChunkGeneratorExtension extension){
             TerrainParameters t = extension.terrainParameters();
 
-            ChunkPos chunkpos = new ChunkPos(TerrainParameters.findSpawnPosition(TerrainParameters.SPAWN_TARGET,t));
+            ChunkPos chunkpos = new ChunkPos(TerrainParameters.findSpawnPosition(TerrainParameters.SPAWN_TARGET,t,level));
+//            extension.prepare(chunkpos);
 
             listener.start(LevelLoadListener.Stage.PREPARE_GLOBAL_SPAWN, 0);
             listener.updateFocus(level.dimension(), chunkpos);
@@ -53,7 +54,10 @@ public class MinecraftServerMixin {
 
             for (int i1 = 0; i1 < Mth.square(11); i1++) {
                 if (xOffset >= -5 && xOffset <= 5 && zOffset >= -5 && zOffset <= 5) {
-                    BlockPos blockpos1 = PlayerSpawnFinder.getSpawnPosInChunk(level, new ChunkPos(chunkpos.x + xOffset, chunkpos.z + zOffset));
+                    ChunkPos newChunk = new ChunkPos(chunkpos.x + xOffset, chunkpos.z + zOffset);
+                    extension.prepare(newChunk);
+
+                    BlockPos blockpos1 = PlayerSpawnFinder.getSpawnPosInChunk(level, newChunk);
                     if (blockpos1 != null) {
                         levelData.setSpawn(LevelData.RespawnData.of(level.dimension(), blockpos1, 0.0F, 0.0F));
                         break;
@@ -80,9 +84,7 @@ public class MinecraftServerMixin {
             }
 
             listener.finish(LevelLoadListener.Stage.PREPARE_GLOBAL_SPAWN);
-
             ci.cancel();
-            return;
         }
     }
 

@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.data.generation.model;
 
-import com.fuyuaki.r_wilderness.world.item.ModItems;
+import com.fuyuaki.r_wilderness.world.item.RItems;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ItemModelOutput;
 import net.minecraft.client.data.models.model.ItemModelUtils;
@@ -52,8 +52,8 @@ public class GenItemModels extends ItemModelGenerators {
     @Override
     public void run() {
 
-        simpleItem(ModItems.CHALK_DUST);
-        simpleItem(ModItems.PEAT_BALL);
+        simpleItem(RItems.CHALK_DUST);
+        simpleItem(RItems.PEAT_BALL);
 
     }
 
@@ -64,19 +64,19 @@ public class GenItemModels extends ItemModelGenerators {
     }
 
     private void handheldClaw(DeferredItem<?> item) {
-        this.itemModelOutput.accept(item.get(), ItemModelUtils.plainModel(this.createFlatItemModel(item.get(), MTAModelTemplates.CLAW)));
+        this.itemModelOutput.accept(item.get(), ItemModelUtils.plainModel(this.createFlatItemModel(item.get(), RebornModels.CLAW)));
 
     }
 
     private void handheldBigItem(DeferredItem<?> item) {
-        this.itemModelOutput.accept(item.get(), ItemModelUtils.plainModel(this.createFlatItemModel(item.get(), MTAModelTemplates.BIG_HANDHELD_LOW_HILT)));
+        this.itemModelOutput.accept(item.get(), ItemModelUtils.plainModel(this.createFlatItemModel(item.get(), RebornModels.BIG_HANDHELD_LOW_HILT)));
 
     }
     private void handheldBigItemMediumHilt(DeferredItem<?> item) {
-        this.itemModelOutput.accept(item.get(), ItemModelUtils.plainModel(this.createFlatItemModel(item.get(), MTAModelTemplates.BIG_HANDHELD_MEDIUM_HILT)));
+        this.itemModelOutput.accept(item.get(), ItemModelUtils.plainModel(this.createFlatItemModel(item.get(), RebornModels.BIG_HANDHELD_MEDIUM_HILT)));
     }
     private void handheldBigItemMiddleHilt(DeferredItem<?> item) {
-        this.itemModelOutput.accept(item.get(), ItemModelUtils.plainModel(this.createFlatItemModel(item.get(), MTAModelTemplates.BIG_HANDHELD_MIDDLE_HILT)));
+        this.itemModelOutput.accept(item.get(), ItemModelUtils.plainModel(this.createFlatItemModel(item.get(), RebornModels.BIG_HANDHELD_MIDDLE_HILT)));
     }
 
 
@@ -86,10 +86,10 @@ public class GenItemModels extends ItemModelGenerators {
 
     public void generateBow(Item bowItem) {
         ItemModel.Unbaked itemmodel$unbaked = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(bowItem));
-        this.createFlatItemModel(bowItem, MTAModelTemplates.BOW);
-        ItemModel.Unbaked itemmodel$unbaked1 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_0", MTAModelTemplates.BOW));
-        ItemModel.Unbaked itemmodel$unbaked2 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_1", MTAModelTemplates.BOW));
-        ItemModel.Unbaked itemmodel$unbaked3 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_2", MTAModelTemplates.BOW));
+        this.createFlatItemModel(bowItem, RebornModels.BOW);
+        ItemModel.Unbaked itemmodel$unbaked1 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_0", RebornModels.BOW));
+        ItemModel.Unbaked itemmodel$unbaked2 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_1", RebornModels.BOW));
+        ItemModel.Unbaked itemmodel$unbaked3 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_2", RebornModels.BOW));
         this.itemModelOutput
                 .accept(
                         bowItem,
@@ -108,10 +108,10 @@ public class GenItemModels extends ItemModelGenerators {
     }
     public void generateBowBig(Item bowItem) {
         ItemModel.Unbaked itemmodel$unbaked = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(bowItem));
-        this.createFlatItemModel(bowItem, MTAModelTemplates.BOW_BIG);
-        ItemModel.Unbaked itemmodel$unbaked1 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_0", MTAModelTemplates.BOW_BIG));
-        ItemModel.Unbaked itemmodel$unbaked2 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_1", MTAModelTemplates.BOW_BIG));
-        ItemModel.Unbaked itemmodel$unbaked3 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_2", MTAModelTemplates.BOW_BIG));
+        this.createFlatItemModel(bowItem, RebornModels.BOW_BIG);
+        ItemModel.Unbaked itemmodel$unbaked1 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_0", RebornModels.BOW_BIG));
+        ItemModel.Unbaked itemmodel$unbaked2 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_1", RebornModels.BOW_BIG));
+        ItemModel.Unbaked itemmodel$unbaked3 = ItemModelUtils.plainModel(this.createFlatItemModel(bowItem, "_pulling_2", RebornModels.BOW_BIG));
         this.itemModelOutput
                 .accept(
                         bowItem,
@@ -131,7 +131,7 @@ public class GenItemModels extends ItemModelGenerators {
 
     public void generateCrossbow(Item crossbowItem) {
         ItemModel.Unbaked itemmodel$unbaked = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(crossbowItem));
-        this.createFlatItemModel(crossbowItem, MTAModelTemplates.CROSSBOW);
+        this.createFlatItemModel(crossbowItem, RebornModels.CROSSBOW);
         ItemModel.Unbaked itemmodel$unbaked1 = ItemModelUtils.plainModel(this.createFlatItemModel(crossbowItem, "_pulling_0", ModelTemplates.CROSSBOW));
         ItemModel.Unbaked itemmodel$unbaked2 = ItemModelUtils.plainModel(this.createFlatItemModel(crossbowItem, "_pulling_1", ModelTemplates.CROSSBOW));
         ItemModel.Unbaked itemmodel$unbaked3 = ItemModelUtils.plainModel(this.createFlatItemModel(crossbowItem, "_pulling_2", ModelTemplates.CROSSBOW));

@@ -35,7 +35,7 @@ public abstract class SurfaceRulesSteepConditionMixin extends SurfaceRules.LazyX
         int xOffset2 = chunkaccess.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x2, z);
         int xDiff = Math.abs(center - xOffset2) + Math.abs(xOffset1 - center);
         int zDiff = Math.abs(center - zOffset2) + Math.abs(zOffset1 - center);
-        cir.setReturnValue(xDiff + zDiff > 4 || xDiff > 3 || zDiff > 3);
+        cir.setReturnValue(xDiff + zDiff > 5 || xDiff > 4 || zDiff > 4);
 
     }
 

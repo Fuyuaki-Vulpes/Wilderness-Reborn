@@ -11,8 +11,7 @@ public record WildGeneratorSettings(
         BlockState defaultBlock,
         BlockState defaultFluid,
         SurfaceRules.RuleSource surfaceRule,
-        int seaLevel,
-        boolean stoneLayerGradients
+        int seaLevel
 ) {
     public static final Codec<WildGeneratorSettings> CODEC = RecordCodecBuilder.create(
             p_64475_ -> p_64475_.group(
@@ -20,8 +19,7 @@ public record WildGeneratorSettings(
                             BlockState.CODEC.fieldOf("default_block").forGetter(WildGeneratorSettings::defaultBlock),
                             BlockState.CODEC.fieldOf("default_fluid").forGetter(WildGeneratorSettings::defaultFluid),
                             SurfaceRules.RuleSource.CODEC.fieldOf("surface_rule").forGetter(WildGeneratorSettings::surfaceRule),
-                            Codec.INT.fieldOf("sea_level").forGetter(WildGeneratorSettings::seaLevel),
-                            Codec.BOOL.fieldOf("legacy_random_source").forGetter(WildGeneratorSettings::stoneLayerGradients)
+                            Codec.INT.fieldOf("sea_level").forGetter(WildGeneratorSettings::seaLevel)
                     )
                     .apply(p_64475_, WildGeneratorSettings::new)
     );

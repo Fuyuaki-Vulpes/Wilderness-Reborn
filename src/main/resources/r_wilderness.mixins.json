@@ -5,20 +5,29 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "r_wilderness.refmap.json",
   "mixins": [
+    "ChunkAccessMixin",
     "ChunkMapMixin",
+    "ChunkStatusMixin",
+    "LevelChunkSectionMixin",
     "MinecraftServerMixin",
+    "PieceGeneratorSupplierContextMixin",
     "RandomStateMixin",
+    "RuinedPortalStructureMixin",
+    "ServerChunkCacheMixin",
     "ServerWorldMixin",
     "SoundEventMixin",
+    "StructureMixin",
     "SurfaceRulesContextMixin",
     "SurfaceRulesSteepConditionMixin",
     "WorldDimensionsMixin",
+    "WorldGenerationContextMixin",
     "WorldPresetsMixin",
     "accessor.ChunkAccessAccessor",
     "accessor.ChunkGeneratorAccessor",
     "accessor.ChunkMapAccessor"
   ],
   "client": [
+    "CreateWorldScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

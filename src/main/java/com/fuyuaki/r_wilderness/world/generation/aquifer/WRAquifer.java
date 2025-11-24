@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation.aquifer;
 
-import com.fuyuaki.r_wilderness.api.Helpers;
+import com.fuyuaki.r_wilderness.util.ModUtil;
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.world.generation.WildChunkGenerator;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
@@ -120,16 +120,11 @@ public class WRAquifer implements Aquifer {
 
         Arrays.fill(aquiferLocations, Long.MAX_VALUE);
 
-        this.globalBasePicker = (x, y, z) -> {
-            if (parameters.samplerAt(x,z).continentalness() > 0.12){
-                return this.lavaLevelAquifer;
-            }
-           return y < minY + 32 ? this.lavaLevelAquifer : this.seaLevelAquifer;
-        };
+        this.globalBasePicker = (x, y, z) -> y < minY + 32 ? this.lavaLevelAquifer : this.seaLevelAquifer;
 
         int yLimit = this.adjustSurfaceLevel(
-                Math.max(chunk.getSurfaceY(fromGridX(this.minGridX, 0), fromGridZ(this.minGridZ, 0),true)
-                , chunk.getSurfaceY(fromGridX(maxGridX, 9), fromGridZ(maxGridZ, 9),true))
+                Math.max(chunk.getSurfaceY(fromGridX(this.minGridX, 0), fromGridZ(this.minGridZ, 0))
+                , chunk.getSurfaceY(fromGridX(maxGridX, 9), fromGridZ(maxGridZ, 9)))
         );
         int yLimitToGrid = gridY(yLimit + 12) + 1;
         this.maxSampledY = fromGridY(yLimitToGrid, 11) - 1;
@@ -184,7 +179,7 @@ public class WRAquifer implements Aquifer {
             BlockState state = null; // The result aquifer state
             boolean isSurfaceLevelAquifer; // If the aquifer is a surface/sea level one, which needs to be affected by the water type
 
-            if (Helpers.isBlock(global.at(y), Blocks.LAVA)) {
+            if (ModUtil.isBlock(global.at(y), Blocks.LAVA)) {
                 // Always lava below lava level, and don't generate adjacent borders.
                 state = Blocks.LAVA.defaultBlockState();
                 aquiferNoiseContribution = 0;
@@ -450,7 +445,7 @@ public class WRAquifer implements Aquifer {
         for (int[] aint : SURFACE_SAMPLING_OFFSETS_IN_CHUNKS) {
             int sectionX = x + SectionPos.sectionToBlockCoord(aint[0]);
             int sectionZ = z + SectionPos.sectionToBlockCoord(aint[1]);
-            int surfaceY = this.chunk.getSurfaceY(sectionX, sectionZ,false);
+            int surfaceY = this.chunk.getSurfaceY(sectionX, sectionZ);
             int surfaceAdjusted = this.adjustSurfaceLevel(surfaceY);
             boolean flag1 = aint[0] == 0 && aint[1] == 0;
             if (flag1 && minY > surfaceAdjusted) {

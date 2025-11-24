@@ -1,7 +1,7 @@
 package com.fuyuaki.r_wilderness.data.generation.loot;
 
-import com.fuyuaki.r_wilderness.world.item.ModItems;
-import com.fuyuaki.r_wilderness.world.level.block.ModBlocks;
+import com.fuyuaki.r_wilderness.world.item.RItems;
+import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -12,7 +12,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class LootBlocks extends BlockLootSubProvider {
     List<Block> excludedBlocks = List.of();
-    List<Block> knownBlocks = ModBlocks.BLOCKS.getEntries().stream().map(Holder::value).collect(Collectors.toList());
+    List<Block> knownBlocks = RBlocks.BLOCKS.getEntries().stream().map(Holder::value).collect(Collectors.toList());
     protected static final float[] PALM_LEAVES_SAPLING_CHANCES = new float[]{0.1F, 0.2F, 0.4F, 0.6F};
 
     protected static final float[] NORMAL_LEAVES_SAPLING_CHANCES = new float[]{0.05F, 0.0625F, 0.083333336F, 0.1F};
@@ -41,20 +40,20 @@ public class LootBlocks extends BlockLootSubProvider {
     @Override
     protected void generate() {
 
-        add(ModBlocks.CHALK.get(), block -> createSingleItemTableWithSilkTouch(block, ModItems.CHALK_DUST,ConstantValue.exactly(4.0F)));
-        dropSelf(ModBlocks.LIMESTONE.get());
-        dropSelf(ModBlocks.MUD_STONE.get());
+        add(RBlocks.CHALK.get(), block -> createSingleItemTableWithSilkTouch(block, RItems.CHALK_DUST,ConstantValue.exactly(4.0F)));
+        dropSelf(RBlocks.LIMESTONE.get());
+        dropSelf(RBlocks.MUD_STONE.get());
 
-        dropSelf(ModBlocks.CHALKY_SOIL.get());
-        dropOther(ModBlocks.CHALKY_FARMLAND.get(), ModBlocks.CHALKY_SOIL);
-        dropSelf(ModBlocks.CLAY_SOIL.get());
-        dropOther(ModBlocks.CLAY_FARMLAND.get(), ModBlocks.CLAY_SOIL);
-        add(ModBlocks.PEAT.get(), block -> createSingleItemTableWithSilkTouch(block, ModItems.PEAT_BALL, ConstantValue.exactly(4.0F)));
-        add(ModBlocks.PEAT_FARMLAND.get(), createSingleItemTable(ModItems.PEAT_BALL, ConstantValue.exactly(4.0F)));
-        dropSelf(ModBlocks.SANDY_SOIL.get());
-        dropOther(ModBlocks.SANDY_FARMLAND.get(), ModBlocks.SANDY_SOIL);
-        dropSelf(ModBlocks.SILT.get());
-        dropOther(ModBlocks.SILT_FARMLAND.get(), ModBlocks.SILT);
+        dropSelf(RBlocks.CHALKY_SOIL.get());
+        dropOther(RBlocks.CHALKY_FARMLAND.get(), RBlocks.CHALKY_SOIL);
+        dropSelf(RBlocks.CLAY_SOIL.get());
+        dropOther(RBlocks.CLAY_FARMLAND.get(), RBlocks.CLAY_SOIL);
+        add(RBlocks.PEAT.get(), block -> createSingleItemTableWithSilkTouch(block, RItems.PEAT_BALL, ConstantValue.exactly(4.0F)));
+        add(RBlocks.PEAT_FARMLAND.get(), createSingleItemTable(RItems.PEAT_BALL, ConstantValue.exactly(4.0F)));
+        dropSelf(RBlocks.SANDY_SOIL.get());
+        dropOther(RBlocks.SANDY_FARMLAND.get(), RBlocks.SANDY_SOIL);
+        dropSelf(RBlocks.SILT.get());
+        dropOther(RBlocks.SILT_FARMLAND.get(), RBlocks.SILT);
 
     }
 

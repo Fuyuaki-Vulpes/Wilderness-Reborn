@@ -1,0 +1,67 @@
+{
+  "biome": "minecraft:deep_dark",
+  "name": "r_wilderness:deep_dark",
+  "target": {
+    "continentalness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "erosion": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "highlands": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "humidity": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "magicalness": {
+      "max": 1.5,
+      "mean": 0.875,
+      "min": 0.25
+    },
+    "rockiness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "tectonic_activity": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "temperature": {
+      "max": -0.35,
+      "mean": -0.55,
+      "min": -0.75
+    },
+    "terrain_height": {
+      "max": -64.0,
+      "mean": -160.0,
+      "min": -256.0
+    },
+    "vegetation_density": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "weirdness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    }
+  },
+  "valid_tectonic_states": [
+    "very_deep_underground"
+  ],
+  "valid_terrain_types": [
+    "cave"
+  ]
+}

@@ -1,8 +1,10 @@
 package com.fuyuaki.r_wilderness.data.generation.other;
 
+import com.fuyuaki.r_wilderness.api.WildRegistries;
 import com.fuyuaki.r_wilderness.data.ModCarvers;
 import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomeData;
 import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomeModifiers;
+import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomePlacements;
 import com.fuyuaki.r_wilderness.data.worldgen.features.ModFeatureUtils;
 import com.fuyuaki.r_wilderness.data.worldgen.placement.ModPlacementUtils;
 import com.fuyuaki.r_wilderness.data.worldgen.ModNoiseData;
@@ -30,6 +32,7 @@ public class ModBuiltInEntries extends DatapackBuiltinEntriesProvider {
             .add(Registries.NOISE, ModNoiseData::bootstrap)
             .add(Registries.DENSITY_FUNCTION, ModNoiseRouterData::bootstrap)
             .add(Registries.BIOME, ModBiomeData::bootstrap)
+            .add(WildRegistries.REBORN_BIOME_PLACEMENT_KEY, ModBiomePlacements::bootstrap)
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifiers::bootstrap)
             .add(Registries.ENCHANTMENT, ModEnchantments::bootstrap)
             .add(Registries.WORLD_PRESET, ModWorldPresets::bootstrap)

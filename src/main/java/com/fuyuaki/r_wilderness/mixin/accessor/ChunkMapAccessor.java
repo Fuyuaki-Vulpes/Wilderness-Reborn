@@ -2,6 +2,7 @@ package com.fuyuaki.r_wilderness.mixin.accessor;
 
 
 import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.levelgen.RandomState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -10,4 +11,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ChunkMapAccessor {
     @Accessor("randomState")
     RandomState accessor$getRandomState();
+
+    @Accessor("level")
+    ServerLevel getLevel();
 }

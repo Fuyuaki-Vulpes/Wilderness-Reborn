@@ -2,8 +2,10 @@ package com.fuyuaki.r_wilderness.data;
 
 
 import com.fuyuaki.r_wilderness.data.generation.lang.EN_US_LangProvider;
+import com.fuyuaki.r_wilderness.data.generation.model.ModModelProvider;
 import com.fuyuaki.r_wilderness.data.generation.other.GenLoot;
 import com.fuyuaki.r_wilderness.data.generation.other.GenRecipes;
+import com.fuyuaki.r_wilderness.data.generation.other.GenSoundDefinition;
 import com.fuyuaki.r_wilderness.data.generation.other.ModBuiltInEntries;
 import com.fuyuaki.r_wilderness.data.generation.tags.GenBiomeTags;
 import com.fuyuaki.r_wilderness.data.generation.tags.GenWorldPresetTags;
@@ -24,6 +26,7 @@ import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 public class ModDataGenerator {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent.Client event){
+
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
@@ -34,9 +37,9 @@ public class ModDataGenerator {
 
         generator.addProvider(true, GenLoot.create(packOutput,lookupProvider));
 
-/*
-        generator.addProvider(true,new ModModelProvider(packOutput));
 
+        generator.addProvider(true,new ModModelProvider(packOutput));
+/*
         event.createBlockAndItemTags(GenBlockTags::new, GenItemTags::new);
 
         generator.addProvider(true,
@@ -53,22 +56,21 @@ public class ModDataGenerator {
 
 */
         generator.addProvider(true,
-                new ModBuiltInEntries(packOutput, lookupProvider));
+                new ModBuiltInEntries(packOutput,  datapackRegistries.getRegistryProvider()));
 
         generator.addProvider(true,
                 new EN_US_LangProvider(packOutput));
 
- /*       generator.addProvider(true,
+      generator.addProvider(true,
                 new GenSoundDefinition(packOutput));
-
+/*
         generator.addProvider(true,
                 new GlobalLootModifiers(packOutput,datapackRegistries.getRegistryProvider()));
 
         generator.addProvider(true,new GenAdvancements(packOutput,datapackRegistries.getRegistryProvider()
                 )
         );*/
-        PackOutput datapackOutput = new PackOutput(packOutput.getOutputFolder().resolve("resourcepacks/r_wilderness"));
-        DataGenerator.PackGenerator packGenerator = event.getGenerator().getBuiltinDatapack(true, MODID,"r_wilderness");
+
 
 
     }

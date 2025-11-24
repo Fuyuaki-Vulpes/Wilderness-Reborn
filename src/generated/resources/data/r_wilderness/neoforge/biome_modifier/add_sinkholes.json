@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_carvers",
+  "biomes": "#c:is_overworld",
+  "carvers": "r_wilderness:sinkhole"
+}

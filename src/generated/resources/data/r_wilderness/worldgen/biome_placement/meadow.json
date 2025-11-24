@@ -1,0 +1,65 @@
+{
+  "biome": "minecraft:meadow",
+  "name": "r_wilderness:meadow",
+  "target": {
+    "continentalness": {
+      "max": 100.0,
+      "mean": 0.15,
+      "min": 0.05
+    },
+    "erosion": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "highlands": {
+      "max": 25.9,
+      "mean": 0.9,
+      "min": 0.15
+    },
+    "humidity": {
+      "max": 2.5,
+      "mean": 0.5,
+      "min": 0.0
+    },
+    "magicalness": {
+      "max": 0.15,
+      "mean": -0.675,
+      "min": -1.5
+    },
+    "rockiness": {
+      "max": 0.0,
+      "mean": -0.5,
+      "min": -2.5
+    },
+    "tectonic_activity": {
+      "max": 1.0,
+      "mean": 0.15,
+      "min": -3.0
+    },
+    "temperature": {
+      "max": -0.35,
+      "mean": -0.55,
+      "min": -0.75
+    },
+    "terrain_height": {
+      "max": 720.0,
+      "mean": 400.0,
+      "min": 80.0
+    },
+    "vegetation_density": {
+      "max": 0.35,
+      "mean": 0.0,
+      "min": -0.35
+    },
+    "weirdness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    }
+  },
+  "valid_terrain_types": [
+    "mountain",
+    "highlands"
+  ]
+}

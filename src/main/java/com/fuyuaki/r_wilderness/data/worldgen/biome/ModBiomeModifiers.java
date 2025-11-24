@@ -27,6 +27,7 @@ import java.util.Set;
 
 public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_LARGE_CAVES = registerKey("add_large_caves");
+    public static final ResourceKey<BiomeModifier> ADD_SINKHOLES = registerKey("add_sinkholes");
     public static final ResourceKey<BiomeModifier> REMOVE_BLOBS = registerKey("remove_blobs");
     public static final ResourceKey<BiomeModifier> SPIKES_FROZEN_PEAKS = registerKey("spikes_frozen_peaks");
     public static final ResourceKey<BiomeModifier> SPIKES_BEACH = registerKey("spikes_beach");
@@ -98,6 +99,13 @@ public class ModBiomeModifiers {
                 new BiomeModifiers.AddCarversBiomeModifier(
                 biomes.getOrThrow(Tags.Biomes.IS_OVERWORLD),
                         HolderSet.direct(carvers.getOrThrow(ModCarvers.LARGE_CAVES))
+
+                )
+        );
+        context.register(ADD_SINKHOLES,
+                new BiomeModifiers.AddCarversBiomeModifier(
+                biomes.getOrThrow(Tags.Biomes.IS_OVERWORLD),
+                        HolderSet.direct(carvers.getOrThrow(ModCarvers.SINKHOLE))
 
                 )
         );

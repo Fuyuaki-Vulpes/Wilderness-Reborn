@@ -1,23 +1,22 @@
 package com.fuyuaki.r_wilderness.api;
 
-import com.fuyuaki.r_wilderness.data.worldgen.ModSurfaceRuleData;
-import com.fuyuaki.r_wilderness.init.ModAttachments;
-import com.fuyuaki.r_wilderness.init.ModChunkGenerators;
-import com.fuyuaki.r_wilderness.init.ModFeatures;
-import com.fuyuaki.r_wilderness.init.ModSoundEvents;
+import com.fuyuaki.r_wilderness.data.worldgen.RSurfaceRuleData;
+import com.fuyuaki.r_wilderness.init.RAttachments;
+import com.fuyuaki.r_wilderness.init.RChunkGenerators;
+import com.fuyuaki.r_wilderness.init.RFeatures;
+import com.fuyuaki.r_wilderness.init.RSoundEvents;
 import com.fuyuaki.r_wilderness.world.generation.distant_horizons.DHApiEventHandler;
-import com.fuyuaki.r_wilderness.world.item.ModCreativeModeTabs;
-import com.fuyuaki.r_wilderness.world.item.ModItems;
-import com.fuyuaki.r_wilderness.world.level.biome.BiomeRanges;
-import com.fuyuaki.r_wilderness.world.level.block.ModBlocks;
-import com.fuyuaki.r_wilderness.world.level.levelgen.carver.ModWorldCarvers;
-import com.fuyuaki.r_wilderness.world.level.levelgen.placement.ModPlacementModifierTypes;
+import com.fuyuaki.r_wilderness.world.item.RCreativeModeTabs;
+import com.fuyuaki.r_wilderness.world.item.RItems;
+import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
+import com.fuyuaki.r_wilderness.world.block.RBlocks;
+import com.fuyuaki.r_wilderness.world.level.levelgen.carver.RWorldCarvers;
+import com.fuyuaki.r_wilderness.world.level.levelgen.placement.RPlacementModifierTypes;
 import com.mojang.logging.LogUtils;
 import com.seibel.distanthorizons.api.methods.events.DhApiEventRegister;
-import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiAfterDhInitEvent;
-import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiBeforeRenderEvent;
 import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiLevelLoadEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -30,9 +29,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
@@ -45,16 +46,18 @@ public class RWildernessMod {
     public RWildernessMod(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
 
-        ModSurfaceRuleData.ConditionSource.init(modEventBus);
-        ModAttachments.init(modEventBus);
-        ModBlocks.init(modEventBus);
-        ModItems.init(modEventBus);
-        ModCreativeModeTabs.init(modEventBus);
-        ModSoundEvents.init(modEventBus);
-        ModFeatures.init(modEventBus);
-        ModChunkGenerators.init(modEventBus);
-        ModWorldCarvers.init(modEventBus);
-        ModPlacementModifierTypes.init(modEventBus);
+        RSurfaceRuleData.ConditionSource.init(modEventBus);
+        RebornBiomeSource.Registerer.init(modEventBus);
+        RAttachments.init(modEventBus);
+        RBlocks.init(modEventBus);
+        RItems.init(modEventBus);
+        RCreativeModeTabs.init(modEventBus);
+        RSoundEvents.init(modEventBus);
+        RFeatures.init(modEventBus);
+        RChunkGenerators.init(modEventBus);
+        RWorldCarvers.init(modEventBus);
+        RPlacementModifierTypes.init(modEventBus);
+        com.fuyuaki.r_wilderness.client.RSoundEvents.init(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 
@@ -68,7 +71,6 @@ public class RWildernessMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        BiomeRanges.bootstrap();
 
 //        LOGGER.info("HELLO FROM COMMON SETUP");
 //
@@ -77,6 +79,7 @@ public class RWildernessMod {
 //        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
 //
 //        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+
     }
 
 
@@ -96,5 +99,13 @@ public class RWildernessMod {
 
     public static ResourceLocation modLocation(String id){
         return ResourceLocation.fromNamespaceAndPath(MODID,id);
+    }
+
+    public static RegistryAccess getRegistryAccess(){
+        if (EffectiveSide.get().isClient())
+            return Minecraft.getInstance().level.registryAccess();
+        if (ServerLifecycleHooks.getCurrentServer() != null)
+            return ServerLifecycleHooks.getCurrentServer().registryAccess();
+        return RegistryAccess.EMPTY;
     }
 }

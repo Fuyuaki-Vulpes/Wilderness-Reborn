@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.data.worldgen.features;
 
-import com.fuyuaki.r_wilderness.init.ModFeatures;
+import com.fuyuaki.r_wilderness.init.RFeatures;
 import com.fuyuaki.r_wilderness.world.level.levelgen.feature.configurations.WaterDeltaFeatureConfiguration;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.FeatureUtils;
@@ -16,14 +16,14 @@ public class ModAquaticFeatures {
         FeatureUtils.register(
                 context,
                 WATER_DELTA,
-                ModFeatures.WATER_DELTA.get(),
+                RFeatures.WATER_DELTA.get(),
                 new WaterDeltaFeatureConfiguration(UniformInt.of(2, 5))
         );
 
         FeatureUtils.register(
                 context,
                 LARGE_WATER_DELTA,
-                ModFeatures.WATER_DELTA.get(),
+                RFeatures.WATER_DELTA.get(),
                 new WaterDeltaFeatureConfiguration(UniformInt.of(4, 7))
         );
     }

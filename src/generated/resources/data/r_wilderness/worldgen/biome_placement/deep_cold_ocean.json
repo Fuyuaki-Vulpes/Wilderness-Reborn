@@ -1,0 +1,64 @@
+{
+  "biome": "minecraft:deep_cold_ocean",
+  "name": "r_wilderness:deep_cold_ocean",
+  "target": {
+    "continentalness": {
+      "max": -0.45,
+      "mean": -0.975,
+      "min": -1.5
+    },
+    "erosion": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "highlands": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "humidity": {
+      "max": 1.0,
+      "mean": 0.0,
+      "min": -1.0
+    },
+    "magicalness": {
+      "max": 0.15,
+      "mean": -0.675,
+      "min": -1.5
+    },
+    "rockiness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "tectonic_activity": {
+      "max": 1.0,
+      "mean": 0.0,
+      "min": -6.0
+    },
+    "temperature": {
+      "max": -0.35,
+      "mean": -0.55,
+      "min": -0.75
+    },
+    "terrain_height": {
+      "max": 60.0,
+      "mean": -98.0,
+      "min": -256.0
+    },
+    "vegetation_density": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "weirdness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    }
+  },
+  "valid_terrain_types": [
+    "far_sea"
+  ]
+}

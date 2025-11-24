@@ -123,6 +123,7 @@ dependencies {
     runtimeOnly("maven.modrinth:DistantHorizons:$dhVersion")
     implementation("maven.modrinth:lithium:$lithiumVersion")
     implementation("maven.modrinth:c2me-neoforge:$c2meVersion")
+    implementation("maven.modrinth:spark:$sparkVersion")
 
 //    runtimeOnly("maven.modrinth:chunky:$chunkyVersion")
 }
