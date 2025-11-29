@@ -108,10 +108,18 @@ public record RebornBiomePlacement(
 
 
         public static Type find(double yLevel, TerrainParameters.Sampled sampled,int x, int y, int z, List<TerrainStates> states){
-            if(yLevel > y + 12 && sampled.erosion() > 0 && sampled.highlandsMap() < 0.05){
-                return CAVE;
-            }if(yLevel > y + 32 && (sampled.erosion() < 0 || sampled.highlandsMap() > 0.05)){
-                return CAVE;
+            if (sampled.highlandsMap() > 0.05){
+                if(yLevel > y + 24 && sampled.erosion() > 0){
+                    return CAVE;
+                }if(yLevel > y + 48 && (sampled.erosion() < 0)){
+                    return CAVE;
+                }
+            }else{
+                if(yLevel > y + 16 && sampled.erosion() > 0){
+                    return CAVE;
+                }if(yLevel > y + 32 && (sampled.erosion() < 0)){
+                    return CAVE;
+                }
             }
             double tectonicActivity = (1 - Math.abs(sampled.tectonicActivity()));
             if (!states.contains(TerrainStates.NORMAL)){
