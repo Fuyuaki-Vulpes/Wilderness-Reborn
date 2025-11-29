@@ -243,6 +243,19 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
         DecimalFormat decimalformat = new DecimalFormat("0.000");
 
 
+        List<RebornBiomePlacement.TerrainStates> states = RebornBiomePlacement.TerrainStates.statesAt(sampled,pos.getY());
+
+        String terrainsAt = "";
+
+        for (RebornBiomePlacement.TerrainStates state : states){
+            if (states.getLast() != state){
+            terrainsAt = append(terrainsAt, state.getSerializedName() + ", ");
+            }else {
+                terrainsAt = append(terrainsAt, state.getSerializedName());
+
+            }
+        }
+
         info.add(
                 "Biome builder: "
         );
@@ -256,8 +269,9 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
                 "Continentalness: " + decimalformat.format(sampled.continentalness()) + " Erosion: " + decimalformat.format(sampled.erosion())
         );
         info.add(
-                " Weirdness: " + decimalformat.format(sampled.weirdness()) + " Magicalness: " + decimalformat.format(sampled.magicalness())
+                "Weirdness: " + decimalformat.format(sampled.weirdness()) + " Magicalness: " + decimalformat.format(sampled.magicalness())
         );
+        info.add("Badlands: " + decimalformat.format(sampled.badlands()) + " Terrain Types: " + terrainsAt);
 
     }
 

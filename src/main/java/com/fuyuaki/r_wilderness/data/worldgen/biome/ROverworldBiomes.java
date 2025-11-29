@@ -42,7 +42,7 @@ public class ROverworldBiomes {
         BiomeDefaultFeatures.addDefaultMushrooms(generation);
         BiomeDefaultFeatures.addDefaultExtraVegetation(generation, false);
         Music music = Musics.createGameMusic(RSoundEvents.MUSIC_BIOME_BARREN_CAVES);
-        return biome(true, 0.0F, 0.4F, spawns, generation, music);
+        return biome(true, 0.45F, 0.4F, spawns, generation, music);
     }
 
 

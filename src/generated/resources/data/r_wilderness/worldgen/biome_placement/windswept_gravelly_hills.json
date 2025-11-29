@@ -5,7 +5,7 @@
     "continentalness": {
       "max": 100.0,
       "mean": 0.15,
-      "min": 0.05
+      "min": -0.2
     },
     "erosion": {
       "max": 0.0,

@@ -3,6 +3,7 @@ package com.fuyuaki.r_wilderness.data.generation.lang;
 import com.fuyuaki.r_wilderness.world.item.RItems;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
@@ -17,22 +18,22 @@ public class EN_US_LangProvider extends LanguageProvider {
 
         //Blocks
 
-        add(RBlocks.CHALK.get(), "Chalk");
-        add(RBlocks.LIMESTONE.get(), "Limestone");
-        add(RBlocks.MUD_STONE.get(), "Mud Stone");
+        block(RBlocks.CHALK.get(), "Chalk");
+        block(RBlocks.LIMESTONE.get(), "Limestone");
+        block(RBlocks.MUD_STONE.get(), "Mud Stone");
 
         //Soils
 
-        add(RBlocks.CHALKY_SOIL.get(),"Chalky Soil");
-        add(RBlocks.CHALKY_FARMLAND.get(),"Chalky Farmland");
-        add(RBlocks.CLAY_SOIL.get(),"Clay Soil");
-        add(RBlocks.CLAY_FARMLAND.get(),"Clay Farmland");
-        add(RBlocks.PEAT.get(),"Peat");
-        add(RBlocks.PEAT_FARMLAND.get(),"Peat Farmland");
-        add(RBlocks.SANDY_SOIL.get(),"Sandy Soil");
-        add(RBlocks.SANDY_FARMLAND.get(),"Sandy Farmland");
-        add(RBlocks.SILT.get(),"Silt");
-        add(RBlocks.SILT_FARMLAND.get(),"Silt Farmland");
+        block(RBlocks.CHALKY_SOIL.get(),"Chalky Soil");
+        block(RBlocks.CHALKY_FARMLAND.get(),"Chalky Farmland");
+        block(RBlocks.CLAY_SOIL.get(),"Clay Soil");
+        block(RBlocks.CLAY_FARMLAND.get(),"Clay Farmland");
+        block(RBlocks.PEAT.get(),"Peat");
+        block(RBlocks.PEAT_FARMLAND.get(),"Peat Farmland");
+        block(RBlocks.SANDY_SOIL.get(),"Sandy Soil");
+        block(RBlocks.SANDY_FARMLAND.get(),"Sandy Farmland");
+        block(RBlocks.SILT.get(),"Silt");
+        block(RBlocks.SILT_FARMLAND.get(),"Silt Farmland");
 
         //Items
 
@@ -49,6 +50,7 @@ public class EN_US_LangProvider extends LanguageProvider {
         this.commands();
 
         add("generator.r_wilderness.reborn", "Reborn");
+        add("itemGroup.r_wilderness_main", "Reborn: Wilderness");
     }
 
     private void sounds() {
@@ -75,5 +77,10 @@ public class EN_US_LangProvider extends LanguageProvider {
 */
     }
 
+
+    private void block(Block block, String name){
+        add(block,name);
+        add(block.asItem(),name);
+    }
 
 }

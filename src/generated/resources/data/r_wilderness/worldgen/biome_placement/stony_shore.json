@@ -48,9 +48,9 @@
       "min": -256.0
     },
     "vegetation_density": {
-      "max": -0.6,
-      "mean": -0.725,
-      "min": -0.85
+      "max": -0.85,
+      "mean": -0.95,
+      "min": -10.0
     },
     "weirdness": {
       "max": 1.5,

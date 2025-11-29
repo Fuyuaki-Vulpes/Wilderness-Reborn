@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation.chunk;
 
+import com.fuyuaki.r_wilderness.util.math.SplinePoint;
 import com.fuyuaki.r_wilderness.world.generation.WildGeneratorSettings;
 import com.fuyuaki.r_wilderness.world.generation.aquifer.LazyAquifer;
 import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
@@ -268,20 +269,22 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             worldState = WATER.defaultBlockState();
         }
         finalState = worldState;
-        double t;
-        if (x % 4 == 0 || z % 4 == 0){
-            t = this.beardifier.compute(
-                    new DensityFunction.SinglePointContext(x + 1, y, z + 1)
-            );
-        }else {
-            t = this.beardifier.compute(this);
+        if (worldState != WATER.defaultBlockState()) {
+            double t;
+            if (x % 4 == 0 || z % 4 == 0) {
+                t = this.beardifier.compute(
+                        new DensityFunction.SinglePointContext(x + 1, y, z + 1)
+                );
+            } else {
+                t = this.beardifier.compute(this);
 
-        }
+            }
 
-        if (t > 0.05){
-            finalState = defaultBlock;
-        }else if (t < -0.05){
-            finalState = Blocks.AIR.defaultBlockState();
+            if (t > 0.05) {
+                finalState = defaultBlock;
+            } else if (t < -0.05) {
+                finalState = Blocks.AIR.defaultBlockState();
+            }
         }
         if (finalState == null){
             finalState = defaultBlock;

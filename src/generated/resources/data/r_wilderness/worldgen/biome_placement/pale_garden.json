@@ -59,6 +59,7 @@
     }
   },
   "valid_terrain_types": [
+    "mountain",
     "neutral",
     "highlands"
   ]

@@ -14,6 +14,9 @@ import com.seibel.distanthorizons.api.objects.data.DhApiTerrainDataPoint;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
 import java.util.ArrayList;
@@ -63,19 +66,43 @@ public class WildDHChunkWorldGen extends AbstractDhApiChunkWorldGenerator {
 
                 IDhApiBlockStateWrapper block = null;
                 IDhApiBiomeWrapper biome = null;
-
+                int firstY = minBuildHeight;
+                int sLight = 0;
+                int bLight = 0;
                 for (int y = minBuildHeight; y < maxBuildHeight; y++)
                 {
-                    // Note: air/empty spaces must be defined, otherwise DH will fail to downsample correctly
-                    // and LODs will have the incorrect lighting.
-                    block = DhApi.Delayed.wrapperFactory.getBlockStateWrapper(new Object[]{ chunk.getBlockState(new BlockPos(x, y, z)) }, this.levelWrapper);
-                    biome = DhApi.Delayed.wrapperFactory.getBiomeWrapper(new Object[]{ chunk.getNoiseBiome(x, y, z) }, this.levelWrapper);
-                    // Note: merging identical datapoints together will improve processing speed and reduce filesize
-                    dataPoints.add(DhApiTerrainDataPoint.create(EDhApiDetailLevel.BLOCK.detailLevel, 0, 15, y, y+1, block, biome));
+
+                    BlockPos thisBlock = new BlockPos(x, y, z);
+                    BlockState b = chunk.getBlockState(thisBlock);
+                    IDhApiBlockStateWrapper newBlock = DhApi.Delayed.wrapperFactory.getBlockStateWrapper(new Object[]{b}, this.levelWrapper);
+                    IDhApiBiomeWrapper newBiome = DhApi.Delayed.wrapperFactory.getBiomeWrapper(new Object[]{ chunk.getNoiseBiome(x, y, z)}, this.levelWrapper);
+                    int blockLight = chunk.getLevel().getBrightness(LightLayer.BLOCK,thisBlock);
+                    int skyLight = chunk.getLevel().getBrightness(LightLayer.SKY,thisBlock);
+                    if (biome == null || block == null){
+                        block = newBlock;
+                        biome = newBiome;
+                        sLight = skyLight;
+                        bLight = blockLight;
+                    }
+                    if (
+                            bLight != blockLight
+                            || sLight != skyLight
+                            || newBlock != block
+                            || newBiome != biome){
+                        dataPoints.add(DhApiTerrainDataPoint.create(EDhApiDetailLevel.BLOCK.detailLevel, bLight, sLight, firstY, y, block, biome));
+                        firstY = y;
+                        sLight = skyLight;
+                        bLight = blockLight;
+                        block = newBlock;
+                        biome = newBiome;
+                    }
+                    if (maxBuildHeight -1 == y){
+                        dataPoints.add(DhApiTerrainDataPoint.create(EDhApiDetailLevel.BLOCK.detailLevel, blockLight, skyLight, y, y+1, newBlock, newBiome));
+
+                    }
+
                 }
 
-                //Collections.reverse(dataPoints);
-                // the api chunk can accept datapoints in either top-down or bottom-up order
                 apiChunk.setDataPoints(x, z, dataPoints);
             }
         }

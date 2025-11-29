@@ -40,7 +40,7 @@ public abstract class ModBiomePlacements {
     private static final TerrainParameters.Range FULL = range(-1.5,0,1.5);
     private static final TerrainParameters.Range NONE = range(0,0);
 
-    private static final TerrainParameters.Range CONTINENT_INLAND = range(0.05,0.15,100);
+    private static final TerrainParameters.Range CONTINENT_INLAND = range(-0.2,0.15,100);
     public static final TerrainParameters.Range CONTINENTAL_SHORE = range(-0.1, 0.1);
     public static final TerrainParameters.Range CONTINENTALNESS_OCEAN = range(-0.75, 0);
     public static final TerrainParameters.Range CONTINENTALNESS_DEEP_OCEAN = range(-1.5, -0.45);
@@ -51,7 +51,10 @@ public abstract class ModBiomePlacements {
     public static final TerrainParameters.Range TECTONIC_LOW = range(-6,-0.5, 0.1);
     public static final TerrainParameters.Range TECTONIC_FOREST = range(-10,0, 0.5);
     public static final TerrainParameters.Range TECTONIC_GROVES = range(-3,0.15, 1.0);
+    public static final TerrainParameters.Range TECTONICS_BADLAND = rangeMax(-3.5, 0.3);
 
+    public static final TerrainParameters.Range HIGHLANDS_AREA = rangeMax(0.15, 0.5);
+    public static final TerrainParameters.Range HIGHLANDS_NONE = range(-1.5,0,0.15);
 
     private static final TerrainParameters.Range HEIGHT_RANGE_ANY = range(WildernessConstants.WORLD_BOTTOM,WildernessConstants.BUILD_HEIGHT);
     private static final TerrainParameters.Range HEIGHT_RANGE_NATURAL = range(WildernessConstants.WORLD_BOTTOM,72,240);
@@ -137,8 +140,6 @@ public abstract class ModBiomePlacements {
     public static final ResourceKey<RebornBiomePlacement> BARREN_CAVES = register("barren_caves");
     public static final ResourceKey<RebornBiomePlacement> DEEP_DARK = register("deep_dark");
     public static final ResourceKey<RebornBiomePlacement> LUSH_CAVES = register("lush_caves");
-    public static final TerrainParameters.Range HIGHLANDS_AREA = rangeMax(0.15, 0.9);
-    public static final TerrainParameters.Range HIGHLANDS_NONE = range(-1.5,0,0.3);
 
 
     public static void bootstrap(BootstrapContext<RebornBiomePlacement> context) {
@@ -158,7 +159,7 @@ public abstract class ModBiomePlacements {
                         HEIGHT_RANGE_NATURAL // Terrain Height
                 ),
                 List.of(
-                        SHORE, NORMAL, MOUNTAIN, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, MOUNTAIN, HIGHLANDS)
         );
         placement(context, SUNFLOWER_PLAINS,
                 getBiomeHolder(lookup, Biomes.SUNFLOWER_PLAINS),
@@ -175,7 +176,7 @@ public abstract class ModBiomePlacements {
                         HIGH //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, MOUNTAIN, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, MOUNTAIN, HIGHLANDS)
         );
         placement(context, SNOWY_PLAINS,
                 getBiomeHolder(lookup, Biomes.SNOWY_PLAINS),
@@ -191,7 +192,7 @@ public abstract class ModBiomePlacements {
                         HEIGHT_RANGE_NATURAL // Terrain Height
                 ),
                 List.of(
-                        SHORE, NORMAL, MOUNTAIN, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, MOUNTAIN, HIGHLANDS)
         );
         placement(context, ICE_SPIKES,
                 getBiomeHolder(lookup, Biomes.ICE_SPIKES),
@@ -207,7 +208,7 @@ public abstract class ModBiomePlacements {
                         HEIGHT_RANGE_NATURAL // Terrain Height
                 ),
                 List.of(
-                        SHORE, NORMAL, MOUNTAIN, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, MOUNTAIN, HIGHLANDS)
         );
 
         placement(context, FOREST,
@@ -225,7 +226,7 @@ public abstract class ModBiomePlacements {
                         NEUTRAL //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
         placement(context, FLOWER_FOREST,
                 getBiomeHolder(lookup, Biomes.FLOWER_FOREST),
@@ -242,7 +243,7 @@ public abstract class ModBiomePlacements {
                         NEUTRAL //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
 
         placement(context, BIRCH_FOREST,
@@ -260,7 +261,7 @@ public abstract class ModBiomePlacements {
                         LOW //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
         placement(context, OLD_GROWTH_BIRCH_FOREST,
                 getBiomeHolder(lookup, Biomes.OLD_GROWTH_BIRCH_FOREST),
@@ -277,7 +278,7 @@ public abstract class ModBiomePlacements {
                         LOW //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
         placement(context, DARK_FOREST,
                 getBiomeHolder(lookup, Biomes.DARK_FOREST),
@@ -294,7 +295,7 @@ public abstract class ModBiomePlacements {
                         HIGH //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
         placement(context, PALE_GARDEN,
                 getBiomeHolder(lookup, Biomes.PALE_GARDEN),
@@ -312,7 +313,7 @@ public abstract class ModBiomePlacements {
                         HIGHISH
                 ),
                 List.of(
-                        NORMAL, HIGHLANDS)
+                        HILLY, NORMAL, HIGHLANDS)
         );
         placement(context, JUNGLE,
                 getBiomeHolder(lookup, Biomes.JUNGLE),
@@ -329,7 +330,7 @@ public abstract class ModBiomePlacements {
                         NEUTRAL //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
         placement(context, SPARSE_JUNGLE,
                 getBiomeHolder(lookup, Biomes.SPARSE_JUNGLE),
@@ -346,7 +347,7 @@ public abstract class ModBiomePlacements {
                         NEUTRAL //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
 
         placement(context, BAMBOO_JUNGLE,
@@ -364,7 +365,7 @@ public abstract class ModBiomePlacements {
                         HIGH //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
 
 
@@ -418,7 +419,7 @@ public abstract class ModBiomePlacements {
                         NEUTRAL //Weirdness
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
         placement(context, OLD_GROWTH_PINE_TAIGA,
                 getBiomeHolder(lookup, Biomes.OLD_GROWTH_PINE_TAIGA),
@@ -435,7 +436,7 @@ public abstract class ModBiomePlacements {
                         LOW // WEIRDNESS
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS, MOUNTAIN)
+                        HILLY, SHORE, NORMAL, HIGHLANDS, MOUNTAIN)
         );
         placement(context, OLD_GROWTH_SPRUCE_TAIGA,
                 getBiomeHolder(lookup, Biomes.OLD_GROWTH_SPRUCE_TAIGA),
@@ -452,7 +453,7 @@ public abstract class ModBiomePlacements {
                         LOW // WEIRDNESS
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS)
+                        HILLY, SHORE, NORMAL, HIGHLANDS)
         );
         placement(context, SNOWY_TAIGA,
                 getBiomeHolder(lookup, Biomes.SNOWY_TAIGA),
@@ -468,7 +469,7 @@ public abstract class ModBiomePlacements {
                         HEIGHT_RANGE_NATURAL // Terrain Height
                 ),
                 List.of(
-                        SHORE, NORMAL, HIGHLANDS, MOUNTAIN)
+                        HILLY, SHORE, NORMAL, HIGHLANDS, MOUNTAIN)
         );
 
         placement(context, SAVANNA,
@@ -485,7 +486,7 @@ public abstract class ModBiomePlacements {
                         HEIGHT_RANGE_NATURAL // Terrain Height
                 ),
                 List.of(
-                        SHORE, NORMAL)
+                        HILLY,SHORE, NORMAL)
         );
 
 
@@ -503,7 +504,8 @@ public abstract class ModBiomePlacements {
                         HEIGHT_RANGE_NATURAL // Terrain Height
                 ),
                 List.of(
-                        HIGHLANDS)
+                        HIGHLANDS),
+                List.of(TERRAIN_NORMAL,UNSTABLE)
         );
 
         placement(context, DESERT,
@@ -521,7 +523,7 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         SHORE, NORMAL, MOUNTAIN, HIGHLANDS),
-                List.of(NORMAL_TECTONIC,UNSTABLE,ERODED_MOUNTAINS)
+                List.of(TERRAIN_NORMAL,UNSTABLE,ERODED_MOUNTAINS)
         );
 
         placement(context, MEADOW,
@@ -679,52 +681,54 @@ public abstract class ModBiomePlacements {
         placement(context, BADLANDS,
                 getBiomeHolder(lookup, Biomes.BADLANDS),
                 target(
-                        HOT, //Temperature
-                        LOW, //Humidity
+                        range(WARM,HOT), //Temperature
+                        range(VERY_LOW,LOW), //Humidity
                         VERY_LOW, //Vegetation Density
-                        HIGH, //Rockiness
+                        range(NEUTRAL,VERY_HIGH), //Rockiness
                         CONTINENT_INLAND, //Continentalness
-                        rangeMax(-1.0, 1.0), //Tectonic Activity
-                        HIGHLANDS_AREA, //Highlands
-                        range(VERY_LOW, LOW), //Erosion
+                        TECTONICS_BADLAND, //Tectonic Activity
+                        rangeMax(-0.15, 0.5), //Highlands
+                        range(VERY_LOW, NEUTRAL), //Erosion
                         range(64, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
-                        MOUNTAIN,HIGHLANDS)
+                        HILLY,MOUNTAIN,HIGHLANDS),
+                List.of(TERRAIN_BADLANDS,FAULT_SURROUNDINGS)
         );
         placement(context, ERODED_BADLANDS,
                 getBiomeHolder(lookup, Biomes.ERODED_BADLANDS),
                 target(
-                        HOT, //Temperature
-                        VERY_LOW, //Humidity
+                        range(WARM,HOT), //Temperature
+                        range(VERY_LOW,LOW), //Humidity
                         VERY_LOW, //Vegetation Density
-                        HIGH, //Rockiness
+                        range(NEUTRAL,VERY_HIGH), //Rockiness
                         CONTINENT_INLAND, //Continentalness
-                        rangeMax(-1.0, 1.0), //Tectonic Activity
-                        HIGHLANDS_AREA, //Highlands
-                        NEUTRAL, //Erosion
+                        TECTONICS_BADLAND, //Tectonic Activity
+                        rangeMax(-0.15, 0.5), //Highlands
+                        range(NEUTRAL, HIGH), //Erosion
                         range(64, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
-                        MOUNTAIN,HIGHLANDS),
-                List.of(MOUNTAINOUS,UNSTABLE)
+                        HILLY,MOUNTAIN,HIGHLANDS),
+                List.of(TERRAIN_BADLANDS,FAULT_SURROUNDINGS)
         );
 
         placement(context, WOODED_BADLANDS,
                 getBiomeHolder(lookup, Biomes.WOODED_BADLANDS),
                 target(
-                        HOT, //Temperature
-                        LOW, //Humidity
-                        NEUTRAL, //Vegetation Density
-                        HIGH, //Rockiness
+                        range(WARM,HOT), //Temperature
+                        range(VERY_LOW,LOW), //Humidity
+                        range(LOW,NEUTRAL), //Vegetation Density
+                        range(NEUTRAL,VERY_HIGH), //Rockiness
                         CONTINENT_INLAND, //Continentalness
-                        rangeMax(-1.0, 1.0), //Tectonic Activity
-                        HIGHLANDS_AREA, //Highlands
-                        range(VERY_LOW, LOWISH), //Erosion
+                        TECTONICS_BADLAND, //Tectonic Activity
+                        rangeMax(-0.15, 0.5), //Highlands
+                        range(VERY_LOW, HIGH), //Erosion
                         range(64, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
-                        MOUNTAIN,HIGHLANDS)
+                        HILLY,MOUNTAIN,HIGHLANDS),
+                List.of(TERRAIN_BADLANDS,FAULT_SURROUNDINGS)
         );
 
 
@@ -807,7 +811,7 @@ public abstract class ModBiomePlacements {
                         CONTINENTAL_SHORE, //Continentalness
                         range(-10, 0.0), //Tectonic Activity
                         range(0.0, 0.25), //Highlands
-                        range(-0.1, 0.2, -1.5), //Erosion
+                        range(-0.1, 0.2, 1.5), //Erosion
                         HEIGHT_RANGE_SHALLOW // Terrain Height
                 ),
                 List.of(
@@ -819,7 +823,7 @@ public abstract class ModBiomePlacements {
                 target(
                         FULL, //Temperature
                         NEGATIVE, //Humidity
-                        LOW, //Vegetation Density
+                        VERY_LOW, //Vegetation Density
                         HIGH, //Rockiness
                         CONTINENTAL_SHORE, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
@@ -1120,7 +1124,7 @@ public abstract class ModBiomePlacements {
                 biomeHolder,target,types
         ));
     }
-    private static void placement(BootstrapContext<RebornBiomePlacement> context, ResourceKey<RebornBiomePlacement> name,Holder<Biome> biomeHolder, TerrainParameters.Target target, List<RebornBiomePlacement.Type> types, List<RebornBiomePlacement.TectonicState> states) {
+    private static void placement(BootstrapContext<RebornBiomePlacement> context, ResourceKey<RebornBiomePlacement> name,Holder<Biome> biomeHolder, TerrainParameters.Target target, List<RebornBiomePlacement.Type> types, List<RebornBiomePlacement.TerrainStates> states) {
         context.register(name,new RebornBiomePlacement(name.location(),
                 biomeHolder,target,types, Optional.of(states)
         ));
@@ -1207,6 +1211,7 @@ public abstract class ModBiomePlacements {
     private static final RebornBiomePlacement.Type CAVE = RebornBiomePlacement.Type.CAVE;
     private static final RebornBiomePlacement.Type PEAK = RebornBiomePlacement.Type.PEAK;
     private static final RebornBiomePlacement.Type MOUNTAIN = RebornBiomePlacement.Type.MOUNTAIN;
+    private static final RebornBiomePlacement.Type HILLY = RebornBiomePlacement.Type.MOUNTAIN;
     private static final RebornBiomePlacement.Type HIGHLANDS = RebornBiomePlacement.Type.HIGHLANDS;
     private static final RebornBiomePlacement.Type SHORE = RebornBiomePlacement.Type.SHORE;
     private static final RebornBiomePlacement.Type NEAR_SHORE = RebornBiomePlacement.Type.NEAR_SHORE;
@@ -1215,18 +1220,19 @@ public abstract class ModBiomePlacements {
     private static final RebornBiomePlacement.Type ISLAND = RebornBiomePlacement.Type.ISLAND;
 
 
-    private static final RebornBiomePlacement.TectonicState NORMAL_TECTONIC = RebornBiomePlacement.TectonicState.NORMAL;
-    private static final RebornBiomePlacement.TectonicState UNSTABLE = RebornBiomePlacement.TectonicState.UNSTABLE;
-    private static final RebornBiomePlacement.TectonicState DIVERGING_PLATES = RebornBiomePlacement.TectonicState.DIVERGING_PLATES;
-    private static final RebornBiomePlacement.TectonicState TRENCH = RebornBiomePlacement.TectonicState.TRENCH;
-    private static final RebornBiomePlacement.TectonicState FAULT_SURROUNDINGS = RebornBiomePlacement.TectonicState.FAULT_SURROUNDINGS;
-    private static final RebornBiomePlacement.TectonicState FAULT = RebornBiomePlacement.TectonicState.FAULT;
-    private static final RebornBiomePlacement.TectonicState CLIFF_MOUNTAINS = RebornBiomePlacement.TectonicState.CLIFF_MOUNTAINS;
-    private static final RebornBiomePlacement.TectonicState MOUNTAINOUS = RebornBiomePlacement.TectonicState.MOUNTAINOUS;
-    private static final RebornBiomePlacement.TectonicState REGULAR_MOUNTAINS = RebornBiomePlacement.TectonicState.REGULAR_MOUNTAINS;
-    private static final RebornBiomePlacement.TectonicState ERODED_MOUNTAINS = RebornBiomePlacement.TectonicState.ERODED_MOUNTAINS;
-    private static final RebornBiomePlacement.TectonicState VOLCANIC = RebornBiomePlacement.TectonicState.VOLCANIC;
-    private static final RebornBiomePlacement.TectonicState DEEP_UNDERGROUND = RebornBiomePlacement.TectonicState.DEEP_UNDERGROUND;
-    private static final RebornBiomePlacement.TectonicState VERY_DEEP_UNDERGROUND = RebornBiomePlacement.TectonicState.VERY_DEEP_UNDERGROUND;
-    private static final RebornBiomePlacement.TectonicState DEEPEST_UNDERGROUND = RebornBiomePlacement.TectonicState.DEEPEST_UNDERGROUND;
+    private static final RebornBiomePlacement.TerrainStates TERRAIN_NORMAL = RebornBiomePlacement.TerrainStates.NORMAL;
+    private static final RebornBiomePlacement.TerrainStates UNSTABLE = RebornBiomePlacement.TerrainStates.UNSTABLE;
+    private static final RebornBiomePlacement.TerrainStates TERRAIN_BADLANDS = RebornBiomePlacement.TerrainStates.BADLANDS;
+    private static final RebornBiomePlacement.TerrainStates DIVERGING_PLATES = RebornBiomePlacement.TerrainStates.DIVERGING_PLATES;
+    private static final RebornBiomePlacement.TerrainStates TRENCH = RebornBiomePlacement.TerrainStates.TRENCH;
+    private static final RebornBiomePlacement.TerrainStates FAULT_SURROUNDINGS = RebornBiomePlacement.TerrainStates.FAULT_SURROUNDINGS;
+    private static final RebornBiomePlacement.TerrainStates FAULT = RebornBiomePlacement.TerrainStates.FAULT;
+    private static final RebornBiomePlacement.TerrainStates CLIFF_MOUNTAINS = RebornBiomePlacement.TerrainStates.CLIFF_MOUNTAINS;
+    private static final RebornBiomePlacement.TerrainStates MOUNTAINOUS = RebornBiomePlacement.TerrainStates.MOUNTAINOUS;
+    private static final RebornBiomePlacement.TerrainStates REGULAR_MOUNTAINS = RebornBiomePlacement.TerrainStates.REGULAR_MOUNTAINS;
+    private static final RebornBiomePlacement.TerrainStates ERODED_MOUNTAINS = RebornBiomePlacement.TerrainStates.ERODED_MOUNTAINS;
+    private static final RebornBiomePlacement.TerrainStates VOLCANIC = RebornBiomePlacement.TerrainStates.VOLCANIC;
+    private static final RebornBiomePlacement.TerrainStates DEEP_UNDERGROUND = RebornBiomePlacement.TerrainStates.DEEP_UNDERGROUND;
+    private static final RebornBiomePlacement.TerrainStates VERY_DEEP_UNDERGROUND = RebornBiomePlacement.TerrainStates.VERY_DEEP_UNDERGROUND;
+    private static final RebornBiomePlacement.TerrainStates DEEPEST_UNDERGROUND = RebornBiomePlacement.TerrainStates.DEEPEST_UNDERGROUND;
 }

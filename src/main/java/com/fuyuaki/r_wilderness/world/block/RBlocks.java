@@ -43,9 +43,9 @@ public class RBlocks {
     //Soils
 
     public static final DeferredBlock<Block> CHALKY_SOIL = registerBlockWithItem("chalky_soil",
-            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CONCRETE_POWDER));
+            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL));
     public static final DeferredBlock<Block> CHALKY_FARMLAND = registerBlockWithItem("chalky_farmland",
-            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CONCRETE_POWDER)
+            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)
     );
     public static final DeferredBlock<Block> CLAY_SOIL = registerBlockWithItem("clay_soil",
             ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY));
@@ -53,9 +53,9 @@ public class RBlocks {
             ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY)
     );
     public static final DeferredBlock<Block> PEAT = registerBlockWithItem("peat",
-            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK));
+            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT));
     public static final DeferredBlock<Block> PEAT_FARMLAND = registerBlockWithItem("peat_farmland",
-            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
+            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
     );
     public static final DeferredBlock<Block> SANDY_SOIL = registerBlockWithItem("sandy_soil",
             ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.SAND));

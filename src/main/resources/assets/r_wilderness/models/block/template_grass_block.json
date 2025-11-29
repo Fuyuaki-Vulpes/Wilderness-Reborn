@@ -19,8 +19,8 @@
 			}
 		},
 		{
-			"from": [-0.01, -0.01, -0.01],
-			"to": [16.02, 16.02, 16.02],
+			"from": [-0.015, -0.015, -0.015],
+			"to": [16.03, 16.03, 16.03],
 			"faces": {
 				"north": {"uv": [0, 0, 16, 16], "texture": "#overlay", "cullface": "north", "tintindex": 0},
 				"east": {"uv": [0, 0, 16, 16], "texture": "#overlay", "cullface": "east", "tintindex": 0},

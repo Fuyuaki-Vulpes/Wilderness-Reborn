@@ -10,6 +10,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -22,7 +23,8 @@ public class RCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
 
-    private static final ResourceLocation SCROLLBAR = RWildernessMod.modLocation("textures/gui/sprites/container/creative_inventory/scroller.png");;
+    private static final ResourceLocation SCROLLBAR = RWildernessMod.modLocation("container/creative_inventory/scroller.png");;
+    private static final ResourceLocation TAB = RWildernessMod.modLocation("container/creative_inventory/tab.png");;
     private static final ResourceLocation DEFAULT_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/generic.png");
     private static final ResourceLocation MAIN_TAB_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/main.png");
 
@@ -31,9 +33,9 @@ public class RCreativeModeTabs {
             .withTabsBefore(CreativeModeTabs.OP_BLOCKS)
             .withScrollBarSpriteLocation(SCROLLBAR)
             .withSearchBar()
-            .hideTitle()
+            .withTabsImage(TAB)
             .backgroundTexture(MAIN_TAB_TEXTURE)
-            .icon(Items.COMPASS.asItem()::getDefaultInstance)
+            .icon(Blocks.BIRCH_LEAVES.asItem()::getDefaultInstance)
             .displayItems(((parameters, output) -> {
                 output.accept(RItems.PEAT_BALL);
                 output.accept(RItems.CHALK_DUST);

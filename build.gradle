@@ -119,7 +119,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
 
 
-    compileOnly ("maven.modrinth:DistantHorizonsApi:$dhAPIVersion")
+    compileOnly("maven.modrinth:distanthorizonsapi:$dhAPIVersion")
     runtimeOnly("maven.modrinth:DistantHorizons:$dhVersion")
     implementation("maven.modrinth:lithium:$lithiumVersion")
     implementation("maven.modrinth:c2me-neoforge:$c2meVersion")
