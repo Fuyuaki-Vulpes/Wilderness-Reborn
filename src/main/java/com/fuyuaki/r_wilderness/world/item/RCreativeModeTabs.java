@@ -23,14 +23,15 @@ public class RCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
 
-    private static final ResourceLocation SCROLLBAR = RWildernessMod.modLocation("container/creative_inventory/scroller.png");;
-    private static final ResourceLocation TAB = RWildernessMod.modLocation("container/creative_inventory/tab.png");;
+    private static final ResourceLocation SCROLLBAR = RWildernessMod.modLocation("container/creative_inventory/scroller");
+    private static final ResourceLocation TAB = RWildernessMod.modLocation("container/creative_inventory/tab");
     private static final ResourceLocation DEFAULT_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/generic.png");
     private static final ResourceLocation MAIN_TAB_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/main.png");
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = registerTab("r_wilderness_main",() -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.r_wilderness_main").withStyle(ChatFormatting.ITALIC,ChatFormatting.GREEN,ChatFormatting.BOLD))
             .withTabsBefore(CreativeModeTabs.OP_BLOCKS)
+            .hideTitle()
             .withScrollBarSpriteLocation(SCROLLBAR)
             .withSearchBar()
             .withTabsImage(TAB)

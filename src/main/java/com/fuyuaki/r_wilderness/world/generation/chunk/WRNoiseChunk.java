@@ -265,7 +265,9 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             worldState = Blocks.AIR.defaultBlockState();
         }
 
-        if (sampled.continentalness() < 0.2 && worldState.isAir() && y <= seaLevel && y >= yLevelGen){
+        double r = Math.pow(Math.abs(Math.clamp(sampled.waterBasins() * 3,-1,1)),2);
+
+        if ((sampled.continentalness() < 0.2 || r < 0.5) && worldState.isAir() && y <= seaLevel){
             worldState = WATER.defaultBlockState();
         }
         finalState = worldState;
@@ -308,8 +310,9 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         }else {
             worldState = Blocks.AIR.defaultBlockState();
         }
+        double r = Math.pow(Math.abs(Math.clamp(sampled.waterBasins() * 3,-1,1)),2);
 
-        if (sampled.continentalness() < 0.2 && worldState.isAir() && y <= seaLevel){
+        if ((sampled.continentalness() < 0.2 || r < 0.5) && worldState.isAir() && y <= seaLevel){
             worldState = WATER.defaultBlockState();
         }
 

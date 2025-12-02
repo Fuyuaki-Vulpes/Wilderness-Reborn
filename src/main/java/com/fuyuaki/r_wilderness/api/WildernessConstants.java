@@ -19,4 +19,6 @@ public class WildernessConstants {
 
 
     public static final boolean DEBUG_GEN = true;
+    public static long DAY_PERIOD = 24000;
+    public static long EARTH_ORBIT_PERIOD = 365 * DAY_PERIOD;
 }

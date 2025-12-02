@@ -18,6 +18,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.ArrayList;
 
@@ -57,21 +58,27 @@ public class WildDHChunkWorldGen extends AbstractDhApiChunkWorldGenerator {
         int minBuildHeight = chunk.getMinY();
         int maxBuildHeight = chunk.getMaxY();
 
+
         DhApiChunk apiChunk = DhApiChunk.create(chunkPosX, chunkPosZ, minBuildHeight, maxBuildHeight);
         for (int x = 0; x < 16; x++)
         {
             for (int z = 0; z < 16; z++)
             {
                 ArrayList<DhApiTerrainDataPoint> dataPoints = new ArrayList<>();
-
                 IDhApiBlockStateWrapper block = null;
                 IDhApiBiomeWrapper biome = null;
                 int firstY = minBuildHeight;
                 int sLight = 0;
                 int bLight = 0;
-                for (int y = minBuildHeight; y < maxBuildHeight; y++)
-                {
 
+                int surfaceY = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z);
+                int terrainStartY = surfaceY - 32;
+
+                int gap = 16;
+                for (int y = minBuildHeight; y < maxBuildHeight; y+= gap) {
+                    if (y > terrainStartY){
+                        gap = 1;
+                    }
                     BlockPos thisBlock = new BlockPos(x, y, z);
                     BlockState b = chunk.getBlockState(thisBlock);
                     IDhApiBlockStateWrapper newBlock = DhApi.Delayed.wrapperFactory.getBlockStateWrapper(new Object[]{b}, this.levelWrapper);

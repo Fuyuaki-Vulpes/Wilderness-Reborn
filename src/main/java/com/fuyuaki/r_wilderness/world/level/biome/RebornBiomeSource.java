@@ -16,10 +16,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeManager;
-import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.biome.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.commons.lang3.mutable.MutableDouble;
@@ -229,6 +226,9 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
                 affinity = pD;
                 biome = placement;
             }
+        }
+        if (affinity < 0){
+            return knownBiomes.stream().filter(rebornBiomePlacement -> rebornBiomePlacement.biome().is(Biomes.THE_VOID)).findFirst().get();
         }
 
         return biome;

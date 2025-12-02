@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.api;
 
+import com.fuyuaki.r_wilderness.api.config.ClientConfig;
 import com.fuyuaki.r_wilderness.data.worldgen.RSurfaceRuleData;
 import com.fuyuaki.r_wilderness.init.RAttachments;
 import com.fuyuaki.r_wilderness.init.RChunkGenerators;
@@ -63,7 +64,7 @@ public class RWildernessMod {
 
 
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
 
         DhApiEventRegister.on(DhApiLevelLoadEvent.class, new DHApiEventHandler());
 

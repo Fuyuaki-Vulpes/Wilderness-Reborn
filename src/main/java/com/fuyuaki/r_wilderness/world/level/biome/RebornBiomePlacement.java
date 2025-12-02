@@ -143,22 +143,29 @@ public record RebornBiomePlacement(
             }
             double continentalness = sampled.continentalness();
 
-            if (continentalness > 0.05){
-                if (tectonicActivity > -3.0 && Math.pow(Math.clamp(sampled.highlandsMap(), 0, 1), 5) > 0.15) return HIGHLANDS;
-                if ((sampled.erosion() < -0.5 && sampled.hills() > 0.35) || states.contains(TerrainStates.BADLANDS)){
-                    return HILLY;
-                }
-                return NEUTRAL;
-            }
-            if (continentalness > -0.05){
+            if (continentalness > -0.05) {
+                double r = Math.pow(Math.abs(Math.clamp(sampled.waterBasins() * 3,-1,1)),2);
 
-                if(yLevel > 160){
+                if (r < 0.5 && 1- Math.abs(tectonicActivity) < 0.15){
+                    return RIVER;
+                }
+                if (continentalness > 0.05) {
+
+                    if (tectonicActivity > -3.0 && Math.pow(Math.clamp(sampled.highlandsMap(), 0, 1), 5) > 0.15)
+                        return HIGHLANDS;
+                    if ((sampled.erosion() < -0.5 && sampled.hills() > 0.35) || states.contains(TerrainStates.BADLANDS)) {
+                        return HILLY;
+                    }
+                    return NEUTRAL;
+                }
+
+                if (yLevel > 160) {
                     return MOUNTAIN;
                 }
-                if(yLevel > 92){
+                if (yLevel > 92) {
                     return HIGHLANDS;
                 }
-                if (states.contains(TerrainStates.BADLANDS)){
+                if (states.contains(TerrainStates.BADLANDS)) {
                     return HILLY;
                 }
                 return SHORE;

@@ -16,6 +16,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 import net.minecraft.world.level.levelgen.synth.PerlinNoise;
+import net.neoforged.api.distmarker.Dist;
 
 import java.util.Map;
 import java.util.Optional;
@@ -44,12 +45,13 @@ public class TerrainParameters {
             );
 
 
-    private static final float baseContinentSize = 0.75F;
-    private static final float baseTectonicSize = 1.25F;
+    private static final float baseContinentSize = 0.5F;
+    private static final float baseTectonicSize = 1.75F;
+    private static final float highlandsOffset = 1.5F;
     private static final float highlandsScale = 1 / 0.75F;
     private static final float terrainTypeScale = 1 / 0.5F;
     private static final float mountainCoordsSize = 0.6F;
-    private static final float temperatureScale = 1.25F;
+    private static final float temperatureScale = 1.5F;
     private static final float humidityScale = 1.25F;
     private static final float rockinessScale = 1.25F;
     private static final float weirdnessScale = 0.65F;
@@ -123,8 +125,20 @@ public class TerrainParameters {
                         getBadlandsStep(randomSource,"badlands_step"),
                         getBadlandsValleys(randomSource,"badlands_valleys"),
                         getBadlandsHills(randomSource,"badlands_hills")
+                ),
+                new Shapers.River(
+                        getRiverDirection(randomSource,"river_direction"),
+                        getRiverType(randomSource,"river_type_a"),
+                        getRiverType(randomSource,"river_type_b")
                 )
         );
+    }
+
+    private PerlinNoise getRiverDirection(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-3,2);
+    }
+    private PerlinNoise getRiverType(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-3,2);
     }
 
     private PerlinNoise getBadlandsHills(PositionalRandomFactory randomSource, String name) {
@@ -251,11 +265,11 @@ public class TerrainParameters {
     }
 
     private PerlinNoise getTerrainOffsetLarge(PositionalRandomFactory randomSource, String name) {
-        return PerlinNoise.create(noiseRandom(name, randomSource),-8,1.5,1);
+        return PerlinNoise.create(noiseRandom(name, randomSource),-8,1.5,0,1);
     }
 
     private PerlinNoise getTerrainOffset(PositionalRandomFactory randomSource, String name) {
-        return PerlinNoise.create(noiseRandom(name, randomSource),-6,1.5,1);
+        return PerlinNoise.create(noiseRandom(name, randomSource),-6,1.5,1,0,1);
     }
 
     private PerlinNoise geHighlandsMap(PositionalRandomFactory randomSource, String name) {
@@ -294,7 +308,7 @@ public class TerrainParameters {
     }
 
     private PerlinNoise getErosion(PositionalRandomFactory randomSource, String name) {
-        return PerlinNoise.create(noiseRandom(name, randomSource),-11,2,1.5);
+        return PerlinNoise.create(noiseRandom(name, randomSource),-12,2,1.5);
     }
 
     private PerlinNoise getContinentalness(PositionalRandomFactory randomSource, String name) {
@@ -309,7 +323,7 @@ public class TerrainParameters {
                 PerlinNoise.create(noiseRandom("vegetation_density", randomSource),-10,2,2,1.5),
                 PerlinNoise.create(noiseRandom("rockiness", randomSource),-9,2,1,1.5),
                 PerlinNoise.create(noiseRandom("weirdness", randomSource),-9,2,1,1),
-                PerlinNoise.create(noiseRandom("magicalness", randomSource),-9,2,1)
+                PerlinNoise.create(noiseRandom("magicalness", randomSource),-9,1.5,1)
         );
     }
 
@@ -355,10 +369,7 @@ public class TerrainParameters {
 
         double randomElevation = sampleRandomElevation(x,z,continentalness,erosionShaper);
 
-        double highlands = (Math.sin(((
-                Math.pow(Math.clamp(getC(this.shapers.highlandsMap, xPos / baseTectonicSize / highlandsScale, zPos / baseTectonicSize/ highlandsScale),0,1),3)
-                        *
-                        Math.clamp(continentalness * 7, -0.2,1)) - 0.5) * Mth.PI) + 1) / 2 ;
+        double highlands = sampleHighlands(xPos, zPos, continentalness);
 
        double tectonicSample = this.shapers.tectonicActivity.getValue(xPos / baseTectonicSize,  0,zPos / baseTectonicSize) * 2.5;
        double mountainLayer = sampleMountains( x, z, highlands, tectonicSample, continentalness, terrainType, erosionShaper, surfaceOnly);
@@ -368,7 +379,8 @@ public class TerrainParameters {
        double yOff = terrainSample + mountainLayer + detailerLayer + randomElevation;
 
        yOff = postWithBadlands(x,z,erosionShaper, continentalness, yOff);
-       double y = yOff + seaSample;
+
+        double y = samplePRivers(x,z,continentalness,tectonicSample,yOff + seaSample);
         if(cache){
             if (surfaceOnly) {
                 updateChunkYSurface(y, xPos, zPos);
@@ -377,6 +389,56 @@ public class TerrainParameters {
             }
         }
        return y;
+    }
+
+    private double sampleHighlands(int xPos, int zPos, double continentalness) {
+        return (Math.sin(((
+                Math.pow(Math.clamp((getC(this.shapers.highlandsMap, xPos / baseTectonicSize / highlandsScale, zPos / baseTectonicSize / highlandsScale) - highlandsOffset) * 2, 0, 1), 3)
+                        *
+                        Math.clamp(continentalness * 7, -0.2, 1)) - 0.5) * Mth.PI) + 1) / 2;
+    }
+
+    /**
+     * Super-duper simplified version of Y calculatiom
+     */
+    public double riverRawY(int xPos, int zPos){
+        float x = xPos * terrainScale;
+        float z = zPos * terrainScale;
+        float xContinental = xPos * continentScale;
+        float zContinental = zPos * continentScale;
+        TerrainType terrainType = new TerrainType(
+                terrainType(this.shapers.terrainTypeA.getValue((xContinental / baseTectonicSize) / terrainTypeScale, 0, (zContinental / baseTectonicSize) / terrainTypeScale)),
+                terrainType(this.shapers.terrainTypeB.getValue((xContinental / baseTectonicSize) / terrainTypeScale, 0, (zContinental / baseTectonicSize) / terrainTypeScale))
+        );
+        double continentalness = (this.shapers.continentalness.getValue(xContinental * baseContinentSize, 0, zContinental * baseContinentSize) * 2) + 0.2;
+        double seaSample = sampleOceans(continentalness);
+        double terrainSample = sampleTerrain(x,z, continentalness,1);
+
+        double randomElevation = sampleRandomElevation(x,z,continentalness,0);
+
+       double tectonicSample = this.shapers.tectonicActivity.getValue(xPos / baseTectonicSize,  0,zPos / baseTectonicSize) * 2.5;
+       double mountainLayer = sampleMountains( x, z, 0, tectonicSample, continentalness, terrainType, 1, false);
+
+       return terrainSample + mountainLayer + randomElevation + seaSample;
+    }
+
+    private double samplePRivers(float x, float z, double continentalness, double tectonicSample, double y) {
+        if (continentalness < -0.2) return y;
+
+        double tFilter = Math.clamp(2 - (Math.abs(tectonicSample) * 2),0,1);
+        double r = Math.pow(Math.abs(Math.clamp(getC(this.shapers.waterBasins,x,z) * 3,-1,1)),1.15);
+        if (r >= 1) return y;
+        DistortionSpline spline =
+                new DistortionSpline(
+                        new DistortionSpline.Spline()
+                                .addPoint(-1,52)
+                                .addPoint(0,52)
+                                .addPoint(0.4,64)
+                                .addPoint(1,y)
+                                .addPoint(5,y)
+                        ,52,y
+                );
+        return Math.min(y,Mth.lerp(tFilter,spline.at(r),y));
     }
 
     private double postWithBadlands(float x, float z, double erosionShaper, double continentalness, double yOff) {
@@ -649,7 +711,7 @@ public class TerrainParameters {
     */
     private double sampleMountains(float xPos, float zPos, double highlands, double tectonicActivity, double continentalness, TerrainType terrainType, double erosion, boolean surfaceOnly){
 
-        double tA = 1 - Math.abs(tectonicActivity);
+        double tA = 1 - Math.pow(tectonicActivity,2);
         double hillHighlandsStart = 3.0;
         if (tA <= -hillHighlandsStart) return 0;
 
@@ -919,10 +981,7 @@ public class TerrainParameters {
         double tA = 1 - Math.pow(tectonicActivity,2);
         double tA2 = 1 - Math.clamp((Math.abs(tectonicActivity) - 3), 0, 1);
         double continentalness = (this.shapers.continentalness.getValue(xContinental * baseContinentSize, 0, zPos * continentScale * baseContinentSize) * 2) + 0.2;
-        double highlandsMap = (Math.sin(((
-                Math.pow(Math.clamp(getC(this.shapers.highlandsMap, xPos / baseTectonicSize / highlandsScale, zPos / baseTectonicSize/ highlandsScale),0,1),3)
-                        *
-                        Math.clamp(continentalness * 7, -0.2,1)) - 0.5) * Mth.PI) + 1) / 2;
+        double highlandsMap = sampleHighlands(xPos, zPos, continentalness);
         double erosion = sampleErosionMap(x,z);
 
 
@@ -956,24 +1015,37 @@ public class TerrainParameters {
                 alpha,
                 alphaDetail,
                 alphaNoise,
-                highlandsMap,
+                highlandsMap * Math.clamp((tA + 3.0) * 1.5, 0,1),
                 Math.abs(this.shapers.hills.getValue(xM, 0, zM)) * tA2,
                 Math.max(Math.abs(this.shapers.terrainOffset.getValue(x, 0, z))
                         , Math.abs(this.shapers.terrainOffsetLarge.getValue(x, 0, z)))
                         + (Math.abs(this.shapers.terrainNoise.getValue(x, 0, z)) * 0.125),
                 terrainA, terrainB,
                 new TerrainType(terrainType(terrainA), terrainType(terrainB)),
-                getC(this.shapers.badlands.filter,x,z),
-                foldZeroToOne(getC(this.shapers.waterBasins,x,z)),
-                getC(this.climate.temperature, x / temperatureScale, z / temperatureScale),
-                getC(this.climate.humidity, x / humidityScale, z / humidityScale),
-                getC(this.climate.vegetationDensity, x, z),
-                getC(this.climate.rockiness, x / rockinessScale, z / rockinessScale),
-                getC(this.climate.weirdness, x / weirdnessScale, z / weirdnessScale),
-                Math.clamp((getC(this.climate.magicalness, x, z) - 0.5) * 2,-1.5,1.5)
+                getC(this.shapers.badlands.filter,xPos,zPos),
+                Math.abs(getC(this.shapers.waterBasins,xPos,zPos)),
+                getC(this.climate.temperature, xPos / temperatureScale, zPos / temperatureScale),
+                getC(this.climate.humidity, xPos / humidityScale, zPos / humidityScale),
+                getC(this.climate.vegetationDensity, xPos, z),
+                getC(this.climate.rockiness, xPos / rockinessScale, zPos / rockinessScale),
+                getC(this.climate.weirdness, xPos / weirdnessScale, zPos / weirdnessScale),
+                Math.clamp((getC(this.climate.magicalness, xPos, zPos) - 0.5) * 2,-1.5,1.5),
+                new Sampled.River(
+                        getC2(this.shapers.rivers.direction,xPos,zPos),
+                        getC2(this.shapers.rivers.typeA,xPos,zPos),
+                        getC2(this.shapers.rivers.typeB,xPos,zPos)
+                )
         );
         this.updateChunkSampler(sampled, xPos, zPos);
         return sampled;
+    }
+
+    public Sampled.River getRiverSampledAt(int x, int z){
+        return new Sampled.River(
+                getC2(this.shapers.rivers.direction,x,z),
+                getC2(this.shapers.rivers.typeA,x,z),
+                getC2(this.shapers.rivers.typeB,x,z)
+        );
     }
 
 
@@ -1006,7 +1078,8 @@ public class TerrainParameters {
         PerlinNoise basinFilter,
         PerlinNoise randomElevation,
         Cave cave,
-        Badlands badlands
+        Badlands badlands,
+        River rivers
         ){
 
         public record Mountain(
@@ -1052,6 +1125,15 @@ public class TerrainParameters {
             }
 
         }
+
+
+        public record River(
+                PerlinNoise direction,
+                PerlinNoise typeA,
+                PerlinNoise typeB
+        ){}
+
+
     }
 
 
@@ -1076,8 +1158,15 @@ public class TerrainParameters {
         double vegetationDensity,
         double rockyness,
         double weirdness,
-        double magicalness
+        double magicalness,
+        River river
         ){
+
+        public record River(
+                double direction,
+                double typeA,
+                double typeB
+        ){}
     }
 
 

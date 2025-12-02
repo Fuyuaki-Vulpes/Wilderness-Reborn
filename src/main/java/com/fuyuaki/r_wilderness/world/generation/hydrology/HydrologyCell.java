@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation.hydrology;
 
-import net.minecraft.core.Direction;
+import com.fuyuaki.r_wilderness.world.generation.hydrology.river.Flow;
 
 import java.util.Set;
 

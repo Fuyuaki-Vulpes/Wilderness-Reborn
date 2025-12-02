@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class ModBiomePlacements {
+
+    private static final TerrainParameters.Range IMPOSSIBLE = range(-999,-990,-985);
+
+
     private static final TerrainParameters.Range HOT = range(0.75,0.85, 2.5);
     private static final TerrainParameters.Range WARM = range(0.35,0.75);
     private static final TerrainParameters.Range LUKEWARM = range(0.15,0.35);
@@ -63,6 +67,8 @@ public abstract class ModBiomePlacements {
     private static final double HEIGHT_TOP = WildernessConstants.BUILD_HEIGHT;
     private static final double HEIGHT_SEA = WildernessConstants.SEA_LEVEL;
 
+
+    public static final ResourceKey<RebornBiomePlacement> VOID = register("void");
 
     //OFF LAND
     public static final ResourceKey<RebornBiomePlacement> OCEAN = register("ocean");
@@ -1112,6 +1118,25 @@ public abstract class ModBiomePlacements {
                 List.of(
                         CAVE),
                 List.of(VERY_DEEP_UNDERGROUND)
+        );
+
+
+        placement(context, VOID,
+                getBiomeHolder(lookup, Biomes.THE_VOID),
+                target(
+                        IMPOSSIBLE, //Temperature
+                        IMPOSSIBLE, //Humidity
+                        IMPOSSIBLE, //Vegetation Density
+                        IMPOSSIBLE, //Rockiness
+                        IMPOSSIBLE, //Continentalness
+                        IMPOSSIBLE, //Tectonic Activity
+                        IMPOSSIBLE, //Highlands
+                        IMPOSSIBLE, //Erosion
+                        IMPOSSIBLE, // Terrain Height
+                        IMPOSSIBLE,
+                        IMPOSSIBLE
+                ),
+                List.of(PEAK)
         );
     }
 
