@@ -1,4 +1,5 @@
-// 1.21.5	2025-05-28T15:17:11.8312727	Registries
+// 1.21.5	2025-05-31T16:43:04.5812892	Registries
+8256cf4a7158a736a7e578d74bfd9f13cd891f85 data/wilderness_reborn/worldgen/configured_feature/alpine_tree.json
 9e9b75fe3efbe69499933934038af88b039436ee data/wilderness_reborn/worldgen/density_function/elevation.json
 84c05f219e6161cd2c2ed4ec543899a35e05c01a data/wilderness_reborn/worldgen/density_function/hill_curvature.json
 842c97188c1aa63c21c40d7282564f23151e5e14 data/wilderness_reborn/worldgen/density_function/noise_filter.json
@@ -16,3 +17,4 @@ ca43fea1cf512ad50b64a55140fce0a94aa98f18 data/wilderness_reborn/worldgen/noise/s
 2e3409ff85a868c7fa4db060fb46b45177d6aa8c data/wilderness_reborn/worldgen/noise/tectonic_activity.json
 574797d6b6b080a36cc515d178138380a3c0c02b data/wilderness_reborn/worldgen/noise/topography_edges.json
 82976cf312a9f4497ce1dfa944057e41d0e31434 data/wilderness_reborn/worldgen/noise/topography_simple.json
+422d38334287c9a7e923b82cc956514a78e3e1c7 data/wilderness_reborn/worldgen/placed_feature/alpine_tree.json

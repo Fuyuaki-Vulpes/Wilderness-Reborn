@@ -1,5 +1,6 @@
-package com.fuyuaki.wilderness_reborn.world.level.block;
+package com.fuyuaki.wilderness_reborn.world.level.block.soils;
 
+import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;

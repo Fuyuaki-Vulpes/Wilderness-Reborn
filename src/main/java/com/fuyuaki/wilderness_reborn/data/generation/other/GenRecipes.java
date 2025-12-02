@@ -2,7 +2,9 @@ package com.fuyuaki.wilderness_reborn.data.generation.other;
 
 import com.fuyuaki.wilderness_reborn.world.item.ModItems;
 import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
+import com.fuyuaki.wilderness_reborn.world.level.block.ModFamilies;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.BlockFamily;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -85,7 +87,7 @@ public class GenRecipes  extends RecipeProvider {
 
     @Override
     protected void generateForEnabledBlockFamilies(FeatureFlagSet enabledFeatures) {
-//        MTAFamilies.getAllFamilies().filter(BlockFamily::shouldGenerateRecipe).forEach(p_359455_ -> this.generateRecipes(p_359455_, enabledFeatures));
+        ModFamilies.getAllFamilies().filter(BlockFamily::shouldGenerateRecipe).forEach(p_359455_ -> this.generateRecipes(p_359455_, enabledFeatures));
     }
 
 

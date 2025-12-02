@@ -1,5 +1,6 @@
-package com.fuyuaki.wilderness_reborn.world.level.block;
+package com.fuyuaki.wilderness_reborn.world.level.block.soils;
 
+import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;

@@ -56,6 +56,38 @@ public class LootBlocks extends BlockLootSubProvider {
         dropSelf(ModBlocks.SILT.get());
         dropOther(ModBlocks.SILT_FARMLAND.get(), ModBlocks.SILT);
 
+        //Trees & Wood
+
+        dropSelf(ModBlocks.ALPINE_LOG.get());
+        dropSelf(ModBlocks.STRIPPED_ALPINE_LOG.get());
+        dropSelf(ModBlocks.ALPINE_WOOD.get());
+        dropSelf(ModBlocks.STRIPPED_ALPINE_WOOD.get());
+        dropSelf(ModBlocks.ALPINE_PLANKS.get());
+        add(ModBlocks.ALPINE_LEAVES.get(), block -> createLeavesDrops(block, ModBlocks.ALPINE_SAPLING.get(),NORMAL_LEAVES_SAPLING_CHANCES));
+        dropSelf(ModBlocks.ALPINE_SAPLING.get());
+        dropSelf(ModBlocks.ALPINE_STAIRS.get());
+        add(ModBlocks.ALPINE_SLAB.get(), block -> createSlabItemTable(ModBlocks.ALPINE_SLAB.get()));
+        dropSelf(ModBlocks.ALPINE_PRESSURE_PLATE.get());
+        dropSelf(ModBlocks.ALPINE_BUTTON.get());
+        dropSelf(ModBlocks.ALPINE_FENCE.get());
+        dropSelf(ModBlocks.ALPINE_FENCE_GATE.get());
+        add(ModBlocks.ALPINE_DOOR.get(), block -> createDoorTable(ModBlocks.ALPINE_DOOR.get()));
+        dropSelf(ModBlocks.ALPINE_TRAPDOOR.get());
+        dropSelf(ModBlocks.ALPINE_SIGN.get());
+        dropOther(ModBlocks.ALPINE_WALL_SIGN.get(), ModBlocks.ALPINE_SIGN);
+        dropSelf(ModBlocks.ALPINE_HANGING_SIGN.get());
+        dropOther(ModBlocks.ALPINE_HANGING_WALL_SIGN.get(), ModBlocks.ALPINE_HANGING_SIGN);
+        dropPottedContents(ModBlocks.POTTED_ALPINE_SAPLING.get());
+
+        //Flowers
+        dropSelf(ModBlocks.BELLFLOWER.get());
+        add(ModBlocks.POTTED_BELLFLOWER.get(), createPotFlowerItemTable(ModBlocks.BELLFLOWER));
+        dropSelf(ModBlocks.MOSS_COMPANION.get());
+        add(ModBlocks.POTTED_MOSS_COMPANION.get(), createPotFlowerItemTable(ModBlocks.MOSS_COMPANION));
+        dropSelf(ModBlocks.MOUNTAIN_HEATHER.get());
+        add(ModBlocks.POTTED_MOUNTAIN_HEATHER.get(), createPotFlowerItemTable(ModBlocks.MOUNTAIN_HEATHER));
+        dropSelf(ModBlocks.SNOWBELL.get());
+        add(ModBlocks.POTTED_SNOWBELL.get(), createPotFlowerItemTable(ModBlocks.SNOWBELL));
     }
 
     @Override

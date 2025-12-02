@@ -1,6 +1,7 @@
 package com.fuyuaki.wilderness_reborn.data.generation.model;
 
 import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
+import com.fuyuaki.wilderness_reborn.world.level.block.ModFamilies;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelOutput;
@@ -8,7 +9,9 @@ import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.data.models.blockstates.BlockModelDefinitionGenerator;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.model.*;
+import net.minecraft.data.BlockFamily;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -33,9 +36,9 @@ public class GenBlockModels extends BlockModelGenerators {
 
     @Override
     public void run() {
-//        ModFamilies.getAllFamilies()
-//                .filter(BlockFamily::shouldGenerateModel)
-//                .forEach(p_386718_ -> this.family(p_386718_.getBaseBlock()).generateFor(p_386718_));
+        ModFamilies.getAllFamilies()
+                .filter(BlockFamily::shouldGenerateModel)
+                .forEach(p_386718_ -> this.family(p_386718_.getBaseBlock()).generateFor(p_386718_));
 
         createTrivialCube(ModBlocks.CHALK.get());
         createTrivialCube(ModBlocks.LIMESTONE.get());
@@ -50,6 +53,19 @@ public class GenBlockModels extends BlockModelGenerators {
         createFarmland(ModBlocks.SANDY_FARMLAND, ModBlocks.SANDY_SOIL);
         createTrivialCube(ModBlocks.SILT.get());
         createFarmland(ModBlocks.SILT_FARMLAND, ModBlocks.SILT);
+
+        //Trees & Wood
+        woodProvider(ModBlocks.ALPINE_LOG.get()).logWithHorizontal(ModBlocks.ALPINE_LOG.get()).wood(ModBlocks.ALPINE_WOOD.get());
+        woodProvider(ModBlocks.STRIPPED_ALPINE_LOG.get()).logWithHorizontal(ModBlocks.STRIPPED_ALPINE_LOG.get()).wood(ModBlocks.STRIPPED_ALPINE_WOOD.get());
+        createTintedLeaves(ModBlocks.ALPINE_LEAVES.get(), TexturedModel.LEAVES, FoliageColor.FOLIAGE_EVERGREEN);
+        createPlantWithDefaultItem(ModBlocks.ALPINE_SAPLING.get(),ModBlocks.POTTED_ALPINE_SAPLING.get(),PlantType.NOT_TINTED);
+        createHangingSign(ModBlocks.STRIPPED_ALPINE_LOG.get(), ModBlocks.ALPINE_HANGING_SIGN.get(), ModBlocks.ALPINE_HANGING_WALL_SIGN.get());
+
+        //Flowers
+        createPlantWithDefaultItem(ModBlocks.BELLFLOWER.get(), ModBlocks.POTTED_BELLFLOWER.get(), BlockModelGenerators.PlantType.NOT_TINTED);
+        createPlantWithDefaultItem(ModBlocks.MOSS_COMPANION.get(), ModBlocks.POTTED_MOSS_COMPANION.get(), BlockModelGenerators.PlantType.NOT_TINTED);
+        createPlantWithDefaultItem(ModBlocks.MOUNTAIN_HEATHER.get(), ModBlocks.POTTED_MOUNTAIN_HEATHER.get(), BlockModelGenerators.PlantType.NOT_TINTED);
+        createPlantWithDefaultItem(ModBlocks.SNOWBELL.get(), ModBlocks.POTTED_SNOWBELL.get(), BlockModelGenerators.PlantType.NOT_TINTED);
         }
 
     public void createVerticalBlock(Block block, Block side, Block bottom, Block top){

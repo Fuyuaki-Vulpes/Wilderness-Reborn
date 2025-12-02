@@ -4,11 +4,15 @@ import com.fuyuaki.wilderness_reborn.data.worldgen.ModSurfaceRuleData;
 import com.fuyuaki.wilderness_reborn.world.item.ModCreativeModeTabs;
 import com.fuyuaki.wilderness_reborn.world.item.ModItems;
 import com.fuyuaki.wilderness_reborn.world.level.block.ModBlocks;
+import com.fuyuaki.wilderness_reborn.world.level.block.entity.ModBlockEntities;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -37,11 +41,29 @@ public class WildernessRebornMod {
         ModBlocks.init(modEventBus);
         ModItems.init(modEventBus);
         ModCreativeModeTabs.init(modEventBus);
+        ModBlockEntities.init(modEventBus);
+
 
         NeoForge.EVENT_BUS.register(this);
 
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+    }
+
+    public static void setupRenderTypes() {
+        RenderType transparentRenderType = RenderType.cutoutMipped();
+        RenderType cutoutRenderType = RenderType.cutout();
+        RenderType translucentRenderType = RenderType.translucent();
+        setRenderType(ModBlocks.ALPINE_LEAVES.get(),cutoutRenderType);
+        setRenderType(ModBlocks.ALPINE_SAPLING.get(),cutoutRenderType);
+        setRenderType(ModBlocks.ALPINE_DOOR.get(),cutoutRenderType);
+        setRenderType(ModBlocks.ALPINE_TRAPDOOR.get(),cutoutRenderType);
+
+    }
+
+    private static void setRenderType(Block block, RenderType type) {
+        ItemBlockRenderTypes.setRenderLayer(block,type);
 
     }
 

@@ -55,6 +55,10 @@ public class ModCreativeModeTabs {
                 output.accept(ModBlocks.SANDY_FARMLAND);
                 output.accept(ModBlocks.SILT);
                 output.accept(ModBlocks.SILT_FARMLAND);
+                output.accept(ModBlocks.BELLFLOWER);
+                output.accept(ModBlocks.MOSS_COMPANION);
+                output.accept(ModBlocks.MOUNTAIN_HEATHER);
+                output.accept(ModBlocks.SNOWBELL);
             }))
             .build());
 
