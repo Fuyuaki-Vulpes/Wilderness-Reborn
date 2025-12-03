@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "moisture=0": {
+      "model": "r_wilderness:block/sandy_farmland"
+    },
+    "moisture=1": {
+      "model": "r_wilderness:block/sandy_farmland"
+    },
+    "moisture=2": {
+      "model": "r_wilderness:block/sandy_farmland"
+    },
+    "moisture=3": {
+      "model": "r_wilderness:block/sandy_farmland"
+    },
+    "moisture=4": {
+      "model": "r_wilderness:block/sandy_farmland"
+    },
+    "moisture=5": {
+      "model": "r_wilderness:block/sandy_farmland"
+    },
+    "moisture=6": {
+      "model": "r_wilderness:block/sandy_farmland"
+    },
+    "moisture=7": {
+      "model": "r_wilderness:block/sandy_farmland_moist"
+    }
+  }
+}

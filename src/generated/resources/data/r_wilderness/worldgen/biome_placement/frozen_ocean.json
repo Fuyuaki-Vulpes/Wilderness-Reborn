@@ -1,0 +1,65 @@
+{
+  "biome": "minecraft:frozen_ocean",
+  "name": "r_wilderness:frozen_ocean",
+  "target": {
+    "continentalness": {
+      "max": 0.0,
+      "mean": -0.375,
+      "min": -0.75
+    },
+    "erosion": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "highlands": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "humidity": {
+      "max": 0.2,
+      "mean": -0.4,
+      "min": -1.0
+    },
+    "magicalness": {
+      "max": 0.15,
+      "mean": -0.675,
+      "min": -1.5
+    },
+    "rockiness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "tectonic_activity": {
+      "max": 26.0,
+      "mean": 1.0,
+      "min": -10.0
+    },
+    "temperature": {
+      "max": -0.75,
+      "mean": -0.85,
+      "min": -2.5
+    },
+    "terrain_height": {
+      "max": 60.0,
+      "mean": -98.0,
+      "min": -256.0
+    },
+    "vegetation_density": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "weirdness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    }
+  },
+  "valid_terrain_types": [
+    "sea_near_shore",
+    "sea"
+  ]
+}

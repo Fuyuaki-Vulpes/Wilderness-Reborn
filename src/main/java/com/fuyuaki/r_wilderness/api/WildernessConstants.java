@@ -1,0 +1,24 @@
+package com.fuyuaki.r_wilderness.api;
+
+public class WildernessConstants {
+
+    public static final int BUILD_HEIGHT = 720;
+    public static final int CAVES_TOP = 416;
+    public static final int CAVES_BASE_TOP = 32;
+    public static final int CAVES_BOTTOM = -240;
+    public static final int CAVES_BOTTOM_CENTER = -192;
+    public static final int WORLD_BOTTOM = -256;
+    public static final int WORLD_HEIGHT =  Math.abs(WORLD_BOTTOM) + BUILD_HEIGHT ;
+
+    public static final float BOTTOM_DENSITY = 1.5F;
+    public static final float TOP_DENSITY = -1.5F;
+
+    public static final int SEA_LEVEL = 64;
+
+    public static final int CLOUD_HEIGHT = 320;
+
+
+    public static final boolean DEBUG_GEN = true;
+    public static long DAY_PERIOD = 24000;
+    public static long EARTH_ORBIT_PERIOD = 365 * DAY_PERIOD;
+}

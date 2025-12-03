@@ -1,0 +1,47 @@
+package com.fuyuaki.r_wilderness.data.generation.model;
+
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+
+public class RebornMapping {
+
+    public static TextureMapping singleSlot(TextureSlot slot, ResourceLocation texture) {
+        return new TextureMapping().put(slot, texture);
+    }
+    public static TextureMapping crossEmissive(Block block) {
+        return new TextureMapping().put(TextureSlot.CROSS, getBlockTexture(block)).put(TextureSlot.CROSS_EMISSIVE, getBlockTexture(block, "_emissive"));
+    }
+
+    public static TextureMapping cross(ResourceLocation texture) {
+        return singleSlot(TextureSlot.CROSS, texture);
+    }
+
+    public static ResourceLocation getBlockTexture(Block block) {
+        ResourceLocation resourcelocation = BuiltInRegistries.BLOCK.getKey(block);
+        return resourcelocation.withPrefix("block/");
+    }
+
+    public static ResourceLocation getBlockTexture(Block block, String suffix) {
+        ResourceLocation resourcelocation = BuiltInRegistries.BLOCK.getKey(block);
+        return resourcelocation.withPath(string -> "block/" + string + suffix);
+    }
+
+    public static ResourceLocation getItemTexture(Item item) {
+        ResourceLocation resourcelocation = BuiltInRegistries.ITEM.getKey(item);
+        return resourcelocation.withPrefix("item/");
+    }
+
+    public static ResourceLocation getItemTexture(Item item, String suffix) {
+        ResourceLocation resourcelocation = BuiltInRegistries.ITEM.getKey(item);
+        return resourcelocation.withPath(string -> "item/" + string + suffix);
+    }
+
+    public static TextureMapping crossBottom(Block block) {
+        return new TextureMapping().put(TextureSlot.CROSS, getBlockTexture(block,"_bottom")).put(RebornSlots.CROSS_TOP, getBlockTexture(block, "_top"));
+
+    }
+}

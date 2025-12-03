@@ -1,0 +1,66 @@
+{
+  "biome": "minecraft:pale_garden",
+  "name": "r_wilderness:pale_garden",
+  "target": {
+    "continentalness": {
+      "max": 1.5,
+      "mean": 1.05,
+      "min": 0.6
+    },
+    "erosion": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "highlands": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "humidity": {
+      "max": 0.35,
+      "mean": 0.0,
+      "min": -0.35
+    },
+    "magicalness": {
+      "max": 0.6,
+      "mean": 0.475,
+      "min": 0.35
+    },
+    "rockiness": {
+      "max": 0.35,
+      "mean": 0.0,
+      "min": -0.35
+    },
+    "tectonic_activity": {
+      "max": 1.0,
+      "mean": -2.25,
+      "min": -5.5
+    },
+    "temperature": {
+      "max": -0.15,
+      "mean": -0.25,
+      "min": -0.35
+    },
+    "terrain_height": {
+      "max": 240.0,
+      "mean": 72.0,
+      "min": -256.0
+    },
+    "vegetation_density": {
+      "max": 1.5,
+      "mean": 0.9750000000000001,
+      "min": 0.45
+    },
+    "weirdness": {
+      "max": 10.0,
+      "mean": 0.95,
+      "min": 0.85
+    }
+  },
+  "valid_terrain_types": [
+    "mountain",
+    "neutral",
+    "highlands"
+  ]
+}

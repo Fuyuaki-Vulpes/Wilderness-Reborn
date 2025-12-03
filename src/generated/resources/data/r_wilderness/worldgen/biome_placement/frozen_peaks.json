@@ -1,0 +1,69 @@
+{
+  "biome": "minecraft:frozen_peaks",
+  "name": "r_wilderness:frozen_peaks",
+  "target": {
+    "continentalness": {
+      "max": 1.5,
+      "mean": 0.5,
+      "min": -0.5
+    },
+    "erosion": {
+      "max": 0.25,
+      "mean": -1.0,
+      "min": -26.0
+    },
+    "highlands": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "humidity": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "magicalness": {
+      "max": 0.15,
+      "mean": -0.675,
+      "min": -1.5
+    },
+    "rockiness": {
+      "max": 25.75,
+      "mean": 0.75,
+      "min": 0.0
+    },
+    "tectonic_activity": {
+      "max": 26.0,
+      "mean": 1.0,
+      "min": 0.25
+    },
+    "temperature": {
+      "max": -0.75,
+      "mean": -0.85,
+      "min": -2.5
+    },
+    "terrain_height": {
+      "max": 720.0,
+      "mean": 440.0,
+      "min": 160.0
+    },
+    "vegetation_density": {
+      "max": 0.35,
+      "mean": 0.0,
+      "min": -0.35
+    },
+    "weirdness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    }
+  },
+  "valid_tectonic_states": [
+    "cliff_mountains",
+    "regular_mountains"
+  ],
+  "valid_terrain_types": [
+    "mountain_peak",
+    "mountain"
+  ]
+}

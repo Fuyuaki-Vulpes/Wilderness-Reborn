@@ -1,0 +1,64 @@
+{
+  "biome": "r_wilderness:barren_caves",
+  "name": "r_wilderness:barren_caves",
+  "target": {
+    "continentalness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "erosion": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "highlands": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "humidity": {
+      "max": 0.0,
+      "mean": -0.5,
+      "min": -2.5
+    },
+    "magicalness": {
+      "max": 0.15,
+      "mean": -0.675,
+      "min": -1.5
+    },
+    "rockiness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "tectonic_activity": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "temperature": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "terrain_height": {
+      "max": 720.0,
+      "mean": 232.0,
+      "min": -256.0
+    },
+    "vegetation_density": {
+      "max": 0.0,
+      "mean": -0.5,
+      "min": -2.5
+    },
+    "weirdness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    }
+  },
+  "valid_terrain_types": [
+    "cave"
+  ]
+}

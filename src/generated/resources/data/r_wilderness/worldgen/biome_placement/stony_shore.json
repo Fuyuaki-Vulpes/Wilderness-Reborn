@@ -1,0 +1,64 @@
+{
+  "biome": "minecraft:stony_shore",
+  "name": "r_wilderness:stony_shore",
+  "target": {
+    "continentalness": {
+      "max": 0.1,
+      "mean": 0.0,
+      "min": -0.1
+    },
+    "erosion": {
+      "max": 0.1,
+      "mean": -0.35,
+      "min": -1.5
+    },
+    "highlands": {
+      "max": 1.0,
+      "mean": 0.5,
+      "min": 0.0
+    },
+    "humidity": {
+      "max": 0.0,
+      "mean": -0.5,
+      "min": -2.5
+    },
+    "magicalness": {
+      "max": 0.15,
+      "mean": -0.675,
+      "min": -1.5
+    },
+    "rockiness": {
+      "max": 0.85,
+      "mean": 0.725,
+      "min": 0.6
+    },
+    "tectonic_activity": {
+      "max": 1.0,
+      "mean": 0.0,
+      "min": -6.0
+    },
+    "temperature": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "terrain_height": {
+      "max": 92.0,
+      "mean": 64.0,
+      "min": -256.0
+    },
+    "vegetation_density": {
+      "max": -0.85,
+      "mean": -0.95,
+      "min": -10.0
+    },
+    "weirdness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    }
+  },
+  "valid_terrain_types": [
+    "shore"
+  ]
+}

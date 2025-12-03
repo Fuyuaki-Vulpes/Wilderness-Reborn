@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:noise",
+    "noise": "r_wilderness:aquifers",
+    "xz_scale": 0.25,
+    "y_scale": 1.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.fuyuaki.r_wilderness.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "r_wilderness.refmap.json",
+  "mixins": [
+    "accessor.ChunkAccessAccessor",
+    "accessor.ChunkGeneratorAccessor",
+    "accessor.ChunkMapAccessor",
+    "common.ChunkAccessMixin",
+    "common.ChunkMapMixin",
+    "common.ChunkStatusMixin",
+    "common.LevelChunkSectionMixin",
+    "common.MinecraftServerMixin",
+    "common.PieceGeneratorSupplierContextMixin",
+    "common.RandomStateMixin",
+    "common.RuinedPortalStructureMixin",
+    "common.ServerChunkCacheMixin",
+    "common.ServerWorldMixin",
+    "common.SoundEventMixin",
+    "common.StructureMixin",
+    "common.SurfaceRulesContextMixin",
+    "common.SurfaceRulesSteepConditionMixin",
+    "common.WorldDimensionsMixin",
+    "common.WorldGenerationContextMixin",
+    "common.WorldPresetsMixin"
+  ],
+  "client": [
+    "client.AirBasedFogEnvironmentMixin",
+    "client.ClientLevelMixin",
+    "client.CreateWorldScreenMixin",
+    "client.CreativeModeInventoryScreenMixin",
+    "client.LevelRendererMixin",
+    "client.SkyRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
