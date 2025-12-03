@@ -49,8 +49,8 @@ public class ModClientEvents {
         //event.registerEntityRenderer(ModEntityTypes.ALPINE_BOAT.get(), context -> new BoatRenderer(context, ModModelLayers.ALPINE_BOAT));
         //event.registerEntityRenderer(ModEntityTypes.ALPINE_CHEST_BOAT.get(), context -> new BoatRenderer(context, ModModelLayers.ALPINE_CHEST_BOAT));
 
-        event.registerBlockEntityRenderer(com.fuyuaki.r_wilderness.world.block.entity.ModBlockEntities.SIGN.get(), SignRenderer::new);
-        event.registerBlockEntityRenderer(com.fuyuaki.r_wilderness.world.block.entity.ModBlockEntities.HANGING_SIGN.get(), HangingSignRenderer::new);
+        //event.registerBlockEntityRenderer(com.fuyuaki.r_wilderness.world.block.entity.ModBlockEntities.SIGN.get(), SignRenderer::new);
+        //event.registerBlockEntityRenderer(com.fuyuaki.r_wilderness.world.block.entity.ModBlockEntities.HANGING_SIGN.get(), HangingSignRenderer::new);
     }
 
     @SubscribeEvent
