@@ -221,8 +221,8 @@ public class RBlocks {
         return BLOCK;
     }
 
-    private static <I extends Block> DeferredBlock<Block> registerNoItemBlock(String name, Function<BlockBehaviour.Properties, ? extends I> func, BlockBehaviour.Properties props) {
-        return BLOCKS.registerBlock(name, func, props);
+    private static  <B extends Block> DeferredBlock<B>  registerNoItemBlock(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
+        return register(name, factory, properties);
     }
 
     private static  DeferredBlock<Block> registerBlock(String name, BlockBehaviour.Properties properties) {

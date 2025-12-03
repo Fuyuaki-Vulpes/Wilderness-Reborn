@@ -19,27 +19,14 @@ import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlac
 
 public class ModFeatureUtils {
 
-    public static final ResourceKey<ConfiguredFeature<?,?>> ALPINE_TREE = createKey("alpine_tree");
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
         ModFrozenFeatures.bootstrap(context);
         ModMiscFeatures.bootstrap(context);
         ModAquaticFeatures.bootstrap(context);
+        ModTreeFeatures.bootstrap(context);
+        ModVegetationFeatures.bootstrap(context);
 
-        register(
-                context,
-                ALPINE_TREE,
-                Feature.TREE,
-                new TreeConfiguration.TreeConfigurationBuilder(
-                        BlockStateProvider.simple(RBlocks.ALPINE_LOG.get()),
-                        new StraightTrunkPlacer(6, 4, 0),
-                        BlockStateProvider.simple(RBlocks.ALPINE_LEAVES.get()),
-                        new PineFoliagePlacer(ConstantInt.of(1), ConstantInt.of(1), UniformInt.of(3, 4)),
-                        new TwoLayersFeatureSize(2, 0, 2)
-                )
-                        .ignoreVines()
-                        .build()
-        );
     }
 
 

@@ -29,9 +29,9 @@ public class RItems {
     public static final DeferredItem<Item> PEAT_BALL = registerItem("peat_ball", new Item.Properties());
     public static final DeferredItem<Item> CHALK_DUST = registerItem("chalk_dust", new Item.Properties());
 
-    public static final DeferredItem<Item> ALPINE_SIGN = ITEMS.registerItem("alpine_sign",
+    public static final DeferredItem<Item> ALPINE_SIGN = registerItem("alpine_sign",
             properties -> new SignItem(RBlocks.ALPINE_SIGN.get(), RBlocks.ALPINE_WALL_SIGN.get(), properties), (new Item.Properties()).stacksTo(16));
-    public static final DeferredItem<Item> ALPINE_HANGING_SIGN = ITEMS.registerItem("alpine_hanging_sign",
+    public static final DeferredItem<Item> ALPINE_HANGING_SIGN = registerItem("alpine_hanging_sign",
             properties -> new HangingSignItem(RBlocks.ALPINE_HANGING_SIGN.get(), RBlocks.ALPINE_HANGING_WALL_SIGN.get(), properties), new Item.Properties().stacksTo(16));
 
 

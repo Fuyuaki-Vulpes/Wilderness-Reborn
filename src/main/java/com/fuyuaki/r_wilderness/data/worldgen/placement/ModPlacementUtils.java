@@ -2,6 +2,7 @@ package com.fuyuaki.r_wilderness.data.worldgen.placement;
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import com.fuyuaki.r_wilderness.data.worldgen.features.ModFeatureUtils;
+import com.fuyuaki.r_wilderness.data.worldgen.features.ModVegetationFeatures;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -21,20 +22,15 @@ import static net.minecraft.data.worldgen.placement.PlacementUtils.register;
 
 public class ModPlacementUtils {
 
-    public static final ResourceKey<PlacedFeature> ALPINE_TREE = createKey("alpine_tree");
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         ModFrozenPlacements.bootstrap(context);
         ModMiscPlacements.bootstrap(context);
         ModAquaticPlacements.bootstrap(context);
+        ModTreePlacements.bootstrap(context);
+        ModVegetationPlacements.bootstrap(context);
 
-        register(
-                context,
-                ALPINE_TREE,
-                holder(context, ModFeatureUtils.ALPINE_TREE),
-                VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.5F, 1),
-                        RBlocks.ALPINE_SAPLING.get())
-        );
+
     }
 
         public static ResourceKey<PlacedFeature> createKey(String name) {
