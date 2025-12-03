@@ -61,6 +61,38 @@ public class LootBlocks extends BlockLootSubProvider {
         dropSelf(RBlocks.SILT.get());
         dropOther(RBlocks.SILT_FARMLAND.get(), RBlocks.SILT);
 
+        //Trees & Wood
+
+        dropSelf(RBlocks.ALPINE_LOG.get());
+        dropSelf(RBlocks.STRIPPED_ALPINE_LOG.get());
+        dropSelf(RBlocks.ALPINE_WOOD.get());
+        dropSelf(RBlocks.STRIPPED_ALPINE_WOOD.get());
+        dropSelf(RBlocks.ALPINE_PLANKS.get());
+        add(RBlocks.ALPINE_LEAVES.get(), block -> createLeavesDrops(block, RBlocks.ALPINE_SAPLING.get(),NORMAL_LEAVES_SAPLING_CHANCES));
+        dropSelf(RBlocks.ALPINE_SAPLING.get());
+        dropSelf(RBlocks.ALPINE_STAIRS.get());
+        add(RBlocks.ALPINE_SLAB.get(), block -> createSlabItemTable(RBlocks.ALPINE_SLAB.get()));
+        dropSelf(RBlocks.ALPINE_PRESSURE_PLATE.get());
+        dropSelf(RBlocks.ALPINE_BUTTON.get());
+        dropSelf(RBlocks.ALPINE_FENCE.get());
+        dropSelf(RBlocks.ALPINE_FENCE_GATE.get());
+        add(RBlocks.ALPINE_DOOR.get(), block -> createDoorTable(RBlocks.ALPINE_DOOR.get()));
+        dropSelf(RBlocks.ALPINE_TRAPDOOR.get());
+        dropSelf(RBlocks.ALPINE_SIGN.get());
+        dropOther(RBlocks.ALPINE_WALL_SIGN.get(), RBlocks.ALPINE_SIGN);
+        dropSelf(RBlocks.ALPINE_HANGING_SIGN.get());
+        dropOther(RBlocks.ALPINE_HANGING_WALL_SIGN.get(), RBlocks.ALPINE_HANGING_SIGN);
+        dropPottedContents(RBlocks.POTTED_ALPINE_SAPLING.get());
+
+        //Flowers
+        dropSelf(RBlocks.BELLFLOWER.get());
+        add(RBlocks.POTTED_BELLFLOWER.get(), createPotFlowerItemTable(RBlocks.BELLFLOWER));
+        dropSelf(RBlocks.MOSS_COMPANION.get());
+        add(RBlocks.POTTED_MOSS_COMPANION.get(), createPotFlowerItemTable(RBlocks.MOSS_COMPANION));
+        dropSelf(RBlocks.MOUNTAIN_HEATHER.get());
+        add(RBlocks.POTTED_MOUNTAIN_HEATHER.get(), createPotFlowerItemTable(RBlocks.MOUNTAIN_HEATHER));
+        dropSelf(RBlocks.SNOWBELL.get());
+        add(RBlocks.POTTED_SNOWBELL.get(), createPotFlowerItemTable(RBlocks.SNOWBELL));
     }
 
     @Override

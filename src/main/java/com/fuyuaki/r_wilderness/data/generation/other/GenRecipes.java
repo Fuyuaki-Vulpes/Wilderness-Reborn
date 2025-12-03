@@ -2,7 +2,9 @@ package com.fuyuaki.r_wilderness.data.generation.other;
 
 import com.fuyuaki.r_wilderness.world.item.RItems;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
+import com.fuyuaki.r_wilderness.world.block.ModFamilies;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.BlockFamily;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.flag.FeatureFlagSet;
@@ -94,7 +96,7 @@ public class GenRecipes  extends RecipeProvider {
 
     @Override
     protected void generateForEnabledBlockFamilies(FeatureFlagSet enabledFeatures) {
-//        MTAFamilies.getAllFamilies().filter(BlockFamily::shouldGenerateRecipe).forEach(p_359455_ -> this.generateRecipes(p_359455_, enabledFeatures));
+        ModFamilies.getAllFamilies().filter(BlockFamily::shouldGenerateRecipe).forEach(p_359455_ -> this.generateRecipes(p_359455_, enabledFeatures));
     }
 
 

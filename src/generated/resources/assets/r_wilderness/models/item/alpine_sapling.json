@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "r_wilderness:block/alpine_sapling"
+  }
+}

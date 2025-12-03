@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "r_wilderness:block/stripped_alpine_log",
+    "side": "r_wilderness:block/stripped_alpine_log"
+  }
+}

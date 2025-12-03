@@ -41,10 +41,24 @@ public class EN_US_LangProvider extends LanguageProvider {
         block(RBlocks.SILT.get(),"Silt");
         block(RBlocks.SILT_FARMLAND.get(),"Silt Farmland");
 
+        //Flowers
+
+        add(RBlocks.BELLFLOWER.get(), "Bellflower");
+        add(RBlocks.POTTED_BELLFLOWER.get(), "Potted Bellflower");
+        add(RBlocks.MOSS_COMPANION.get(), "Moss Companion");
+        add(RBlocks.POTTED_MOSS_COMPANION.get(), "Potted Moss Companion");
+        add(RBlocks.MOUNTAIN_HEATHER.get(), "Mountain Heather");
+        add(RBlocks.POTTED_MOUNTAIN_HEATHER.get(), "PottedMountain Heather");
+        add(RBlocks.SNOWBELL.get(), "Snowbell");
+        add(RBlocks.POTTED_SNOWBELL.get(), "Potted Snowbell");
+
         //Items
 
         add(RItems.CHALK_DUST.get(), "Chalk Dust");
         add(RItems.PEAT_BALL.get(), "Peat Ball");
+
+        add(RItems.ALPINE_SIGN.get(),"Alpine Sign");
+        add(RItems.ALPINE_HANGING_SIGN.get(),"Alpine Hanging Sign");
 
         //Others
 

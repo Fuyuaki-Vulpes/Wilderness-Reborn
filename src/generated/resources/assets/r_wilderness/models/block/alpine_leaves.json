@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "r_wilderness:block/alpine_leaves"
+  }
+}

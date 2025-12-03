@@ -13,6 +13,7 @@ import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -63,6 +64,20 @@ public class GenBlockModels extends BlockModelGenerators {
         createFarmland(RBlocks.SANDY_FARMLAND, RBlocks.SANDY_SOIL);
         createTrivialCube(RBlocks.SILT.get());
         createFarmland(RBlocks.SILT_FARMLAND, RBlocks.SILT);
+
+        //Trees & Wood
+        woodProvider(RBlocks.ALPINE_LOG.get()).logWithHorizontal(RBlocks.ALPINE_LOG.get()).wood(RBlocks.ALPINE_WOOD.get());
+        woodProvider(RBlocks.STRIPPED_ALPINE_LOG.get()).logWithHorizontal(RBlocks.STRIPPED_ALPINE_LOG.get()).wood(RBlocks.STRIPPED_ALPINE_WOOD.get());
+        createTintedLeaves(RBlocks.ALPINE_LEAVES.get(), TexturedModel.LEAVES, FoliageColor.FOLIAGE_EVERGREEN);
+        createPlantWithDefaultItem(RBlocks.ALPINE_SAPLING.get(),RBlocks.POTTED_ALPINE_SAPLING.get(),PlantType.NOT_TINTED);
+        createHangingSign(RBlocks.STRIPPED_ALPINE_LOG.get(), RBlocks.ALPINE_HANGING_SIGN.get(), RBlocks.ALPINE_HANGING_WALL_SIGN.get());
+
+        //Flowers
+        createPlantWithDefaultItem(RBlocks.BELLFLOWER.get(), RBlocks.POTTED_BELLFLOWER.get(), BlockModelGenerators.PlantType.NOT_TINTED);
+        createPlantWithDefaultItem(RBlocks.MOSS_COMPANION.get(), RBlocks.POTTED_MOSS_COMPANION.get(), BlockModelGenerators.PlantType.NOT_TINTED);
+        createPlantWithDefaultItem(RBlocks.MOUNTAIN_HEATHER.get(), RBlocks.POTTED_MOUNTAIN_HEATHER.get(), BlockModelGenerators.PlantType.NOT_TINTED);
+        createPlantWithDefaultItem(RBlocks.SNOWBELL.get(), RBlocks.POTTED_SNOWBELL.get(), BlockModelGenerators.PlantType.NOT_TINTED);
+
 
         vanillaOverride();
     }

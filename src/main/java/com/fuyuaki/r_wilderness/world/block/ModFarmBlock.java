@@ -1,5 +1,7 @@
+
 package com.fuyuaki.r_wilderness.world.block;
 
+import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
