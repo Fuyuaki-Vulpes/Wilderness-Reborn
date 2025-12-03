@@ -1,10 +1,14 @@
 package com.fuyuaki.r_wilderness.data.generation.tags;
 
+import com.fuyuaki.r_wilderness.RTags;
+import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -18,6 +22,82 @@ public class GenBlockTags extends IntrinsicHolderTagsProvider<Block> {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
+        this.tag(Tags.Blocks.VILLAGER_FARMLANDS).add(
+                RBlocks.CHALKY_FARMLAND.get(),
+                RBlocks.CLAY_FARMLAND.get(),
+                RBlocks.PEAT_FARMLAND.get(),
+                RBlocks.SANDY_FARMLAND.get(),
+                RBlocks.SILT_FARMLAND.get()
+        );
+        this.tag(BlockTags.BASE_STONE_OVERWORLD).add(
+                RBlocks.SCHINITE.get(),
+                RBlocks.MAGNEISS.get(),
+                RBlocks.MALATITE.get()
+        );
+        this.tag(Tags.Blocks.STONES).add(
+                RBlocks.SCHINITE.get(),
+                RBlocks.MAGNEISS.get(),
+                RBlocks.MALATITE.get()
+        );
+
+        this.tag(Tags.Blocks.COBBLESTONES).add(
+               RBlocks.COBBLED_SCHINITE.get(),
+               RBlocks.COBBLED_MAGNEISS.get(),
+               RBlocks.COBBLED_MALATITE.get()
+        );
+
+        this.tag(BlockTags.DIRT).add(
+                RBlocks.CHALKY_SOIL.get(),
+                RBlocks.CLAY_SOIL.get(),
+                RBlocks.PEAT.get(),
+                RBlocks.SILT.get(),
+                RBlocks.SANDY_SOIL.get()
+        );
+        this.tag(BlockTags.MINEABLE_WITH_SHOVEL).add(
+                RBlocks.CHALKY_SOIL.get(),
+                RBlocks.CLAY_SOIL.get(),
+                RBlocks.PEAT.get(),
+                RBlocks.SILT.get(),
+                RBlocks.SANDY_SOIL.get(),
+                RBlocks.CHALKY_FARMLAND.get(),
+                RBlocks.CLAY_FARMLAND.get(),
+                RBlocks.PEAT_FARMLAND.get(),
+                RBlocks.SANDY_FARMLAND.get(),
+                RBlocks.SILT_FARMLAND.get()
+        );
+
+        this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(
+                RBlocks.SCHINITE.get(),
+                RBlocks.MAGNEISS.get(),
+                RBlocks.MALATITE.get(),
+                RBlocks.COBBLED_SCHINITE.get(),
+                RBlocks.COBBLED_MAGNEISS.get(),
+                RBlocks.COBBLED_MALATITE.get(),
+                RBlocks.CHALK.get(),
+                RBlocks.LIMESTONE.get(),
+                RBlocks.MUD_STONE.get()
+        );
+        this.tag(BlockTags.NEEDS_STONE_TOOL).add(
+                RBlocks.SCHINITE.get(),
+                RBlocks.COBBLED_SCHINITE.get()
+        );
+        this.tag(BlockTags.NEEDS_IRON_TOOL).add(
+                RBlocks.MAGNEISS.get(),
+                RBlocks.COBBLED_MAGNEISS.get()
+        );
+        this.tag(BlockTags.NEEDS_DIAMOND_TOOL).add(
+                RBlocks.MALATITE.get(),
+                RBlocks.COBBLED_MALATITE.get()
+        );
+        this.tag(RTags.Blocks.SCHINITE_ORE_REPLACEABLES).add(
+                RBlocks.SCHINITE.get()
+        );
+        this.tag(RTags.Blocks.MAGNEISS_ORE_REPLACEABLES).add(
+                RBlocks.MAGNEISS.get()
+        );
+        this.tag(RTags.Blocks.MALATITE_ORE_REPLACEABLES).add(
+                RBlocks.MALATITE.get()
+        );
 
     }
 }

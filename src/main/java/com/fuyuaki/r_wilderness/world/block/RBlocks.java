@@ -40,6 +40,31 @@ public class RBlocks {
     public static final DeferredBlock<Block> LIMESTONE = registerBlock("limestone", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
     public static final DeferredBlock<Block> MUD_STONE = registerBlock("mud_stone", BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS));
 
+    public static final DeferredBlock<Block> SCHINITE = registerBlock("schinite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
+                    .strength(4.5F, 7.0F)
+    );
+    public static final DeferredBlock<Block> MAGNEISS = registerBlock("magneiss",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
+                    .strength(5.5F, 5.0F)
+    );
+    public static final DeferredBlock<Block> MALATITE = registerBlock("malatite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
+                    .strength(7.0F, 4.0F)
+    );
+    public static final DeferredBlock<Block> COBBLED_SCHINITE = registerBlock("cobbled_schinite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
+                    .strength(4.5F, 7.0F)
+    );
+    public static final DeferredBlock<Block> COBBLED_MAGNEISS = registerBlock("cobbled_magneiss",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
+                    .strength(5.5F, 5.0F)
+    );
+    public static final DeferredBlock<Block> COBBLED_MALATITE = registerBlock("cobbled_malatite",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
+                    .strength(7.0F, 4.0F)
+    );
+
     //Soils
 
     public static final DeferredBlock<Block> CHALKY_SOIL = registerBlockWithItem("chalky_soil",

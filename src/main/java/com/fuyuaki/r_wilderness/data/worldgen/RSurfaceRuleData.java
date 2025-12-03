@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.data.worldgen;
 
+import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -32,6 +33,9 @@ public class RSurfaceRuleData {
     private static final SurfaceRules.RuleSource RED_SANDSTONE = makeStateRule(Blocks.RED_SANDSTONE);
     private static final SurfaceRules.RuleSource STONE = makeStateRule(Blocks.STONE);
     private static final SurfaceRules.RuleSource DEEPSLATE = makeStateRule(Blocks.DEEPSLATE);
+    private static final SurfaceRules.RuleSource SCHINITE = makeStateRule(RBlocks.SCHINITE.get());
+    private static final SurfaceRules.RuleSource MAGNEISS = makeStateRule(RBlocks.MAGNEISS.get());
+    private static final SurfaceRules.RuleSource MALATITE = makeStateRule(RBlocks.MALATITE.get());
     private static final SurfaceRules.RuleSource DIRT = makeStateRule(Blocks.DIRT);
     private static final SurfaceRules.RuleSource PODZOL = makeStateRule(Blocks.PODZOL);
     private static final SurfaceRules.RuleSource COARSE_DIRT = makeStateRule(Blocks.COARSE_DIRT);
@@ -331,6 +335,9 @@ public class RSurfaceRuleData {
 
         SurfaceRules.RuleSource surfacerules$rulesource9 = SurfaceRules.ifTrue(SurfaceRules.abovePreliminarySurface(), badlandsAndSurfaces);
         builder.add(aboveGround ? surfacerules$rulesource9 : badlandsAndSurfaces);
+        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("malatite", VerticalAnchor.absolute(-192), VerticalAnchor.absolute(-194)), MALATITE));
+        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("magneiss", VerticalAnchor.absolute(-128), VerticalAnchor.absolute(-120)), MAGNEISS));
+        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("schinite", VerticalAnchor.absolute(-64), VerticalAnchor.absolute(-56)), SCHINITE));
         builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("deepslate", VerticalAnchor.absolute(0), VerticalAnchor.absolute(8)), DEEPSLATE));
 
 

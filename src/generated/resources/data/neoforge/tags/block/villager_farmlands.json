@@ -1,0 +1,9 @@
+{
+  "values": [
+    "r_wilderness:chalky_farmland",
+    "r_wilderness:clay_farmland",
+    "r_wilderness:peat_farmland",
+    "r_wilderness:sandy_farmland",
+    "r_wilderness:silt_farmland"
+  ]
+}

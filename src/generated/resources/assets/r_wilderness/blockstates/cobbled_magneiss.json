@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "r_wilderness:block/cobbled_magneiss"
+      },
+      {
+        "model": "r_wilderness:block/cobbled_magneiss",
+        "y": 90
+      },
+      {
+        "model": "r_wilderness:block/cobbled_magneiss",
+        "y": 180
+      },
+      {
+        "model": "r_wilderness:block/cobbled_magneiss",
+        "y": 270
+      }
+    ]
+  }
+}

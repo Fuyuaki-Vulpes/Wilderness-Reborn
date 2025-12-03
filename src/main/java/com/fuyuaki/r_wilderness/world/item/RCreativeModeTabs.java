@@ -43,6 +43,16 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.LIMESTONE);
                 output.accept(RBlocks.MUD_STONE);
                 output.accept(RBlocks.CHALK);
+
+                output.accept(RBlocks.SCHINITE);
+                output.accept(RBlocks.COBBLED_SCHINITE);
+                output.accept(RBlocks.MAGNEISS);
+                output.accept(RBlocks.COBBLED_MAGNEISS);
+                output.accept(RBlocks.MALATITE);
+                output.accept(RBlocks.COBBLED_MALATITE);
+
+
+
                 output.accept(RBlocks.CHALKY_SOIL);
                 output.accept(RBlocks.CHALKY_FARMLAND);
                 output.accept(RBlocks.CLAY_SOIL);

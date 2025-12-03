@@ -8,6 +8,7 @@ import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +30,6 @@ public class GenItemTags extends IntrinsicHolderTagsProvider<Item> {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
-
-
     }
     protected void copy(TagKey<Block> blockTag, TagKey<Item> itemTag) {
         this.tagsToCopy.put(blockTag, itemTag);

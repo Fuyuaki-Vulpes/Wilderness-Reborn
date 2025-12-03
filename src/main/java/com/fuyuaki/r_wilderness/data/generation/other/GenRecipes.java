@@ -4,10 +4,7 @@ import com.fuyuaki.r_wilderness.world.item.RItems;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
@@ -44,6 +41,18 @@ public class GenRecipes  extends RecipeProvider {
                 .group("brown_dye")
                 .unlockedBy("has_chalk_dust", this.has(RItems.CHALK_DUST))
                 .save(this.output);
+
+
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(RBlocks.COBBLED_SCHINITE), RecipeCategory.BUILDING_BLOCKS, RBlocks.SCHINITE.asItem(), 0.1F, 200)
+                .unlockedBy("has_cobbled_schinite", this.has(RBlocks.COBBLED_SCHINITE))
+                .save(this.output);
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(RBlocks.COBBLED_MAGNEISS), RecipeCategory.BUILDING_BLOCKS,  RBlocks.MAGNEISS.asItem(), 0.1F, 200)
+                .unlockedBy("has_cobbled_magneiss", this.has(RBlocks.COBBLED_MAGNEISS))
+                .save(this.output);
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(RBlocks.COBBLED_MALATITE), RecipeCategory.BUILDING_BLOCKS, RBlocks.MALATITE.asItem(), 0.1F, 200)
+                .unlockedBy("has_cobbled_malatite", this.has(RBlocks.COBBLED_MALATITE))
+                .save(this.output);
+
     }
 
 

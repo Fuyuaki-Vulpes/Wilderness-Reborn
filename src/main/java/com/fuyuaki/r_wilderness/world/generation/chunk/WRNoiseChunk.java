@@ -37,7 +37,9 @@ import static net.minecraft.world.level.block.Blocks.WATER;
 public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFunction.FunctionContext {
 
     private static final ExecutorService EXECUTOR =
-            Executors.newFixedThreadPool(3);
+            Executors.newFixedThreadPool(10);
+
+
 
     private final NoiseSettings noiseSettings;
     final int cellCountXZ;
@@ -57,6 +59,9 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
     private final TerrainParameters terrainParameters;
     protected long lastBlendingDataPos = ChunkPos.INVALID_CHUNK_POS;
     protected Blender.BlendingOutput lastBlendingOutput = new Blender.BlendingOutput(1.0, 0.0);
+
+    protected Double[][] heightsAtCells;
+
     final int noiseSizeXZ;
     final int cellWidth;
     final int cellHeight;
@@ -140,6 +145,7 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         this.cellWidth = noiseSettings.getCellWidth();
         this.cellHeight = noiseSettings.getCellHeight();
         this.cellCountXZ = cellCountXZ;
+        this.heightsAtCells = new Double[cellCountXZ+1][cellCountXZ+1];
         this.cellCountY = Mth.floorDiv(noiseSettings.height(), this.cellHeight);
         this.cellNoiseMinY = Mth.floorDiv(noiseSettings.minY(), this.cellHeight);
         this.firstCellX = Math.floorDiv(firstNoiseX, this.cellWidth);
@@ -174,8 +180,6 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
 
         this.seaLevel = seaLevel;
         this.veinFiller = WildOreVeins.create(noiserouter1.veinToggle(), noiserouter1.veinRidged(), noiserouter1.veinGap(), random.oreRandom());
-
-
     }
 
     public ChunkAccess buildNoise(ChunkAccess chunk, int minCellY, BlockState defaultBlock) {
@@ -189,13 +193,35 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         int cellCountX = 16 / cellWidth;
         int cellCountZ = 16 / cellWidth;
 
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+        for (int cellX= 0; cellX < cellCountX+1; cellX++) {
+            int x = this.chunkMinX + cellX * cellWidth;
+
+            for (int cellZ = 0; cellZ < cellCountZ + 1; cellZ++) {
+                int z = this.chunkMinZ + cellZ * cellWidth;
+                int xIndex = cellX;
+                int zIndex = cellZ;
+                futures.add(CompletableFuture.runAsync(
+                        () -> {
+                            double y = this.terrainParameters.yLevelAt(x, z,false);
+                            this.heightsAtCells[xIndex][zIndex] = y;
+                        },
+                        Util.backgroundExecutor().forName("chunk_cell_calculations")
+                ));
+
+            }
+        }
+        futures.forEach(CompletableFuture::join);
+
+
         for (int cellX= 0; cellX < cellCountX; cellX++) {
             this.advanceCellX(cellX);
 
             for (int cellZ = 0; cellZ < cellCountZ; cellZ++) {
+
                 int chunkSectionsCount = chunk.getSectionsCount() - 1;
                 LevelChunkSection levelchunksection = chunk.getSection(chunkSectionsCount);
-
 
                 for (int cellFractionX = 0; cellFractionX < cellWidth; cellFractionX++) {
                     int x = this.chunkMinX + cellX * cellWidth + cellFractionX;
@@ -208,7 +234,9 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                         int regionalZ = z & 15;
                         double d2 = (double) cellFractionZ / cellWidth;
                         this.updateForZ(z, d2);
-                        int yLevelGen = Mth.floor(this.terrainParameters.yLevelAt(x, z,false));
+
+
+                        int yLevelGen = Mth.floor(blendYLevelsFor(cellX,cellZ,cellFractionX,cellFractionZ));
                         TerrainParameters.Sampled sampled = this.terrainParameters.samplerAt(x,z);
 
                         for (int cellY = cellCountY - 1; cellY >= 0; cellY--) {
@@ -233,6 +261,8 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                                 }
                             }
                         }
+
+
                     }
                 }
             }
@@ -242,6 +272,18 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
 
         this.stopInterpolation();
         return chunk;
+    }
+
+    private double blendYLevelsFor(int cellX, int cellZ, int cellFractionX, int cellFractionZ) {
+        double y1 = this.heightsAtCells[cellX][cellZ];
+        double y2 = this.heightsAtCells[cellX+1][cellZ];
+        double y3 = this.heightsAtCells[cellX][cellZ+1];
+        double y4 = this.heightsAtCells[cellX+1][cellZ+1];
+
+        double delta1 = (double) cellFractionX / this.cellWidth;
+        double delta2 = (double) cellFractionZ / this.cellWidth;
+
+        return Mth.lerp2(delta1,delta2,y1,y2,y3,y4);
     }
 
     private @Nullable BlockState getBlockStateForY(BlockState defaultBlock, double verticalCell, int cellHeight1, int y, int yLevelGen, TerrainParameters.Sampled sampled, int x, int z) {

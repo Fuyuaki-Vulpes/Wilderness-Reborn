@@ -46,7 +46,7 @@ public class TerrainParameters {
 
 
     private static final float baseContinentSize = 0.5F;
-    private static final float baseTectonicSize = 1.75F;
+    private static final float baseTectonicSize = 1.5F;
     private static final float highlandsOffset = 1.5F;
     private static final float highlandsScale = 1 / 0.75F;
     private static final float terrainTypeScale = 1 / 0.5F;

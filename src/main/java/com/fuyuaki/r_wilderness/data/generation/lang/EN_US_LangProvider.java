@@ -21,6 +21,12 @@ public class EN_US_LangProvider extends LanguageProvider {
         block(RBlocks.CHALK.get(), "Chalk");
         block(RBlocks.LIMESTONE.get(), "Limestone");
         block(RBlocks.MUD_STONE.get(), "Mud Stone");
+        block(RBlocks.SCHINITE.get(), "Schinite");
+        block(RBlocks.MAGNEISS.get(), "Magneiss");
+        block(RBlocks.MALATITE.get(), "Malatite");
+        block(RBlocks.COBBLED_SCHINITE.get(), "Cobbled Schinite");
+        block(RBlocks.COBBLED_MAGNEISS.get(), "Cobbled Magneiss");
+        block(RBlocks.COBBLED_MALATITE.get(), "Cobbled Malatite");
 
         //Soils
 

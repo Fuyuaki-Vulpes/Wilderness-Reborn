@@ -2409,6 +2409,63 @@
                 "if_true": {
                   "type": "minecraft:vertical_gradient",
                   "false_at_and_above": {
+                    "absolute": -194
+                  },
+                  "random_name": "minecraft:malatite",
+                  "true_at_and_below": {
+                    "absolute": -192
+                  }
+                },
+                "then_run": {
+                  "type": "minecraft:block",
+                  "result_state": {
+                    "Name": "r_wilderness:malatite"
+                  }
+                }
+              },
+              {
+                "type": "minecraft:condition",
+                "if_true": {
+                  "type": "minecraft:vertical_gradient",
+                  "false_at_and_above": {
+                    "absolute": -120
+                  },
+                  "random_name": "minecraft:magneiss",
+                  "true_at_and_below": {
+                    "absolute": -128
+                  }
+                },
+                "then_run": {
+                  "type": "minecraft:block",
+                  "result_state": {
+                    "Name": "r_wilderness:magneiss"
+                  }
+                }
+              },
+              {
+                "type": "minecraft:condition",
+                "if_true": {
+                  "type": "minecraft:vertical_gradient",
+                  "false_at_and_above": {
+                    "absolute": -56
+                  },
+                  "random_name": "minecraft:schinite",
+                  "true_at_and_below": {
+                    "absolute": -64
+                  }
+                },
+                "then_run": {
+                  "type": "minecraft:block",
+                  "result_state": {
+                    "Name": "r_wilderness:schinite"
+                  }
+                }
+              },
+              {
+                "type": "minecraft:condition",
+                "if_true": {
+                  "type": "minecraft:vertical_gradient",
+                  "false_at_and_above": {
                     "absolute": 8
                   },
                   "random_name": "minecraft:deepslate",

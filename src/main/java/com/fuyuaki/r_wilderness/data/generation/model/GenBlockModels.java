@@ -45,6 +45,14 @@ public class GenBlockModels extends BlockModelGenerators {
         createTrivialCube(RBlocks.CHALK.get());
         createTrivialCube(RBlocks.LIMESTONE.get());
         createTrivialCube(RBlocks.MUD_STONE.get());
+
+        createRotatedVariantBlock(RBlocks.SCHINITE.get());
+        createRotatedVariantBlock(RBlocks.COBBLED_SCHINITE.get());
+        createRotatedVariantBlock(RBlocks.MAGNEISS.get());
+        createRotatedVariantBlock(RBlocks.COBBLED_MAGNEISS.get());
+        createRotatedVariantBlock(RBlocks.MALATITE.get());
+        createRotatedVariantBlock(RBlocks.COBBLED_MALATITE.get());
+
         createTrivialCube(RBlocks.CHALKY_SOIL.get());
         createFarmland(RBlocks.CHALKY_FARMLAND, RBlocks.CHALKY_SOIL);
         createTrivialCube(RBlocks.CLAY_SOIL.get());

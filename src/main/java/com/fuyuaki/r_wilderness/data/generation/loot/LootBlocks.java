@@ -43,6 +43,12 @@ public class LootBlocks extends BlockLootSubProvider {
         add(RBlocks.CHALK.get(), block -> createSingleItemTableWithSilkTouch(block, RItems.CHALK_DUST,ConstantValue.exactly(4.0F)));
         dropSelf(RBlocks.LIMESTONE.get());
         dropSelf(RBlocks.MUD_STONE.get());
+        add(RBlocks.SCHINITE.get(), block -> createSingleItemTableWithSilkTouch(block, RBlocks.COBBLED_SCHINITE));
+        add(RBlocks.MAGNEISS.get(), block -> createSilkTouchDispatchTable(block, applyExplosionDecay(block,LootItem.lootTableItem(RBlocks.COBBLED_MAGNEISS))));
+        add(RBlocks.MALATITE.get(), block -> createSilkTouchDispatchTable(block, applyExplosionDecay(block,LootItem.lootTableItem(RBlocks.COBBLED_MALATITE))));
+        dropSelf(RBlocks.COBBLED_SCHINITE.get());
+        dropSelf(RBlocks.COBBLED_MAGNEISS.get());
+        dropSelf(RBlocks.COBBLED_MALATITE.get());
 
         dropSelf(RBlocks.CHALKY_SOIL.get());
         dropOther(RBlocks.CHALKY_FARMLAND.get(), RBlocks.CHALKY_SOIL);
