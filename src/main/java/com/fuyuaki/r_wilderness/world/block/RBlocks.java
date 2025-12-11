@@ -49,110 +49,31 @@ public class RBlocks {
             BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
                     .strength(4.5F, 7.0F)
     );
-    public static final DeferredBlock<Block> SCHINITE_SLAB = registerBlockWithItem("schinite_slab",
-            SlabBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_BRICK_SLAB)
-                    .strength(4.5F, 7.0F)
-    );
-    public static final DeferredBlock<Block> SCHINITE_STAIRS = registerBlockWithItem("schinite_stairs",
-            properties -> new StairBlock(Blocks.DEEPSLATE_BRICK_STAIRS.defaultBlockState(),properties),
-            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_BRICK_STAIRS)
-                    .strength(4.5F, 7.0F)
-    );
-    public static final DeferredBlock<Block> SCHINITE_WALL = registerBlockWithItem("schinite_wall",
-            WallBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_BRICK_SLAB)
-                    .strength(4.5F, 7.0F)
-    );
     public static final DeferredBlock<Block> MAGNEISS = registerBlock("magneiss",
             BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
-                    .strength(5.5F, 5.0F)
-    );
-    public static final DeferredBlock<Block> MAGNEISS_SLAB = registerBlockWithItem("magneiss_slab",
-            SlabBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
-                    .strength(5.5F, 5.0F)
-    );
-    public static final DeferredBlock<Block> MAGNEISS_STAIRS = registerBlockWithItem("magneiss_stairs",
-            properties -> new StairBlock(Blocks.BASALT.defaultBlockState(),properties),
-            BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
-                    .strength(5.5F, 5.0F)
-    );
-    public static final DeferredBlock<Block> MAGNEISS_WALL = registerBlockWithItem("magneiss_wall",
-            WallBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
                     .strength(5.5F, 5.0F)
     );
     public static final DeferredBlock<Block> MALATITE = registerBlock("malatite",
             BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
                     .strength(7.0F, 4.0F)
     );
-    public static final DeferredBlock<Block> MALATITE_SLAB = registerBlockWithItem("malatite_slab",
-            SlabBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
-                    .strength(7.0F, 4.0F)
-    );
-    public static final DeferredBlock<Block> MALATITE_STAIRS = registerBlockWithItem("malatite_stairs",
-            properties -> new StairBlock(Blocks.OBSIDIAN.defaultBlockState(),properties),
-            BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
-                    .strength(7.0F, 4.0F)
-    );
-    public static final DeferredBlock<Block> MALATITE_WALL = registerBlockWithItem("malatite_wall",
-            WallBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
-                    .strength(7.0F, 4.0F)
-    );
     public static final DeferredBlock<Block> COBBLED_SCHINITE = registerBlock("cobbled_schinite",
             BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
-                    .strength(4.5F, 7.0F)
-    );
-    public static final DeferredBlock<Block> COBBLED_SCHINITE_SLAB = registerBlockWithItem("cobbled_schinite_slab",
-            SlabBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_BRICK_SLAB)
-                    .strength(4.5F, 7.0F)
-    );
-    public static final DeferredBlock<Block> COBBLED_SCHINITE_STAIRS = registerBlockWithItem("cobbled_schinite_stairs",
-            properties -> new StairBlock(Blocks.DEEPSLATE_BRICK_STAIRS.defaultBlockState(),properties),
-            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_BRICK_STAIRS)
-                    .strength(4.5F, 7.0F)
-    );
-    public static final DeferredBlock<Block> COBBLED_SCHINITE_WALL = registerBlockWithItem("cobbled_schinite_wall",
-            WallBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_BRICK_SLAB)
                     .strength(4.5F, 7.0F)
     );
     public static final DeferredBlock<Block> COBBLED_MAGNEISS = registerBlock("cobbled_magneiss",
             BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
                     .strength(5.5F, 5.0F)
     );
-    public static final DeferredBlock<Block> COBBLED_MAGNEISS_SLAB = registerBlockWithItem("cobbled_magneiss_slab",
-            SlabBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
-                    .strength(5.5F, 5.0F)
-    );
-    public static final DeferredBlock<Block> COBBLED_MAGNEISS_STAIRS = registerBlockWithItem("cobbled_magneiss_stairs",
-            properties -> new StairBlock(Blocks.BASALT.defaultBlockState(),properties),
-            BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
-                    .strength(5.5F, 5.0F)
-    );
-    public static final DeferredBlock<Block> COBBLED_MAGNEISS_WALL = registerBlockWithItem("cobbled_magneiss_wall",
-            WallBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
-                    .strength(5.5F, 5.0F)
-    );
     public static final DeferredBlock<Block> COBBLED_MALATITE = registerBlock("cobbled_malatite",
             BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
-                    .strength(7.0F, 4.0F)
-    );
-    public static final DeferredBlock<Block> COBBLED_MALATITE_SLAB = registerBlockWithItem("cobbled_malatite_slab",
-            SlabBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
-                    .strength(7.0F, 4.0F)
-    );
-    public static final DeferredBlock<Block> COBBLED_MALATITE_STAIRS = registerBlockWithItem("cobbled_malatite_stairs",
-            properties -> new StairBlock(Blocks.OBSIDIAN.defaultBlockState(),properties),
-            BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
-                    .strength(7.0F, 4.0F)
-    );
-    public static final DeferredBlock<Block> COBBLED_MALATITE_WALL = registerBlockWithItem("cobbled_malatite_wall",
-            WallBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
                     .strength(7.0F, 4.0F)
     );
 
     //Soils
 
     public static final DeferredBlock<Block> CHALKY_SOIL = registerBlockWithItem("chalky_soil",
-            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)
-    );
+            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL));
     public static final DeferredBlock<Block> CHALKY_FARMLAND = registerBlockWithItem("chalky_farmland",
             ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)
     );
