@@ -83,6 +83,26 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.SANDY_FARMLAND);
                 output.accept(RBlocks.SILT);
                 output.accept(RBlocks.SILT_FARMLAND);
+
+                output.accept(RBlocks.ALPINE_LOG);
+                output.accept(RBlocks.ALPINE_WOOD);
+                output.accept(RBlocks.STRIPPED_ALPINE_LOG);
+                output.accept(RBlocks.STRIPPED_ALPINE_WOOD);
+                output.accept(RBlocks.ALPINE_PLANKS);
+                output.accept(RBlocks.ALPINE_LEAVES);
+                output.accept(RBlocks.ALPINE_SAPLING);
+                output.accept(RBlocks.ALPINE_SLAB);
+                output.accept(RBlocks.ALPINE_STAIRS);
+                output.accept(RBlocks.ALPINE_BUTTON);
+                output.accept(RBlocks.ALPINE_PRESSURE_PLATE);
+                output.accept(RBlocks.ALPINE_FENCE);
+                output.accept(RBlocks.ALPINE_FENCE_GATE);
+                output.accept(RBlocks.ALPINE_DOOR);
+                output.accept(RBlocks.ALPINE_TRAPDOOR);
+                output.accept(RBlocks.ALPINE_SIGN);
+                output.accept(RBlocks.ALPINE_WALL_SIGN);
+                output.accept(RBlocks.ALPINE_HANGING_SIGN);
+                output.accept(RBlocks.ALPINE_HANGING_WALL_SIGN);
             }))
             .build());
 
