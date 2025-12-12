@@ -7,7 +7,7 @@ import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildOreVeins;
 import com.google.common.collect.Lists;
 import net.minecraft.SharedConstants;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -314,16 +314,20 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         }
         finalState = worldState;
         if (worldState != WATER.defaultBlockState()) {
-            double t;
-            if (x % 4 == 0 || z % 4 == 0) {
-                t = this.beardifier.compute(
-                        new DensityFunction.SinglePointContext(x + 1, y, z + 1)
-                );
-            } else {
-                t = this.beardifier.compute(this);
-
+            double t = 0;
+            double c = 0;
+            for (int xO = -1; xO < 1; xO++){
+                for (int zO = -1; zO < 1; zO++){
+                    double v = this.beardifier.compute(
+                            new DensityFunction.SinglePointContext(x + xO, y, z + zO)
+                    );
+                    if (Math.abs(v) > 0.025){
+                        t += v;
+                        c++;
+                    }
+                }
             }
-
+            t = t/c;
             if (t > 0.05) {
                 finalState = defaultBlock;
             } else if (t < -0.05) {

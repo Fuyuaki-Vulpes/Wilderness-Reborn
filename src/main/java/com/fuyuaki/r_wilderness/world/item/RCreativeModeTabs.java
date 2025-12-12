@@ -5,7 +5,7 @@ import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
@@ -23,10 +23,10 @@ public class RCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
 
-    private static final ResourceLocation SCROLLBAR = RWildernessMod.modLocation("container/creative_inventory/scroller");
-    private static final ResourceLocation TAB = RWildernessMod.modLocation("container/creative_inventory/tab");
-    private static final ResourceLocation DEFAULT_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/generic.png");
-    private static final ResourceLocation MAIN_TAB_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/main.png");
+    private static final Identifier SCROLLBAR = RWildernessMod.modLocation("container/creative_inventory/scroller");
+    private static final Identifier TAB = RWildernessMod.modLocation("container/creative_inventory/tab");
+    private static final Identifier DEFAULT_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/generic.png");
+    private static final Identifier MAIN_TAB_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/main.png");
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = registerTab("r_wilderness_main",() -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.r_wilderness_main").withStyle(ChatFormatting.ITALIC,ChatFormatting.GREEN,ChatFormatting.BOLD))
@@ -102,7 +102,7 @@ public class RCreativeModeTabs {
             String name,
             DeferredHolder<CreativeModeTab, CreativeModeTab> previousTab,
             ItemStack icon,
-            ResourceLocation texture,
+            Identifier texture,
             int color,
             CreativeModeTab.DisplayItemsGenerator generator){
         return registerTab(name, Component.translatable("itemGroup." + name),previousTab,icon,texture,color,generator);
@@ -113,7 +113,7 @@ public class RCreativeModeTabs {
             String name,
             Component title,
             DeferredHolder<CreativeModeTab, CreativeModeTab> previousTab,
-            ItemStack icon, ResourceLocation texture, int color, CreativeModeTab.DisplayItemsGenerator generator){
+            ItemStack icon, Identifier texture, int color, CreativeModeTab.DisplayItemsGenerator generator){
         return registerTab(name, () -> CreativeModeTab.builder()
                 .title(title)
                 .build());

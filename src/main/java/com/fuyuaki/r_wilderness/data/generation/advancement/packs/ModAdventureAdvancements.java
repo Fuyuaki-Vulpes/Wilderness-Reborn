@@ -3,8 +3,8 @@ package com.fuyuaki.r_wilderness.data.generation.advancement.packs;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.critereon.LocationPredicate;
-import net.minecraft.advancements.critereon.PlayerTrigger;
+import net.minecraft.advancements.criterion.LocationPredicate;
+import net.minecraft.advancements.criterion.PlayerTrigger;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -49,7 +49,7 @@ public class ModAdventureAdvancements implements AdvancementSubProvider {
 
         for (ResourceKey<Biome> resourcekey : biomes) {
             builder.addCriterion(
-                    resourcekey.location().toString(),
+                    resourcekey.identifier().toString(),
                     PlayerTrigger.TriggerInstance.located(LocationPredicate.Builder.inBiome(holdergetter.getOrThrow(resourcekey)))
             );
         }

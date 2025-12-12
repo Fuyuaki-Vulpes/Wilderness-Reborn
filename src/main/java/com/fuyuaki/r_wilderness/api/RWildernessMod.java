@@ -1,33 +1,27 @@
 package com.fuyuaki.r_wilderness.api;
 
+import com.fuyuaki.r_wilderness.api.compat.DHApiCompatLoader;
 import com.fuyuaki.r_wilderness.api.config.ClientConfig;
 import com.fuyuaki.r_wilderness.data.worldgen.RSurfaceRuleData;
 import com.fuyuaki.r_wilderness.init.RAttachments;
 import com.fuyuaki.r_wilderness.init.RChunkGenerators;
 import com.fuyuaki.r_wilderness.init.RFeatures;
 import com.fuyuaki.r_wilderness.init.RSoundEvents;
-import com.fuyuaki.r_wilderness.world.generation.distant_horizons.DHApiEventHandler;
+import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import com.fuyuaki.r_wilderness.world.item.RCreativeModeTabs;
 import com.fuyuaki.r_wilderness.world.item.RItems;
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
-import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import com.fuyuaki.r_wilderness.world.level.levelgen.carver.RWorldCarvers;
 import com.fuyuaki.r_wilderness.world.level.levelgen.placement.RPlacementModifierTypes;
 import com.mojang.logging.LogUtils;
-import com.seibel.distanthorizons.api.methods.events.DhApiEventRegister;
-import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiLevelLoadEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -36,7 +30,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
 
@@ -45,7 +38,6 @@ import org.slf4j.Logger;
 public class RWildernessMod {
     public static final String MODID = "r_wilderness";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public RWildernessMod(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
@@ -69,7 +61,9 @@ public class RWildernessMod {
 
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
 
-        DhApiEventRegister.on(DhApiLevelLoadEvent.class, new DHApiEventHandler());
+        if (ModList.get().isLoaded("distanthorizons")) {
+            DHApiCompatLoader.execute();
+        }
 
 
     }
@@ -101,8 +95,8 @@ public class RWildernessMod {
         }
     }
 
-    public static ResourceLocation modLocation(String id){
-        return ResourceLocation.fromNamespaceAndPath(MODID,id);
+    public static Identifier modLocation(String id){
+        return Identifier.fromNamespaceAndPath(MODID,id);
     }
 
     public static RegistryAccess getRegistryAccess(){

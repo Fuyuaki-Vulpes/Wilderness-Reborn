@@ -27,7 +27,6 @@
     "common.WorldPresetsMixin"
   ],
   "client": [
-    "client.AirBasedFogEnvironmentMixin",
     "client.ClientLevelMixin",
     "client.CreateWorldScreenMixin",
     "client.CreativeModeInventoryScreenMixin",

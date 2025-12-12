@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.item.properties.numeric.CrossbowPull;
 import net.minecraft.client.renderer.item.properties.numeric.UseDuration;
 import net.minecraft.client.renderer.item.properties.select.Charge;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
@@ -25,10 +25,10 @@ import java.util.function.BiConsumer;
 public class GenItemModels extends ItemModelGenerators {
 
     private final ItemModelOutput itemModelOutput;
-    private final BiConsumer<ResourceLocation, ModelInstance> modelOutput;
+    private final BiConsumer<Identifier, ModelInstance> modelOutput;
 
 
-    public GenItemModels(ItemModelOutput itemModelOutput, BiConsumer<ResourceLocation, ModelInstance> modelOutput) {
+    public GenItemModels(ItemModelOutput itemModelOutput, BiConsumer<Identifier, ModelInstance> modelOutput) {
         super(itemModelOutput, modelOutput);
         this.itemModelOutput = itemModelOutput;
         this.modelOutput = modelOutput;

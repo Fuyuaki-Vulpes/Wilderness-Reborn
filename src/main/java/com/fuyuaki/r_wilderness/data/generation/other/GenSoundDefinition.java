@@ -3,7 +3,7 @@ package com.fuyuaki.r_wilderness.data.generation.other;
 import com.fuyuaki.r_wilderness.client.RSoundEvents;
 import com.mojang.datafixers.kinds.IdF;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.data.SoundDefinition;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
@@ -37,7 +37,7 @@ public class GenSoundDefinition extends SoundDefinitionsProvider {
     }
 
     protected static SoundDefinition.Sound entitySound(final String name) {
-        return sound(ResourceLocation.fromNamespaceAndPath(MODID,"entity/name"));
+        return sound(Identifier.fromNamespaceAndPath(MODID,"entity/name"));
     }
 
 

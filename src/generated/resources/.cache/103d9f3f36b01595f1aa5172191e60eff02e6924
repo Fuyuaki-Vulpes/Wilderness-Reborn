@@ -1,5 +1,5 @@
-// 1.21.10	2025-12-03T15:01:42.4048463	Registries
-14e0716a1c330c7a132c15016222d350050853d3 data/r_wilderness/dimension_type/overworld.json
+// 1.21.11	2025-12-11T15:06:28.3927259	Registries
+fdbf91ba9360561935d2dcd5776bdcf0962463bd data/r_wilderness/dimension_type/overworld.json
 2d1810b2c1dedbefb9477b91d904ebabc26855a6 data/r_wilderness/neoforge/biome_modifier/add_large_caves.json
 722cd10a80d461b4ef0633f3b3c493f2e3349321 data/r_wilderness/neoforge/biome_modifier/add_sinkholes.json
 013c138a4adc7b0faa12f29dd7a3ec3b3f8780fb data/r_wilderness/neoforge/biome_modifier/remove_blobs.json
@@ -9,7 +9,7 @@ ca98a1c6f7a86da7e54d007f0d855d4bf57453e9 data/r_wilderness/neoforge/biome_modifi
 d379d6cf13d776e336d1af812e7e79489e85cec2 data/r_wilderness/neoforge/biome_modifier/water_deltas_common.json
 19a508a5c0a846c2aa6e4dcc9630b987da7e81f0 data/r_wilderness/neoforge/biome_modifier/water_deltas_large.json
 e487549b33a041b1bb4caaf468030b33d5fcb75c data/r_wilderness/neoforge/biome_modifier/water_deltas_very_common.json
-95e40ff8905fd562a66860ba2f5187f308c023fb data/r_wilderness/worldgen/biome/barren_caves.json
+e2d5ad0af06ec3af28104dc4043b3c3d194d33fd data/r_wilderness/worldgen/biome/barren_caves.json
 ef8cf18cb3436f43866f59f9a622d82e0278f38a data/r_wilderness/worldgen/biome_placement/badlands.json
 aad3110f68a8bfcaa8196187c7c037f28b260055 data/r_wilderness/worldgen/biome_placement/bamboo_jungle.json
 de5ca5dea38dec5731aa5e872f5f034c15081027 data/r_wilderness/worldgen/biome_placement/barren_caves.json
@@ -96,4 +96,4 @@ c64ca9690aaedf5decf94c45e9aa412abbc414bd data/r_wilderness/worldgen/placed_featu
 4e33388bb731920288a72594d8848bf7a1bea256 data/r_wilderness/worldgen/placed_feature/water_deltas_common.json
 91cff8978996631e48425b6ea7c90665b52a34aa data/r_wilderness/worldgen/placed_feature/water_deltas_large.json
 3f440c3a738ea532cb70bd584e34e79f400f434f data/r_wilderness/worldgen/placed_feature/water_deltas_very_common.json
-306ec207479c3c9ac3ce6f8c82438442e1a33ae1 data/r_wilderness/worldgen/world_preset/reborn.json
+af6f7f959676ab36e1be8f56e67392f96736045f data/r_wilderness/worldgen/world_preset/reborn.json

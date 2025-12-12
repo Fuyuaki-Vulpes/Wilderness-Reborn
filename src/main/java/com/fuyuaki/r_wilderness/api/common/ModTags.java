@@ -16,6 +16,9 @@ import net.minecraft.world.level.material.Fluid;
 public class ModTags {
 
     public static class Blocks {
+        public static final TagKey<Block> ROOT_BLOCK_GROWS_INTO = tag("root_block_grows_into");
+
+
         private static TagKey<Block> tag(String name) {
             return TagKey.create(Registries.BLOCK, RWildernessMod.modLocation(name));
         }

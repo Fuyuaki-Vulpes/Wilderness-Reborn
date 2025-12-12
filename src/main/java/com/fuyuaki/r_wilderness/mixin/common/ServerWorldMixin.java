@@ -11,10 +11,10 @@ import net.minecraft.server.level.ServerEntityGetter;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.SleepStatus;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -47,7 +47,7 @@ public abstract class ServerWorldMixin extends Level implements ServerEntityGett
     private void mixinUpdateSleepingPlayerAnnounceSleep(ServerLevel instance){
 
         int playerCount = instance.players().size();
-        int playerSleepMinCount = Math.max(1,(instance.getGameRules().getInt(GameRules.RULE_PLAYERS_SLEEPING_PERCENTAGE) * playerCount) / 100);
+        int playerSleepMinCount = Math.max(1,(instance.getGameRules().get(GameRules.PLAYERS_SLEEPING_PERCENTAGE) * playerCount) / 100);
         int asleepPlayers = this.sleepStatus.amountSleeping();
 
         float speedMultiplier = 1 + (((float) asleepPlayers / (float) playerSleepMinCount) * 3);

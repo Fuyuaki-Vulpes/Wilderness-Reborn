@@ -1,22 +1,19 @@
 package com.fuyuaki.r_wilderness.data.worldgen.biome;
 
-import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import com.fuyuaki.r_wilderness.client.RSoundEvents;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
-import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.Musics;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.attribute.BackgroundMusic;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ROverworldBiomes {
     protected static final int NORMAL_WATER_COLOR = 4159204;
@@ -31,7 +28,8 @@ public class ROverworldBiomes {
     public static Biome barrenCaves(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
         MobSpawnSettings.Builder spawns = new MobSpawnSettings.Builder();
         BiomeDefaultFeatures.caveSpawns(spawns);
-        BiomeDefaultFeatures.monsters(spawns, 95, 5, 100, false);
+        BiomeDefaultFeatures.monsters(spawns, 95, 5, 0, 100, false);
+
 
         BiomeGenerationSettings.Builder generation = new BiomeGenerationSettings.Builder(placedFeatures, worldCarvers);
         globalOverworldGeneration(generation);
@@ -41,8 +39,9 @@ public class ROverworldBiomes {
         BiomeDefaultFeatures.addPlainVegetation(generation);
         BiomeDefaultFeatures.addDefaultMushrooms(generation);
         BiomeDefaultFeatures.addDefaultExtraVegetation(generation, false);
-        Music music = Musics.createGameMusic(RSoundEvents.MUSIC_BIOME_BARREN_CAVES);
-        return biome(true, 0.45F, 0.4F, spawns, generation, music);
+        return biome(true, 0.45F, 0.4F, spawns, generation)
+                .setAttribute(EnvironmentAttributes.BACKGROUND_MUSIC, new BackgroundMusic(RSoundEvents.MUSIC_BIOME_BARREN_CAVES))
+                .build();
     }
 
 
@@ -63,36 +62,28 @@ public class ROverworldBiomes {
         return Mth.hsvToRgb(0.62222224F - $$1 * 0.05F, 0.5F + $$1 * 0.1F, 1.0F);
     }
 
-    private static Biome biome(
+    private static Biome.BiomeBuilder biome(
             boolean pHasPercipitation,
             float pTemperature,
             float pDownfall,
             MobSpawnSettings.Builder pMobSpawnSettings,
-            BiomeGenerationSettings.Builder pGenerationSettings,
-            @Nullable Music pBackgroundMusic
+            BiomeGenerationSettings.Builder pGenerationSettings
     ) {
-        return biome(pHasPercipitation, pTemperature, pDownfall, 4159204, 329011, null, null, pMobSpawnSettings, pGenerationSettings, pBackgroundMusic);
+        return biome(pHasPercipitation, pTemperature, pDownfall, 4159204, null, null, pMobSpawnSettings, pGenerationSettings);
     }
 
-    private static Biome biome(
+    private static Biome.BiomeBuilder biome(
             boolean pHasPrecipitation,
             float pTemperature,
             float pDownfall,
             int pWaterColor,
-            int pWaterFogColor,
             @Nullable Integer pGrassColorOverride,
             @Nullable Integer pFoliageColorOverride,
             MobSpawnSettings.Builder pMobSpawnSettings,
-            BiomeGenerationSettings.Builder pGenerationSettings,
-            @Nullable Music pBackgroundMusic
+            BiomeGenerationSettings.Builder pGenerationSettings
     ) {
         BiomeSpecialEffects.Builder biomespecialeffects$builder = new BiomeSpecialEffects.Builder()
-                .waterColor(pWaterColor)
-                .waterFogColor(pWaterFogColor)
-                .fogColor(12638463)
-                .skyColor(calculateSkyColor(pTemperature))
-                .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS)
-                .backgroundMusic(pBackgroundMusic);
+                .waterColor(pWaterColor);
         if (pGrassColorOverride != null) {
             biomespecialeffects$builder.grassColorOverride(pGrassColorOverride);
         }
@@ -105,15 +96,15 @@ public class ROverworldBiomes {
                 .hasPrecipitation(pHasPrecipitation)
                 .temperature(pTemperature)
                 .downfall(pDownfall)
+                .setAttribute(EnvironmentAttributes.SKY_COLOR, calculateSkyColor(pTemperature))
                 .specialEffects(biomespecialeffects$builder.build())
                 .mobSpawnSettings(pMobSpawnSettings.build())
-                .generationSettings(pGenerationSettings.build())
-                .build();
+                .generationSettings(pGenerationSettings.build());
     }
 
 
-    private static Biome baseOcean(MobSpawnSettings.Builder mobSpawnSettings, int waterColor, int waterFogColor, BiomeGenerationSettings.Builder generationSettings) {
-        return biome(true, 0.5F, 0.5F, waterColor, waterFogColor, null, null, mobSpawnSettings, generationSettings, NORMAL_MUSIC);
+    private static Biome.BiomeBuilder baseOcean(MobSpawnSettings.Builder mobSpawnSettings, int waterColor, int waterFogColor, BiomeGenerationSettings.Builder generationSettings) {
+        return biome(true, 0.5F, 0.5F, waterColor, null, null, mobSpawnSettings, generationSettings);
     }
 
 

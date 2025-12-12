@@ -43,7 +43,7 @@ public class SkyUtils {
 
     public static double sunHeight(Level level, double z, float partialTicks) {
         double latitudeTilt = sunLatitudeRotation(level, z) * Mth.PI;
-        double untitledHeight = (Mth.cos(level.getTimeOfDay(partialTicks) * Mth.TWO_PI));
+        double untitledHeight = (Mth.cos(level.getDayTimePerTick() * Mth.TWO_PI));
         return untitledHeight * Math.cos(latitudeTilt);
     }
 
@@ -90,7 +90,7 @@ public class SkyUtils {
     }
 
     public static Vector3f sunVector(Level level, double zPos, float partialTicks) {
-        double azimuth = smoothTimeOfDay(level.getTimeOfDay(partialTicks)) * 360;
+        double azimuth = smoothTimeOfDay(level.getDayTimePerTick()) * 360;
         double tiltAngle = sunLatitudeRotation(level, zPos) * 180;
         double zenithAngle = tiltAngle - 90;
         double azimuthRad = azimuth * Mth.DEG_TO_RAD;

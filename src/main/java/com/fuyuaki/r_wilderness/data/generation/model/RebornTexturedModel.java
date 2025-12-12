@@ -1,7 +1,7 @@
 package com.fuyuaki.r_wilderness.data.generation.model;
 
 import net.minecraft.client.data.models.model.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.extensions.ITexturedModelExtension;
 

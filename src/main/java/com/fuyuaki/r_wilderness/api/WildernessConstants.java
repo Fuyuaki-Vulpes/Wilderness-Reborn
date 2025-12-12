@@ -15,7 +15,7 @@ public class WildernessConstants {
 
     public static final int SEA_LEVEL = 64;
 
-    public static final int CLOUD_HEIGHT = 320;
+    public static final float CLOUD_HEIGHT = 320;
 
 
     public static final boolean DEBUG_GEN = true;

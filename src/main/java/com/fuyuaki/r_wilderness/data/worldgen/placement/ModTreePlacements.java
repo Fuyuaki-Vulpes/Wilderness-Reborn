@@ -1,6 +1,7 @@
 package com.fuyuaki.r_wilderness.data.worldgen.placement;
 
 import com.fuyuaki.r_wilderness.data.worldgen.features.ModFeatureUtils;
+import com.fuyuaki.r_wilderness.data.worldgen.features.ModTreeFeatures;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -15,7 +16,7 @@ public class ModTreePlacements {
         PlacementUtils.register(
                 context,
                 ALPINE_TREE,
-                ModPlacementUtils.holder(context, ModFeatureUtils.ALPINE_TREE),
+                ModPlacementUtils.holder(context, ModTreeFeatures.ALPINE_TREE),
                 VegetationPlacements.treePlacement(PlacementUtils.countExtra(1, 0.5F, 1),
                         RBlocks.ALPINE_SAPLING.get())
         );

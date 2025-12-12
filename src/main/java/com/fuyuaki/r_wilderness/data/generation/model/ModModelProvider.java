@@ -15,7 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -93,7 +93,7 @@ public class ModModelProvider implements DataProvider, IModelProviderExtension {
 
         public CompletableFuture<?> save(CachedOutput output, PackOutput.PathProvider pathProvider) {
             Map<Block, BlockModelDefinition> map = Maps.transformValues(this.generators, BlockModelDefinitionGenerator::create);
-            Function<Block, Path> function = p_387598_ -> pathProvider.json(p_387598_.builtInRegistryHolder().key().location());
+            Function<Block, Path> function = p_387598_ -> pathProvider.json(p_387598_.builtInRegistryHolder().key().identifier());
             return DataProvider.saveAll(output, BlockModelDefinition.CODEC, function, map);
         }
     }
@@ -105,6 +105,11 @@ public class ModModelProvider implements DataProvider, IModelProviderExtension {
         @Override
         public void accept(Item item, ItemModel.Unbaked model) {
             this.register(item, new ClientItem(model, ClientItem.Properties.DEFAULT));
+        }
+
+        @Override
+        public void accept(Item item, ItemModel.Unbaked model, ClientItem.Properties clientProperties) {
+            this.register(item, new ClientItem(model, clientProperties));
         }
 
         public void register(Item p_388205_, ClientItem p_388233_) {
@@ -124,8 +129,8 @@ public class ModModelProvider implements DataProvider, IModelProviderExtension {
                 BuiltInRegistries.ITEM.listElements().filter(ModModelProvider.this::isModded).forEach(p_388426_ -> {
                     if (!this.copies.containsKey(p_388426_)) {
                         if (p_388426_.value() instanceof BlockItem blockitem && !this.itemInfos.containsKey(blockitem)) {
-                            ResourceLocation resourcelocation = ModelLocationUtils.getModelLocation(blockitem.getBlock());
-                            this.accept(blockitem, ItemModelUtils.plainModel(resourcelocation));
+                            Identifier Identifier = ModelLocationUtils.getModelLocation(blockitem.getBlock());
+                            this.accept(blockitem, ItemModelUtils.plainModel(Identifier));
                         }
                     }
                 });
@@ -142,15 +147,15 @@ public class ModModelProvider implements DataProvider, IModelProviderExtension {
 
         public CompletableFuture<?> save(CachedOutput output, PackOutput.PathProvider pathProvider) {
             return DataProvider.saveAll(
-                    output, ClientItem.CODEC, p_388594_ -> pathProvider.json(p_388594_.builtInRegistryHolder().key().location()), this.itemInfos
+                    output, ClientItem.CODEC, p_388594_ -> pathProvider.json(p_388594_.builtInRegistryHolder().key().identifier()), this.itemInfos
             );
         }
     }
 
-    static class SimpleModelCollector implements BiConsumer<ResourceLocation, ModelInstance> {
-        private final Map<ResourceLocation, ModelInstance> models = new HashMap<>();
+    static class SimpleModelCollector implements BiConsumer<Identifier, ModelInstance> {
+        private final Map<Identifier, ModelInstance> models = new HashMap<>();
 
-        public void accept(ResourceLocation location, ModelInstance instance) {
+        public void accept(Identifier location, ModelInstance instance) {
             Supplier<JsonElement> supplier = this.models.put(location, instance);
             if (supplier != null) {
                 throw new IllegalStateException("Duplicate model value for " + location);
@@ -163,6 +168,6 @@ public class ModModelProvider implements DataProvider, IModelProviderExtension {
     }
 
     private boolean isModded(Holder.Reference<?> reference) {
-        return reference.key().location().getNamespace().equals(this.modId);
+        return reference.key().identifier().getNamespace().equals(this.modId);
     }
 }

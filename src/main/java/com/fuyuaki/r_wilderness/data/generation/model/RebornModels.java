@@ -3,7 +3,7 @@ package com.fuyuaki.r_wilderness.data.generation.model;
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Optional;
 
@@ -49,11 +49,11 @@ public class RebornModels {
         return new ModelTemplate(Optional.of(decorateBlockModelLocation(name)), Optional.of(suffix), requiredSlots);
     }
 
-    public static ResourceLocation decorateBlockModelLocation(String name) {
-        // Neo: Use ResourceLocation.parse to support modded paths
+    public static Identifier decorateBlockModelLocation(String name) {
+        // Neo: Use Identifier.parse to support modded paths
         return RWildernessMod.modLocation(name).withPrefix("block/");
     }
-    public static ResourceLocation decorateItemModelLocation(String name) {
+    public static Identifier decorateItemModelLocation(String name) {
         return RWildernessMod.modLocation(name).withPrefix("item/");
     }
 

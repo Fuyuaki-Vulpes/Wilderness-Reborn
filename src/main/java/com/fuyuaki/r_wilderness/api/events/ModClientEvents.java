@@ -24,7 +24,7 @@ public class ModClientEvents {
 
     @SubscribeEvent
     public static void registerConditionalProperties(RegisterConditionalItemModelPropertyEvent event) {
-//        event.register(ResourceLocation.fromNamespaceAndPath(MODID, "is_attacking"), IsAttacking.MAP_CODEC);
+//        event.register(Identifier.fromNamespaceAndPath(MODID, "is_attacking"), IsAttacking.MAP_CODEC);
     }
 
     @SubscribeEvent

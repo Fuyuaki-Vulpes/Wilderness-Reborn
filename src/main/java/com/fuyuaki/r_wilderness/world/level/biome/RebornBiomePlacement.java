@@ -10,7 +10,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFileCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.biome.Biome;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record RebornBiomePlacement(
-        ResourceLocation name,
+        Identifier name,
         Holder<Biome> biome,
         TerrainParameters.Target target,
         List<Type> validTerrainTypes,
@@ -31,7 +31,7 @@ public record RebornBiomePlacement(
     public static final Codec<RebornBiomePlacement> CODEC = ExtraCodecs.catchDecoderException(
             RecordCodecBuilder.create(
                     p_415523_ -> p_415523_.group(
-                                    ResourceLocation.CODEC.fieldOf("name").forGetter(RebornBiomePlacement::name),
+                                    Identifier.CODEC.fieldOf("name").forGetter(RebornBiomePlacement::name),
                                     Biome.CODEC.fieldOf("biome").forGetter(RebornBiomePlacement::biome),
                                     TerrainParameters.Target.CODEC.fieldOf("target").forGetter(RebornBiomePlacement::target),
                                     Type.CODEC.listOf().fieldOf("valid_terrain_types").forGetter(RebornBiomePlacement::validTerrainTypes),
@@ -45,7 +45,7 @@ public record RebornBiomePlacement(
 
 
     public RebornBiomePlacement(
-            ResourceLocation name,
+            Identifier name,
             Holder<Biome> biome,
             TerrainParameters.Target target,
             List<Type> validTerrainTypes){

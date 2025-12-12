@@ -1145,12 +1145,12 @@ public abstract class ModBiomePlacements {
     }
 
     private static void placement(BootstrapContext<RebornBiomePlacement> context, ResourceKey<RebornBiomePlacement> name,Holder<Biome> biomeHolder, TerrainParameters.Target target, List<RebornBiomePlacement.Type> types) {
-        context.register(name,new RebornBiomePlacement(name.location(),
+        context.register(name,new RebornBiomePlacement(name.identifier(),
                 biomeHolder,target,types
         ));
     }
     private static void placement(BootstrapContext<RebornBiomePlacement> context, ResourceKey<RebornBiomePlacement> name,Holder<Biome> biomeHolder, TerrainParameters.Target target, List<RebornBiomePlacement.Type> types, List<RebornBiomePlacement.TerrainStates> states) {
-        context.register(name,new RebornBiomePlacement(name.location(),
+        context.register(name,new RebornBiomePlacement(name.identifier(),
                 biomeHolder,target,types, Optional.of(states)
         ));
     }

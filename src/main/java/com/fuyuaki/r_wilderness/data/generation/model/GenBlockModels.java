@@ -11,7 +11,7 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.model.Variant;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
@@ -29,9 +29,9 @@ public class GenBlockModels extends BlockModelGenerators {
     // CLEAR QUARTZ CLUSTER NEEDED
 
     public final Consumer<BlockModelDefinitionGenerator> blockStateOutput;
-    final BiConsumer<ResourceLocation, ModelInstance> modelOutput;
+    final BiConsumer<Identifier, ModelInstance> modelOutput;
 
-    public GenBlockModels(ModModelProvider.BlockStateGeneratorCollector blockStateOutput, ItemModelOutput itemModelOutput, BiConsumer<ResourceLocation, ModelInstance> modelOutput) {
+    public GenBlockModels(ModModelProvider.BlockStateGeneratorCollector blockStateOutput, ItemModelOutput itemModelOutput, BiConsumer<Identifier, ModelInstance> modelOutput) {
         super(blockStateOutput, itemModelOutput, modelOutput);
         this.blockStateOutput = blockStateOutput;
         this.modelOutput = modelOutput;
@@ -106,7 +106,7 @@ public class GenBlockModels extends BlockModelGenerators {
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(side));
         this.blockStateOutput.accept(createSimpleBlock(block, plainVariant(ModelTemplates.CUBE_BOTTOM_TOP.create(block, texturemapping, this.modelOutput))));
     }
-    public void createVerticalBlock(Block block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top){
+    public void createVerticalBlock(Block block, Identifier side, Identifier bottom, Identifier top){
         TextureMapping texturemapping = new TextureMapping()
                 .put(TextureSlot.BOTTOM, bottom)
                 .put(TextureSlot.TOP, side)
@@ -114,16 +114,16 @@ public class GenBlockModels extends BlockModelGenerators {
         this.blockStateOutput.accept(createSimpleBlock(block, plainVariant(ModelTemplates.CUBE_BOTTOM_TOP.create(block, texturemapping, this.modelOutput))));
     }
     public void createGrassBlock(Block block, Block dirt, Block top, ItemTintSource colorSource) {
-        ResourceLocation resourcelocation = TextureMapping.getBlockTexture(dirt);
+        Identifier Identifier = TextureMapping.getBlockTexture(dirt);
 
         TextureMapping texturemapping = new TextureMapping()
-                .put(RebornSlots.DIRT, resourcelocation)
+                .put(RebornSlots.DIRT, Identifier)
                 .copyForced(RebornSlots.DIRT, TextureSlot.PARTICLE)
                 .put(RebornSlots.GRASS, TextureMapping.getBlockTexture(top, "_top"))
                 .put(RebornSlots.OVERLAY, TextureMapping.getBlockTexture(block, "_snow_overlay"));
 
         TextureMapping texturemappingNoSnow = new TextureMapping()
-                .put(RebornSlots.DIRT, resourcelocation)
+                .put(RebornSlots.DIRT, Identifier)
                 .copyForced(RebornSlots.DIRT, TextureSlot.PARTICLE)
                 .put(RebornSlots.GRASS, TextureMapping.getBlockTexture(top, "_top"))
                 .put(RebornSlots.OVERLAY, TextureMapping.getBlockTexture(block, "_overlay"));
@@ -141,11 +141,11 @@ public class GenBlockModels extends BlockModelGenerators {
                         texturemappingNoSnow,
                         this.modelOutput)
         );
-        ResourceLocation resourcelocation1 = ModelLocationUtils.getModelLocation(block);
+        Identifier Identifier1 = ModelLocationUtils.getModelLocation(block);
 
         this.createGrassLikeBlock(block, createRotatedVariants(variant), multivariant);
 
-        this.registerSimpleTintedItemModel(block, resourcelocation1, colorSource);
+        this.registerSimpleTintedItemModel(block, Identifier1, colorSource);
 
     }
 
@@ -176,7 +176,7 @@ public class GenBlockModels extends BlockModelGenerators {
         this.createRPlantBlock(block, plantType, texturemapping);
     }
     public void createRPlantBlock(Block block, RPlantType plantType, TextureMapping textureMapping) {
-        ResourceLocation location = plantType.getCross().create(block, textureMapping, this.modelOutput);
+        Identifier location = plantType.getCross().create(block, textureMapping, this.modelOutput);
         MultiVariant multivariant = plainVariant(location);
         this.registerSimpleItemModel(block, location);
         this.blockStateOutput.accept(createSimpleBlock(block, multivariant));
@@ -186,7 +186,7 @@ public class GenBlockModels extends BlockModelGenerators {
         this.createRTintedPlantBlock(block, plantType, texturemapping);
     }
     public void createRTintedPlantBlock(Block block, RPlantType plantType, TextureMapping textureMapping) {
-        ResourceLocation location = plantType.getCross().create(block, textureMapping, this.modelOutput);
+        Identifier location = plantType.getCross().create(block, textureMapping, this.modelOutput);
         MultiVariant multivariant = plainVariant(location);
         this.registerSimpleTintedItemModel(block, location, new GrassColorSource());
         this.blockStateOutput.accept(createSimpleBlock(block, multivariant));
@@ -204,7 +204,7 @@ public class GenBlockModels extends BlockModelGenerators {
     }
 
     public void createRDoublePlantWithTintedModel(Block block, RPlantType plantType, RPlantType bottomType) {
-        ResourceLocation topLocation = this.createSuffixedVariant(block, "_top", plantType.getCross(), TextureMapping::cross);
+        Identifier topLocation = this.createSuffixedVariant(block, "_top", plantType.getCross(), TextureMapping::cross);
         MultiVariant multivariant = plainVariant(topLocation);
         MultiVariant multivariant1 = plainVariant(this.createSuffixedVariant(block, "_bottom", bottomType.getCross(), bottomType == RPlantType.FERN_LIKE_DOUBLE_BOTTOM ? f -> bottomType.getTextureMapping(block) : TextureMapping::cross));
         this.registerSimpleTintedItemModel(block,topLocation, new GrassColorSource());
@@ -253,7 +253,7 @@ public class GenBlockModels extends BlockModelGenerators {
             return this.flowerPotTemplate;
         }
 
-        public ResourceLocation createItemModel(BlockModelGenerators generator, Block block) {
+        public Identifier createItemModel(BlockModelGenerators generator, Block block) {
             Item item = block.asItem();
             return this.isEmissive
                     ? generator.createFlatItemModelWithBlockTextureAndOverlay(item, block, "_emissive")

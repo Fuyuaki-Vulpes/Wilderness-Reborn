@@ -16,7 +16,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SkyRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -50,16 +50,15 @@ public abstract class SkyRendererMixin {
 
     @Shadow private int starIndexCount;
     @Shadow @Final private GpuBuffer starBuffer;
-    @Shadow @Final private RenderSystem.AutoStorageIndexBuffer starIndices;
 
     @Shadow protected abstract void renderStars(float starBrightness, PoseStack poseStack);
 
-    @Shadow protected abstract void renderMoon(int moonPhase, float rainLevel, PoseStack poseStack);
 
     @Shadow protected abstract void renderSun(float alpha, PoseStack poseStack);
 
-    private static final ResourceLocation MOON_BRIGHT_LOCATION = RWildernessMod.modLocation("textures/environment/moon.png");
-    private static final ResourceLocation MOON_DARK_LOCATION = RWildernessMod.modLocation("textures/environment/moon_shadow.png");
+    @Shadow @Final private RenderSystem.AutoStorageIndexBuffer quadIndices;
+    private static final Identifier MOON_BRIGHT_LOCATION = RWildernessMod.modLocation("textures/environment/moon.png");
+    private static final Identifier MOON_DARK_LOCATION = RWildernessMod.modLocation("textures/environment/moon_shadow.png");
 
 
     @Inject(method = "<init>", at = @At("RETURN"))
@@ -75,10 +74,6 @@ public abstract class SkyRendererMixin {
         add(1.0f, 120, 199, 255);
     }};
 
-    @Inject(method = "initTextures", at = @At("HEAD"))
-    private void initTextures(CallbackInfo ci) {
-
-    }
 
 /*
     @Inject(method = "renderSunMoonAndStars", at = @At("HEAD"), cancellable = true)
@@ -141,9 +136,9 @@ public abstract class SkyRendererMixin {
         RenderPipeline renderpipeline = R_STARS;
         GpuTextureView gputextureview = Minecraft.getInstance().getMainRenderTarget().getColorTextureView();
         GpuTextureView gputextureview1 = Minecraft.getInstance().getMainRenderTarget().getDepthTextureView();
-        GpuBuffer gpubuffer = this.starIndices.getBuffer(this.starIndexCount);
+        GpuBuffer gpubuffer = this.quadIndices.getBuffer(this.starIndexCount);
         GpuBufferSlice gpubufferslice = RenderSystem.getDynamicUniforms()
-                .writeTransform(matrix4fstack, new Vector4f(starBrightness, starBrightness, starBrightness, starBrightness), new Vector3f(), new Matrix4f(), 1);
+                .writeTransform(matrix4fstack, new Vector4f(starBrightness, starBrightness, starBrightness, starBrightness), new Vector3f(), new Matrix4f());
 
         try (RenderPass renderpass = RenderSystem.getDevice()
                 .createCommandEncoder()
@@ -152,7 +147,7 @@ public abstract class SkyRendererMixin {
             RenderSystem.bindDefaultUniforms(renderpass);
             renderpass.setUniform("DynamicTransforms", gpubufferslice);
             renderpass.setVertexBuffer(0, this.starBuffer);
-            renderpass.setIndexBuffer(gpubuffer, this.starIndices.type());
+            renderpass.setIndexBuffer(gpubuffer, this.quadIndices.type());
             renderpass.drawIndexed(0, 0, this.starIndexCount, 1);
         }
 

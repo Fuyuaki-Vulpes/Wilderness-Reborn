@@ -2,10 +2,10 @@ package com.fuyuaki.r_wilderness.mixin.common;
 
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
 import com.google.common.collect.ImmutableList;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelHeightAccessor;
@@ -161,16 +161,16 @@ public abstract class RuinedPortalStructureMixin {
             ruinedportalpiece$properties.overgrown = ruinedportalstructure$setup3.overgrown();
             ruinedportalpiece$properties.vines = ruinedportalstructure$setup3.vines();
             ruinedportalpiece$properties.replaceWithBlackstone = ruinedportalstructure$setup3.replaceWithBlackstone();
-            ResourceLocation resourcelocation;
+            Identifier identifier;
             if (worldgenrandom.nextFloat() < 0.05F) {
-                resourcelocation = ResourceLocation.withDefaultNamespace(
+                identifier = Identifier.withDefaultNamespace(
                         STRUCTURE_LOCATION_GIANT_PORTALS[worldgenrandom.nextInt(STRUCTURE_LOCATION_GIANT_PORTALS.length)]
                 );
             } else {
-                resourcelocation = ResourceLocation.withDefaultNamespace(STRUCTURE_LOCATION_PORTALS[worldgenrandom.nextInt(STRUCTURE_LOCATION_PORTALS.length)]);
+                identifier = Identifier.withDefaultNamespace(STRUCTURE_LOCATION_PORTALS[worldgenrandom.nextInt(STRUCTURE_LOCATION_PORTALS.length)]);
             }
 
-            StructureTemplate structuretemplate = context.structureTemplateManager().getOrCreate(resourcelocation);
+            StructureTemplate structuretemplate = context.structureTemplateManager().getOrCreate(identifier);
             Rotation rotation = Util.getRandom(Rotation.values(), worldgenrandom);
             Mirror mirror = worldgenrandom.nextFloat() < 0.5F ? Mirror.NONE : Mirror.FRONT_BACK;
             BlockPos blockpos = new BlockPos(structuretemplate.getSize().getX() / 2, 0, structuretemplate.getSize().getZ() / 2);
@@ -225,7 +225,7 @@ public abstract class RuinedPortalStructureMixin {
                                                 blockpos3,
                                                 ruinedportalstructure$setup3.placement(),
                                                 ruinedportalpiece$properties,
-                                                resourcelocation,
+                                                identifier,
                                                 structuretemplate,
                                                 rotation,
                                                 mirror,

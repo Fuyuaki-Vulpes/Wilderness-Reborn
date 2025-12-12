@@ -1,6 +1,7 @@
 package com.fuyuaki.r_wilderness.data.generation.tags;
 
 import com.fuyuaki.r_wilderness.RTags;
+import com.fuyuaki.r_wilderness.api.common.ModTags;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -22,6 +23,8 @@ public class GenBlockTags extends IntrinsicHolderTagsProvider<Block> {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
+        this.tag(ModTags.Blocks.ROOT_BLOCK_GROWS_INTO).addTag(BlockTags.DIRT);
+
         this.tag(Tags.Blocks.VILLAGER_FARMLANDS).add(
                 RBlocks.CHALKY_FARMLAND.get(),
                 RBlocks.CLAY_FARMLAND.get(),
