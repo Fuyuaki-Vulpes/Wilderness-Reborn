@@ -9,6 +9,8 @@ public class RebornSlots {
     public static final TextureSlot OVERLAY = create("overlay");
     public static final TextureSlot GRASS = create("grass");
     public static final TextureSlot TOP_GRASS = create("top_grass");
+    public static final TextureSlot LOG = create("log");
+    public static final TextureSlot STRIPPED_LOG = create("stripped_log");
 
     public static TextureSlot create(String id) {
         return TextureSlot.create(id);

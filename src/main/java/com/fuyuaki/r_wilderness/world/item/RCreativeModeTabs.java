@@ -38,6 +38,7 @@ public class RCreativeModeTabs {
             .backgroundTexture(MAIN_TAB_TEXTURE)
             .icon(Blocks.BIRCH_LEAVES.asItem()::getDefaultInstance)
             .displayItems(((parameters, output) -> {
+                output.accept(RBlocks.BRANCH);
                 output.accept(RItems.PEAT_BALL);
                 output.accept(RItems.CHALK_DUST);
                 output.accept(RBlocks.LIMESTONE);
