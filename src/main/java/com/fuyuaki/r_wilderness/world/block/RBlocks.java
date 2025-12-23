@@ -1,10 +1,12 @@
 package com.fuyuaki.r_wilderness.world.block;
 
 import com.fuyuaki.r_wilderness.data.worldgen.tree.ModTreeGrower;
-import com.fuyuaki.r_wilderness.world.item.RItems;
 import com.fuyuaki.r_wilderness.world.block.soils.ModFarmBlock;
 import com.fuyuaki.r_wilderness.world.block.soils.ModSoilBlock;
+import com.fuyuaki.r_wilderness.world.block.tree.BranchBlock;
+import com.fuyuaki.r_wilderness.world.block.tree.TreePartBlock;
 import com.fuyuaki.r_wilderness.world.block.woods.*;
+import com.fuyuaki.r_wilderness.world.item.RItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffects;
@@ -31,13 +33,16 @@ import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
-import static net.minecraft.world.item.Items.registerBlock;
 
 public class RBlocks {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
 
     //Blocks
+
+    //Tree Stuff
+    public static final DeferredBlock<Block> BRANCH = registerBlock("branch", TreePartBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG));
+
 
     //Stones
 
@@ -72,68 +77,68 @@ public class RBlocks {
 
     //Soils
 
-    public static final DeferredBlock<Block> CHALKY_SOIL = registerBlockWithItem("chalky_soil",
+    public static final DeferredBlock<Block> CHALKY_SOIL = registerBlock("chalky_soil",
             ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL));
-    public static final DeferredBlock<Block> CHALKY_FARMLAND = registerBlockWithItem("chalky_farmland",
+    public static final DeferredBlock<Block> CHALKY_FARMLAND = registerBlock("chalky_farmland",
             ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)
     );
-    public static final DeferredBlock<Block> CLAY_SOIL = registerBlockWithItem("clay_soil",
+    public static final DeferredBlock<Block> CLAY_SOIL = registerBlock("clay_soil",
             ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY));
-    public static final DeferredBlock<Block> CLAY_FARMLAND = registerBlockWithItem("clay_farmland",
+    public static final DeferredBlock<Block> CLAY_FARMLAND = registerBlock("clay_farmland",
             ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY)
     );
-    public static final DeferredBlock<Block> PEAT = registerBlockWithItem("peat",
+    public static final DeferredBlock<Block> PEAT = registerBlock("peat",
             ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT));
-    public static final DeferredBlock<Block> PEAT_FARMLAND = registerBlockWithItem("peat_farmland",
+    public static final DeferredBlock<Block> PEAT_FARMLAND = registerBlock("peat_farmland",
             ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
     );
-    public static final DeferredBlock<Block> SANDY_SOIL = registerBlockWithItem("sandy_soil",
+    public static final DeferredBlock<Block> SANDY_SOIL = registerBlock("sandy_soil",
             ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.SAND));
-    public static final DeferredBlock<Block> SANDY_FARMLAND = registerBlockWithItem("sandy_farmland",
+    public static final DeferredBlock<Block> SANDY_FARMLAND = registerBlock("sandy_farmland",
             ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.SAND)
     );
-    public static final DeferredBlock<Block> SILT = registerBlockWithItem("silt",
+    public static final DeferredBlock<Block> SILT = registerBlock("silt",
             ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.MUD));
-    public static final DeferredBlock<Block> SILT_FARMLAND = registerBlockWithItem("silt_farmland",
+    public static final DeferredBlock<Block> SILT_FARMLAND = registerBlock("silt_farmland",
             ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)
     );
 
     //Trees & Wood
 
-    public static final DeferredBlock<Block> ALPINE_LOG = registerBlockWithItem("alpine_log",  RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG));
-    public static final DeferredBlock<Block> STRIPPED_ALPINE_LOG = registerBlockWithItem("stripped_alpine_log",  RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG));
-    public static final DeferredBlock<Block> ALPINE_WOOD = registerBlockWithItem("alpine_wood",  RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD));
-    public static final DeferredBlock<Block> STRIPPED_ALPINE_WOOD = registerBlockWithItem("stripped_alpine_wood",  RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD));
+    public static final DeferredBlock<Block> ALPINE_LOG = registerBlock("alpine_log",  RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG));
+    public static final DeferredBlock<Block> STRIPPED_ALPINE_LOG = registerBlock("stripped_alpine_log",  RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG));
+    public static final DeferredBlock<Block> ALPINE_WOOD = registerBlock("alpine_wood",  RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD));
+    public static final DeferredBlock<Block> STRIPPED_ALPINE_WOOD = registerBlock("stripped_alpine_wood",  RotatedPillarBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD));
 
-    public static final DeferredBlock<Block> ALPINE_PLANKS = registerBlockWithItem("alpine_planks",  Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS));
-    public static final DeferredBlock<Block> ALPINE_LEAVES = registerBlockWithItem("alpine_leaves", (properties) -> {
+    public static final DeferredBlock<Block> ALPINE_PLANKS = registerBlock("alpine_planks",  Block::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS));
+    public static final DeferredBlock<Block> ALPINE_LEAVES = registerBlock("alpine_leaves", (properties) -> {
         return new TintedParticleLeavesBlock(0.1F, properties);
     }, leavesProperties(SoundType.GRASS));
 
-    public static final DeferredBlock<Block> ALPINE_SAPLING = registerBlockWithItem("alpine_sapling",
+    public static final DeferredBlock<Block> ALPINE_SAPLING = registerBlock("alpine_sapling",
             properties -> new SaplingBlock(ModTreeGrower.ALPINE_TREE,properties), BlockBehaviour.Properties.ofFullCopy(Blocks.SPRUCE_SAPLING));
-    public static final DeferredBlock<Block> POTTED_ALPINE_SAPLING = registerBlockWithItem("potted_alpine_sapling",
+    public static final DeferredBlock<Block> POTTED_ALPINE_SAPLING = registerBlock("potted_alpine_sapling",
             properties -> new FlowerPotBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, ALPINE_SAPLING::value, properties),flowerPotProperties());
-    public static final DeferredBlock<Block> ALPINE_STAIRS = registerBlockWithItem("alpine_stairs",
+    public static final DeferredBlock<Block> ALPINE_STAIRS = registerBlock("alpine_stairs",
             properties -> new StairBlock(Blocks.OAK_STAIRS.defaultBlockState(),properties),
             BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_STAIRS));
 
-    public static final DeferredBlock<Block> ALPINE_SLAB = registerBlockWithItem("alpine_slab",
+    public static final DeferredBlock<Block> ALPINE_SLAB = registerBlock("alpine_slab",
             SlabBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SLAB));
 
-    public static final DeferredBlock<Block> ALPINE_PRESSURE_PLATE = registerBlockWithItem("alpine_pressure_plate",
+    public static final DeferredBlock<Block> ALPINE_PRESSURE_PLATE = registerBlock("alpine_pressure_plate",
             properties -> new PressurePlateBlock(ModBlockSetTypes.ALPINE,properties), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PRESSURE_PLATE));
-    public static final DeferredBlock<Block> ALPINE_BUTTON = registerBlockWithItem("alpine_button",
+    public static final DeferredBlock<Block> ALPINE_BUTTON = registerBlock("alpine_button",
             properties -> new ButtonBlock(ModBlockSetTypes.ALPINE, 10,properties), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_BUTTON));
 
-    public static final DeferredBlock<Block> ALPINE_FENCE = registerBlockWithItem("alpine_fence",
+    public static final DeferredBlock<Block> ALPINE_FENCE = registerBlock("alpine_fence",
             FenceBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_FENCE));
-    public static final DeferredBlock<Block> ALPINE_FENCE_GATE = registerBlockWithItem("alpine_fence_gate",
+    public static final DeferredBlock<Block> ALPINE_FENCE_GATE = registerBlock("alpine_fence_gate",
             properties -> new FenceGateBlock(ModWoodTypes.ALPINE,properties), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_FENCE_GATE));
 
-    public static final DeferredBlock<Block> ALPINE_DOOR = registerBlockWithItem("alpine_door",
+    public static final DeferredBlock<Block> ALPINE_DOOR = registerBlock("alpine_door",
             properties -> new DoorBlock(ModBlockSetTypes.ALPINE,properties), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_DOOR));
-    public static final DeferredBlock<Block> ALPINE_TRAPDOOR = registerBlockWithItem("alpine_trapdoor",
+    public static final DeferredBlock<Block> ALPINE_TRAPDOOR = registerBlock("alpine_trapdoor",
             properties -> new TrapDoorBlock(ModBlockSetTypes.ALPINE,properties), BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_TRAPDOOR));
 
     public static final DeferredBlock<Block> ALPINE_SIGN = registerNoItemBlock("alpine_sign",
@@ -151,7 +156,7 @@ public class RBlocks {
 
     //Flowers
 
-    public static final DeferredBlock<Block> BELLFLOWER = registerBlockWithItem(
+    public static final DeferredBlock<Block> BELLFLOWER = registerBlock(
             "bellflower",
             properties -> new FlowerBlock(MobEffects.GLOWING, 5.0F, properties),
             BlockBehaviour.Properties.of()
@@ -163,7 +168,7 @@ public class RBlocks {
                     .pushReaction(PushReaction.DESTROY)
     );
     public static final DeferredBlock<Block> POTTED_BELLFLOWER = register("potted_bellflower", properties -> new FlowerPotBlock(BELLFLOWER.get(), properties), flowerPotProperties());
-    public static final DeferredBlock<Block> MOSS_COMPANION = registerBlockWithItem(
+    public static final DeferredBlock<Block> MOSS_COMPANION = registerBlock(
             "moss_companion",
             properties -> new FlowerBlock(MobEffects.OOZING, 5.0F, properties),
             BlockBehaviour.Properties.of()
@@ -175,7 +180,7 @@ public class RBlocks {
                     .pushReaction(PushReaction.DESTROY)
     );
     public static final DeferredBlock<Block> POTTED_MOSS_COMPANION = register("potted_moss_companion", properties -> new FlowerPotBlock(MOSS_COMPANION.get(), properties), flowerPotProperties());
-    public static final DeferredBlock<Block> MOUNTAIN_HEATHER = registerBlockWithItem(
+    public static final DeferredBlock<Block> MOUNTAIN_HEATHER = registerBlock(
             "mountain_heather",
             properties -> new FlowerBlock(MobEffects.WEAVING, 5.0F, properties),
             BlockBehaviour.Properties.of()
@@ -187,7 +192,7 @@ public class RBlocks {
                     .pushReaction(PushReaction.DESTROY)
     );
     public static final DeferredBlock<Block> POTTED_MOUNTAIN_HEATHER = register("potted_mountain_heather", properties -> new FlowerPotBlock(MOUNTAIN_HEATHER.get(), properties), flowerPotProperties());
-    public static final DeferredBlock<Block> SNOWBELL = registerBlockWithItem(
+    public static final DeferredBlock<Block> SNOWBELL = registerBlock(
             "snowbell",
             properties -> new FlowerBlock(MobEffects.FIRE_RESISTANCE, 5.0F, properties),
             BlockBehaviour.Properties.of()
@@ -210,7 +215,7 @@ public class RBlocks {
         return BLOCKS.registerBlock(name,factory,() -> properties);
     }
 
-    private static <B extends Block> DeferredBlock<B> registerBlockWithItem(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
+    private static <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
         DeferredBlock<B> BLOCK = register(name,factory,properties);
         RItems.registerItem(name, (p) -> new BlockItem(BLOCK.get(), p),new Item.Properties());
         return BLOCK;
@@ -226,11 +231,11 @@ public class RBlocks {
     }
 
     private static  DeferredBlock<Block> registerBlock(String name, BlockBehaviour.Properties properties) {
-        return registerBlockWithItem(name, Block::new, properties);
+        return registerBlock(name, Block::new, properties);
     }
 
     private static DeferredBlock<StairBlock> registerStair(String name, Block baseBlock) {
-        return registerBlockWithItem(name, p_368009_ -> new StairBlock(baseBlock.defaultBlockState(), p_368009_), BlockBehaviour.Properties.ofFullCopy(baseBlock));
+        return registerBlock(name, p_368009_ -> new StairBlock(baseBlock.defaultBlockState(), p_368009_), BlockBehaviour.Properties.ofFullCopy(baseBlock));
     }
 
     private static BlockBehaviour.Properties wallVariant(Block baseBlock, boolean overrideDescription) {
@@ -264,7 +269,7 @@ public class RBlocks {
     }
 
     private static DeferredBlock<BedBlock> registerBed(String name, DyeColor color) {
-        return registerBlockWithItem(
+        return registerBlock(
                 name,
                 p_368367_ -> new BedBlock(color, p_368367_),
                 BlockBehaviour.Properties.of()
@@ -299,7 +304,7 @@ public class RBlocks {
     }
 
     private static DeferredBlock<StainedGlassBlock> registerStainedGlass(String name, DyeColor color) {
-        return registerBlockWithItem(
+        return registerBlock(
                 name,
                 p_368166_ -> new StainedGlassBlock(color, p_368166_),
                 BlockBehaviour.Properties.of()

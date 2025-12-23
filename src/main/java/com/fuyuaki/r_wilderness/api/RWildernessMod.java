@@ -17,6 +17,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextKey;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -66,6 +67,11 @@ public class RWildernessMod {
         }
 
 
+    }
+
+
+    public static <T> ContextKey<T> contextKey(String name) {
+        return new ContextKey<>(modLocation(name));
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
