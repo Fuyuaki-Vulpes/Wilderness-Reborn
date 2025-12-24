@@ -1,6 +1,10 @@
 package com.fuyuaki.r_wilderness.world.generation.terrain;
 
+import com.fuyuaki.r_wilderness.api.common.ModTags;
+import com.fuyuaki.r_wilderness.mixin.accessor.BiomeAccessAccessor;
+import com.fuyuaki.r_wilderness.world.generation.RandomStateExtension;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
+import com.fuyuaki.r_wilderness.world.level.biome.BiomeDitherer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -20,18 +24,23 @@ public class WRSurfaceSystemUtil {
     public static void buildSurface(
 
             RandomState randomState,
-            BiomeManager biomeManager,
+            BiomeManager manager,
             Registry<Biome> biomes,
             WorldGenerationContext context,
             final ChunkAccess chunk,
             WRNoiseChunk noiseChunk,
             SurfaceRules.RuleSource ruleSource
     ) {
+
+        BiomeAccessAccessor biomeAccessAccessor = (BiomeAccessAccessor)manager;
+
+        BiomeManager biomeManager = new BiomeDitherer(biomeAccessAccessor.getBiomeSource(), biomeAccessAccessor.getSeed());
         SurfaceSystem surfaceSystem = randomState.surfaceSystem();
+        SurfaceSystemExtension extendedSurfaceSystem = ((RandomStateExtension) (Object) randomState).getSurfaceSystemExtension();
         final BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
         final ChunkPos chunkpos = chunk.getPos();
-        int i = chunkpos.getMinBlockX();
-        int j = chunkpos.getMinBlockZ();
+        int chunkMinX = chunkpos.getMinBlockX();
+        int chunkMinZ = chunkpos.getMinBlockZ();
         BlockColumn blockcolumn = new BlockColumn() {
             @Override
             public BlockState getBlock(int p_190006_) {
@@ -59,19 +68,22 @@ public class WRSurfaceSystemUtil {
         SurfaceRules.SurfaceRule surfacerules$surfacerule = ruleSource.apply(surfacerules$context);
         BlockPos.MutableBlockPos blockpos$mutableblockpos1 = new BlockPos.MutableBlockPos();
 
-        for (int k = 0; k < 16; k++) {
-            for (int l = 0; l < 16; l++) {
-                int i1 = i + k;
-                int j1 = j + l;
-                int k1 = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, k, l) + 1;
-                blockpos$mutableblockpos.setX(i1).setZ(j1);
-                Holder<Biome> holder = biomeManager.getBiome(blockpos$mutableblockpos1.set(i1, k1, j1));
+        for (int chunkX = 0; chunkX < 16; chunkX++) {
+            for (int chunkZ = 0; chunkZ < 16; chunkZ++) {
+                int x = chunkMinX + chunkX;
+                int z = chunkMinZ + chunkZ;
+                int height = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, chunkX, chunkZ);
+                int oceanFloor = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, chunkX, chunkZ);
+                blockpos$mutableblockpos.setX(x).setZ(z);
+                Holder<Biome> holder = manager.getBiome(blockpos$mutableblockpos1.set(x, height, z));
                 if (holder.is(Biomes.ERODED_BADLANDS)) {
-                    surfaceSystem.erodedBadlandsExtension(blockcolumn, i1, j1, k1, chunk);
+                    surfaceSystem.erodedBadlandsExtension(blockcolumn, x, z, height, chunk);
+                }if (holder.is(ModTags.Biomes.HAS_SAND_DUNES)) {
+                    extendedSurfaceSystem.sandDunes(manager,blockcolumn, x, z, oceanFloor, chunk);
                 }
 
-                int l1 = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, k, l) + 1;
-                surfacerules$context.updateXZ(i1, j1);
+                int l1 = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, chunkX, chunkZ) + 1;
+                surfacerules$context.updateXZ(x, z);
                 int i2 = 0;
                 int j2 = Integer.MIN_VALUE;
                 int k2 = Integer.MAX_VALUE;
@@ -101,9 +113,9 @@ public class WRSurfaceSystemUtil {
 
                         i2++;
                         int k3 = i3 - k2 + 1;
-                        surfacerules$context.updateY(i2, k3, j2, i1, i3, j1);
+                        surfacerules$context.updateY(i2, k3, j2, x, i3, z);
                         if (blockstate == surfaceSystem.defaultBlock) {
-                            BlockState blockstate2 = surfacerules$surfacerule.tryApply(i1, i3, j1);
+                            BlockState blockstate2 = surfacerules$surfacerule.tryApply(x, i3, z);
                             if (blockstate2 != null) {
                                 blockcolumn.setBlock(i3, blockstate2);
                             }
@@ -112,7 +124,7 @@ public class WRSurfaceSystemUtil {
                 }
 
                 if (holder.is(Biomes.FROZEN_OCEAN) || holder.is(Biomes.DEEP_FROZEN_OCEAN)) {
-                    surfaceSystem.frozenOceanExtension(surfacerules$context.getMinSurfaceLevel(), holder.value(), blockcolumn, blockpos$mutableblockpos1, i1, j1, k1);
+                    surfaceSystem.frozenOceanExtension(surfacerules$context.getMinSurfaceLevel(), holder.value(), blockcolumn, blockpos$mutableblockpos1, x, z, height);
                 }
             }
         }

@@ -5,11 +5,14 @@ import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.mixin.accessor.ChunkMapAccessor;
 import com.fuyuaki.r_wilderness.world.generation.carvers.WildCarverContext;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
+import com.fuyuaki.r_wilderness.world.generation.hydrology.RAquifer;
 import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
 import com.fuyuaki.r_wilderness.world.generation.terrain.WRSurfaceSystemUtil;
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomePlacement;
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.util.ChunkAccessModifier;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -28,6 +31,7 @@ import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.*;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.carver.CarvingContext;
@@ -58,6 +62,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
     public static final int DECORATION_STEPS = GenerationStep.Decoration.values().length;
     public static final int SEA_LEVEL_Y = WildernessConstants.SEA_LEVEL;
+    private final Supplier<Aquifer.FluidPicker> globalFluidPicker;
 
     private Seed seed;
     private WildGeneratorSettings settings;
@@ -70,16 +75,27 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         this.noiseSettings = noiseSettings;
         this.settings = generatorSettings;
         this.vanillaChunkGenerator = new NoiseBasedChunkGenerator(biomeSource, this.noiseSettings);
+        this.globalFluidPicker = Suppliers.memoize(WildChunkGenerator::createFluidPicker);
+
 
     }
-
+    private static Aquifer.FluidPicker createFluidPicker() {
+        Aquifer.FluidStatus lavaAquifer = new Aquifer.FluidStatus(WildernessConstants.CAVES_BOTTOM + 16, Blocks.LAVA.defaultBlockState());
+        int i = WildernessConstants.SEA_LEVEL;
+        Aquifer.FluidStatus oceanAquifer = new Aquifer.FluidStatus(i, Blocks.WATER.defaultBlockState());
+        Aquifer.FluidStatus disabledAquifer = new Aquifer.FluidStatus(DimensionType.MIN_Y * 2, Blocks.AIR.defaultBlockState());
+        return (x, y, z) -> {
+            if (SharedConstants.DEBUG_DISABLE_FLUID_GENERATION) {
+                return disabledAquifer;
+            } else {
+                return y < WildernessConstants.CAVES_BOTTOM + 32 ? lavaAquifer : oceanAquifer;
+            }
+        };
+    }
     @Override
     protected MapCodec<? extends ChunkGenerator> codec() {
         return CODEC;
     }
-
-
-
 
     @Override
     public CompletableFuture<ChunkAccess> createBiomes(RandomState randomState, Blender blender, StructureManager structureManager, ChunkAccess chunk) {
@@ -105,7 +121,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
             int i = 8;
             ChunkPos chunkpos = chunk.getPos();
             WRNoiseChunk noisechunk = this.createWRNoiseChunk(chunk, structureManager, Blender.of(level), random);
-            Aquifer aquifer = noisechunk.lazyAquifer();
+            Aquifer aquifer = new RAquifer(noisechunk,chunkpos,random.aquiferRandom(), WildernessConstants.WORLD_BOTTOM,WildernessConstants.WORLD_HEIGHT,this.globalFluidPicker.get());
             CarvingContext carvingcontext = new WildCarverContext(
                     this, level.registryAccess(), chunk.getHeightAccessorForGeneration(), noisechunk, random, this.settings.surfaceRule()
             );
@@ -234,7 +250,9 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
                 Beardifier.forStructuresInChunk(structureManager, chunk.getPos()),
                 this.settings,
                 blender,
-                getSeaLevel()
+                getSeaLevel(),
+                (RebornBiomeSource) this.biomeSource,
+                this.globalFluidPicker.get()
         );
     }
 
@@ -398,8 +416,9 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
                     SEA_LEVEL_Y,
                     DensityFunctions.BeardifierMarker.INSTANCE,
                     Blender.empty(),
-                    this.settings
-            );
+                    this.settings,
+                    (RebornBiomeSource) biomeSource,
+                    this.globalFluidPicker.get());
 
             if (column != null) {
                 ablockstate = new BlockState[noisesettings.height()];

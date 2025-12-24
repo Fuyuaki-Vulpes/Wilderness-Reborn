@@ -1,5 +1,14 @@
 {
   "biome": "minecraft:desert",
+  "disliked_tectonic_states": [
+    "cliff_mountains",
+    "regular_mountains"
+  ],
+  "liked_tectonic_states": [
+    "normal",
+    "unstable",
+    "eroded_mountains"
+  ],
   "name": "r_wilderness:desert",
   "target": {
     "continentalness": {
@@ -18,8 +27,8 @@
       "min": -1.5
     },
     "humidity": {
-      "max": -0.85,
-      "mean": -0.95,
+      "max": -0.6,
+      "mean": -0.8374999999999999,
       "min": -10.0
     },
     "magicalness": {
@@ -29,8 +38,8 @@
     },
     "rockiness": {
       "max": 0.35,
-      "mean": 0.0,
-      "min": -0.35
+      "mean": -0.475,
+      "min": -10.0
     },
     "tectonic_activity": {
       "max": 0.1,
@@ -48,8 +57,8 @@
       "min": -256.0
     },
     "vegetation_density": {
-      "max": -0.85,
-      "mean": -0.95,
+      "max": -0.6,
+      "mean": -0.8374999999999999,
       "min": -10.0
     },
     "weirdness": {
@@ -58,11 +67,6 @@
       "min": -1.5
     }
   },
-  "valid_tectonic_states": [
-    "normal",
-    "unstable",
-    "eroded_mountains"
-  ],
   "valid_terrain_types": [
     "shore",
     "neutral",

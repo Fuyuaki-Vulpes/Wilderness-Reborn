@@ -34,8 +34,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
-public class TreePartBlock extends Block implements SimpleWaterloggedBlock {
-    public static final MapCodec<TreePartBlock> CODEC = simpleCodec(TreePartBlock::new);
+public abstract class TreePartBlock extends Block implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final IntegerProperty THICKNESS = RBlockStateProperties.THICKNESS;
@@ -54,6 +53,7 @@ public class TreePartBlock extends Block implements SimpleWaterloggedBlock {
 
     public TreePartBlock(Properties properties) {
         super(properties);
+        /*
         this.registerDefaultState(
                 this.stateDefinition
                         .any()
@@ -66,7 +66,8 @@ public class TreePartBlock extends Block implements SimpleWaterloggedBlock {
                         .setValue(WEST, false)
                         .setValue(UP, false)
                         .setValue(DOWN, false)
-        );
+        )
+        ;*/
     }
 
     @Override
@@ -101,7 +102,7 @@ public class TreePartBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.INVISIBLE;
     }
 
     public static boolean isNextToTreePart(Level level, BlockPos pos, Direction originDir) {
@@ -201,8 +202,4 @@ public class TreePartBlock extends Block implements SimpleWaterloggedBlock {
         return SimpleWaterloggedBlock.super.canPlaceLiquid(p_393688_, p_56301_, p_56302_, p_56303_, p_56304_);
     }
 
-    @Override
-    protected MapCodec<? extends Block> codec() {
-        return CODEC;
-    }
 }

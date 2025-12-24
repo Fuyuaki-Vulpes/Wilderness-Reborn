@@ -7,7 +7,6 @@ import com.fuyuaki.r_wilderness.world.level.levelgen.util.DistortionSpline;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.Mth;
@@ -16,7 +15,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 import net.minecraft.world.level.levelgen.synth.PerlinNoise;
-import net.neoforged.api.distmarker.Dist;
 
 import java.util.Map;
 import java.util.Optional;
@@ -45,18 +43,18 @@ public class TerrainParameters {
             );
 
 
-    private static final float baseContinentSize = 0.5F;
+    private static final float baseContinentSize = 1.0F;
     private static final float baseTectonicSize = 1.5F;
     private static final float highlandsOffset = 1.5F;
     private static final float highlandsScale = 1 / 0.75F;
     private static final float terrainTypeScale = 1 / 0.5F;
     private static final float mountainCoordsSize = 0.6F;
-    private static final float temperatureScale = 1.5F;
-    private static final float humidityScale = 1.25F;
-    private static final float rockinessScale = 1.25F;
-    private static final float weirdnessScale = 0.65F;
-    public static final double EROSION_BADLANDS_THRESHOLD = 1;
-    public static final double HUMIDITY_BADLANDS_THRESHOLD = -0.25;
+    private static final float temperatureScale = 1.0F;
+    private static final float humidityScale = 0.75F;
+    private static final float rockinessScale = 1.0F;
+    private static final float vegetationScale = 0.75F;
+    private static final float weirdnessScale = 1.25F;
+    public static final double HUMIDITY_BADLANDS_THRESHOLD = 0.15;
     public static final double BADLANDS_THRESHOLD = 0.65;
     private final float continentScale;
     private final float terrainScale;
@@ -79,6 +77,10 @@ public class TerrainParameters {
         this.shapers = makeShapers(seed.fork().forkPositional(), settings);
         this.climate = makeClimate(seed.fork().forkPositional(), settings);
 
+    }
+
+    public static boolean shouldSampleAccurate(Sampled sampled) {
+        return sampled.tectonicActivity > 0.1;
     }
 
     private Shapers makeShapers(PositionalRandomFactory randomSource, WildGeneratorSettings settings) {
@@ -124,16 +126,36 @@ public class TerrainParameters {
                         getBadlandsFilter(randomSource,"badlands_filter"),
                         getBadlandsStep(randomSource,"badlands_step"),
                         getBadlandsValleys(randomSource,"badlands_valleys"),
-                        getBadlandsHills(randomSource,"badlands_hills")
+                        getBadlandsHills(randomSource,"badlands_hills"),
+                        getBadlandsLargeHills(randomSource,"badlands_large_hills")
                 ),
                 new Shapers.River(
                         getRiverDirection(randomSource,"river_direction"),
                         getRiverType(randomSource,"river_type_a"),
                         getRiverType(randomSource,"river_type_b")
+                ),
+                new Shapers.Aquifers(
+                        getAquiferBarrier(randomSource,"aquifer_barrier"),
+                        getAquiferFloodedness(randomSource,"aquifer_floodedness"),
+                        getAquiferSpread(randomSource,"aquifer_spread"),
+                        getAquiferLava(randomSource,"aquifer_lava")
+
                 )
         );
     }
 
+    private PerlinNoise getAquiferBarrier(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-3,1);
+    }
+    private PerlinNoise getAquiferFloodedness(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-7,1);
+    }
+    private PerlinNoise getAquiferSpread(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-5,1);
+    }
+    private PerlinNoise getAquiferLava(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-1,1);
+    }
     private PerlinNoise getRiverDirection(PositionalRandomFactory randomSource, String name) {
         return PerlinNoise.create(noiseRandom(name, randomSource),-3,2);
     }
@@ -144,6 +166,9 @@ public class TerrainParameters {
     private PerlinNoise getBadlandsHills(PositionalRandomFactory randomSource, String name) {
         return PerlinNoise.create(noiseRandom(name, randomSource),-7,1.25,1,2,2);
     }
+    private PerlinNoise getBadlandsLargeHills(PositionalRandomFactory randomSource, String name) {
+        return PerlinNoise.create(noiseRandom(name, randomSource),-8,1.25,1,2,2);
+    }
     private PerlinNoise getBadlandsFilter(PositionalRandomFactory randomSource, String name) {
         return PerlinNoise.create(noiseRandom(name, randomSource),-10,1.25,1,1,1);
     }
@@ -151,7 +176,7 @@ public class TerrainParameters {
         return PerlinNoise.create(noiseRandom(name, randomSource),-8,1.25,1,1,2,2,2);
     }
     private PerlinNoise getBadlandsValleys(PositionalRandomFactory randomSource, String name) {
-        return PerlinNoise.create(noiseRandom(name, randomSource),-9,1.25,2,2,3);
+        return PerlinNoise.create(noiseRandom(name, randomSource),-8,1.25,2,2,3);
     }
 
     private PerlinNoise getCaveFilter(PositionalRandomFactory randomSource, String name,int firstOctave) {
@@ -273,7 +298,7 @@ public class TerrainParameters {
     }
 
     private PerlinNoise geHighlandsMap(PositionalRandomFactory randomSource, String name) {
-        return PerlinNoise.create(noiseRandom(name, randomSource),-10,4,5,5,6,8);
+        return PerlinNoise.create(noiseRandom(name, randomSource),-9,4,5,5,6,8);
     }
 
     private PerlinNoise getHills(PositionalRandomFactory randomSource, String name) {
@@ -304,7 +329,7 @@ public class TerrainParameters {
     }
 
     private PerlinNoise getTectonicActivity(PositionalRandomFactory randomSource, String name) {
-        return PerlinNoise.create(noiseRandom(name, randomSource), -13,12,8,8,8);
+        return PerlinNoise.create(noiseRandom(name, randomSource), -13,10,6,6,6);
     }
 
     private PerlinNoise getErosion(PositionalRandomFactory randomSource, String name) {
@@ -312,14 +337,14 @@ public class TerrainParameters {
     }
 
     private PerlinNoise getContinentalness(PositionalRandomFactory randomSource, String name) {
-        return PerlinNoise.create(noiseRandom(name, randomSource),-12,1.5,1,1,1);
+        return PerlinNoise.create(noiseRandom(name, randomSource),-12,1.5,2,2,2);
     }
 
 
     private Climate makeClimate(PositionalRandomFactory randomSource, WildGeneratorSettings settings) {
         return new Climate(
                 PerlinNoise.create(noiseRandom("temperature", randomSource),-11,2,1),
-                PerlinNoise.create(noiseRandom("humidity", randomSource),-11,2,1,1),
+                PerlinNoise.create(noiseRandom("humidity", randomSource),-10,2,1,1),
                 PerlinNoise.create(noiseRandom("vegetation_density", randomSource),-10,2,2,1.5),
                 PerlinNoise.create(noiseRandom("rockiness", randomSource),-9,2,1,1.5),
                 PerlinNoise.create(noiseRandom("weirdness", randomSource),-9,2,1,1),
@@ -425,35 +450,35 @@ public class TerrainParameters {
     private double samplePRivers(float x, float z, double continentalness, double tectonicSample, double y) {
         if (continentalness < -0.2) return y;
 
-        double tFilter = Math.clamp(2 - (Math.abs(tectonicSample) * 2),0,1);
         double r = Math.pow(Math.abs(Math.clamp(getC(this.shapers.waterBasins,x,z) * 3,-1,1)),1.15);
-        if (r >= 1) return y;
+        if (r >= 2) return y;
+
+        double tFilter = Math.clamp(2 - (Math.abs(tectonicSample) * 2),0,1);
         DistortionSpline spline =
                 new DistortionSpline(
                         new DistortionSpline.Spline()
-                                .addPoint(-1,52)
-                                .addPoint(0,52)
-                                .addPoint(0.4,64)
-                                .addPoint(1,y)
+                                .addPoint(-1,Math.min(52,y))
+                                .addPoint(0,Math.min(52,y))
+                                .addPoint(0.4,Math.min(64,y))
+                                .addPoint(1.5,y)
                                 .addPoint(5,y)
-                        ,52,y
+                        ,Math.min(52,y),y
                 );
+
         return Math.min(y,Mth.lerp(tFilter,spline.at(r),y));
     }
 
-    private double postWithBadlands(float x, float z, double erosionShaper, double continentalness, double yOff) {
-        if (erosionShaper > EROSION_BADLANDS_THRESHOLD) return yOff;
-        double filterE = Math.clamp(-(erosionShaper - EROSION_BADLANDS_THRESHOLD) * 8,0,1);
+    private double postWithBadlands(float x, float z, double erosionShaper, double continentalness, double yOffset) {
 
         double humidity = getC(this.climate.humidity, x, z);
 
-        if (humidity > HUMIDITY_BADLANDS_THRESHOLD) return yOff;
-        double filterH = Math.clamp(-(humidity - HUMIDITY_BADLANDS_THRESHOLD) * 8,0,1);
+        if (humidity > HUMIDITY_BADLANDS_THRESHOLD) return yOffset;
+        double filterH = Math.clamp(-(humidity - HUMIDITY_BADLANDS_THRESHOLD) * 4,0,1);
 
-        double f = getC(this.shapers.badlands.filter,x,z);
-        if (f < BADLANDS_THRESHOLD) return yOff;
+        double badlands = getC(this.shapers.badlands.filter,x,z);
+        if (badlands < BADLANDS_THRESHOLD) return yOffset;
         double continentFilter = Math.clamp(continentalness * 8,0,1);
-        double filter = Math.clamp((f - BADLANDS_THRESHOLD) * 8,0,1) * filterH * filterE * continentFilter ;
+        double filter = Math.clamp((badlands - BADLANDS_THRESHOLD) * 10,0,1) * filterH * continentFilter ;
         double step = getC(this.shapers.badlands.step,x,z) * filter;
 
         DistortionSpline spline = new DistortionSpline(
@@ -465,26 +490,51 @@ public class TerrainParameters {
                         .addPoint(2.0,12)
                 ,0,12
         );
+        DistortionSpline hillShape = new DistortionSpline(
+                new DistortionSpline.Spline()
+                        .addPoint(-1.5,0)
+                        .addPoint(0.0,0)
+                        .addPoint(0.25,8)
+                        .addPoint(0.4,8)
+                        .addPoint(0.6,16)
+                        .addPoint(0.85,16)
+                        .addPoint(1.0,24)
+                        .addPoint(2.0,24)
+                ,0,24
+        );
+        DistortionSpline largeHillShape = new DistortionSpline(
+                new DistortionSpline.Spline()
+                        .addPoint(-1.5,0)
+                        .addPoint(0.0,0)
+                        .addPoint(0.25,12)
+                        .addPoint(0.4,16)
+                        .addPoint(0.6,24)
+                        .addPoint(0.85,32)
+                        .addPoint(1.0,48)
+                        .addPoint(2.0,48)
+                ,0,48
+        );
 
-        double e = Math.min(Math.abs(erosionShaper - EROSION_BADLANDS_THRESHOLD) * 5,1);
+        double e = Math.clamp((erosionShaper + 1) / 2 * 5,0,1);
         double stepPost = Math.floor(spline.at(step)) * e;
 
-        double hillAmp = 12;
-        double hills = Math.abs(getC(this.shapers.badlands.hills,x,z)) * hillAmp;
+        double hills = hillShape.at(Math.abs(getC(this.shapers.badlands.hills,x,z)));
+        double hillsLarge = largeHillShape.at(Math.abs(getC(this.shapers.badlands.largeHills,x,z)));
 
-        double heightOffset = yOff;
+        double yPost = yOffset + hillsLarge;
+        double heightOffset = yPost;
         if (stepPost >= 1){
-            int yMod = Math.floorMod(Mth.floor(yOff), (int) stepPost);
-            heightOffset = yOff - yMod;
+            int yMod = Math.floorMod(Mth.floor(yPost), (int) stepPost);
+            heightOffset = yPost - yMod;
 
         }
         if (heightOffset > 0){
             double valleysNoise = Math.abs(getC2(this.shapers.badlands.valleys,x,z));
-            double valleys = Math.clamp((1 - Math.pow((1-valleysNoise),3)) * 3,0,1) * filter;
+            double valleys = Math.clamp((1 - Math.pow((1-valleysNoise),3)) * 3,0,1) / 2 + 0.5;
             heightOffset *= valleys;
 
         }
-        return Mth.lerp(filter,yOff,heightOffset + hills);
+        return Mth.lerp(filter,yOffset,heightOffset + hills);
     }
 
     public boolean cavesAt(int x,int y, int z, double yLevel){
@@ -712,7 +762,7 @@ public class TerrainParameters {
     private double sampleMountains(float xPos, float zPos, double highlands, double tectonicActivity, double continentalness, TerrainType terrainType, double erosion, boolean surfaceOnly){
 
         double tA = 1 - Math.pow(tectonicActivity,2);
-        double hillHighlandsStart = 3.0;
+        double hillHighlandsStart = 5.0;
         if (tA <= -hillHighlandsStart) return 0;
 
 
@@ -726,8 +776,9 @@ public class TerrainParameters {
                 new DistortionSpline.Spline()
                         .addPoint(-1.5,42)
                         .addPoint(-0.75,42)
-                        .addPoint(0.0F, 32)
-                        .addPoint(0.5F,24)
+                        .addPoint(-0.5F, 32)
+                        .addPoint(0.0F, 24)
+                        .addPoint(0.5F,12)
                         .addPoint(0.75F,6)
                         .addPoint(1.5F,6),
                 42,0
@@ -799,7 +850,7 @@ public class TerrainParameters {
             divergentMap = (dA * highlandFilter) + dB;
         }
         divergentMap = NaNCheck(divergentMap);
-        double transform = NaNCheck(transform(mountainsCore, 1 - detail, mountains, continentalness,Math.pow(tA,3),surfaceOnly));
+        double transform = NaNCheck(transform(mountainsCore, 1 - detail, mountains, continentalness,Math.pow(tA,3)));
         double terrainMap = terrainType.mapValuesWithInBetween(
                 divergentMap,
                 transform,
@@ -830,7 +881,7 @@ public class TerrainParameters {
         return Double.isNaN(v) ? 0 : v;
     }
 
-    private double transform(double mountains, double detail, double modifier, double continentalness, double tA, boolean surfaceOnly) {
+    private double transform(double mountains, double detail, double modifier, double continentalness, double tA) {
         double faultPoint = 0.982;
         double tMultiplyFault = 1 / (1 - faultPoint);
         double fault = Math.pow(
@@ -840,14 +891,10 @@ public class TerrainParameters {
                 3);
         double t = Math.clamp((1.5 * tA) - (modifier * 0.5), 0, 1);
         double terrain = (detail * 4) + (mountains * 4 + 6);
-        double faultTerrain = terrain * fault;
+        double faultTerrain = (terrain - 8) * fault;
         double terrainFaded = terrain * continentalnessFade(continentalness,0.3F,0,true);
         double transformTerrain = terrainFaded + (continentalness * 12);
-        if (surfaceOnly) {
-            return transformTerrain * t;
-        } else {
-            return t * transformTerrain - faultTerrain;
-        }
+        return transformTerrain * t - faultTerrain;
     }
 
     private double divergent(double mountains, double core, double tA, boolean surfaceOnly, double riftFilter) {
@@ -1004,8 +1051,11 @@ public class TerrainParameters {
         double alpha = (mountains) * tectonicFilter1;
         double alphaDetail = detail * tectonicFilter;
         double alphaNoise = mountainNoise * tectonicFilter;
-
-
+        double badlandsFilter = getC(this.shapers.badlands.filter,xPos,zPos);
+        double humidity = getC(this.climate.humidity, xPos / humidityScale, zPos / humidityScale);
+        double filterH = Math.clamp(-(humidity - HUMIDITY_BADLANDS_THRESHOLD) * 4,0,1);
+        double continentFilter = Math.clamp(continentalness * 8,0,1);
+        double badlands = Math.clamp((badlandsFilter - BADLANDS_THRESHOLD) * 10,0,1) * filterH * continentFilter ;
 
         Sampled sampled = new Sampled(
                 continentalness,
@@ -1022,11 +1072,11 @@ public class TerrainParameters {
                         + (Math.abs(this.shapers.terrainNoise.getValue(x, 0, z)) * 0.125),
                 terrainA, terrainB,
                 new TerrainType(terrainType(terrainA), terrainType(terrainB)),
-                getC(this.shapers.badlands.filter,xPos,zPos),
+                badlands,
                 Math.abs(getC(this.shapers.waterBasins,xPos,zPos)),
                 getC(this.climate.temperature, xPos / temperatureScale, zPos / temperatureScale),
-                getC(this.climate.humidity, xPos / humidityScale, zPos / humidityScale),
-                getC(this.climate.vegetationDensity, xPos, z),
+                humidity,
+                getC(this.climate.vegetationDensity, xPos / vegetationScale, zPos / vegetationScale),
                 getC(this.climate.rockiness, xPos / rockinessScale, zPos / rockinessScale),
                 getC(this.climate.weirdness, xPos / weirdnessScale, zPos / weirdnessScale),
                 Math.clamp((getC(this.climate.magicalness, xPos, zPos) - 0.5) * 2,-1.5,1.5),
@@ -1079,7 +1129,8 @@ public class TerrainParameters {
         PerlinNoise randomElevation,
         Cave cave,
         Badlands badlands,
-        River rivers
+        River rivers,
+        Aquifers aquifers
         ){
 
         public record Mountain(
@@ -1105,7 +1156,14 @@ public class TerrainParameters {
                 PerlinNoise filter,
                 PerlinNoise step,
                 PerlinNoise valleys,
-                PerlinNoise hills
+                PerlinNoise hills,
+                PerlinNoise largeHills
+        ){}
+        public record Aquifers(
+                PerlinNoise barrier,
+                PerlinNoise fluidLevelFloodednessNoise,
+                PerlinNoise fluidLevelSpreadNoise,
+                PerlinNoise lavaNoise
         ){}
 
         public record Detailer(
@@ -1292,17 +1350,17 @@ public class TerrainParameters {
                         .apply(p_223591_, Target::new)
         );
 
-        public static final double temperatureInfluence = 3;
+        public static final double temperatureInfluence = 3.0;
         public static final double humidityInfluence = 1.75;
         public static final double vegetationDensityInfluence = 1.75;
         public static final double rockinessInfluence = 1.0;
-        public static final double continentalnessInfluence = 1.75;
+        public static final double continentalnessInfluence = 2.75;
         public static final double tectonicActivityInfluence = 1.0;
         public static final double highlandsInfluence = 1;
-        public static final double erosionInfluence = 1.25;
-        public static final double terrainHeightInfluence = 0.25;
+        public static final double erosionInfluence = 2.0;
+        public static final double terrainHeightInfluence = 0.5;
         public static final double weirdnessInfluence = 1.0;
-        public static final double magicalnessInfluence = 1;
+        public static final double magicalnessInfluence = 1.0;
         public static final double TOTAL_MAX =
                 temperatureInfluence + humidityInfluence
                         + vegetationDensityInfluence + rockinessInfluence

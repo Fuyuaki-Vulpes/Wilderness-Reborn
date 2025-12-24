@@ -4,6 +4,8 @@ package com.fuyuaki.r_wilderness.mixin.common;
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
 import com.fuyuaki.r_wilderness.world.generation.terrain.SurfaceRulesContextExtension;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.*;
 import org.jetbrains.annotations.Nullable;
@@ -31,10 +33,21 @@ public abstract class SurfaceRulesContextMixin implements SurfaceRulesContextExt
     @Shadow @Final public RandomState randomState;
     @Shadow public int blockY;
     @Shadow @Final public ChunkAccess chunk;
+    @Shadow @Final private int[] preliminarySurfaceCache;
+
+
+    @Shadow private long lastPreliminarySurfaceCellOrigin;
     @Unique
     @Nullable
     private WRNoiseChunk wildNoiseChunk = null;
 
+    private static int blockCoordToSurfaceCell(int blockCoord) {
+        return blockCoord >> 4;
+    }
+
+    private static int surfaceCellToBlockCoord(int surfaceCell) {
+        return surfaceCell << 4;
+    }
 
     @Override
     public void setNoiseChunk(@Nullable WRNoiseChunk noiseChunk) {
@@ -54,11 +67,27 @@ public abstract class SurfaceRulesContextMixin implements SurfaceRulesContextExt
         if (this.noiseChunk == null && this.wildNoiseChunk != null){
             if (this.lastMinSurfaceLevelUpdate != this.lastUpdateXZ) {
                 this.lastMinSurfaceLevelUpdate = this.lastUpdateXZ;
-                int l = Math.max(this.wildNoiseChunk.getSurfaceYSurface(this.blockX,this.blockZ),
-                        this.randomState.getOrCreateRandomFactory(RWildernessMod.modLocation("surface_depth_bottom")).at(this.blockX,this.blockY,this.blockZ).nextIntBetweenInclusive(4,12)
+                int i = blockCoordToSurfaceCell(this.blockX);
+                int j = blockCoordToSurfaceCell(this.blockZ);
+                long k = ChunkPos.asLong(i, j);
+                if (this.lastPreliminarySurfaceCellOrigin != k) {
+                    this.lastPreliminarySurfaceCellOrigin = k;
+                    this.preliminarySurfaceCache[0] = this.wildNoiseChunk.preliminarySurfaceLevel(surfaceCellToBlockCoord(i), surfaceCellToBlockCoord(j));
+                    this.preliminarySurfaceCache[1] = this.wildNoiseChunk.preliminarySurfaceLevel(surfaceCellToBlockCoord(i + 1), surfaceCellToBlockCoord(j));
+                    this.preliminarySurfaceCache[2] = this.wildNoiseChunk.preliminarySurfaceLevel(surfaceCellToBlockCoord(i), surfaceCellToBlockCoord(j + 1));
+                    this.preliminarySurfaceCache[3] = this.wildNoiseChunk.preliminarySurfaceLevel(surfaceCellToBlockCoord(i + 1), surfaceCellToBlockCoord(j + 1));
+                }
 
-                        );
-
+                int l = Mth.floor(
+                        Mth.lerp2(
+                                (this.blockX & 15) / 16.0F,
+                                (this.blockZ & 15) / 16.0F,
+                                this.preliminarySurfaceCache[0],
+                                this.preliminarySurfaceCache[1],
+                                this.preliminarySurfaceCache[2],
+                                this.preliminarySurfaceCache[3]
+                        )
+                );
                 this.minSurfaceLevel = l + this.surfaceDepth - 8;
             }
 

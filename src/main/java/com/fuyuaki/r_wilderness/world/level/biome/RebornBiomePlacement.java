@@ -24,7 +24,8 @@ public record RebornBiomePlacement(
         Holder<Biome> biome,
         TerrainParameters.Target target,
         List<Type> validTerrainTypes,
-        Optional<List<TerrainStates>> tectonicStates
+        Optional<List<TerrainStates>> tectonicStates,
+        Optional<List<TerrainStates>> dislikedTectonicStates
 ) {
 
 
@@ -35,7 +36,8 @@ public record RebornBiomePlacement(
                                     Biome.CODEC.fieldOf("biome").forGetter(RebornBiomePlacement::biome),
                                     TerrainParameters.Target.CODEC.fieldOf("target").forGetter(RebornBiomePlacement::target),
                                     Type.CODEC.listOf().fieldOf("valid_terrain_types").forGetter(RebornBiomePlacement::validTerrainTypes),
-                                    TerrainStates.CODEC.listOf().optionalFieldOf("valid_tectonic_states").forGetter(RebornBiomePlacement::tectonicStates)
+                                    TerrainStates.CODEC.listOf().optionalFieldOf("liked_tectonic_states").forGetter(RebornBiomePlacement::tectonicStates),
+                                    TerrainStates.CODEC.listOf().optionalFieldOf("disliked_tectonic_states").forGetter(RebornBiomePlacement::dislikedTectonicStates)
                             )
                             .apply(p_415523_, RebornBiomePlacement::new)
             )
@@ -49,7 +51,7 @@ public record RebornBiomePlacement(
             Holder<Biome> biome,
             TerrainParameters.Target target,
             List<Type> validTerrainTypes){
-        this(name,biome,target,validTerrainTypes,Optional.empty());
+        this(name,biome,target,validTerrainTypes,Optional.empty(),Optional.empty());
     }
 
     public double tryAt(double yLevel, TerrainParameters.Sampled sampled,int x, int y, int z){
@@ -62,11 +64,26 @@ public record RebornBiomePlacement(
             for (TerrainStates state : states){
                 if (this.tectonicStates.get().contains(state)) {
                     v = true;
-                    affinity += 3;
+                    if (state.strongerRelevancy){
+                        affinity += 7;
+                    } else {
+                        affinity += 3;
+                    }
 
                 }
             }
             if (!v) affinity -= 12;
+        }if (this.dislikedTectonicStates.isPresent()){
+            for (TerrainStates state : states){
+                if (this.dislikedTectonicStates.get().contains(state)) {
+                    if (state.strongerRelevancy){
+                        affinity -= 5;
+                    } else {
+                        affinity -= 2;
+                    }
+
+                }
+            }
         }
 
         return affinity;
@@ -108,7 +125,7 @@ public record RebornBiomePlacement(
 
 
         public static Type find(double yLevel, TerrainParameters.Sampled sampled,int x, int y, int z, List<TerrainStates> states){
-            if (sampled.highlandsMap() > 0.05){
+            if (sampled.highlandsMap() > 0.05 || sampled.badlands() > 0.15 || sampled.tectonicActivity() > 0.25){
                 if(yLevel > y + 24 && sampled.erosion() > 0){
                     return CAVE;
                 }if(yLevel > y + 48 && (sampled.erosion() < 0)){
@@ -151,7 +168,7 @@ public record RebornBiomePlacement(
                 }
                 if (continentalness > 0.05) {
 
-                    if (tectonicActivity > -3.0 && Math.pow(Math.clamp(sampled.highlandsMap(), 0, 1), 5) > 0.15)
+                    if (tectonicActivity > -5.0 && Math.clamp(sampled.highlandsMap(), 0, 1) > 0.5)
                         return HIGHLANDS;
                     if ((sampled.erosion() < -0.5 && sampled.hills() > 0.35) || states.contains(TerrainStates.BADLANDS)) {
                         return HILLY;
@@ -196,30 +213,32 @@ public record RebornBiomePlacement(
         }
     }
     public enum TerrainStates implements StringRepresentable {
-        NORMAL("normal"),
-        UNSTABLE("unstable"),
-        BADLANDS("badlands"),
-        DIVERGING_PLATES("diverging_plates"),
-        TRENCH("trench"),
-        FAULT_SURROUNDINGS("fault_surroundings"),
-        FAULT("fault"),
-        CLIFF_MOUNTAINS("cliff_mountains"),
-        MOUNTAINOUS("mountainous"),
-        REGULAR_MOUNTAINS("regular_mountains"),
-        ERODED_MOUNTAINS("eroded_mountains"),
-        VOLCANIC("volcanic"),
-        DEEP_UNDERGROUND ("deep_underground"),
-        VERY_DEEP_UNDERGROUND ("very_deep_underground"),
-        DEEPEST_UNDERGROUND ("deepest_underground"),
+        NORMAL("normal",false),
+        UNSTABLE("unstable",false),
+        BADLANDS("badlands",true),
+        DIVERGING_PLATES("diverging_plates",false),
+        TRENCH("trench",true),
+        FAULT_SURROUNDINGS("fault_surroundings",false),
+        FAULT("fault",true),
+        CLIFF_MOUNTAINS("cliff_mountains",false),
+        MOUNTAINOUS("mountainous",true),
+        REGULAR_MOUNTAINS("regular_mountains",false),
+        ERODED_MOUNTAINS("eroded_mountains",false),
+        VOLCANIC("volcanic",true),
+        DEEP_UNDERGROUND ("deep_underground",false),
+        VERY_DEEP_UNDERGROUND ("very_deep_underground",false),
+        DEEPEST_UNDERGROUND ("deepest_underground",false),
 
         ;
 
         public static final Codec<TerrainStates> CODEC = StringRepresentable.fromEnum(TerrainStates::values);
 
         private final String name;
+        private final boolean strongerRelevancy;
 
-        TerrainStates(String name) {
+        TerrainStates(String name, boolean strongerRelevancy) {
             this.name = name;
+            this.strongerRelevancy = strongerRelevancy;
         }
 
         @Override
@@ -249,8 +268,7 @@ public record RebornBiomePlacement(
                     }
                 }
             }
-            if (erosion < TerrainParameters.EROSION_BADLANDS_THRESHOLD
-                    && sampled.badlands() > TerrainParameters.BADLANDS_THRESHOLD
+            if (       sampled.badlands() > TerrainParameters.BADLANDS_THRESHOLD
                     && sampled.humidity() < TerrainParameters.HUMIDITY_BADLANDS_THRESHOLD
                     && sampled.continentalness() > 0.0) {
                 states.add(BADLANDS);

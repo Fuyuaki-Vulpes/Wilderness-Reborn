@@ -482,7 +482,7 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.SAVANNA),
                 target(
                         HOT, //Temperature
-                        NEGATIVE, //Humidity
+                        range(LOW,LOWISH), //Humidity
                         NEUTRAL, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -500,7 +500,7 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.SAVANNA_PLATEAU),
                 target(
                         HOT, //Temperature
-                        NEGATIVE, //Humidity
+                        range(LOW,LOWISH), //Humidity
                         NEUTRAL, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -511,16 +511,17 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         HIGHLANDS),
-                List.of(TERRAIN_NORMAL,UNSTABLE)
+                List.of(TERRAIN_NORMAL,UNSTABLE),
+                List.of(FAULT_SURROUNDINGS,TRENCH,FAULT)
         );
 
         placement(context, DESERT,
                 getBiomeHolder(lookup, Biomes.DESERT),
                 target(
                         HOT, //Temperature
-                        VERY_LOW, //Humidity
-                        VERY_LOW, //Vegetation Density
-                        NEUTRAL, //Rockiness
+                        range(VERY_LOW,LOW), //Humidity
+                        range(VERY_LOW,LOW), //Vegetation Density
+                        range(VERY_LOW,NEUTRAL), //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_LOW, //Tectonic Activity
                         HIGHLANDS_NONE, //Highlands
@@ -529,7 +530,8 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         SHORE, NORMAL, MOUNTAIN, HIGHLANDS),
-                List.of(TERRAIN_NORMAL,UNSTABLE,ERODED_MOUNTAINS)
+                List.of(TERRAIN_NORMAL,UNSTABLE,ERODED_MOUNTAINS),
+                List.of(CLIFF_MOUNTAINS,REGULAR_MOUNTAINS)
         );
 
         placement(context, MEADOW,
@@ -596,7 +598,8 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         MOUNTAIN,HIGHLANDS),
-                List.of(MOUNTAINOUS)
+                List.of(MOUNTAINOUS),
+                List.of(TERRAIN_BADLANDS)
         );
         placement(context, SNOWY_SLOPES,
                 getBiomeHolder(lookup, Biomes.SNOWY_SLOPES),
@@ -613,7 +616,8 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         MOUNTAIN,HIGHLANDS),
-                List.of(CLIFF_MOUNTAINS,REGULAR_MOUNTAINS)
+                List.of(CLIFF_MOUNTAINS,REGULAR_MOUNTAINS),
+                List.of(TERRAIN_BADLANDS)
         );
         placement(context, WINDSWEPT_HILLS,
                 getBiomeHolder(lookup, Biomes.WINDSWEPT_HILLS),
@@ -630,7 +634,8 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         MOUNTAIN,HIGHLANDS),
-                List.of(MOUNTAINOUS)
+                List.of(MOUNTAINOUS),
+                List.of(TERRAIN_BADLANDS)
         );
         placement(context, WINDSWEPT_GRAVELLY_HILLS,
                 getBiomeHolder(lookup, Biomes.WINDSWEPT_GRAVELLY_HILLS),
@@ -647,7 +652,8 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         MOUNTAIN,HIGHLANDS),
-                List.of(MOUNTAINOUS)
+                List.of(MOUNTAINOUS),
+                List.of(TERRAIN_BADLANDS)
         );
         placement(context, WINDSWEPT_FOREST,
                 getBiomeHolder(lookup, Biomes.WINDSWEPT_FOREST),
@@ -664,13 +670,14 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         MOUNTAIN,HIGHLANDS),
-                List.of(MOUNTAINOUS)
+                List.of(MOUNTAINOUS),
+                List.of(TERRAIN_BADLANDS)
         );
         placement(context, WINDSWEPT_SAVANNA,
                 getBiomeHolder(lookup, Biomes.WINDSWEPT_SAVANNA),
                 target(
                         HOT, //Temperature
-                        NEGATIVE, //Humidity
+                        range(LOW,LOWISH), //Humidity
                         NEUTRAL, //Vegetation Density
                         NEUTRAL, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -681,33 +688,34 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         MOUNTAIN,HIGHLANDS),
-                List.of(MOUNTAINOUS)
+                List.of(MOUNTAINOUS),
+                List.of(TERRAIN_BADLANDS)
         );
 
-        placement(context, BADLANDS,
+        placementWithLiked(context, BADLANDS,
                 getBiomeHolder(lookup, Biomes.BADLANDS),
                 target(
                         range(WARM,HOT), //Temperature
-                        range(VERY_LOW,LOW), //Humidity
-                        VERY_LOW, //Vegetation Density
+                        range(VERY_LOW,NEUTRAL), //Humidity
+                        range(VERY_LOW,NEUTRAL), //Vegetation Density
                         range(NEUTRAL,VERY_HIGH), //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONICS_BADLAND, //Tectonic Activity
                         rangeMax(-0.15, 0.5), //Highlands
-                        range(VERY_LOW, NEUTRAL), //Erosion
+                        range(VERY_LOW, HIGHISH), //Erosion
                         range(64, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
                         HILLY,MOUNTAIN,HIGHLANDS),
                 List.of(TERRAIN_BADLANDS,FAULT_SURROUNDINGS)
         );
-        placement(context, ERODED_BADLANDS,
+        placementWithLiked(context, ERODED_BADLANDS,
                 getBiomeHolder(lookup, Biomes.ERODED_BADLANDS),
                 target(
                         range(WARM,HOT), //Temperature
-                        range(VERY_LOW,LOW), //Humidity
-                        VERY_LOW, //Vegetation Density
-                        range(NEUTRAL,VERY_HIGH), //Rockiness
+                        range(LOWISH,HIGHISH), //Humidity
+                        range(VERY_LOW,LOW), //Vegetation Density
+                        range(LOWISH,VERY_HIGH), //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONICS_BADLAND, //Tectonic Activity
                         rangeMax(-0.15, 0.5), //Highlands
@@ -719,13 +727,13 @@ public abstract class ModBiomePlacements {
                 List.of(TERRAIN_BADLANDS,FAULT_SURROUNDINGS)
         );
 
-        placement(context, WOODED_BADLANDS,
+        placementWithLiked(context, WOODED_BADLANDS,
                 getBiomeHolder(lookup, Biomes.WOODED_BADLANDS),
                 target(
                         range(WARM,HOT), //Temperature
-                        range(VERY_LOW,LOW), //Humidity
-                        range(LOW,NEUTRAL), //Vegetation Density
-                        range(NEUTRAL,VERY_HIGH), //Rockiness
+                        range(VERY_LOW,NEUTRAL), //Humidity
+                        range(HIGHISH,VERY_HIGH), //Vegetation Density
+                        range(LOW,VERY_HIGH), //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONICS_BADLAND, //Tectonic Activity
                         rangeMax(-0.15, 0.5), //Highlands
@@ -738,7 +746,7 @@ public abstract class ModBiomePlacements {
         );
 
 
-        placement(context, JAGGED_PEAKS,
+        placementWithLiked(context, JAGGED_PEAKS,
                 getBiomeHolder(lookup, Biomes.JAGGED_PEAKS),
                 target(
                         NEUTRAL, //Temperature
@@ -755,7 +763,7 @@ public abstract class ModBiomePlacements {
                         PEAK, MOUNTAIN),
                 List.of(CLIFF_MOUNTAINS,REGULAR_MOUNTAINS)
         );
-        placement(context, FROZEN_PEAKS,
+        placementWithLiked(context, FROZEN_PEAKS,
                 getBiomeHolder(lookup, Biomes.FROZEN_PEAKS),
                 target(
                         FREEZING, //Temperature
@@ -772,7 +780,7 @@ public abstract class ModBiomePlacements {
                         PEAK, MOUNTAIN),
                 List.of(CLIFF_MOUNTAINS,REGULAR_MOUNTAINS)
         );
-        placement(context, STONY_PEAKS,
+        placementWithLiked(context, STONY_PEAKS,
                 getBiomeHolder(lookup, Biomes.STONY_PEAKS),
                 target(
                         WARM, //Temperature
@@ -1100,7 +1108,7 @@ public abstract class ModBiomePlacements {
                 List.of(
                         CAVE)
         );
-        placement(context, DEEP_DARK,
+        placementWithLiked(context, DEEP_DARK,
                 getBiomeHolder(lookup, Biomes.DEEP_DARK),
                 target(
                         COLD, //Temperature
@@ -1149,9 +1157,19 @@ public abstract class ModBiomePlacements {
                 biomeHolder,target,types
         ));
     }
-    private static void placement(BootstrapContext<RebornBiomePlacement> context, ResourceKey<RebornBiomePlacement> name,Holder<Biome> biomeHolder, TerrainParameters.Target target, List<RebornBiomePlacement.Type> types, List<RebornBiomePlacement.TerrainStates> states) {
+    private static void placement(BootstrapContext<RebornBiomePlacement> context, ResourceKey<RebornBiomePlacement> name,Holder<Biome> biomeHolder, TerrainParameters.Target target, List<RebornBiomePlacement.Type> types, List<RebornBiomePlacement.TerrainStates> states, List<RebornBiomePlacement.TerrainStates> dislikedStates) {
         context.register(name,new RebornBiomePlacement(name.identifier(),
-                biomeHolder,target,types, Optional.of(states)
+                biomeHolder,target,types, Optional.of(states), Optional.of(dislikedStates)
+        ));
+    }
+    private static void placementWithLiked(BootstrapContext<RebornBiomePlacement> context, ResourceKey<RebornBiomePlacement> name,Holder<Biome> biomeHolder, TerrainParameters.Target target, List<RebornBiomePlacement.Type> types, List<RebornBiomePlacement.TerrainStates> states) {
+        context.register(name,new RebornBiomePlacement(name.identifier(),
+                biomeHolder,target,types, Optional.of(states), Optional.empty()
+        ));
+    }
+    private static void placementWithDisliked(BootstrapContext<RebornBiomePlacement> context, ResourceKey<RebornBiomePlacement> name,Holder<Biome> biomeHolder, TerrainParameters.Target target, List<RebornBiomePlacement.Type> types, List<RebornBiomePlacement.TerrainStates> dislikedStates) {
+        context.register(name,new RebornBiomePlacement(name.identifier(),
+                biomeHolder,target,types, Optional.empty(), Optional.of(dislikedStates)
         ));
     }
 

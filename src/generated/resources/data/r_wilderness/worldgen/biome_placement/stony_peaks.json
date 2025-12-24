@@ -1,5 +1,9 @@
 {
   "biome": "minecraft:stony_peaks",
+  "liked_tectonic_states": [
+    "cliff_mountains",
+    "regular_mountains"
+  ],
   "name": "r_wilderness:stony_peaks",
   "target": {
     "continentalness": {
@@ -58,10 +62,6 @@
       "min": -1.5
     }
   },
-  "valid_tectonic_states": [
-    "cliff_mountains",
-    "regular_mountains"
-  ],
   "valid_terrain_types": [
     "mountain_peak",
     "mountain"

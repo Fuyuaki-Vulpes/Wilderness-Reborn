@@ -50,6 +50,8 @@ public class ModTags {
         public static final TagKey<Biome> HAS_WATER_DELTAS_VERY_COMMON = tag("has_water_deltas_very_common");
         public static final TagKey<Biome> HAS_WATER_DELTAS_LARGE = tag("has_water_deltas_large");
         public static final TagKey<Biome> HAS_WATER_DELTAS_REGULAR = tag("has_water_deltas_regular");
+        public static final TagKey<Biome> HAS_SAND_DUNES = tag("has_sand_dunes");
+        public static final TagKey<Biome> LAVA_AQUIFERS_ONLY = tag("lava_aquifers_only");
 
 
         private static TagKey<Biome> tag(String name) {

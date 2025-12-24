@@ -24,6 +24,9 @@ public class ModNoises {
     public static final ResourceKey<NormalNoise.NoiseParameters> AQUIFERS = createKey("aquifers");
 
 
+    public static final ResourceKey<NormalNoise.NoiseParameters> SAND_DUNES = createKey("sand_dunes");
+
+
     private static ResourceKey<NormalNoise.NoiseParameters> createKey(String key) {
         return ResourceKey.create(Registries.NOISE, RWildernessMod.modLocation(key));
     }

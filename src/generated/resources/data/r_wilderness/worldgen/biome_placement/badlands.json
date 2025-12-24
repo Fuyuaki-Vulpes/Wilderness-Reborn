@@ -1,5 +1,9 @@
 {
   "biome": "minecraft:badlands",
+  "liked_tectonic_states": [
+    "badlands",
+    "fault_surroundings"
+  ],
   "name": "r_wilderness:badlands",
   "target": {
     "continentalness": {
@@ -8,8 +12,8 @@
       "min": -0.2
     },
     "erosion": {
-      "max": 0.35,
-      "mean": -0.475,
+      "max": 0.6,
+      "mean": -0.2375,
       "min": -10.0
     },
     "highlands": {
@@ -18,8 +22,8 @@
       "min": -0.15
     },
     "humidity": {
-      "max": -0.6,
-      "mean": -0.8374999999999999,
+      "max": 0.35,
+      "mean": -0.475,
       "min": -10.0
     },
     "magicalness": {
@@ -48,8 +52,8 @@
       "min": 64.0
     },
     "vegetation_density": {
-      "max": -0.85,
-      "mean": -0.95,
+      "max": 0.35,
+      "mean": -0.475,
       "min": -10.0
     },
     "weirdness": {
@@ -58,10 +62,6 @@
       "min": -1.5
     }
   },
-  "valid_tectonic_states": [
-    "badlands",
-    "fault_surroundings"
-  ],
   "valid_terrain_types": [
     "mountain",
     "mountain",

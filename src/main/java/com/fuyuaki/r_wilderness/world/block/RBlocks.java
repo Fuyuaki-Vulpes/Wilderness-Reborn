@@ -4,7 +4,6 @@ import com.fuyuaki.r_wilderness.data.worldgen.tree.ModTreeGrower;
 import com.fuyuaki.r_wilderness.world.block.soils.ModFarmBlock;
 import com.fuyuaki.r_wilderness.world.block.soils.ModSoilBlock;
 import com.fuyuaki.r_wilderness.world.block.tree.BranchBlock;
-import com.fuyuaki.r_wilderness.world.block.tree.TreePartBlock;
 import com.fuyuaki.r_wilderness.world.block.woods.*;
 import com.fuyuaki.r_wilderness.world.item.RItems;
 import net.minecraft.core.BlockPos;
@@ -41,7 +40,7 @@ public class RBlocks {
     //Blocks
 
     //Tree Stuff
-    public static final DeferredBlock<Block> BRANCH = registerBlock("branch", TreePartBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG));
+    public static final DeferredBlock<Block> BRANCH = registerBlock("branch", BranchBlock::new, logProperties(MapColor.WOOD, SoundType.WOOD).dynamicShape().noLootTable());
 
 
     //Stones
@@ -285,6 +284,14 @@ public class RBlocks {
     private static BlockBehaviour.Properties logProperties(MapColor sideColor, MapColor topColor, SoundType sound) {
         return BlockBehaviour.Properties.of()
                 .mapColor(p_152624_ -> p_152624_.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? sideColor : topColor)
+                .instrument(NoteBlockInstrument.BASS)
+                .strength(2.0F)
+                .sound(sound)
+                .ignitedByLava();
+    }
+    private static BlockBehaviour.Properties logProperties(MapColor color, SoundType sound) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(color)
                 .instrument(NoteBlockInstrument.BASS)
                 .strength(2.0F)
                 .sound(sound)

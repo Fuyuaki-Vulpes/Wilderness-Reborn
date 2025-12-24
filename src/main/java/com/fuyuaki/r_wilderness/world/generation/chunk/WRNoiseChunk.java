@@ -1,17 +1,21 @@
 package com.fuyuaki.r_wilderness.world.generation.chunk;
 
-import com.fuyuaki.r_wilderness.util.math.SplinePoint;
+import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.world.generation.WildGeneratorSettings;
-import com.fuyuaki.r_wilderness.world.generation.aquifer.LazyAquifer;
+import com.fuyuaki.r_wilderness.world.generation.hydrology.RAquifer;
 import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
+import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildOreVeins;
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.longs.Long2IntMap;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.SharedConstants;
-import net.minecraft.util.Util;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,18 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import static net.minecraft.world.level.block.Blocks.WATER;
 
 public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFunction.FunctionContext {
-
-    private static final ExecutorService EXECUTOR =
-            Executors.newFixedThreadPool(10);
-
-
 
     private final NoiseSettings noiseSettings;
     final int cellCountXZ;
@@ -52,11 +48,14 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
     final List<WRNoiseChunk.NoiseInterpolator> interpolators;
     final List<WRNoiseChunk.CacheAllInCell> cellCaches;
     protected final Map<DensityFunction, DensityFunction> wrapped = new HashMap<>();
+    private final Long2IntMap preliminarySurfaceLevelCache = new Long2IntOpenHashMap();
+
 
     protected final Blender blender;
     protected final WRNoiseChunk.FlatCache blendAlpha;
     protected final WRNoiseChunk.FlatCache blendOffset;
     private final TerrainParameters terrainParameters;
+    private final Aquifer aquifer;
     protected long lastBlendingDataPos = ChunkPos.INVALID_CHUNK_POS;
     protected Blender.BlendingOutput lastBlendingOutput = new Blender.BlendingOutput(1.0, 0.0);
 
@@ -111,6 +110,7 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
     protected final int seaLevel;
 
     private final BlockStateFiller veinFiller;
+    private final RebornBiomeSource biomeSource;
 
     public static WRNoiseChunk forChunk(
             TerrainParameters parameters,
@@ -119,12 +119,13 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             DensityFunctions.BeardifierOrMarker beardifierOrMarker,
             WildGeneratorSettings noiseGeneratorSettings,
             Blender blender,
-            int seaLevel
+            int seaLevel,
+            RebornBiomeSource biomeSource, final Aquifer.FluidPicker globalFluidPicker
     ) {
         NoiseSettings noisesettings = noiseGeneratorSettings.noiseSettings().clampToHeightAccessor(chunk);
         ChunkPos chunkpos = chunk.getPos();
         int i = 16 / noisesettings.getCellWidth();
-        return new WRNoiseChunk(parameters, i, state, chunkpos.getMinBlockX(), chunkpos.getMinBlockZ(),(ProtoChunk) chunk, noisesettings, seaLevel,beardifierOrMarker, blender, noiseGeneratorSettings);
+        return new WRNoiseChunk(parameters, i, state, chunkpos.getMinBlockX(), chunkpos.getMinBlockZ(),(ProtoChunk) chunk, noisesettings, seaLevel,beardifierOrMarker, blender, noiseGeneratorSettings, biomeSource,globalFluidPicker);
     }
 
     public WRNoiseChunk(
@@ -138,9 +139,10 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             int seaLevel,
             DensityFunctions.BeardifierOrMarker  beardifier,
             Blender blendifier,
-            WildGeneratorSettings noiseGeneratorSettings
-    ){
+            WildGeneratorSettings noiseGeneratorSettings,
+            RebornBiomeSource biomeSource, final Aquifer.FluidPicker globalFluidPicker){
         this.terrainParameters = parameters;
+        this.biomeSource = biomeSource;
         this.noiseSettings = noiseSettings;
         this.cellWidth = noiseSettings.getCellWidth();
         this.cellHeight = noiseSettings.getCellHeight();
@@ -169,9 +171,16 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             int z = SectionPos.blockToSectionCoord(firstNoiseZ);
 
             this.chunk = null;
-            this.chunkMinX = 0;
-            this.chunkMinZ = 0;
+            this.chunkMinX = x;
+            this.chunkMinZ = z;
             this.airCarvingMask = new CarvingMask(0,0);
+        }
+        if (this.chunk != null) {
+            this.aquifer = new RAquifer(this, this.chunk.getPos(), random.aquiferRandom(), WildernessConstants.WORLD_BOTTOM, WildernessConstants.WORLD_HEIGHT, globalFluidPicker);
+        }
+        else{
+            this.aquifer = new RAquifer(this, new ChunkPos(0,0), random.aquiferRandom(), WildernessConstants.WORLD_BOTTOM, WildernessConstants.WORLD_HEIGHT, globalFluidPicker);
+
         }
         NoiseRouter noiserouter = random.router();
         NoiseRouter noiserouter1 = noiserouter.mapAll(this::wrap);
@@ -235,10 +244,13 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                         double d2 = (double) cellFractionZ / cellWidth;
                         this.updateForZ(z, d2);
 
-
-                        int yLevelGen = Mth.floor(blendYLevelsFor(cellX,cellZ,cellFractionX,cellFractionZ));
                         TerrainParameters.Sampled sampled = this.terrainParameters.samplerAt(x,z);
-
+                        int yLevelGen;
+                        if (TerrainParameters.shouldSampleAccurate(sampled)){
+                            yLevelGen = Mth.floor(this.terrainParameters.yLevelAt(x,z,false));
+                        }else {
+                            yLevelGen = Mth.floor(blendYLevelsFor(cellX, cellZ, cellFractionX, cellFractionZ));
+                        }
                         for (int cellY = cellCountY - 1; cellY >= 0; cellY--) {
                             this.selectCellYZ(cellY, cellZ);
 
@@ -251,7 +263,7 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                                     levelchunksection = chunk.getSection(cellIndex);
                                 }
 
-                                BlockState finalState = getBlockStateForY(defaultBlock, verticalCell, cellHeights, y, yLevelGen, sampled, x, z);
+                                BlockState finalState = getBlockStateForY(defaultBlock, verticalCell, cellHeights, y, yLevelGen, x, z);
 
 
                                 if (finalState != Blocks.AIR.defaultBlockState() && !SharedConstants.debugVoidTerrain(chunk.getPos())) {
@@ -274,6 +286,8 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         return chunk;
     }
 
+
+
     private double blendYLevelsFor(int cellX, int cellZ, int cellFractionX, int cellFractionZ) {
         double y1 = this.heightsAtCells[cellX][cellZ];
         double y2 = this.heightsAtCells[cellX+1][cellZ];
@@ -286,7 +300,8 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         return Mth.lerp2(delta1,delta2,y1,y2,y3,y4);
     }
 
-    private @Nullable BlockState getBlockStateForY(BlockState defaultBlock, double verticalCell, int cellHeight1, int y, int yLevelGen, TerrainParameters.Sampled sampled, int x, int z) {
+    private BlockState getBlockStateForY(BlockState defaultBlock, double verticalCell, int cellHeight1, int y, int yLevelGen, int x, int z) {
+        if (defaultBlock == null) defaultBlock = Blocks.STONE.defaultBlockState();
         double cellY1 = verticalCell / cellHeight1;
         this.updateForY(y, cellY1);
 
@@ -296,22 +311,23 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                 veinFiller
                         .calculate(this);
         if (y <= yLevelGen){
-            if (sampled.continentalness() < 0.2 && y > yLevelGen - 3){
-                worldState = veinState == null ? defaultBlock : veinState;
-
-            }else {
-                worldState = this.terrainParameters.cavesAt(x, y, z, yLevelGen) ? Blocks.AIR.defaultBlockState() : veinState == null ? defaultBlock : veinState;
-            }
+            worldState = this.terrainParameters.cavesAt(x, y, z, yLevelGen) ? Blocks.AIR.defaultBlockState() : veinState == null ? defaultBlock : veinState;
         }
         else {
             worldState = Blocks.AIR.defaultBlockState();
         }
 
-        double r = Math.pow(Math.abs(Math.clamp(sampled.waterBasins() * 3,-1,1)),2);
+        if (worldState.isAir()){
+            double substance = -0.15;
+            if (y > this.preliminarySurfaceLevel(x,z)){
+                substance = -0.5;
+            }
+            worldState = this.aquifer.computeSubstance(new DensityFunction.SinglePointContext(x,y,z),-0.15);
 
-        if ((sampled.continentalness() < 0.2 || r < 0.5) && worldState.isAir() && y <= seaLevel){
-            worldState = WATER.defaultBlockState();
+        }else{
+            this.aquifer.computeSubstance(new DensityFunction.SinglePointContext(x,y,z),substance(y,yLevelGen));
         }
+
         finalState = worldState;
         if (worldState != WATER.defaultBlockState()) {
             double t = 0;
@@ -340,10 +356,47 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         return finalState;
     }
 
+    private double substance(int y, int yLevelGen) {
+        double threshold = yLevelGen - 16;
+        double substance = 0;
+        if (y > threshold){
+            substance = Math.max((double) (yLevelGen - y)/16.0D,-0.458);
+        }else{
+            substance = Math.max(1 - Math.min((threshold - y) / 16.0D,1),0.250);
+        }
+        return substance;
+    }
+
+    public int maxPreliminarySurfaceLevel(final int minBlockX, final int minBlockZ, final int maxBlockX, final int maxBlockZ) {
+        int maxY = Integer.MIN_VALUE;
+
+        for(int blockZ = minBlockZ; blockZ <= maxBlockZ; blockZ += 4) {
+            for(int blockX = minBlockX; blockX <= maxBlockX; blockX += 4) {
+                int surfaceLevel = this.preliminarySurfaceLevel(blockX, blockZ);
+                if (surfaceLevel > maxY) {
+                    maxY = surfaceLevel;
+                }
+            }
+        }
+
+        return maxY;
+    }
+
+    public int preliminarySurfaceLevel(final int sampleX, final int sampleZ) {
+        int quantizedX = QuartPos.toBlock(QuartPos.fromBlock(sampleX));
+        int quantizedZ = QuartPos.toBlock(QuartPos.fromBlock(sampleZ));
+        return this.preliminarySurfaceLevelCache.computeIfAbsent(ColumnPos.asLong(quantizedX, quantizedZ), this::computePreliminarySurfaceLevel);
+    }
+
+    private int computePreliminarySurfaceLevel(final long key) {
+        int blockX = ColumnPos.getX(key);
+        int blockZ = ColumnPos.getZ(key);
+        return Mth.floor(getSurfaceYSurface(blockX,blockZ));
+    }
+
     public BlockState testBlockAt(int x, int y, int z, BlockState defaultBlock) {
         if (defaultBlock == null) defaultBlock = Blocks.STONE.defaultBlockState();
         int yLevelGen = Mth.floor(this.terrainParameters.yLevelAtWithCache(x, z));
-        TerrainParameters.Sampled sampled = this.terrainParameters.samplerAtCached(x,z);
 
 
         BlockState finalState;
@@ -356,10 +409,11 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         }else {
             worldState = Blocks.AIR.defaultBlockState();
         }
-        double r = Math.pow(Math.abs(Math.clamp(sampled.waterBasins() * 3,-1,1)),2);
+        if (worldState.isAir()){
+            worldState = this.aquifer.computeSubstance(new DensityFunction.SinglePointContext(x,y,z),-0.15);
 
-        if ((sampled.continentalness() < 0.2 || r < 0.5) && worldState.isAir() && y <= seaLevel){
-            worldState = WATER.defaultBlockState();
+        }else{
+            this.aquifer.computeSubstance(new DensityFunction.SinglePointContext(x,y,z),substance(y,yLevelGen));
         }
 
         finalState = worldState;
@@ -623,9 +677,13 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         return Mth.floor(this.terrainParameters.yLevelAt(x,z,surfaceOnly,false));
     }
 
-    public Aquifer lazyAquifer() {
-        return new LazyAquifer(terrainParameters);
 
+    public TerrainParameters getTerrainParameters() {
+        return this.terrainParameters;
+    }
+
+    public RebornBiomeSource biomeSource() {
+        return this.biomeSource;
     }
 
 

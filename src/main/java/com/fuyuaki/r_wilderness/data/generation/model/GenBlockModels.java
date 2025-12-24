@@ -7,11 +7,14 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelOutput;
 import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.data.models.blockstates.BlockModelDefinitionGenerator;
+import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.random.Weighted;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
@@ -196,7 +199,8 @@ public class GenBlockModels extends BlockModelGenerators {
         TextureMapping texturemapping = plantType.getPlantTextureMapping(block);
         MultiVariant multivariant = plainVariant(plantType.getCrossPot().create(pottedBlock, texturemapping, this.modelOutput));
         this.blockStateOutput.accept(createSimpleBlock(pottedBlock, multivariant));
-    }public void createTintedRebornPlant(Block block, Block pottedBlock, RPlantType plantType) {
+    }
+    public void createTintedRebornPlant(Block block, Block pottedBlock, RPlantType plantType) {
         this.createRTintedPlantBlock(block, plantType);
         TextureMapping texturemapping = plantType.getPlantTextureMapping(block);
         MultiVariant multivariant = plainVariant(plantType.getCrossPot().create(pottedBlock, texturemapping, this.modelOutput));
@@ -224,7 +228,24 @@ public class GenBlockModels extends BlockModelGenerators {
                 );
     }
 
-
+    public void createBranchLike(Block block,Block log) {
+        MultiVariant up = plainVariant(ModelLocationUtils.getModelLocation(block, "_up"));
+        MultiVariant down = plainVariant(ModelLocationUtils.getModelLocation(block, "_down"));
+        MultiVariant north = plainVariant(ModelLocationUtils.getModelLocation(block, "_north"));
+        MultiVariant east = plainVariant(ModelLocationUtils.getModelLocation(block, "_east"));
+        MultiVariant south = plainVariant(ModelLocationUtils.getModelLocation(block, "_south"));
+        MultiVariant west = plainVariant(ModelLocationUtils.getModelLocation(block, "_west"));
+        this.blockStateOutput
+                .accept(
+                        MultiPartGenerator.multiPart(block)
+                                .with(condition().term(BlockStateProperties.NORTH, true), north)
+                                .with(condition().term(BlockStateProperties.EAST, true), east)
+                                .with(condition().term(BlockStateProperties.SOUTH, true), south)
+                                .with(condition().term(BlockStateProperties.WEST, true), west)
+                                .with(condition().term(BlockStateProperties.UP, true), up)
+                                .with(condition().term(BlockStateProperties.DOWN, true), down)
+                );
+    }
 
     //OTHERS
 

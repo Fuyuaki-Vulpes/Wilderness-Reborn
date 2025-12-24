@@ -17,7 +17,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.*;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableObject;
@@ -53,6 +55,10 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
 
     public RebornBiomeSource(List<RebornBiomePlacement> knownBiomes) {
         this.knownBiomes = knownBiomes;
+    }
+
+    public boolean isDeepDarkRegion(DensityFunction.SinglePointContext context) {
+        return this.getNoiseBiome(context.blockX(),context.blockY(),context.blockZ()).is(Biomes.DEEP_DARK);
     }
 
 
@@ -218,7 +224,6 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
         RebornBiomePlacement biome = null;
         double affinity = -1000;
         double surfaceY = parameters.yLevelAt(x,z,true);
-
 
         for (RebornBiomePlacement placement : this.knownBiomes){
             double pD = placement.tryAt(surfaceY,sampled,x,y,z);

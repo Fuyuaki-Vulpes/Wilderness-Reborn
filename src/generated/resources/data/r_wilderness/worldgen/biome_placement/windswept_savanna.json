@@ -1,5 +1,11 @@
 {
   "biome": "minecraft:windswept_savanna",
+  "disliked_tectonic_states": [
+    "badlands"
+  ],
+  "liked_tectonic_states": [
+    "mountainous"
+  ],
   "name": "r_wilderness:windswept_savanna",
   "target": {
     "continentalness": {
@@ -18,9 +24,9 @@
       "min": 0.0
     },
     "humidity": {
-      "max": 0.0,
-      "mean": -0.5,
-      "min": -2.5
+      "max": -0.35,
+      "mean": -0.6,
+      "min": -0.85
     },
     "magicalness": {
       "max": 0.15,
@@ -58,9 +64,6 @@
       "min": -1.5
     }
   },
-  "valid_tectonic_states": [
-    "mountainous"
-  ],
   "valid_terrain_types": [
     "mountain",
     "highlands"

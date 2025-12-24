@@ -1,5 +1,14 @@
 {
   "biome": "minecraft:savanna_plateau",
+  "disliked_tectonic_states": [
+    "fault_surroundings",
+    "trench",
+    "fault"
+  ],
+  "liked_tectonic_states": [
+    "normal",
+    "unstable"
+  ],
   "name": "r_wilderness:savanna_highlands",
   "target": {
     "continentalness": {
@@ -18,9 +27,9 @@
       "min": 0.5
     },
     "humidity": {
-      "max": 0.0,
-      "mean": -0.5,
-      "min": -2.5
+      "max": -0.35,
+      "mean": -0.6,
+      "min": -0.85
     },
     "magicalness": {
       "max": 0.15,
@@ -58,10 +67,6 @@
       "min": -1.5
     }
   },
-  "valid_tectonic_states": [
-    "normal",
-    "unstable"
-  ],
   "valid_terrain_types": [
     "highlands"
   ]

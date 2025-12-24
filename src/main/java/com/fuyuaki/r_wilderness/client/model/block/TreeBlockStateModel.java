@@ -1,7 +1,6 @@
-package com.fuyuaki.r_wilderness.client.model.block.state;
+package com.fuyuaki.r_wilderness.client.model.block;
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
-import com.fuyuaki.r_wilderness.client.model.block.TreePartModel;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.block.model.BlockModelPart;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
@@ -10,7 +9,6 @@ import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.DynamicBlockStateModel;
@@ -20,12 +18,10 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public record TreePartBlockStateModel(BlockModelPart model) implements DynamicBlockStateModel {
-
+public record TreeBlockStateModel(TreeBlockModelPart model) implements DynamicBlockStateModel {
     @Override
     public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockModelPart> parts) {
         ModelData data = level.getModelData(pos);
-
         parts.add(this.model);
     }
 
@@ -35,20 +31,20 @@ public record TreePartBlockStateModel(BlockModelPart model) implements DynamicBl
     }
 
     @Override
-    public TextureAtlasSprite particleIcon(BlockAndTintGetter level, BlockPos pos, BlockState state) {
-        return this.model.particleIcon();
-    }
-
-    @Override
     public TextureAtlasSprite particleIcon() {
         return this.model.particleIcon();
     }
 
-    public record Unbaked(TreePartModel.Unbaked model) implements CustomUnbakedBlockStateModel {
-        public static final MapCodec<Unbaked> CODEC = TreePartModel.Unbaked.CODEC.xmap(
+    @Override
+    public TextureAtlasSprite particleIcon(BlockAndTintGetter level, BlockPos pos, BlockState state) {
+        return particleIcon();
+    }
+    public record Unbaked(TreeBlockModelPart.Unbaked model) implements CustomUnbakedBlockStateModel {
+        public static final MapCodec<Unbaked> CODEC = TreeBlockModelPart.Unbaked.MAP_CODEC.xmap(
                 Unbaked::new, Unbaked::model
         );
-        public static final Identifier ID = RWildernessMod.modLocation("tree_part_unbaked_loader");
+        public static final Identifier ID = RWildernessMod.modLocation("tree_block_state_model_loader");
+
 
         @Override
         public MapCodec<? extends CustomUnbakedBlockStateModel> codec() {
@@ -57,7 +53,7 @@ public record TreePartBlockStateModel(BlockModelPart model) implements DynamicBl
 
         @Override
         public BlockStateModel bake(ModelBaker baker) {
-            return new TreePartBlockStateModel(this.model.bake(baker));
+            return new TreeBlockStateModel(this.model.bake(baker));
         }
 
         @Override

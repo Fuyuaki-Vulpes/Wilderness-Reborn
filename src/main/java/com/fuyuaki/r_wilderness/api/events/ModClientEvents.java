@@ -1,6 +1,8 @@
 package com.fuyuaki.r_wilderness.api.events;
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
+import com.fuyuaki.r_wilderness.client.model.block.TreeBlockModelPart;
+import com.fuyuaki.r_wilderness.client.model.block.TreeBlockStateModel;
 import com.fuyuaki.r_wilderness.world.block.woods.ModWoodTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Sheets;
@@ -59,4 +61,9 @@ public class ModClientEvents {
         //event.registerLayerDefinition(ModModelLayers.ALPINE_CHEST_BOAT,BoatModel::createChestBoatModel);
     }
 
+
+    @SubscribeEvent
+    public static void registerBlockStateModels(RegisterBlockStateModels event) {
+        event.registerModel(TreeBlockStateModel.Unbaked.ID, TreeBlockStateModel.Unbaked.CODEC);
+    }
 }

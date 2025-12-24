@@ -1,5 +1,8 @@
 {
   "biome": "minecraft:deep_dark",
+  "liked_tectonic_states": [
+    "very_deep_underground"
+  ],
   "name": "r_wilderness:deep_dark",
   "target": {
     "continentalness": {
@@ -58,9 +61,6 @@
       "min": -1.5
     }
   },
-  "valid_tectonic_states": [
-    "very_deep_underground"
-  ],
   "valid_terrain_types": [
     "cave"
   ]
