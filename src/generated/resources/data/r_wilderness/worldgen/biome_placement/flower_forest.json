@@ -18,9 +18,9 @@
       "min": -1.5
     },
     "humidity": {
-      "max": 0.85,
-      "mean": 0.725,
-      "min": 0.6
+      "max": 0.15,
+      "mean": 0.0,
+      "min": -0.15
     },
     "magicalness": {
       "max": 1.5,
@@ -28,8 +28,8 @@
       "min": -1.5
     },
     "rockiness": {
-      "max": -0.6,
-      "mean": -0.725,
+      "max": -0.5,
+      "mean": -0.675,
       "min": -0.85
     },
     "tectonic_activity": {
@@ -44,18 +44,18 @@
     },
     "terrain_height": {
       "max": 240.0,
-      "mean": 72.0,
+      "mean": 68.0,
       "min": -256.0
     },
     "vegetation_density": {
-      "max": 10.0,
-      "mean": 0.95,
-      "min": 0.85
+      "max": 1.5,
+      "mean": 0.45,
+      "min": 0.35
     },
     "weirdness": {
-      "max": 0.35,
-      "mean": 0.0,
-      "min": -0.35
+      "max": -0.35,
+      "mean": -0.425,
+      "min": -0.5
     }
   },
   "valid_terrain_types": [

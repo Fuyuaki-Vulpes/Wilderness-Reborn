@@ -18,14 +18,14 @@
       "min": -1.5
     },
     "humidity": {
-      "max": 0.35,
+      "max": 0.15,
       "mean": 0.0,
-      "min": -0.35
+      "min": -0.15
     },
     "magicalness": {
-      "max": 0.6,
-      "mean": 0.475,
-      "min": 0.35
+      "max": 0.35,
+      "mean": 0.25,
+      "min": 0.15
     },
     "rockiness": {
       "max": 0.35,
@@ -44,13 +44,13 @@
     },
     "terrain_height": {
       "max": 240.0,
-      "mean": 72.0,
+      "mean": 68.0,
       "min": -256.0
     },
     "vegetation_density": {
-      "max": 1.5,
-      "mean": 0.9750000000000001,
-      "min": 0.45
+      "max": 10.0,
+      "mean": 0.8125,
+      "min": 0.5
     },
     "weirdness": {
       "max": 10.0,

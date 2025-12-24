@@ -44,9 +44,9 @@
       "min": 0.0
     },
     "temperature": {
-      "max": 0.35,
+      "max": 0.15,
       "mean": 0.0,
-      "min": -0.35
+      "min": -0.15
     },
     "terrain_height": {
       "max": 720.0,
@@ -54,9 +54,9 @@
       "min": 80.0
     },
     "vegetation_density": {
-      "max": 0.35,
+      "max": 0.15,
       "mean": 0.0,
-      "min": -0.35
+      "min": -0.15
     },
     "weirdness": {
       "max": 1.5,

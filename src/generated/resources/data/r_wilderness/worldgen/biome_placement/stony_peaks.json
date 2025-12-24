@@ -24,7 +24,7 @@
     "humidity": {
       "max": 0.0,
       "mean": -0.5,
-      "min": -1.0
+      "min": -2.5
     },
     "magicalness": {
       "max": 0.15,
@@ -32,9 +32,9 @@
       "min": -1.5
     },
     "rockiness": {
-      "max": 26.0,
-      "mean": 1.0,
-      "min": 0.25
+      "max": 10.0,
+      "mean": 0.6,
+      "min": 0.15
     },
     "tectonic_activity": {
       "max": 26.0,
@@ -52,9 +52,9 @@
       "min": 160.0
     },
     "vegetation_density": {
-      "max": 0.35,
+      "max": 0.15,
       "mean": 0.0,
-      "min": -0.35
+      "min": -0.15
     },
     "weirdness": {
       "max": 1.5,

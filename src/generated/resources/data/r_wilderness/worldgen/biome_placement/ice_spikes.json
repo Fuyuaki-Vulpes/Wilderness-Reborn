@@ -44,7 +44,7 @@
     },
     "terrain_height": {
       "max": 240.0,
-      "mean": 72.0,
+      "mean": 68.0,
       "min": -256.0
     },
     "vegetation_density": {

@@ -28,9 +28,9 @@
       "min": -1.5
     },
     "rockiness": {
-      "max": 0.6,
-      "mean": 0.475,
-      "min": 0.35
+      "max": 0.35,
+      "mean": 0.25,
+      "min": 0.15
     },
     "tectonic_activity": {
       "max": 1.5,
@@ -48,9 +48,9 @@
       "min": -256.0
     },
     "vegetation_density": {
-      "max": 0.6,
-      "mean": 0.475,
-      "min": 0.35
+      "max": 0.35,
+      "mean": 0.25,
+      "min": 0.15
     },
     "weirdness": {
       "max": 1.5,
