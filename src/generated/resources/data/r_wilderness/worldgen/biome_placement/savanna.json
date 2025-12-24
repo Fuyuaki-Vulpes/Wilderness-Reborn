@@ -24,8 +24,8 @@
     },
     "magicalness": {
       "max": 0.15,
-      "mean": -0.675,
-      "min": -1.5
+      "mean": 0.0,
+      "min": -5.5
     },
     "rockiness": {
       "max": 0.0,

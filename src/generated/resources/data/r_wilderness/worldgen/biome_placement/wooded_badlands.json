@@ -1,8 +1,7 @@
 {
   "biome": "minecraft:wooded_badlands",
   "liked_tectonic_states": [
-    "badlands",
-    "fault_surroundings"
+    "badlands"
   ],
   "name": "r_wilderness:wooded_badlands",
   "target": {
@@ -28,8 +27,8 @@
     },
     "magicalness": {
       "max": 0.15,
-      "mean": -0.675,
-      "min": -1.5
+      "mean": 0.0,
+      "min": -5.5
     },
     "rockiness": {
       "max": 10.0,

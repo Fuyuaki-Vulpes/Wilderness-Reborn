@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TerrainParameters {
     public static final Range POSITIVE = range(0,1.5);
     public static final Range NEGATIVE = range(-1.5,0);
-    public static final Range MAGICALNESS_LOW = range(-1.5,0.15);
+    public static final Range MAGICALNESS_LOW = range(-5.5,0,0.15);
     public static final Range NEUTRAL = range(-0.65,0.65);
     public static final Range FULL = range(-1.5,1.5);
 

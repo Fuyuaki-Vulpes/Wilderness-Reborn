@@ -746,7 +746,7 @@ public abstract class ModBiomePlacements {
                 ),
                 List.of(
                         HILLY,MOUNTAIN,HIGHLANDS),
-                List.of(TERRAIN_BADLANDS,FAULT_SURROUNDINGS)
+                List.of(TERRAIN_BADLANDS)
         );
 
 
