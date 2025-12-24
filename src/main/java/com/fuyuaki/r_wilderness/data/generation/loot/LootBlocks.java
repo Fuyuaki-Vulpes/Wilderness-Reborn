@@ -69,6 +69,34 @@ public class LootBlocks extends BlockLootSubProvider {
         dropSelf(RBlocks.COBBLED_MALATITE_SLAB.get());
         dropSelf(RBlocks.COBBLED_MALATITE_WALL.get());
 
+        //Ores
+
+        add(RBlocks.SCHINITE_COPPER_ORE.get(), block -> createOreDrop(block, Items.RAW_COPPER));
+        add(RBlocks.SCHINITE_IRON_ORE.get(), block -> createOreDrop(block, Items.RAW_IRON));
+        add(RBlocks.SCHINITE_GOLD_ORE.get(), block -> createOreDrop(block, Items.RAW_GOLD));
+        add(RBlocks.SCHINITE_DIAMOND_ORE.get(), block -> createOreDrop(block, Items.DIAMOND));
+        add(RBlocks.SCHINITE_EMERALD_ORE.get(), block -> createOreDrop(block, Items.EMERALD));
+        add(RBlocks.SCHINITE_REDSTONE_ORE.get(), block -> createOreDrop(block, Items.REDSTONE));
+        add(RBlocks.SCHINITE_LAPIS_ORE.get(), block -> createOreDrop(block, Items.LAPIS_LAZULI));
+
+        add(RBlocks.MAGNEISS_COPPER_ORE.get(), block -> createOreDrop(block, Items.RAW_COPPER));
+        add(RBlocks.MAGNEISS_IRON_ORE.get(), block -> createOreDrop(block, Items.RAW_IRON));
+        add(RBlocks.MAGNEISS_GOLD_ORE.get(), block -> createOreDrop(block, Items.RAW_GOLD));
+        add(RBlocks.MAGNEISS_DIAMOND_ORE.get(), block -> createOreDrop(block, Items.DIAMOND));
+        add(RBlocks.MAGNEISS_EMERALD_ORE.get(), block -> createOreDrop(block, Items.EMERALD));
+        add(RBlocks.MAGNEISS_REDSTONE_ORE.get(), block -> createOreDrop(block, Items.REDSTONE));
+        add(RBlocks.MAGNEISS_LAPIS_ORE.get(), block -> createOreDrop(block, Items.LAPIS_LAZULI));
+
+        add(RBlocks.MALATITE_COPPER_ORE.get(), block -> createOreDrop(block, Items.RAW_COPPER));
+        add(RBlocks.MALATITE_IRON_ORE.get(), block -> createOreDrop(block, Items.RAW_IRON));
+        add(RBlocks.MALATITE_GOLD_ORE.get(), block -> createOreDrop(block, Items.RAW_GOLD));
+        add(RBlocks.MALATITE_DIAMOND_ORE.get(), block -> createOreDrop(block, Items.DIAMOND));
+        add(RBlocks.MALATITE_EMERALD_ORE.get(), block -> createOreDrop(block, Items.EMERALD));
+        add(RBlocks.MALATITE_REDSTONE_ORE.get(), block -> createOreDrop(block, Items.REDSTONE));
+        add(RBlocks.MALATITE_LAPIS_ORE.get(), block -> createOreDrop(block, Items.LAPIS_LAZULI));
+
+        //Soils
+
         dropSelf(RBlocks.CHALKY_SOIL.get());
         dropOther(RBlocks.CHALKY_FARMLAND.get(), RBlocks.CHALKY_SOIL);
         dropSelf(RBlocks.CLAY_SOIL.get());

@@ -8,6 +8,7 @@ import com.fuyuaki.r_wilderness.world.block.woods.*;
 import com.fuyuaki.r_wilderness.world.item.RItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
@@ -160,6 +161,32 @@ public class RBlocks {
     public static final DeferredBlock<Block> COBBLED_MALATITE_WALL = registerBlock("cobbled_malatite_wall",
             WallBlock::new, MALATITE_PROPERTIES
     );
+
+    //Ores
+
+    public static final DeferredBlock<Block> SCHINITE_COPPER_ORE = oreBlock("schinite_copper_ore", 0, 0, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_IRON_ORE = oreBlock("_iron_ore", 0, 0, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_GOLD_ORE = oreBlock("_gold_ore", 0, 0, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_DIAMOND_ORE = oreBlock("_diamond_ore", 3, 7, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_EMERALD_ORE = oreBlock("_emerald_ore", 3, 7, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_REDSTONE_ORE = oreBlock("_redstone_ore", 1, 5, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_LAPIS_ORE = oreBlock("_lapis_ore", 2, 5,  SCHINITE_PROPERTIES);
+
+    public static final DeferredBlock<Block> MAGNEISS_COPPER_ORE = oreBlock("magneiss_copper_ore", 0, 0, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_IRON_ORE = oreBlock("_iron_ore", 0, 0, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_GOLD_ORE = oreBlock("_gold_ore", 0, 0, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_DIAMOND_ORE = oreBlock("_diamond_ore", 3, 7, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_EMERALD_ORE = oreBlock("_emerald_ore", 3, 7, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_REDSTONE_ORE = oreBlock("_redstone_ore", 1, 5, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_LAPIS_ORE = oreBlock("_lapis_ore", 2, 5,  MAGNEISS_PROPERTIES);
+
+    public static final DeferredBlock<Block> MALATITE_COPPER_ORE = oreBlock("malatite_copper_ore", 0, 0, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_IRON_ORE = oreBlock("_iron_ore", 0, 0, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_GOLD_ORE = oreBlock("_gold_ore", 0, 0, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_DIAMOND_ORE = oreBlock("_diamond_ore", 3, 7, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_EMERALD_ORE = oreBlock("_emerald_ore", 3, 7, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_REDSTONE_ORE = oreBlock("_redstone_ore", 1, 5, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_LAPIS_ORE = oreBlock("_lapis_ore", 2, 5,  MALATITE_PROPERTIES);
 
 
 
@@ -331,6 +358,16 @@ public class RBlocks {
 
     private static DeferredBlock<StairBlock> registerStair(String name, DeferredBlock<Block> baseBlock,BlockBehaviour.Properties properties) {
         return registerBlock(name, p -> new StairBlock(baseBlock.get().defaultBlockState(), p), () -> properties);
+    }
+
+    public static DeferredBlock<Block> oreBlock(String name, int min, int max, BlockBehaviour.Properties block) {
+        return registerBlock(name, properties -> new DropExperienceBlock(
+                UniformInt.of(min, max), properties), block
+        );
+    }
+
+    private static BlockBehaviour.Properties copy(Block block) {
+        return BlockBehaviour.Properties.ofFullCopy(block);
     }
 
     private static BlockBehaviour.Properties signWallVariant(Block baseBlock, boolean overrideDescription) {

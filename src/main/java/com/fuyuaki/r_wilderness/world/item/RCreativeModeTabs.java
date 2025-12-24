@@ -89,7 +89,27 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.COBBLED_MALATITE_SLAB);
                 output.accept(RBlocks.COBBLED_MALATITE_WALL);
 
-
+                output.accept(RBlocks.SCHINITE_COPPER_ORE);
+                output.accept(RBlocks.SCHINITE_IRON_ORE);
+                output.accept(RBlocks.SCHINITE_GOLD_ORE);
+                output.accept(RBlocks.SCHINITE_DIAMOND_ORE);
+                output.accept(RBlocks.SCHINITE_EMERALD_ORE);
+                output.accept(RBlocks.SCHINITE_REDSTONE_ORE);
+                output.accept(RBlocks.SCHINITE_LAPIS_ORE);
+                output.accept(RBlocks.MAGNEISS);
+                output.accept(RBlocks.MAGNEISS_IRON_ORE);
+                output.accept(RBlocks.MAGNEISS_GOLD_ORE);
+                output.accept(RBlocks.MAGNEISS_DIAMOND_ORE);
+                output.accept(RBlocks.MAGNEISS_EMERALD_ORE);
+                output.accept(RBlocks.MAGNEISS_REDSTONE_ORE);
+                output.accept(RBlocks.MAGNEISS_LAPIS_ORE);
+                output.accept(RBlocks.MALATITE_COPPER_ORE);
+                output.accept(RBlocks.MALATITE_IRON_ORE);
+                output.accept(RBlocks.MALATITE_GOLD_ORE);
+                output.accept(RBlocks.MALATITE_DIAMOND_ORE);
+                output.accept(RBlocks.MALATITE_EMERALD_ORE);
+                output.accept(RBlocks.MALATITE_REDSTONE_ORE);
+                output.accept(RBlocks.MALATITE_LAPIS_ORE);
 
                 output.accept(RBlocks.CHALKY_SOIL);
                 output.accept(RBlocks.CHALKY_FARMLAND);
