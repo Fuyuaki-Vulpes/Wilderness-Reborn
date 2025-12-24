@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "r_wilderness:block/cobbled_schinite_slab"
+    },
+    "type=double": {
+      "model": "r_wilderness:block/cobbled_schinite"
+    },
+    "type=top": {
+      "model": "r_wilderness:block/cobbled_schinite_slab_top"
+    }
+  }
+}

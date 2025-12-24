@@ -168,7 +168,7 @@ public record RebornBiomePlacement(
                 }
                 if (continentalness > 0.05) {
 
-                    if (tectonicActivity > -5.0 && Math.clamp(sampled.highlandsMap(), 0, 1) > 0.5)
+                    if (tectonicActivity > -5.0 && sampled.highlandsMap() > 0.5)
                         return HIGHLANDS;
                     if ((sampled.erosion() < -0.5 && sampled.hills() > 0.35) || states.contains(TerrainStates.BADLANDS)) {
                         return HILLY;
@@ -225,9 +225,9 @@ public record RebornBiomePlacement(
         REGULAR_MOUNTAINS("regular_mountains",false),
         ERODED_MOUNTAINS("eroded_mountains",false),
         VOLCANIC("volcanic",true),
-        DEEP_UNDERGROUND ("deep_underground",false),
-        VERY_DEEP_UNDERGROUND ("very_deep_underground",false),
-        DEEPEST_UNDERGROUND ("deepest_underground",false),
+        DEEP_UNDERGROUND ("deep_underground",true),
+        VERY_DEEP_UNDERGROUND ("very_deep_underground",true),
+        DEEPEST_UNDERGROUND ("deepest_underground",true),
 
         ;
 

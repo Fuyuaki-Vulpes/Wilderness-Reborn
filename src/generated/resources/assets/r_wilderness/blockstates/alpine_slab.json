@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "r_wilderness:block/alpine_slab"
+    },
+    "type=double": {
+      "model": "r_wilderness:block/alpine_planks"
+    },
+    "type=top": {
+      "model": "r_wilderness:block/alpine_slab_top"
+    }
+  }
+}

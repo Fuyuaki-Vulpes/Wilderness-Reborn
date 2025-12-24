@@ -1,21 +1,7 @@
 {
   "variants": {
-    "": [
-      {
-        "model": "r_wilderness:block/cobbled_malatite"
-      },
-      {
-        "model": "r_wilderness:block/cobbled_malatite",
-        "y": 90
-      },
-      {
-        "model": "r_wilderness:block/cobbled_malatite",
-        "y": 180
-      },
-      {
-        "model": "r_wilderness:block/cobbled_malatite",
-        "y": 270
-      }
-    ]
+    "": {
+      "model": "r_wilderness:block/cobbled_malatite"
+    }
   }
 }

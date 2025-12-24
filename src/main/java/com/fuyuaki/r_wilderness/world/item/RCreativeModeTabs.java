@@ -65,11 +65,29 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.CHALK);
 
                 output.accept(RBlocks.SCHINITE);
+                output.accept(RBlocks.SCHINITE_STAIRS);
+                output.accept(RBlocks.SCHINITE_SLAB);
+                output.accept(RBlocks.SCHINITE_WALL);
                 output.accept(RBlocks.COBBLED_SCHINITE);
+                output.accept(RBlocks.COBBLED_SCHINITE_STAIRS);
+                output.accept(RBlocks.COBBLED_SCHINITE_SLAB);
+                output.accept(RBlocks.COBBLED_SCHINITE_WALL);
                 output.accept(RBlocks.MAGNEISS);
+                output.accept(RBlocks.MAGNEISS_STAIRS);
+                output.accept(RBlocks.MAGNEISS_SLAB);
+                output.accept(RBlocks.MAGNEISS_WALL);
                 output.accept(RBlocks.COBBLED_MAGNEISS);
+                output.accept(RBlocks.COBBLED_MAGNEISS_STAIRS);
+                output.accept(RBlocks.COBBLED_MAGNEISS_SLAB);
+                output.accept(RBlocks.COBBLED_MAGNEISS_WALL);
                 output.accept(RBlocks.MALATITE);
+                output.accept(RBlocks.MALATITE_STAIRS);
+                output.accept(RBlocks.MALATITE_SLAB);
+                output.accept(RBlocks.MALATITE_WALL);
                 output.accept(RBlocks.COBBLED_MALATITE);
+                output.accept(RBlocks.COBBLED_MALATITE_STAIRS);
+                output.accept(RBlocks.COBBLED_MALATITE_SLAB);
+                output.accept(RBlocks.COBBLED_MALATITE_WALL);
 
 
 

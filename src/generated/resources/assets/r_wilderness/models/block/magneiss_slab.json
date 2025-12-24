@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "r_wilderness:block/magneiss",
+    "side": "r_wilderness:block/magneiss",
+    "top": "r_wilderness:block/magneiss"
+  }
+}

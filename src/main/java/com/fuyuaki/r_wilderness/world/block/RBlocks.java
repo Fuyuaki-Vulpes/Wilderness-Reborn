@@ -29,6 +29,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
@@ -49,30 +50,118 @@ public class RBlocks {
     public static final DeferredBlock<Block> LIMESTONE = registerBlock("limestone", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
     public static final DeferredBlock<Block> MUD_STONE = registerBlock("mud_stone", BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS));
 
+    private static final BlockBehaviour.Properties SCHINITE_PROPERTIES =
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(4.5F, 7.0F);
     public static final DeferredBlock<Block> SCHINITE = registerBlock("schinite",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
-                    .strength(4.5F, 7.0F)
+            SCHINITE_PROPERTIES);
+    public static final DeferredBlock<StairBlock> SCHINITE_STAIRS = registerStair(
+            "schinite_stairs",
+            SCHINITE,
+            SCHINITE_PROPERTIES
     );
+    public static final DeferredBlock<Block> SCHINITE_SLAB = registerBlock(
+            "schinite_slab",
+            SlabBlock::new,
+            SCHINITE_PROPERTIES
+    );
+    public static final DeferredBlock<Block> SCHINITE_WALL = registerBlock(
+            "schinite_wall",
+            WallBlock::new,
+            SCHINITE_PROPERTIES
+    );
+    private static final BlockBehaviour.Properties MAGNEISS_PROPERTIES =
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(5.5F, 5.0F);
+
     public static final DeferredBlock<Block> MAGNEISS = registerBlock("magneiss",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
-                    .strength(5.5F, 5.0F)
+            MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<StairBlock> MAGNEISS_STAIRS = registerStair(
+            "magneiss_stairs",
+            MAGNEISS,
+            MAGNEISS_PROPERTIES
     );
+    public static final DeferredBlock<Block> MAGNEISS_SLAB = registerBlock(
+            "magneiss_slab",
+            SlabBlock::new,
+            MAGNEISS_PROPERTIES
+    );
+    public static final DeferredBlock<Block> MAGNEISS_WALL = registerBlock(
+            "magneiss_wall",
+            WallBlock::new,
+            MAGNEISS_PROPERTIES
+    );
+    private static final BlockBehaviour.Properties MALATITE_PROPERTIES =
+            BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_BLACK)
+            .instrument(NoteBlockInstrument.BASEDRUM)
+            .requiresCorrectToolForDrops()
+            .strength(7.0F, 4.0F);
     public static final DeferredBlock<Block> MALATITE = registerBlock("malatite",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
-                    .strength(7.0F, 4.0F)
+            MALATITE_PROPERTIES);
+    public static final DeferredBlock<StairBlock> MALATITE_STAIRS = registerStair(
+            "malatite_stairs",
+            MALATITE,
+            MALATITE_PROPERTIES
     );
+
+    public static final DeferredBlock<Block> MALATITE_SLAB = registerBlock(
+            "malatite_slab",
+            SlabBlock::new,
+            MALATITE_PROPERTIES
+    );
+    public static final DeferredBlock<Block> MALATITE_WALL = registerBlock(
+            "malatite_wall",
+            WallBlock::new,
+            MALATITE_PROPERTIES
+    );
+
     public static final DeferredBlock<Block> COBBLED_SCHINITE = registerBlock("cobbled_schinite",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
-                    .strength(4.5F, 7.0F)
+            SCHINITE_PROPERTIES
     );
+    public static final DeferredBlock<StairBlock> COBBLED_SCHINITE_STAIRS = registerStair("cobbled_schinite_stairs",
+            COBBLED_SCHINITE,SCHINITE_PROPERTIES
+    );
+    public static final DeferredBlock<Block> COBBLED_SCHINITE_SLAB = registerBlock("cobbled_schinite_slab",
+            SlabBlock::new, SCHINITE_PROPERTIES
+    );
+    public static final DeferredBlock<Block> COBBLED_SCHINITE_WALL = registerBlock("cobbled_schinite_wall",
+            WallBlock::new, SCHINITE_PROPERTIES
+    );
+
     public static final DeferredBlock<Block> COBBLED_MAGNEISS = registerBlock("cobbled_magneiss",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)
-                    .strength(5.5F, 5.0F)
+            MAGNEISS_PROPERTIES
     );
+    public static final DeferredBlock<StairBlock> COBBLED_MAGNEISS_STAIRS = registerStair("cobbled_magneiss_stairs",
+            COBBLED_MAGNEISS,MAGNEISS_PROPERTIES
+    );
+    public static final DeferredBlock<Block> COBBLED_MAGNEISS_SLAB = registerBlock("cobbled_magneiss_slab",
+            SlabBlock::new, MAGNEISS_PROPERTIES
+    );
+    public static final DeferredBlock<Block> COBBLED_MAGNEISS_WALL = registerBlock("cobbled_magneiss_wall",
+            WallBlock::new, MAGNEISS_PROPERTIES
+    );
+
     public static final DeferredBlock<Block> COBBLED_MALATITE = registerBlock("cobbled_malatite",
-            BlockBehaviour.Properties.ofFullCopy(Blocks.OBSIDIAN)
-                    .strength(7.0F, 4.0F)
+            MALATITE_PROPERTIES
     );
+    public static final DeferredBlock<StairBlock> COBBLED_MALATITE_STAIRS = registerStair("cobbled_malatite_stairs",
+            COBBLED_MALATITE,MALATITE_PROPERTIES
+    );
+    public static final DeferredBlock<Block> COBBLED_MALATITE_SLAB = registerBlock("cobbled_malatite_slab",
+            SlabBlock::new, MALATITE_PROPERTIES
+    );
+    public static final DeferredBlock<Block> COBBLED_MALATITE_WALL = registerBlock("cobbled_malatite_wall",
+            WallBlock::new, MALATITE_PROPERTIES
+    );
+
+
 
     //Soils
 
@@ -219,6 +308,13 @@ public class RBlocks {
         RItems.registerItem(name, (p) -> new BlockItem(BLOCK.get(), p),new Item.Properties());
         return BLOCK;
     }
+    private static <B extends Block> DeferredBlock<B> registerBlock(String name, Function<BlockBehaviour.Properties, B> factory, Supplier<BlockBehaviour.Properties> properties) {
+        DeferredBlock<B> BLOCK = BLOCKS.registerBlock(name,factory,properties);
+        RItems.registerItem(name, (p) -> new BlockItem(BLOCK.get(), p),new Item.Properties());
+        return BLOCK;
+    }
+
+
     private static <B extends Block> DeferredBlock<?> registerBlockWithItemCustomProperties(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties, Item.Properties iProperties) {
         DeferredBlock<B> BLOCK = register(name,factory,properties);
         RItems.registerItem(name, (p) -> new BlockItem(BLOCK.get(), p), iProperties);
@@ -233,11 +329,11 @@ public class RBlocks {
         return registerBlock(name, Block::new, properties);
     }
 
-    private static DeferredBlock<StairBlock> registerStair(String name, Block baseBlock) {
-        return registerBlock(name, p_368009_ -> new StairBlock(baseBlock.defaultBlockState(), p_368009_), BlockBehaviour.Properties.ofFullCopy(baseBlock));
+    private static DeferredBlock<StairBlock> registerStair(String name, DeferredBlock<Block> baseBlock,BlockBehaviour.Properties properties) {
+        return registerBlock(name, p -> new StairBlock(baseBlock.get().defaultBlockState(), p), () -> properties);
     }
 
-    private static BlockBehaviour.Properties wallVariant(Block baseBlock, boolean overrideDescription) {
+    private static BlockBehaviour.Properties signWallVariant(Block baseBlock, boolean overrideDescription) {
         BlockBehaviour.Properties blockbehaviour$properties = baseBlock.properties();
         BlockBehaviour.Properties blockbehaviour$properties1 = BlockBehaviour.Properties.of().overrideLootTable(baseBlock.getLootTable());
         if (overrideDescription) {

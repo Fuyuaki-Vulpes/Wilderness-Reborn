@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "r_wilderness:block/cobbled_magneiss",
+    "side": "r_wilderness:block/cobbled_magneiss",
+    "top": "r_wilderness:block/cobbled_magneiss"
+  }
+}

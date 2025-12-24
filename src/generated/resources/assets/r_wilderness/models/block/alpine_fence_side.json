@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/fence_side",
+  "textures": {
+    "texture": "r_wilderness:block/alpine_planks"
+  }
+}

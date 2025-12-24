@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "r_wilderness:block/cobbled_magneiss_slab"
+    },
+    "type=double": {
+      "model": "r_wilderness:block/cobbled_magneiss"
+    },
+    "type=top": {
+      "model": "r_wilderness:block/cobbled_magneiss_slab_top"
+    }
+  }
+}

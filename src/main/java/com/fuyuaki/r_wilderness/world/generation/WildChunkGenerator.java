@@ -356,7 +356,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         String mountain = decimalformat.format(sampled.mountains());
         String mountainDetail = decimalformat.format(sampled.mountainDetails());
         String mountainNoise = decimalformat.format(sampled.mountainNoise());
-        String plateau = decimalformat.format(Math.pow(Math.clamp(sampled.highlandsMap(), 0, 1), 5));
+        String plateau = decimalformat.format(sampled.highlandsMap());
         String hill = decimalformat.format(sampled.hills());
         String terrainTypeA = decimalformat.format(sampled.terrainTypeA());
         String terrainTypeB = decimalformat.format(sampled.terrainTypeB());

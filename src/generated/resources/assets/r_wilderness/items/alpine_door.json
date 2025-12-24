@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "r_wilderness:block/alpine_door"
+    "model": "r_wilderness:item/alpine_door"
   }
 }

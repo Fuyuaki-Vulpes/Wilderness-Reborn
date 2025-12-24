@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "r_wilderness:block/alpine_sign"
+    "model": "r_wilderness:item/alpine_sign"
   }
 }

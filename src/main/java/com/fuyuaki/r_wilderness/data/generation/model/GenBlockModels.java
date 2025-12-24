@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.data.generation.model;
 
+import com.fuyuaki.r_wilderness.world.block.ModFamilies;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.client.color.item.GrassColorSource;
 import net.minecraft.client.color.item.ItemTintSource;
@@ -12,6 +13,7 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.data.BlockFamily;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.Weighted;
 import net.minecraft.util.random.WeightedList;
@@ -21,8 +23,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredBlock;
+import org.jspecify.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -34,28 +43,39 @@ public class GenBlockModels extends BlockModelGenerators {
     public final Consumer<BlockModelDefinitionGenerator> blockStateOutput;
     final BiConsumer<Identifier, ModelInstance> modelOutput;
 
+
     public GenBlockModels(ModModelProvider.BlockStateGeneratorCollector blockStateOutput, ItemModelOutput itemModelOutput, BiConsumer<Identifier, ModelInstance> modelOutput) {
         super(blockStateOutput, itemModelOutput, modelOutput);
         this.blockStateOutput = blockStateOutput;
         this.modelOutput = modelOutput;
+
     }
+    public static final Map<Block, BlockModelGenerators.BlockStateGeneratorSupplier> FULL_BLOCK_MODEL_CUSTOM_GENERATORS = Map.of(
+            RBlocks.COBBLED_SCHINITE.get(),
+            BlockModelGenerators::createMirroredCubeGenerator,
+            RBlocks.SCHINITE.get(),
+            BlockModelGenerators::createMirroredCubeGenerator,
+            RBlocks.COBBLED_MAGNEISS.get(),
+            BlockModelGenerators::createMirroredCubeGenerator,
+            RBlocks.MAGNEISS.get(),
+            BlockModelGenerators::createMirroredCubeGenerator,
+            RBlocks.COBBLED_MALATITE.get(),
+            BlockModelGenerators::createMirroredCubeGenerator,
+            RBlocks.MALATITE.get(),
+            BlockModelGenerators::createMirroredCubeGenerator
+    );
 
     @Override
     public void run() {
-//        ModFamilies.getAllFamilies()
-//                .filter(BlockFamily::shouldGenerateModel)
-//                .forEach(p_386718_ -> this.family(p_386718_.getBaseBlock()).generateFor(p_386718_));
+        ModFamilies.getAllFamilies()
+                .filter(BlockFamily::shouldGenerateModel)
+                .forEach(blockFamily -> this.family(blockFamily.getBaseBlock()).generateFor(blockFamily));
+
+
 
         createTrivialCube(RBlocks.CHALK.get());
         createTrivialCube(RBlocks.LIMESTONE.get());
         createTrivialCube(RBlocks.MUD_STONE.get());
-
-        createRotatedVariantBlock(RBlocks.SCHINITE.get());
-        createRotatedVariantBlock(RBlocks.COBBLED_SCHINITE.get());
-        createRotatedVariantBlock(RBlocks.MAGNEISS.get());
-        createRotatedVariantBlock(RBlocks.COBBLED_MAGNEISS.get());
-        createRotatedVariantBlock(RBlocks.MALATITE.get());
-        createRotatedVariantBlock(RBlocks.COBBLED_MALATITE.get());
 
         createTrivialCube(RBlocks.CHALKY_SOIL.get());
         createFarmland(RBlocks.CHALKY_FARMLAND, RBlocks.CHALKY_SOIL);
@@ -87,7 +107,6 @@ public class GenBlockModels extends BlockModelGenerators {
 
     private void vanillaOverride() {
         this.createGrassBlock(Blocks.GRASS_BLOCK,Blocks.DIRT,new GrassColorSource());
-
         this.createRTintedPlantBlock(Blocks.SHORT_GRASS, RPlantType.TINTED);
         this.createRTintedPlantBlock(Blocks.BUSH, RPlantType.TINTED);
         this.createRPlantBlock(Blocks.SHORT_DRY_GRASS, RPlantType.NOT_TINTED);
@@ -292,7 +311,4 @@ public class GenBlockModels extends BlockModelGenerators {
             return this.isEmissive ? TextureMapping.plantEmissive(block) : TextureMapping.plant(block);
         }
     }
-
-
-
 }

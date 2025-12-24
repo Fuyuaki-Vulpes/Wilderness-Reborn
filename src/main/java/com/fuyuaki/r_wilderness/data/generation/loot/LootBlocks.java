@@ -46,9 +46,28 @@ public class LootBlocks extends BlockLootSubProvider {
         add(RBlocks.SCHINITE.get(), block -> createSingleItemTableWithSilkTouch(block, RBlocks.COBBLED_SCHINITE));
         add(RBlocks.MAGNEISS.get(), block -> createSilkTouchDispatchTable(block, applyExplosionDecay(block,LootItem.lootTableItem(RBlocks.COBBLED_MAGNEISS))));
         add(RBlocks.MALATITE.get(), block -> createSilkTouchDispatchTable(block, applyExplosionDecay(block,LootItem.lootTableItem(RBlocks.COBBLED_MALATITE))));
+        dropSelf(RBlocks.SCHINITE_STAIRS.get());
+        dropSelf(RBlocks.SCHINITE_SLAB.get());
+        dropSelf(RBlocks.SCHINITE_WALL.get());
+        dropSelf(RBlocks.MAGNEISS_STAIRS.get());
+        dropSelf(RBlocks.MAGNEISS_SLAB.get());
+        dropSelf(RBlocks.MAGNEISS_WALL.get());
+        dropSelf(RBlocks.MALATITE_STAIRS.get());
+        dropSelf(RBlocks.MALATITE_SLAB.get());
+        dropSelf(RBlocks.MALATITE_WALL.get());
+
         dropSelf(RBlocks.COBBLED_SCHINITE.get());
+        dropSelf(RBlocks.COBBLED_SCHINITE_STAIRS.get());
+        dropSelf(RBlocks.COBBLED_SCHINITE_SLAB.get());
+        dropSelf(RBlocks.COBBLED_SCHINITE_WALL.get());
         dropSelf(RBlocks.COBBLED_MAGNEISS.get());
+        dropSelf(RBlocks.COBBLED_MAGNEISS_STAIRS.get());
+        dropSelf(RBlocks.COBBLED_MAGNEISS_SLAB.get());
+        dropSelf(RBlocks.COBBLED_MAGNEISS_WALL.get());
         dropSelf(RBlocks.COBBLED_MALATITE.get());
+        dropSelf(RBlocks.COBBLED_MALATITE_STAIRS.get());
+        dropSelf(RBlocks.COBBLED_MALATITE_SLAB.get());
+        dropSelf(RBlocks.COBBLED_MALATITE_WALL.get());
 
         dropSelf(RBlocks.CHALKY_SOIL.get());
         dropOther(RBlocks.CHALKY_FARMLAND.get(), RBlocks.CHALKY_SOIL);

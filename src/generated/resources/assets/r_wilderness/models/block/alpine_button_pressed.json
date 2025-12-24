@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button_pressed",
+  "textures": {
+    "texture": "r_wilderness:block/alpine_planks"
+  }
+}

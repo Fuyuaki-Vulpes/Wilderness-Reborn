@@ -46,8 +46,8 @@ public class TerrainParameters {
     private static final float baseContinentSize = 1.0F;
     private static final float baseTectonicSize = 1.5F;
     private static final float highlandsOffset = 1.5F;
-    private static final float highlandsScale = 1 / 0.75F;
-    private static final float terrainTypeScale = 1 / 0.5F;
+    private static final float highlandsSize = 1.5F;
+    private static final float terrainTypeScale = 2.0F;
     private static final float mountainCoordsSize = 0.6F;
     private static final float temperatureScale = 1.0F;
     private static final float humidityScale = 0.75F;
@@ -214,6 +214,16 @@ public class TerrainParameters {
         return x * 16 + z;
     }
 
+
+    private static double get(PerlinNoise noise, int x, int z){
+        return noise.getValue(x,0,z) * 2;
+    }
+    private static double get(PerlinNoise noise, float x, float z){
+        return noise.getValue(x,0,z) * 2;
+    }
+    private static double get(PerlinNoise noise, double x, double z){
+        return noise.getValue(x,0,z) * 2;
+    }
 
     private static double getC(PerlinNoise noise, int x, int z){
         return Mth.clamp(noise.getValue(x,0,z) * 2,-1.5,1.5);
@@ -417,10 +427,43 @@ public class TerrainParameters {
     }
 
     private double sampleHighlands(int xPos, int zPos, double continentalness) {
-        return (Math.sin(((
-                Math.pow(Math.clamp((getC(this.shapers.highlandsMap, xPos / baseTectonicSize / highlandsScale, zPos / baseTectonicSize / highlandsScale) - highlandsOffset) * 2, 0, 1), 3)
-                        *
-                        Math.clamp(continentalness * 7, -0.2, 1)) - 0.5) * Mth.PI) + 1) / 2;
+        DistortionSpline cFilter = new DistortionSpline(
+                new DistortionSpline.Spline()
+                        .addPoint(-5,0)
+                        .addPoint(0.0,0)
+                        .addPoint(0.05F, 0)
+                        .addPoint(0.25F, 1)
+                        .addPoint(5.0F, 1),
+                0,1
+        );
+
+        float x = xPos / baseTectonicSize / highlandsSize;
+        float z = zPos / baseTectonicSize / highlandsSize;
+        double highlands = get(this.shapers.highlandsMap, x, z);
+        return Math.clamp(
+                Math.pow(
+                        (highlands - highlandsOffset) * 2,
+                        3)
+                * cFilter.at(continentalness)
+                ,0,1);
+    }
+    private double unclampedHighlands(int xPos, int zPos, double continentalness) {
+        DistortionSpline cFilter = new DistortionSpline(
+                new DistortionSpline.Spline()
+                        .addPoint(-5,0)
+                        .addPoint(0.0,0)
+                        .addPoint(0.05F, 0)
+                        .addPoint(0.25F, 1)
+                        .addPoint(5.0F, 1),
+                0,1
+        );
+        float x = xPos / baseTectonicSize / highlandsSize;
+        float z = zPos / baseTectonicSize / highlandsSize;
+        double highlands = get(this.shapers.highlandsMap, x, z);
+        return Math.pow(
+                (highlands - highlandsOffset) * 2,
+                3)
+                * cFilter.at(continentalness);
     }
 
     /**
@@ -763,7 +806,7 @@ public class TerrainParameters {
 
         double tA = 1 - Math.pow(tectonicActivity,2);
         double hillHighlandsStart = 5.0;
-        if (tA <= -hillHighlandsStart) return 0;
+        if (tectonicActivity <= -hillHighlandsStart) return 0;
 
 
         double continentalFilter = Math.clamp((continentalness * (1/0.05F)),0,1);
@@ -784,13 +827,14 @@ public class TerrainParameters {
                 42,0
         );
         double hillSize = hillErosionBasedSize.at(erosion);
-        double hillShape = (Math.min((tA + hillHighlandsStart), 1)) * hills * hillSize * continentalFilter;
+        double tA2 = Math.clamp((tectonicActivity + hillHighlandsStart), 0, 1);
+        double hillShape = tA2 * hills * hillSize * continentalFilter;
 
         double highlandFilter = (1 - highlands) * 0.5 + 0.5;
 
 
         double highlandHeight = terrainType.mapValues(80,40,60,70);
-        double highlandShape = highlands * highlandHeight * Math.min((tA + hillHighlandsStart) * 1.5, 1);
+        double highlandShape = highlands * highlandHeight * tA2;
 
         if (tA <= 0) return NaNCheck(highlandShape + hillShape);
 
@@ -1026,9 +1070,9 @@ public class TerrainParameters {
         double terrainB = this.shapers.terrainTypeB.getValue((xContinental / baseTectonicSize) / terrainTypeScale, 0, (zContinental / baseTectonicSize) / terrainTypeScale);
         double tectonicActivity = this.shapers.tectonicActivity.getValue(xPos / baseTectonicSize, 0, zPos / baseTectonicSize) * 2.5;
         double tA = 1 - Math.pow(tectonicActivity,2);
-        double tA2 = 1 - Math.clamp((Math.abs(tectonicActivity) - 3), 0, 1);
+        double tA2 = Math.clamp((tectonicActivity + 5), 0, 1);
         double continentalness = (this.shapers.continentalness.getValue(xContinental * baseContinentSize, 0, zPos * continentScale * baseContinentSize) * 2) + 0.2;
-        double highlandsMap = sampleHighlands(xPos, zPos, continentalness);
+        double highlandsMap = unclampedHighlands(xPos, zPos, continentalness);
         double erosion = sampleErosionMap(x,z);
 
 
@@ -1065,8 +1109,8 @@ public class TerrainParameters {
                 alpha,
                 alphaDetail,
                 alphaNoise,
-                highlandsMap * Math.clamp((tA + 3.0) * 1.5, 0,1),
-                Math.abs(this.shapers.hills.getValue(xM, 0, zM)) * tA2,
+                highlandsMap,
+                Math.pow(Math.abs(getC(this.shapers.hills, x, z)),1.25) * tA2,
                 Math.max(Math.abs(this.shapers.terrainOffset.getValue(x, 0, z))
                         , Math.abs(this.shapers.terrainOffsetLarge.getValue(x, 0, z)))
                         + (Math.abs(this.shapers.terrainNoise.getValue(x, 0, z)) * 0.125),

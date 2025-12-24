@@ -1,21 +1,7 @@
 {
   "variants": {
-    "": [
-      {
-        "model": "r_wilderness:block/cobbled_schinite"
-      },
-      {
-        "model": "r_wilderness:block/cobbled_schinite",
-        "y": 90
-      },
-      {
-        "model": "r_wilderness:block/cobbled_schinite",
-        "y": 180
-      },
-      {
-        "model": "r_wilderness:block/cobbled_schinite",
-        "y": 270
-      }
-    ]
+    "": {
+      "model": "r_wilderness:block/cobbled_schinite"
+    }
   }
 }

@@ -1,21 +1,7 @@
 {
   "variants": {
-    "": [
-      {
-        "model": "r_wilderness:block/magneiss"
-      },
-      {
-        "model": "r_wilderness:block/magneiss",
-        "y": 90
-      },
-      {
-        "model": "r_wilderness:block/magneiss",
-        "y": 180
-      },
-      {
-        "model": "r_wilderness:block/magneiss",
-        "y": 270
-      }
-    ]
+    "": {
+      "model": "r_wilderness:block/magneiss"
+    }
   }
 }

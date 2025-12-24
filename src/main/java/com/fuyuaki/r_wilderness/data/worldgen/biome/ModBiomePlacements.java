@@ -25,21 +25,25 @@ public abstract class ModBiomePlacements {
     private static final TerrainParameters.Range HOT = range(0.75,0.85, 2.5);
     private static final TerrainParameters.Range WARM = range(0.35,0.75);
     private static final TerrainParameters.Range LUKEWARM = range(0.15,0.35);
-    private static final TerrainParameters.Range NEUTRAL = range(-0.35,0.35);
+    private static final TerrainParameters.Range NEUTRAL = range(-0.15,0.15);
     private static final TerrainParameters.Range COOL = range(-0.35,0.-0.15);
     private static final TerrainParameters.Range COLD = range(-0.75,-0.35);
     private static final TerrainParameters.Range FREEZING = range(-2.5,-0.85, -0.75);
 
     private static final TerrainParameters.Range NEGATIVE = range(-2.5,-0.5,0.0);
     private static final TerrainParameters.Range POSITIVE = range(0.0,0.5,2.5);
-    private static final TerrainParameters.Range FOREST_VEGETATION = range(0.45,1.5);
+    private static final TerrainParameters.Range FOREST_VEGETATION = range(0.35,0.45,1.5);
 
-    private static final TerrainParameters.Range VERY_LOW = range(-10,-0.95,-0.85);
-    private static final TerrainParameters.Range LOW = range(-0.85,-0.6);
-    private static final TerrainParameters.Range LOWISH = range(-0.6,-0.35);
-    private static final TerrainParameters.Range HIGHISH = range(0.35,0.6);
-    private static final TerrainParameters.Range HIGH = range(0.6,0.85);
-    private static final TerrainParameters.Range VERY_HIGH = range(0.85,0.95,10);
+    private static final TerrainParameters.Range NEUTRAL_WIDE = range(-0.35,0.35);
+
+    private static final TerrainParameters.Range LOWEST = range(-10,-0.95,-0.85);
+    private static final TerrainParameters.Range VERY_LOW = range(-0.85,-0.5);
+    private static final TerrainParameters.Range LOW = range(-0.5,-0.35);
+    private static final TerrainParameters.Range LOWISH = range(-0.35,-0.15);
+    private static final TerrainParameters.Range HIGHISH = range(0.15,0.35);
+    private static final TerrainParameters.Range HIGH = range(0.35,0.5);
+    private static final TerrainParameters.Range VERY_HIGH = range(0.5,0.85);
+    private static final TerrainParameters.Range HIGHEST = range(0.85,0.95,10);
 
     private static final TerrainParameters.Range FULL = range(-1.5,0,1.5);
     private static final TerrainParameters.Range NONE = range(0,0);
@@ -54,14 +58,14 @@ public abstract class ModBiomePlacements {
     public static final TerrainParameters.Range TECTONIC_ANY = range(-6,0, 1.0);
     public static final TerrainParameters.Range TECTONIC_LOW = range(-6,-0.5, 0.1);
     public static final TerrainParameters.Range TECTONIC_FOREST = range(-10,0, 0.5);
-    public static final TerrainParameters.Range TECTONIC_GROVES = range(-3,0.15, 1.0);
-    public static final TerrainParameters.Range TECTONICS_BADLAND = rangeMax(-3.5, 0.3);
+    public static final TerrainParameters.Range TECTONIC_GROVES = range(-5,0.15, 5.0);
+    public static final TerrainParameters.Range TECTONICS_BADLAND = rangeMax(-5.5, 0.3);
 
     public static final TerrainParameters.Range HIGHLANDS_AREA = rangeMax(0.15, 0.5);
     public static final TerrainParameters.Range HIGHLANDS_NONE = range(-1.5,0,0.15);
 
     private static final TerrainParameters.Range HEIGHT_RANGE_ANY = range(WildernessConstants.WORLD_BOTTOM,WildernessConstants.BUILD_HEIGHT);
-    private static final TerrainParameters.Range HEIGHT_RANGE_NATURAL = range(WildernessConstants.WORLD_BOTTOM,72,240);
+    private static final TerrainParameters.Range HEIGHT_RANGE_NATURAL = range(WildernessConstants.WORLD_BOTTOM,68,240);
     private static final TerrainParameters.Range HEIGHT_RANGE_SHALLOW = range(WildernessConstants.WORLD_BOTTOM,64,92);
     private static final double HEIGHT_BOTTOM = WildernessConstants.WORLD_BOTTOM;
     private static final double HEIGHT_TOP = WildernessConstants.BUILD_HEIGHT;
@@ -179,7 +183,7 @@ public abstract class ModBiomePlacements {
                         FULL, //Highlands
                         FULL, //Erosion
                         HEIGHT_RANGE_NATURAL, //Terrain Height
-                        HIGH //Weirdness
+                        VERY_HIGH //Weirdness
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, MOUNTAIN, HIGHLANDS)
@@ -205,7 +209,7 @@ public abstract class ModBiomePlacements {
                 target(
                         FREEZING, //Temperature
                         POSITIVE, //Humidity
-                        VERY_LOW, //Vegetation Density
+                        LOWEST, //Vegetation Density
                         POSITIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
@@ -221,7 +225,7 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.FOREST),
                 target(
                         LUKEWARM, //Temperature
-                        HIGH, //Humidity
+                        NEUTRAL, //Humidity
                         FOREST_VEGETATION, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -229,7 +233,7 @@ public abstract class ModBiomePlacements {
                         FULL, //Highlands
                         FULL, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        NEUTRAL //Weirdness
+                        NEUTRAL_WIDE //Weirdness
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS)
@@ -238,15 +242,15 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.FLOWER_FOREST),
                 target(
                         LUKEWARM, //Temperature
-                        HIGH, //Humidity
-                        VERY_HIGH, //Vegetation Density
-                        LOW, //Rockiness
+                        NEUTRAL, //Humidity
+                        FOREST_VEGETATION, //Vegetation Density
+                        VERY_LOW, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_FOREST, //Tectonic Activity
                         FULL, //Highlands
                         FULL, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        NEUTRAL //Weirdness
+                        LOW //Weirdness
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS)
@@ -256,7 +260,7 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.BIRCH_FOREST),
                 target(
                         NEUTRAL, //Temperature
-                        HIGH, //Humidity
+                        VERY_HIGH, //Humidity
                         FOREST_VEGETATION, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -264,7 +268,7 @@ public abstract class ModBiomePlacements {
                         FULL, //Highlands
                         NEGATIVE, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        LOW //Weirdness
+                        HIGH //Weirdness
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS)
@@ -273,15 +277,15 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.OLD_GROWTH_BIRCH_FOREST),
                 target(
                         NEUTRAL, //Temperature
-                        HIGH, //Humidity
+                        NEUTRAL, //Humidity
                         FOREST_VEGETATION, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
-                        range(-10, 0.75), //Tectonic Activity
+                        range(-10, -0.15), //Tectonic Activity
                         FULL, //Highlands
-                        POSITIVE, //Erosion
+                        range(HIGH,HIGHEST), //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        LOW //Weirdness
+                        VERY_HIGH //Weirdness
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS)
@@ -290,15 +294,15 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.DARK_FOREST),
                 target(
                         COOL, //Temperature
-                        HIGH, //Humidity
-                        FOREST_VEGETATION, //Vegetation Density
+                        VERY_HIGH, //Humidity
+                        range(VERY_HIGH,HIGHEST), //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
                         FULL, //Highlands
                         FULL, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        HIGH //Weirdness
+                        VERY_HIGH //Weirdness
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS)
@@ -308,14 +312,14 @@ public abstract class ModBiomePlacements {
                 target(
                         COOL, //Temperature
                         NEUTRAL, //Humidity
-                        FOREST_VEGETATION, //Vegetation Density
-                        NEUTRAL, //Rockiness
+                        range(VERY_HIGH,HIGHEST), //Vegetation Density
+                        NEUTRAL_WIDE, //Rockiness
                         range(0.6, 1.5), //Continentalness
                         range(-5.5, 1.0), //Tectonic Activity
                         FULL, //Highlands
                         FULL, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        VERY_HIGH, //Weirdness
+                        HIGHEST, //Weirdness
                         HIGHISH
                 ),
                 List.of(
@@ -325,15 +329,15 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.JUNGLE),
                 target(
                         HOT, //Temperature
-                        HIGH, //Humidity
-                        VERY_HIGH, //Vegetation Density
+                        VERY_HIGH, //Humidity
+                        HIGHEST, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
                         FULL, //Highlands
                         FULL, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        NEUTRAL //Weirdness
+                        NEUTRAL_WIDE //Weirdness
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS)
@@ -342,7 +346,7 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.SPARSE_JUNGLE),
                 target(
                         HOT, //Temperature
-                        HIGH, //Humidity
+                        VERY_HIGH, //Humidity
                         POSITIVE, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -350,7 +354,7 @@ public abstract class ModBiomePlacements {
                         FULL, //Highlands
                         FULL, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        NEUTRAL //Weirdness
+                        NEUTRAL_WIDE //Weirdness
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS)
@@ -360,15 +364,15 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.BAMBOO_JUNGLE),
                 target(
                         HOT, //Temperature
-                        HIGH, //Humidity
-                        HIGH, //Vegetation Density
+                        VERY_HIGH, //Humidity
+                        VERY_HIGH, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
                         FULL, //Highlands
                         FULL, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        HIGH //Weirdness
+                        POSITIVE //Weirdness
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS)
@@ -379,13 +383,13 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.SWAMP),
                 target(
                         WARM, //Temperature
-                        HIGH, //Humidity
+                        HIGHEST, //Humidity
                         range(-0.6, 0.25), //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
-                        range(-5, -0.5), //Tectonic Activity
+                        range(-10, -0.5), //Tectonic Activity
                         NONE, //Highlands
-                        VERY_HIGH, //Erosion
+                        HIGHEST, //Erosion
                         HEIGHT_RANGE_SHALLOW, // Terrain Height
                         NEUTRAL //Weirdness
                 ),
@@ -396,13 +400,13 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.MANGROVE_SWAMP),
                 target(
                         WARM, //Temperature
-                        HIGH, //Humidity
+                        HIGHEST, //Humidity
                         FOREST_VEGETATION, //Vegetation Density
                         NEUTRAL, //Rockiness
                         CONTINENT_INLAND, //Continentalness
-                        range(-5, -0.5), //Tectonic Activity
+                        range(-10, -0.5), //Tectonic Activity
                         NONE, //Highlands
-                        VERY_HIGH, //Erosion
+                        HIGHEST, //Erosion
                         HEIGHT_RANGE_SHALLOW, // Terrain Height
                         NEUTRAL //Weirdness
                 ),
@@ -414,7 +418,7 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.TAIGA),
                 target(
                         COLD, //Temperature
-                        HIGH, //Humidity
+                        NEUTRAL, //Humidity
                         FOREST_VEGETATION, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -431,15 +435,15 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.OLD_GROWTH_PINE_TAIGA),
                 target(
                         COLD, //Temperature
-                        HIGH, //Humidity
+                        HIGHISH, //Humidity
                         FOREST_VEGETATION, //Vegetation Density
                         NEUTRAL, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_FOREST, //Tectonic Activity
                         FULL, //Highlands
-                        POSITIVE, //Erosion
+                        HIGH, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        LOW // WEIRDNESS
+                        NEGATIVE // WEIRDNESS
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS, MOUNTAIN)
@@ -448,15 +452,15 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.OLD_GROWTH_SPRUCE_TAIGA),
                 target(
                         COLD, //Temperature
-                        HIGH, //Humidity
+                        HIGHISH, //Humidity
                         FOREST_VEGETATION, //Vegetation Density
                         NEUTRAL, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_FOREST, //Tectonic Activity
                         FULL, //Highlands
-                        NEGATIVE, //Erosion
+                        VERY_HIGH, //Erosion
                         HEIGHT_RANGE_NATURAL, // Terrain Height
-                        LOW // WEIRDNESS
+                        NEGATIVE // WEIRDNESS
                 ),
                 List.of(
                         HILLY, SHORE, NORMAL, HIGHLANDS)
@@ -465,7 +469,7 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.SNOWY_TAIGA),
                 target(
                         FREEZING, //Temperature
-                        HIGH, //Humidity
+                        NEUTRAL, //Humidity
                         FOREST_VEGETATION, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -482,7 +486,7 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.SAVANNA),
                 target(
                         HOT, //Temperature
-                        range(LOW,LOWISH), //Humidity
+                        range(VERY_LOW, LOW), //Humidity
                         NEUTRAL, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -500,7 +504,7 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.SAVANNA_PLATEAU),
                 target(
                         HOT, //Temperature
-                        range(LOW,LOWISH), //Humidity
+                        range(VERY_LOW, LOW), //Humidity
                         NEUTRAL, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
@@ -519,13 +523,13 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.DESERT),
                 target(
                         HOT, //Temperature
-                        range(VERY_LOW,LOW), //Humidity
-                        range(VERY_LOW,LOW), //Vegetation Density
-                        range(VERY_LOW,NEUTRAL), //Rockiness
+                        range(LOWEST, VERY_LOW), //Humidity
+                        range(LOWEST, VERY_LOW), //Vegetation Density
+                        range(LOWEST,NEUTRAL), //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_LOW, //Tectonic Activity
                         HIGHLANDS_NONE, //Highlands
-                        range(HIGH,VERY_HIGH), //Erosion
+                        range(VERY_HIGH, HIGHEST), //Erosion
                         HEIGHT_RANGE_NATURAL // Terrain Height
                 ),
                 List.of(
@@ -554,8 +558,8 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.CHERRY_GROVE),
                 target(
                         NEUTRAL, //Temperature
-                        HIGH, //Humidity
-                        POSITIVE, //Vegetation Density
+                        POSITIVE, //Humidity
+                        HIGH, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_GROVES, //Tectonic Activity
@@ -572,7 +576,7 @@ public abstract class ModBiomePlacements {
                         COLD, //Temperature
                         NEUTRAL, //Humidity
                         FOREST_VEGETATION, //Vegetation Density
-                        NEGATIVE, //Rockiness
+                        NEUTRAL_WIDE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONIC_GROVES, //Tectonic Activity
                         HIGHLANDS_AREA, //Highlands
@@ -606,7 +610,7 @@ public abstract class ModBiomePlacements {
                 target(
                         COLD, //Temperature
                         NEUTRAL, //Humidity
-                        LOW, //Vegetation Density
+                        VERY_LOW, //Vegetation Density
                         range(-1.0, 0.5), //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         rangeMax(0, 1.0), //Tectonic Activity
@@ -622,14 +626,14 @@ public abstract class ModBiomePlacements {
         placement(context, WINDSWEPT_HILLS,
                 getBiomeHolder(lookup, Biomes.WINDSWEPT_HILLS),
                 target(
-                        NEUTRAL, //Temperature
+                        COLD, //Temperature
                         NEUTRAL, //Humidity
                         NEGATIVE, //Vegetation Density
                         NEUTRAL, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         rangeMax(0, 1.0), //Tectonic Activity
                         rangeMinZero(0.15), //Highlands
-                        FULL, //Erosion
+                        POSITIVE, //Erosion
                         range(80, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
@@ -640,14 +644,14 @@ public abstract class ModBiomePlacements {
         placement(context, WINDSWEPT_GRAVELLY_HILLS,
                 getBiomeHolder(lookup, Biomes.WINDSWEPT_GRAVELLY_HILLS),
                 target(
-                        WARM, //Temperature
+                        COLD, //Temperature
                         NEGATIVE, //Humidity
                         NEGATIVE, //Vegetation Density
                         POSITIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         rangeMax(0, 1.0), //Tectonic Activity
                         rangeMinZero(0.15), //Highlands
-                        NEGATIVE, //Erosion
+                        POSITIVE, //Erosion
                         range(80, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
@@ -658,14 +662,14 @@ public abstract class ModBiomePlacements {
         placement(context, WINDSWEPT_FOREST,
                 getBiomeHolder(lookup, Biomes.WINDSWEPT_FOREST),
                 target(
-                        WARM, //Temperature
+                        COLD, //Temperature
                         POSITIVE, //Humidity
-                        POSITIVE, //Vegetation Density
+                        HIGHISH, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         rangeMax(0, 1.0), //Tectonic Activity
                         rangeMinZero(0.15), //Highlands
-                        FULL, //Erosion
+                        POSITIVE, //Erosion
                         range(80, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
@@ -677,13 +681,13 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.WINDSWEPT_SAVANNA),
                 target(
                         HOT, //Temperature
-                        range(LOW,LOWISH), //Humidity
+                        range(VERY_LOW, LOW), //Humidity
                         NEUTRAL, //Vegetation Density
                         NEUTRAL, //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         rangeMax(0, 1.0), //Tectonic Activity
                         rangeMinZero(0.15), //Highlands
-                        FULL, //Erosion
+                        POSITIVE, //Erosion
                         range(80, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
@@ -696,48 +700,48 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.BADLANDS),
                 target(
                         range(WARM,HOT), //Temperature
-                        range(VERY_LOW,NEUTRAL), //Humidity
-                        range(VERY_LOW,NEUTRAL), //Vegetation Density
-                        range(NEUTRAL,VERY_HIGH), //Rockiness
+                        range(LOWEST,NEUTRAL), //Humidity
+                        range(LOWEST,LOW), //Vegetation Density
+                        range(NEUTRAL, HIGHEST), //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONICS_BADLAND, //Tectonic Activity
-                        rangeMax(-0.15, 0.5), //Highlands
-                        range(VERY_LOW, HIGHISH), //Erosion
+                        rangeMax(-3.0, 0.5), //Highlands
+                        range(LOWEST, HIGHISH), //Erosion
                         range(64, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
                         HILLY,MOUNTAIN,HIGHLANDS),
-                List.of(TERRAIN_BADLANDS,FAULT_SURROUNDINGS)
+                List.of(TERRAIN_BADLANDS)
         );
         placementWithLiked(context, ERODED_BADLANDS,
                 getBiomeHolder(lookup, Biomes.ERODED_BADLANDS),
                 target(
                         range(WARM,HOT), //Temperature
-                        range(LOWISH,HIGHISH), //Humidity
-                        range(VERY_LOW,LOW), //Vegetation Density
-                        range(LOWISH,VERY_HIGH), //Rockiness
+                        range(LOW,HIGHISH), //Humidity
+                        range(LOWEST, VERY_LOW), //Vegetation Density
+                        range(LOW, HIGHEST), //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONICS_BADLAND, //Tectonic Activity
-                        rangeMax(-0.15, 0.5), //Highlands
-                        range(NEUTRAL, HIGH), //Erosion
+                        rangeMax(-3.0, 0.5), //Highlands
+                        range(NEUTRAL, VERY_HIGH), //Erosion
                         range(64, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
                         HILLY,MOUNTAIN,HIGHLANDS),
-                List.of(TERRAIN_BADLANDS,FAULT_SURROUNDINGS)
+                List.of(TERRAIN_BADLANDS)
         );
 
         placementWithLiked(context, WOODED_BADLANDS,
                 getBiomeHolder(lookup, Biomes.WOODED_BADLANDS),
                 target(
                         range(WARM,HOT), //Temperature
-                        range(VERY_LOW,NEUTRAL), //Humidity
-                        range(HIGHISH,VERY_HIGH), //Vegetation Density
-                        range(LOW,VERY_HIGH), //Rockiness
+                        range(LOWEST,NEUTRAL), //Humidity
+                        NEUTRAL_WIDE, //Vegetation Density
+                        range(VERY_LOW, HIGHEST), //Rockiness
                         CONTINENT_INLAND, //Continentalness
                         TECTONICS_BADLAND, //Tectonic Activity
-                        rangeMax(-0.15, 0.5), //Highlands
-                        range(VERY_LOW, HIGH), //Erosion
+                        rangeMax(-3.0, 0.5), //Highlands
+                        range(LOWEST, VERY_HIGH), //Erosion
                         range(64, HEIGHT_TOP) // Terrain Height
                 ),
                 List.of(
@@ -749,9 +753,9 @@ public abstract class ModBiomePlacements {
         placementWithLiked(context, JAGGED_PEAKS,
                 getBiomeHolder(lookup, Biomes.JAGGED_PEAKS),
                 target(
-                        NEUTRAL, //Temperature
+                        COOL, //Temperature
                         FULL, //Humidity
-                        NEUTRAL, //Vegetation Density
+                        LOW, //Vegetation Density
                         rangeMax(0.25, 1.0), //Rockiness
                         range(-0.5, 1.5), //Continentalness
                         rangeMax(0.25, 1.0), //Tectonic Activity
@@ -784,9 +788,9 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.STONY_PEAKS),
                 target(
                         WARM, //Temperature
-                        range(-1.0, 0.0), //Humidity
+                        NEGATIVE, //Humidity
                         NEUTRAL, //Vegetation Density
-                        rangeMax(0.25, 1.0), //Rockiness
+                        range(HIGHISH,HIGHEST), //Rockiness
                         range(-0.5, 1.5), //Continentalness
                         rangeMax(0.25, 1.0), //Tectonic Activity
                         FULL, //Highlands
@@ -803,7 +807,7 @@ public abstract class ModBiomePlacements {
                 target(
                         WARM, //Temperature
                         NEGATIVE, //Humidity
-                        LOW, //Vegetation Density
+                        VERY_LOW, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENTAL_SHORE, //Continentalness
                         range(-10, 0.0), //Tectonic Activity
@@ -820,7 +824,7 @@ public abstract class ModBiomePlacements {
                 target(
                         COLD, //Temperature
                         NEGATIVE, //Humidity
-                        LOW, //Vegetation Density
+                        VERY_LOW, //Vegetation Density
                         NEGATIVE, //Rockiness
                         CONTINENTAL_SHORE, //Continentalness
                         range(-10, 0.0), //Tectonic Activity
@@ -835,10 +839,10 @@ public abstract class ModBiomePlacements {
         placement(context, STONY_SHORE,
                 getBiomeHolder(lookup, Biomes.STONY_SHORE),
                 target(
-                        FULL, //Temperature
+                        POSITIVE, //Temperature
                         NEGATIVE, //Humidity
-                        VERY_LOW, //Vegetation Density
-                        HIGH, //Rockiness
+                        LOWEST, //Vegetation Density
+                        VERY_HIGH, //Rockiness
                         CONTINENTAL_SHORE, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
                         range(0.0, 1.0), //Highlands
@@ -854,7 +858,7 @@ public abstract class ModBiomePlacements {
                 target(
                         COLD, //Temperature
                         NEGATIVE, //Humidity
-                        LOW, //Vegetation Density
+                        VERY_LOW, //Vegetation Density
                         FULL, //Rockiness
                         FULL, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
@@ -870,8 +874,8 @@ public abstract class ModBiomePlacements {
                 target(
                         NEUTRAL, //Temperature
                         NEGATIVE, //Humidity
-                        LOW, //Vegetation Density
-                        HIGH, //Rockiness
+                        VERY_LOW, //Vegetation Density
+                        VERY_HIGH, //Rockiness
                         FULL, //Continentalness
                         FULL, //Tectonic Activity
                         range(0.0, 1.0), //Highlands
@@ -886,8 +890,8 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.OCEAN),
                 target(
                         NEUTRAL, //Temperature
-                        range(-1.0, 1.0), //Humidity
-                        FULL, //Vegetation Density
+                        FULL, //Humidity
+                        NEGATIVE, //Vegetation Density
                         FULL, //Rockiness
                         CONTINENTALNESS_OCEAN, //Continentalness
                         rangeMax(-10, 1.0), //Tectonic Activity
@@ -903,8 +907,8 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.DEEP_OCEAN),
                 target(
                         NEUTRAL, //Temperature
-                        range(-1.0, 1.0), //Humidity
-                        NEUTRAL, //Vegetation Density
+                        FULL, //Humidity
+                        NEGATIVE, //Vegetation Density
                         FULL, //Rockiness
                         CONTINENTALNESS_DEEP_OCEAN, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
@@ -921,8 +925,8 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.WARM_OCEAN),
                 target(
                         WARM, //Temperature
-                        range(-1.0, 1.0), //Humidity
-                        range(-1.0, 0), //Vegetation Density
+                        FULL, //Humidity
+                        NEUTRAL_WIDE, //Vegetation Density
                         FULL, //Rockiness
                         CONTINENTALNESS_OCEAN, //Continentalness
                         rangeMax(-10, 1.0), //Tectonic Activity
@@ -938,8 +942,8 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.LUKEWARM_OCEAN),
                 target(
                         LUKEWARM, //Temperature
-                        range(-1.0, 1.0), //Humidity
-                        range(0.3, 1.0), //Vegetation Density
+                        FULL, //Humidity
+                        POSITIVE, //Vegetation Density
                         FULL, //Rockiness
                         CONTINENTALNESS_OCEAN, //Continentalness
                         rangeMax(-10, 1.0), //Tectonic Activity
@@ -956,7 +960,7 @@ public abstract class ModBiomePlacements {
                 target(
                         LUKEWARM, //Temperature
                         range(-1.0, 1.0), //Humidity
-                        range(0.3, 1.0), //Vegetation Density
+                        POSITIVE, //Vegetation Density
                         FULL, //Rockiness
                         CONTINENTALNESS_DEEP_OCEAN, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
@@ -973,8 +977,8 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.COLD_OCEAN),
                 target(
                         COLD, //Temperature
-                        range(-1.0, 1.0), //Humidity
-                        FULL, //Vegetation Density
+                        FULL, //Humidity
+                        NEGATIVE, //Vegetation Density
                         FULL, //Rockiness
                         CONTINENTALNESS_OCEAN, //Continentalness
                         rangeMax(-10, 1.0), //Tectonic Activity
@@ -990,9 +994,9 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.DEEP_COLD_OCEAN),
                 target(
                         COLD, //Temperature
-                        range(-1.0, 1.0), //Humidity
-                        FULL, //Vegetation Density
-                        FULL,
+                        FULL, //Humidity
+                        NEGATIVE, //Vegetation Density
+                        FULL, //Rockiness
                         CONTINENTALNESS_DEEP_OCEAN, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
                         FULL, //Highlands
@@ -1043,9 +1047,9 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, Biomes.MUSHROOM_FIELDS),
                 target(
                         NEUTRAL, //Temperature
-                        range(-1.0, 1.0), //Humidity
-                        FULL, //Vegetation Density
-                        range(-1.0, 1.0), //Rockiness
+                        FULL, //Humidity
+                        NEUTRAL_WIDE, //Vegetation Density
+                        FULL, //Rockiness
                         CONTINENTALNESS_DEEP_OCEAN, //Continentalness
                         TECTONIC_ANY, //Tectonic Activity
                         FULL, //Highlands
@@ -1064,8 +1068,8 @@ public abstract class ModBiomePlacements {
                 target(
                         NEUTRAL, //Temperature
                         POSITIVE, //Humidity
-                        LOWISH, //Vegetation Density
-                        HIGHISH, //Rockiness
+                        LOW, //Vegetation Density
+                        range(HIGHISH,HIGHEST), //Rockiness
                         FULL, //Continentalness
                         FULL, //Tectonic Activity
                         FULL, //Highlands
@@ -1080,8 +1084,8 @@ public abstract class ModBiomePlacements {
                 getBiomeHolder(lookup, RBiomes.BARREN_CAVES),
                 target(
                         FULL, //Temperature
-                        NEGATIVE, //Humidity
-                        NEGATIVE, //Vegetation Density
+                        LOW, //Humidity
+                        LOW, //Vegetation Density
                         FULL, //Rockiness
                         FULL, //Continentalness
                         FULL, //Tectonic Activity

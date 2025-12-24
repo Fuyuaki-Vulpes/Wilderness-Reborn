@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "r_wilderness:block/alpine_button"
+    "model": "r_wilderness:block/alpine_button_inventory"
   }
 }

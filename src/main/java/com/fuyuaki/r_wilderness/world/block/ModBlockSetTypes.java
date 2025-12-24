@@ -4,7 +4,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 
-public class ModBlockSetTypes { public static final BlockSetType ALPINE = register("alpine");
+public class ModBlockSetTypes {
+    public static final BlockSetType ALPINE = register("alpine");
     public static final BlockSetType AVOCADO = register("avocado");
 
     public static BlockSetType register(String name) {
