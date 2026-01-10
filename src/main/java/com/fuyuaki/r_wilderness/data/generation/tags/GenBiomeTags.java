@@ -46,7 +46,10 @@ public class GenBiomeTags extends KeyTagProvider<Biome> {
 
         this.tag(ModTags.Biomes.HAS_SAND_DUNES)
                 .add(Biomes.DESERT)
+                .add(Biomes.SNOWY_BEACH)
                 .add(Biomes.BEACH);
+        this.tag(ModTags.Biomes.HAS_BIG_SAND_DUNES)
+                .add(Biomes.DESERT);
 
         addWolfTags();
     }

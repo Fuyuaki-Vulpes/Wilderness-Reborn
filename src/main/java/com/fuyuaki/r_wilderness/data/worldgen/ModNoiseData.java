@@ -23,6 +23,7 @@ public class ModNoiseData {
         register(context, ModNoises.CAVES_CRACKS_FREQUENCY, -8,1);
         register(context, ModNoises.AQUIFERS, -8,1.5);
         register(context, ModNoises.SAND_DUNES, -5,2);
+        register(context, ModNoises.SAND_DUNES_LARGE, -6,2);
 
     }
 

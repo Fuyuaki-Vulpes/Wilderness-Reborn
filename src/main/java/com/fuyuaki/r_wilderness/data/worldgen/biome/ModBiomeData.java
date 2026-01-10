@@ -19,8 +19,23 @@ public class ModBiomeData {
         HolderGetter<PlacedFeature> features = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<ConfiguredWorldCarver<?>> carver = context.lookup(Registries.CONFIGURED_CARVER);
 
-
-        context.register(RBiomes.BARREN_CAVES,ROverworldBiomes.barrenCaves(features,carver));
+        context.register(RBiomes.LUSH_RIVER, ROverworldBiomes.lushRiver(features,carver));
+        context.register(RBiomes.SPARSE_CHERRY_GROVE, ROverworldBiomes.sparseCherryGrove(features,carver));
+        context.register(RBiomes.SPARSE_TAIGA, ROverworldBiomes.sparseTaiga(features,carver));
+        context.register(RBiomes.OASIS, ROverworldBiomes.oasis(features,carver));
+        context.register(RBiomes.TUNDRA, ROverworldBiomes.tundra(features,carver));
+        context.register(RBiomes.GRAVELLY_RIVER, ROverworldBiomes.gravelRiver(features,carver));
+        context.register(RBiomes.LUSH_MEADOW, ROverworldBiomes.lushMeadow(features,carver));
+        context.register(RBiomes.CRYSTALLINE_GROTTO, ROverworldBiomes.crystallineGrotto(features,carver));
+        context.register(RBiomes.UNDERWATER_FOREST, ROverworldBiomes.underwaterForest(features,carver));
+        context.register(RBiomes.MAPLE_FOREST, ROverworldBiomes.mapleForest(features,carver));
+        context.register(RBiomes.ALPINE_TUNDRA, ROverworldBiomes.alpineTundra(features,carver));
+        context.register(RBiomes.BOG, ROverworldBiomes.bog(features,carver));
+        context.register(RBiomes.POLAR_DESERT, ROverworldBiomes.polarDesert(features,carver));
+        context.register(RBiomes.CERRADO, ROverworldBiomes.cerrado(features,carver));
+        context.register(RBiomes.CAATINGA, ROverworldBiomes.caatinga(features,carver));
+        context.register(RBiomes.DENSE_SAVANNA, ROverworldBiomes.dense_savanna(features,carver));
+        context.register(RBiomes.BARREN_CAVES, ROverworldBiomes.barrenCaves(features,carver));
     }
 
 

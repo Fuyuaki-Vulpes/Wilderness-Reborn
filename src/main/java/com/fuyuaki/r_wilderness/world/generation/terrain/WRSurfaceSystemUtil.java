@@ -78,9 +78,14 @@ public class WRSurfaceSystemUtil {
                 Holder<Biome> holder = manager.getBiome(blockpos$mutableblockpos1.set(x, height, z));
                 if (holder.is(Biomes.ERODED_BADLANDS)) {
                     surfaceSystem.erodedBadlandsExtension(blockcolumn, x, z, height, chunk);
-                }if (holder.is(ModTags.Biomes.HAS_SAND_DUNES)) {
-                    extendedSurfaceSystem.sandDunes(manager,blockcolumn, x, z, oceanFloor, chunk);
                 }
+                /*
+                if (holder.is(ModTags.Biomes.HAS_SAND_DUNES)) {
+                    extendedSurfaceSystem.sandDunes(manager,blockcolumn, x, z, oceanFloor, chunk);
+                }if (holder.is(ModTags.Biomes.HAS_BIG_SAND_DUNES)) {
+                    extendedSurfaceSystem.sandDunesLarge(manager,blockcolumn, x, z, oceanFloor, chunk);
+                }*/
+
 
                 int l1 = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, chunkX, chunkZ) + 1;
                 surfacerules$context.updateXZ(x, z);

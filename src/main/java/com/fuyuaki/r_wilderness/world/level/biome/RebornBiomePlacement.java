@@ -138,8 +138,10 @@ public record RebornBiomePlacement(
                     return CAVE;
                 }
             }
+            double continentalness = sampled.continentalness();
+
             double tectonicActivity = (1 - Math.abs(sampled.tectonicActivity()));
-            if (!states.contains(TerrainStates.NORMAL)){
+            if (!states.contains(TerrainStates.NORMAL) && continentalness > -0.25){
                 boolean canBeMountainFlag = yLevel >= 80;
                 boolean defaultMountainFlag = states.contains(TerrainStates.REGULAR_MOUNTAINS);
                 boolean mountainousFlag = (states.contains(TerrainStates.ERODED_MOUNTAINS) || defaultMountainFlag) && canBeMountainFlag;
@@ -158,7 +160,6 @@ public record RebornBiomePlacement(
                     return HILLY;
                 }
             }
-            double continentalness = sampled.continentalness();
 
             if (continentalness > -0.05) {
                 double r = Math.pow(Math.abs(Math.clamp(sampled.waterBasins() * 3,-1,1)),2);
@@ -196,7 +197,7 @@ public record RebornBiomePlacement(
                 return NEAR_SHORE;
             }
 
-            if (continentalness > -0.5){
+            if (continentalness > -0.25){
                 if(yLevel > WildernessConstants.SEA_LEVEL - 2){
                     return SHORE;
                 }

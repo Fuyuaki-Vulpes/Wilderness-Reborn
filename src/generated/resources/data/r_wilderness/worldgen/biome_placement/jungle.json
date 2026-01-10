@@ -33,9 +33,9 @@
       "min": -2.5
     },
     "tectonic_activity": {
-      "max": 1.0,
+      "max": 25.0,
       "mean": 0.0,
-      "min": -6.0
+      "min": -20.0
     },
     "temperature": {
       "max": 2.5,

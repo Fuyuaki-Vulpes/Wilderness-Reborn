@@ -7,9 +7,13 @@ import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildOreVeins;
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.doubles.DoubleList;
+import it.unimi.dsi.fastutil.doubles.DoubleLists;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.SharedConstants;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ColumnPos;
@@ -25,12 +29,9 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.levelgen.*;
 import net.minecraft.world.level.levelgen.blending.Blender;
+import org.jspecify.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static net.minecraft.world.level.block.Blocks.WATER;
@@ -49,6 +50,7 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
     final List<WRNoiseChunk.CacheAllInCell> cellCaches;
     protected final Map<DensityFunction, DensityFunction> wrapped = new HashMap<>();
     private final Long2IntMap preliminarySurfaceLevelCache = new Long2IntOpenHashMap();
+    private final Long2IntMap preliminaryTerrainLevelCache = new Long2IntOpenHashMap();
 
 
     protected final Blender blender;
@@ -191,7 +193,10 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         this.veinFiller = WildOreVeins.create(noiserouter1.veinToggle(), noiserouter1.veinRidged(), noiserouter1.veinGap(), random.oreRandom());
     }
 
+
     public ChunkAccess buildNoise(ChunkAccess chunk, int minCellY, BlockState defaultBlock) {
+        double t = this.terrainParameters.samplerAt(chunkMinX + 8, chunkMinZ + 8).tectonicActivity();
+        boolean tectonicFlag = t > 0;
 
         Heightmap oceanFloor = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.OCEAN_FLOOR_WG);
         Heightmap worldSurface = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.WORLD_SURFACE_WG);
@@ -199,30 +204,39 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         this.initializeForFirstCellX();
         int cellWidth = this.cellWidth();
         int cellHeights = this.cellHeight();
+        if (tectonicFlag){
+            cellWidth /= 2;
+        }
+
         int cellCountX = 16 / cellWidth;
         int cellCountZ = 16 / cellWidth;
 
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        if (!tectonicFlag) {
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-        for (int cellX= 0; cellX < cellCountX+1; cellX++) {
-            int x = this.chunkMinX + cellX * cellWidth;
 
-            for (int cellZ = 0; cellZ < cellCountZ + 1; cellZ++) {
-                int z = this.chunkMinZ + cellZ * cellWidth;
-                int xIndex = cellX;
-                int zIndex = cellZ;
-                futures.add(CompletableFuture.runAsync(
-                        () -> {
-                            double y = this.terrainParameters.yLevelAt(x, z,false);
-                            this.heightsAtCells[xIndex][zIndex] = y;
-                        },
-                        Util.backgroundExecutor().forName("chunk_cell_calculations")
-                ));
+            for (int cellX = 0; cellX < cellCountX + 1; cellX++) {
+                int x = this.chunkMinX + cellX * cellWidth;
 
+                for (int cellZ = 0; cellZ < cellCountZ + 1; cellZ++) {
+                    int z = this.chunkMinZ + cellZ * cellWidth;
+
+                    int xIndex = cellX;
+                    int zIndex = cellZ;
+                    futures.add(CompletableFuture.runAsync(
+                            () -> {
+                                double y = this.terrainParameters.yLevelAt(x, z, false);
+
+                                this.heightsAtCells[xIndex][zIndex] = y;
+
+                            },
+                            Util.backgroundExecutor().forName("chunk_cell_calculations")
+                    ));
+
+                }
             }
+            futures.forEach(CompletableFuture::join);
         }
-        futures.forEach(CompletableFuture::join);
-
 
         for (int cellX= 0; cellX < cellCountX; cellX++) {
             this.advanceCellX(cellX);
@@ -244,9 +258,8 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                         double d2 = (double) cellFractionZ / cellWidth;
                         this.updateForZ(z, d2);
 
-                        TerrainParameters.Sampled sampled = this.terrainParameters.samplerAt(x,z);
                         int yLevelGen;
-                        if (TerrainParameters.shouldSampleAccurate(sampled)){
+                        if (tectonicFlag){
                             yLevelGen = Mth.floor(this.terrainParameters.yLevelAt(x,z,false));
                         }else {
                             yLevelGen = Mth.floor(blendYLevelsFor(cellX, cellZ, cellFractionX, cellFractionZ));
@@ -270,6 +283,9 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                                     levelchunksection.setBlockState(regionalX, regionalY, regionalZ, finalState, false);
                                     oceanFloor.update(regionalX, y, regionalZ, finalState);
                                     worldSurface.update(regionalX, y, regionalZ, finalState);
+                                    if (aquifer.shouldScheduleFluidUpdate() && !finalState.getFluidState().isEmpty()) {
+                                        chunk.markPosForPostprocessing(new BlockPos(x,y,z));
+                                    }
                                 }
                             }
                         }
@@ -286,8 +302,6 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         return chunk;
     }
 
-
-
     private double blendYLevelsFor(int cellX, int cellZ, int cellFractionX, int cellFractionZ) {
         double y1 = this.heightsAtCells[cellX][cellZ];
         double y2 = this.heightsAtCells[cellX+1][cellZ];
@@ -300,9 +314,12 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         return Mth.lerp2(delta1,delta2,y1,y2,y3,y4);
     }
 
-    private BlockState getBlockStateForY(BlockState defaultBlock, double verticalCell, int cellHeight1, int y, int yLevelGen, int x, int z) {
+
+    private BlockState getBlockStateForY(BlockState defaultBlock, double verticalCell, int cellHeights, int y, int yLevelGen, int x, int z) {
         if (defaultBlock == null) defaultBlock = Blocks.STONE.defaultBlockState();
-        double cellY1 = verticalCell / cellHeight1;
+
+
+        double cellY1 = verticalCell / cellHeights;
         this.updateForY(y, cellY1);
 
         BlockState finalState;
@@ -312,6 +329,7 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
                         .calculate(this);
         if (y <= yLevelGen){
             worldState = this.terrainParameters.cavesAt(x, y, z, yLevelGen) ? Blocks.AIR.defaultBlockState() : veinState == null ? defaultBlock : veinState;
+
         }
         else {
             worldState = Blocks.AIR.defaultBlockState();
@@ -322,7 +340,7 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
             if (y > this.preliminarySurfaceLevel(x,z)){
                 substance = -0.5;
             }
-            worldState = this.aquifer.computeSubstance(new DensityFunction.SinglePointContext(x,y,z),-0.15);
+            worldState = this.aquifer.computeSubstance(new DensityFunction.SinglePointContext(x,y,z),substance);
 
         }else{
             this.aquifer.computeSubstance(new DensityFunction.SinglePointContext(x,y,z),substance(y,yLevelGen));
@@ -392,6 +410,34 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
         int blockX = ColumnPos.getX(key);
         int blockZ = ColumnPos.getZ(key);
         return Mth.floor(getSurfaceYSurface(blockX,blockZ));
+    }
+
+
+    public int maxPreliminaryTerrainLevel(final int minBlockX, final int minBlockZ, final int maxBlockX, final int maxBlockZ) {
+        int maxY = Integer.MIN_VALUE;
+
+        for(int blockZ = minBlockZ; blockZ <= maxBlockZ; blockZ += 4) {
+            for(int blockX = minBlockX; blockX <= maxBlockX; blockX += 4) {
+                int surfaceLevel = this.preliminaryTerrainLevel(blockX, blockZ);
+                if (surfaceLevel > maxY) {
+                    maxY = surfaceLevel;
+                }
+            }
+        }
+
+        return maxY;
+    }
+
+    public int preliminaryTerrainLevel(final int sampleX, final int sampleZ) {
+        int quantizedX = QuartPos.toBlock(QuartPos.fromBlock(sampleX));
+        int quantizedZ = QuartPos.toBlock(QuartPos.fromBlock(sampleZ));
+        return this.preliminaryTerrainLevelCache.computeIfAbsent(ColumnPos.asLong(quantizedX, quantizedZ), this::computeTerrainSurfaceLevel);
+    }
+
+    private int computeTerrainSurfaceLevel(final long key) {
+        int blockX = ColumnPos.getX(key);
+        int blockZ = ColumnPos.getZ(key);
+        return Mth.floor(getSurfaceY(blockX,blockZ));
     }
 
     public BlockState testBlockAt(int x, int y, int z, BlockState defaultBlock) {
@@ -668,7 +714,7 @@ public class WRNoiseChunk implements DensityFunction.ContextProvider, DensityFun
     }
 
     public int getSurfaceY(int x, int z) {
-        return Mth.floor(this.terrainParameters.yLevelAtWithCache(x,z));
+        return Mth.floor(this.terrainParameters.yLevelAt(x,z,false));
     }
     public int getSurfaceYSurface(int x, int z) {
         return Mth.floor(this.terrainParameters.yLevelAt(x,z,true));

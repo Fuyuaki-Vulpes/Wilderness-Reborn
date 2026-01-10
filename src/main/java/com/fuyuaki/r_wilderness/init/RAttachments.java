@@ -1,6 +1,8 @@
 package com.fuyuaki.r_wilderness.init;
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
+import com.fuyuaki.r_wilderness.world.environment.HydrationData;
+import com.fuyuaki.r_wilderness.world.environment.TemperatureData;
 import com.fuyuaki.r_wilderness.world.generation.chunk.ChunkData;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.storage.ValueInput;
@@ -38,6 +40,16 @@ public class RAttachments {
                 }
             })
             .build());
+
+
+    public static final Supplier<AttachmentType<TemperatureData>> TEMPERATURE = registerAtt("player_temperature",
+            () -> AttachmentType.<TemperatureData>serializable(holder ->
+            new TemperatureData()).sync(TemperatureData.STREAM_CODEC).build());
+
+    public static final Supplier<AttachmentType<HydrationData>> HYDRATION = registerAtt("hydration",
+            () -> AttachmentType.<HydrationData>serializable(holder ->
+            new HydrationData()).sync(HydrationData.STREAM_CODEC).build());
+
 
     private static <T> DeferredHolder<AttachmentType<?>,AttachmentType<T>> registerAtt(String name, Supplier<AttachmentType<T>> type)
     {

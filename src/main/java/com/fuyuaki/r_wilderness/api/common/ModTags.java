@@ -18,6 +18,18 @@ public class ModTags {
     public static class Blocks {
         public static final TagKey<Block> ROOT_BLOCK_GROWS_INTO = tag("root_block_grows_into");
 
+        public static final TagKey<Block> SCHINITE_ORE_REPLACEABLES = tag("schinite_ore_replaceables");
+        public static final TagKey<Block> MAGNEISS_ORE_REPLACEABLES = tag("magneiss_ore_replaceables");
+        public static final TagKey<Block> MALATITE_ORE_REPLACEABLES = tag("malatite_ore_replaceables");
+
+        public static final TagKey<Block> SLIGHTLY_INCREASES_TEMPERATURE = tag("slightly_increases_temperature");
+        public static final TagKey<Block> MODERATELY_INCREASES_TEMPERATURE = tag("moderately_increases_temperature");
+        public static final TagKey<Block> GREATLY_INCREASES_TEMPERATURE = tag("greatly_increases_temperature");
+        public static final TagKey<Block> INCREASES_TEMPERATURE = tag("increases_temperature");
+        public static final TagKey<Block> SLIGHTLY_DECREASES_TEMPERATURE = tag("slightly_decreases_temperature");
+        public static final TagKey<Block> MODERATELY_DECREASES_TEMPERATURE = tag("moderately_decreases_temperature");
+        public static final TagKey<Block> GREATLY_DECREASES_TEMPERATURE = tag("greatly_decreases_temperature");
+        public static final TagKey<Block> DECREASES_TEMPERATURE = tag("decreases_temperature");
 
         private static TagKey<Block> tag(String name) {
             return TagKey.create(Registries.BLOCK, RWildernessMod.modLocation(name));
@@ -34,6 +46,8 @@ public class ModTags {
         }
     }
     public static class Fluids {
+        public static final TagKey<Fluid> COOLING = tag("cooling_fluids");
+        public static final TagKey<Fluid> HEATING = tag("heating_fluids");
 
         private static TagKey<Fluid> tag(String name) {
             return FluidTags.create(RWildernessMod.modLocation(name));
@@ -51,6 +65,7 @@ public class ModTags {
         public static final TagKey<Biome> HAS_WATER_DELTAS_LARGE = tag("has_water_deltas_large");
         public static final TagKey<Biome> HAS_WATER_DELTAS_REGULAR = tag("has_water_deltas_regular");
         public static final TagKey<Biome> HAS_SAND_DUNES = tag("has_sand_dunes");
+        public static final TagKey<Biome> HAS_BIG_SAND_DUNES = tag("has_sand_dunes");
         public static final TagKey<Biome> LAVA_AQUIFERS_ONLY = tag("lava_aquifers_only");
 
 

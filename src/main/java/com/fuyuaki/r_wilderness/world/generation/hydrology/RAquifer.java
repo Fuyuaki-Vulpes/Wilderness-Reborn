@@ -83,7 +83,7 @@ public class RAquifer implements Aquifer {
         this.aquiferCache = new FluidStatus[totalGridSize];
         this.aquiferLocationCache = new long[totalGridSize];
         Arrays.fill(this.aquiferLocationCache, Long.MAX_VALUE);
-        int maxAdjustedSurfaceLevel = noiseChunk.maxPreliminarySurfaceLevel(fromGridX(this.minGridX, 0), fromGridZ(this.minGridZ, 0), fromGridX(maxGridX, 9), fromGridZ(maxGridZ, 9));
+        int maxAdjustedSurfaceLevel = noiseChunk.maxPreliminaryTerrainLevel(fromGridX(this.minGridX, 0), fromGridZ(this.minGridZ, 0), fromGridX(maxGridX, 9), fromGridZ(maxGridZ, 9));
         int skipSamplingAboveGridY = gridY(maxAdjustedSurfaceLevel + 12) + 1;
         this.skipSamplingAboveY = fromGridY(skipSamplingAboveGridY, 11) - 1;
     }
@@ -350,7 +350,7 @@ public class RAquifer implements Aquifer {
             int[] offset = var9[var11];
             int sampleX = x + SectionPos.sectionToBlockCoord(offset[0]);
             int sampleZ = z + SectionPos.sectionToBlockCoord(offset[1]);
-            int preliminarySurfaceLevel = this.chunk.preliminarySurfaceLevel(sampleX, sampleZ);
+            int preliminarySurfaceLevel = this.chunk.preliminaryTerrainLevel(sampleX, sampleZ);
             boolean start = offset[0] == 0 && offset[1] == 0;
             if (start && bottomOfAquiferCell > preliminarySurfaceLevel) {
                 return globalFluid;
@@ -419,7 +419,7 @@ public class RAquifer implements Aquifer {
         int fluidLevelCellY = Math.floorDiv(y, 40);
         int fluidLevelCellZ = Math.floorDiv(z, 16);
         int fluidCellMiddleY = fluidLevelCellY * 40 + 20;
-        double fluidLevelSpread = this.fluidLevelSpreadNoise.getValue(fluidLevelCellX, fluidLevelCellY, fluidLevelCellZ) * 10.0;
+        double fluidLevelSpread = this.fluidLevelSpreadNoise.getValue(fluidLevelCellX, fluidLevelCellY, fluidLevelCellZ) * 20.0;
         int fluidLevelSpreadQuantized = Mth.quantize(fluidLevelSpread, 3);
         int targetFluidSurfaceLevel = fluidCellMiddleY + fluidLevelSpreadQuantized;
         return Math.min(lowestPreliminarySurface, targetFluidSurfaceLevel);
@@ -431,7 +431,7 @@ public class RAquifer implements Aquifer {
             int fluidTypeCellX = Math.floorDiv(x, 64);
             int fluidTypeCellY = Math.floorDiv(y, 40);
             int fluidTypeCellZ = Math.floorDiv(z, 64);
-            double lavaNoiseValue = this.lavaNoise.getValue(fluidTypeCellX, fluidTypeCellY, fluidTypeCellZ);
+            double lavaNoiseValue = this.lavaNoise.getValue(fluidTypeCellX, fluidTypeCellY, fluidTypeCellZ) * 2;
             if (Math.abs(lavaNoiseValue) > 0.3) {
                 fluidType = Blocks.LAVA.defaultBlockState();
             }

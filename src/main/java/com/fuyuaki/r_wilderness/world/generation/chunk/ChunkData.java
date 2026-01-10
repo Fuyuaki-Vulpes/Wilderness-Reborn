@@ -69,8 +69,6 @@ public class ChunkData {
 
     public void serializeNBT(ValueOutput nbt) {
 
-
-
     }
 
     public void deserializeNBT(ValueInput nbt) {

@@ -257,7 +257,7 @@ public class RiverData extends SavedData {
 
     private static Vec2 calculateFlow(Vec2 flow,  RandomSource source) {
         int degreeRange = 12;
-        int rot = source.nextIntBetweenInclusive(-degreeRange,degreeRange);
+        float rot = Mth.DEG_TO_RAD * source.nextIntBetweenInclusive(-degreeRange,degreeRange);
         Vec3 flow3 = new Vec3(flow.x,0,flow.y).yRot(rot);
 
         return new Vec2((float) flow3.x, (float) flow3.z);

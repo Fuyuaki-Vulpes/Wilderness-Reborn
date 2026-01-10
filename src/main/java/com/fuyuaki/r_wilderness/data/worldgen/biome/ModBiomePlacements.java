@@ -12,7 +12,6 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,11 +54,12 @@ public abstract class ModBiomePlacements {
 
     public static final TerrainParameters.Range MAGICALNESS_LOW = range(-1.5,0.15);
     public static final TerrainParameters.Range MAGICALNESS_ANY = range(-1.5,1.5);
-    public static final TerrainParameters.Range TECTONIC_ANY = range(-6,0, 1.0);
-    public static final TerrainParameters.Range TECTONIC_LOW = range(-6,-0.5, 0.1);
-    public static final TerrainParameters.Range TECTONIC_FOREST = range(-10,0, 0.5);
-    public static final TerrainParameters.Range TECTONIC_GROVES = range(-5,0.15, 5.0);
-    public static final TerrainParameters.Range TECTONICS_BADLAND = rangeMax(-5.5, 0.3);
+    public static final TerrainParameters.Range TECTONIC_ANY = rangeMax(-20,0);
+    public static final TerrainParameters.Range TECTONIC_LOW = range(-20,-1.5, 0.1);
+    public static final TerrainParameters.Range TECTONIC_NONE = range(-20,-2.5, -0.25);
+    public static final TerrainParameters.Range TECTONIC_FOREST = range(-20,0, 0.5);
+    public static final TerrainParameters.Range TECTONIC_GROVES = rangeMax(-5,0.15);
+    public static final TerrainParameters.Range TECTONICS_BADLAND = rangeMax(-5.5, -1.5);
 
     public static final TerrainParameters.Range HIGHLANDS_AREA = rangeMax(0.15, 0.5);
     public static final TerrainParameters.Range HIGHLANDS_NONE = range(-1.5,0,0.15);
@@ -527,7 +527,7 @@ public abstract class ModBiomePlacements {
                         range(LOWEST, VERY_LOW), //Vegetation Density
                         range(LOWEST,NEUTRAL), //Rockiness
                         CONTINENT_INLAND, //Continentalness
-                        TECTONIC_LOW, //Tectonic Activity
+                        TECTONIC_NONE, //Tectonic Activity
                         HIGHLANDS_NONE, //Highlands
                         range(VERY_HIGH, HIGHEST), //Erosion
                         HEIGHT_RANGE_NATURAL // Terrain Height
@@ -1123,13 +1123,13 @@ public abstract class ModBiomePlacements {
                         FULL, //Tectonic Activity
                         FULL, //Highlands
                         FULL, //Erosion
-                        range(HEIGHT_BOTTOM,-64), // Terrain Height
+                        range(HEIGHT_BOTTOM,-16), // Terrain Height
                         FULL,
                         range(0.25,1.5)
                 ),
                 List.of(
                         CAVE),
-                List.of(VERY_DEEP_UNDERGROUND)
+                List.of(DEEP_UNDERGROUND)
         );
 
 
@@ -1152,7 +1152,7 @@ public abstract class ModBiomePlacements {
         );
     }
 
-    private static Holder.@NotNull Reference<Biome> getBiomeHolder(HolderGetter<Biome> holdergetter,ResourceKey<Biome> key) {
+    private static Holder.Reference<Biome> getBiomeHolder(HolderGetter<Biome> holdergetter,ResourceKey<Biome> key) {
         return holdergetter.getOrThrow(key);
     }
 

@@ -25,6 +25,7 @@ public class ModNoises {
 
 
     public static final ResourceKey<NormalNoise.NoiseParameters> SAND_DUNES = createKey("sand_dunes");
+    public static final ResourceKey<NormalNoise.NoiseParameters> SAND_DUNES_LARGE = createKey("sand_dunes_large");
 
 
     private static ResourceKey<NormalNoise.NoiseParameters> createKey(String key) {

@@ -42,7 +42,7 @@
       "min": -2.5
     },
     "tectonic_activity": {
-      "max": 5.0,
+      "max": 25.15,
       "mean": 0.15,
       "min": -5.0
     },

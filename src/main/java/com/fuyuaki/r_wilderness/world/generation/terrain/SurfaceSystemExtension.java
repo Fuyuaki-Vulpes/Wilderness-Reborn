@@ -33,6 +33,7 @@ public class SurfaceSystemExtension {
     private final int seaLevel;
     private final BlockState[] clayBands;
     private final NormalNoise sandDunesNoise;
+    private final NormalNoise sandDunesNoiseLarge;
     private final PositionalRandomFactory noiseRandom;
     private final NormalNoise clayBandsOffsetNoise;
     private final NormalNoise badlandsPillarNoise;
@@ -49,6 +50,7 @@ public class SurfaceSystemExtension {
         this.seaLevel = seaLevel;
         this.noiseRandom = noiseRandom;
         this.sandDunesNoise = randomState.getOrCreateNoise(ModNoises.SAND_DUNES);
+        this.sandDunesNoiseLarge = randomState.getOrCreateNoise(ModNoises.SAND_DUNES_LARGE);
         this.clayBands = generateBands(noiseRandom.fromHashOf(Identifier.withDefaultNamespace("clay_bands")));
         this.clayBandsOffsetNoise = randomState.getOrCreateNoise(Noises.CLAY_BANDS_OFFSET);
         this.surfaceNoise = randomState.getOrCreateNoise(Noises.SURFACE);
@@ -125,9 +127,33 @@ public class SurfaceSystemExtension {
                 }
             }
         }
-        double influence = matches / count;
+        double influence = Math.pow(matches / count,2);
         int duneSize = 6;
         double dunes = Math.max(1 - Math.abs(this.sandDunesNoise.getValue(x,0,z)),0) * influence * duneSize;
+        for (int duneHeight = 0; duneHeight < Math.floor(dunes); duneHeight++){
+            BlockState blockstate = blockColumn.getBlock(height+duneHeight);
+
+            if (blockstate.canBeReplaced()){
+                blockColumn.setBlock(height + duneHeight,Blocks.SAND.defaultBlockState());
+            }
+        }
+    }
+    public void sandDunesLarge(BiomeManager manager, BlockColumn blockColumn, int x, int z, int height, LevelHeightAccessor level) {
+        double count = 0;
+        double matches = 0;
+        for (int xOff = -4; xOff < 4; xOff ++){
+            for (int zOff = -4; zOff < 4; zOff ++){
+                int x1 = x + (4*xOff);
+                int z1 = z + (4*zOff);
+                count++;
+                if (manager.getNoiseBiomeAtPosition(new BlockPos(x1,height,z1)).is(ModTags.Biomes.HAS_BIG_SAND_DUNES)){
+                    matches++;
+                }
+            }
+        }
+        double influence = Math.pow(matches / count,2);
+        int duneSize = 16;
+        double dunes = Math.max(1 - Math.abs(this.sandDunesNoiseLarge.getValue(x,0,z)),0) * influence * duneSize;
         for (int duneHeight = 0; duneHeight < Math.floor(dunes); duneHeight++){
             BlockState blockstate = blockColumn.getBlock(height+duneHeight);
 

@@ -1,18 +1,16 @@
 package com.fuyuaki.r_wilderness.api.events;
 
-import com.fuyuaki.r_wilderness.api.RWildernessMod;
-import com.fuyuaki.r_wilderness.client.model.block.TreeBlockModelPart;
+import com.fuyuaki.r_wilderness.client.gui.RWildernessLayers;
+import com.fuyuaki.r_wilderness.client.menu.hud.RWildernessGui;
 import com.fuyuaki.r_wilderness.client.model.block.TreeBlockStateModel;
 import com.fuyuaki.r_wilderness.world.block.woods.ModWoodTypes;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
@@ -32,14 +30,14 @@ public class ModClientEvents {
     @SubscribeEvent
     public static void registerGuiComponents(RegisterGuiLayersEvent event) {
 
-        event.registerAboveAll(RWildernessMod.modLocation("debug_ui"),((guiGraphics, deltaTracker) -> {
-            Minecraft minecraft = Minecraft.getInstance();
-            if (minecraft.player != null && !minecraft.options.hideGui){
-//                debugScreen.render(guiGraphics);
-            }
-        }));
+        event.registerBelow(VanillaGuiLayers.FOOD_LEVEL, RWildernessLayers.HYDRATION_LEVEL, RWildernessGui::hydrationLayer);
+        event.registerBelow(VanillaGuiLayers.AIR_LEVEL, RWildernessLayers.ENV_TEMPERATURE, RWildernessGui::environmentTemperatureLayer);
+        event.registerBelow(RWildernessLayers.ENV_TEMPERATURE, RWildernessLayers.BODY_TEMPERATURE, RWildernessGui::bodyTemperatureLayer);
+
 
     }
+
+
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         Sheets.addWoodType(ModWoodTypes.ALPINE);
