@@ -3,6 +3,7 @@ package com.fuyuaki.r_wilderness.api.events;
 import com.fuyuaki.r_wilderness.client.gui.RWildernessLayers;
 import com.fuyuaki.r_wilderness.client.menu.hud.RWildernessGui;
 import com.fuyuaki.r_wilderness.client.model.block.TreeBlockStateModel;
+import com.fuyuaki.r_wilderness.network.DrinkWaterInWorldPacket;
 import com.fuyuaki.r_wilderness.world.block.woods.ModWoodTypes;
 import net.minecraft.client.renderer.Sheets;
 import net.neoforged.api.distmarker.Dist;
@@ -11,6 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
@@ -19,6 +21,14 @@ public class ModClientEvents {
 
     @SubscribeEvent
     public static void registerBindings(RegisterKeyMappingsEvent event) {
+    }
+
+    @SubscribeEvent
+    public static void registerPayloads(RegisterClientPayloadHandlersEvent event) {
+        event.register(
+                DrinkWaterInWorldPacket.TYPE,
+                DrinkWaterInWorldPacket::handle
+        );
     }
 
 

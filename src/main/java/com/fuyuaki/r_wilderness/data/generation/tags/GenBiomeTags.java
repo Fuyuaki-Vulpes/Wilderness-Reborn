@@ -5,6 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.KeyTagProvider;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
@@ -42,6 +43,11 @@ public class GenBiomeTags extends KeyTagProvider<Biome> {
                 .addTag(ModTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON)
                 .addTag(ModTags.Biomes.HAS_WATER_DELTAS_COMMON)
                 .addTag(ModTags.Biomes.HAS_WATER_DELTAS_REGULAR)
+        ;
+
+        this.tag(ModTags.Biomes.HAS_SALT_WATER)
+                .addTag(BiomeTags.IS_OCEAN)
+                .addTag(BiomeTags.IS_BEACH)
         ;
 
         this.tag(ModTags.Biomes.HAS_SAND_DUNES)

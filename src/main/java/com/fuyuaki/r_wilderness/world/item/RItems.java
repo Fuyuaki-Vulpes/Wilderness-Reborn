@@ -26,6 +26,9 @@ public class RItems {
 
     //Items
 
+    public static final DeferredItem<Item> CANTEEN = registerItem("canteen", CanteenItem::new,new Item.Properties());
+
+
     public static final DeferredItem<Item> PEAT_BALL = registerItem("peat_ball", new Item.Properties());
     public static final DeferredItem<Item> CHALK_DUST = registerItem("chalk_dust", new Item.Properties());
 

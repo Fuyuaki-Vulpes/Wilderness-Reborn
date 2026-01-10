@@ -1,14 +1,17 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
+import com.fuyuaki.r_wilderness.api.common.ModTags;
 import com.fuyuaki.r_wilderness.init.RAttachments;
 import com.fuyuaki.r_wilderness.world.environment.HydrationData;
 import com.fuyuaki.r_wilderness.world.environment.HydrationProperties;
 import com.fuyuaki.r_wilderness.world.environment.ServerPlayerEnvironment;
 import com.fuyuaki.r_wilderness.world.environment.TemperatureData;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,6 +19,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin extends Player implements ServerPlayerEnvironment {
@@ -105,6 +109,15 @@ public abstract class ServerPlayerMixin extends Player implements ServerPlayerEn
 
     }
 
+    @Inject(method = "hurtServer", at = @At("RETURN"))
+    private void hurtServer(ServerLevel level, DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (damageSource.is(ModTags.DamageTypes.CAUSES_TEMPERATURE_DECREASE)){
+            this.addCooling(amount * 0.01F);
+
+        } else if (damageSource.is(ModTags.DamageTypes.CAUSES_TEMPERATURE_INCREASE)){
+            this.addHeat(amount * 0.01F);
+        }
+    }
 
     private static boolean didNotMove(double dx, double dy, double dz) {
         return dx == 0.0 && dy == 0.0 && dz == 0.0;
@@ -144,11 +157,32 @@ public abstract class ServerPlayerMixin extends Player implements ServerPlayerEn
         ((ServerPlayer) (Object) this).setData(RAttachments.HYDRATION, data);
 
     }
+    @Override
+    public void drinkInWorld(int hydrationLevelModifier, float saturationLevelModifier) {
+        HydrationData data = this.getHydrationData();
+        data.drink(hydrationLevelModifier,saturationLevelModifier);
+        data.triggerCooldown();
+        ((ServerPlayer) (Object) this).setData(RAttachments.HYDRATION, data);
+
+    }
 
     @Override
     public void drink(HydrationProperties foodProperties) {
         HydrationData data = this.getHydrationData();
         data.drink(foodProperties);
         ((Player) (Object) this).setData(RAttachments.HYDRATION, data);
+    }
+
+    @Override
+    public void addHeat(float heat) {
+        TemperatureData data = this.getTemperatureData();
+        data.heatUp(heat);
+        ((Player) (Object) this).setData(RAttachments.TEMPERATURE, data);
+    }
+    @Override
+    public void addCooling(float cooling) {
+        TemperatureData data = this.getTemperatureData();
+        data.heatUp(cooling);
+        ((Player) (Object) this).setData(RAttachments.TEMPERATURE, data);
     }
 }

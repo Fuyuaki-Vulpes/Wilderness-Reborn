@@ -1,24 +1,39 @@
 package com.fuyuaki.r_wilderness.world.environment;
 
+import com.fuyuaki.r_wilderness.network.DrinkWaterInWorldPacket;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodConstants;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.util.ValueIOSerializable;
 
 public class HydrationData implements ValueIOSerializable {
+    public static final float THISRT_CHANCE = 0.15F;
     private static final int DEFAULT_TICK_TIMER = 0;
     private static final float DEFAULT_EXHAUSTION_LEVEL = 0.0F;
     private int waterLevel = 20;
     private float saturationLevel = 5.0F;
     private float exhaustionLevel;
     private int tickTimer;
+    private int worldDrinkCooldown = 0;
+    private static final int WORLD_DRINK_COOLDOWN_COUNT = 20;
 
     public static final StreamCodec<RegistryFriendlyByteBuf, HydrationData> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT,
@@ -42,8 +57,15 @@ public class HydrationData implements ValueIOSerializable {
         this.saturationLevel = Mth.clamp(saturationLevel + this.saturationLevel, 0.0F, (float)this.waterLevel);
     }
 
+    private boolean canHandDrinkInWorld(Player player, InteractionHand hand)
+    {
+        return InteractionHand.MAIN_HAND == hand && player.getMainHandItem().isEmpty() && player.isCrouching() && this.getWaterLevel() < 20 && player.level().isClientSide() && worldDrinkCooldown <= 0;
+    }
 
     public void tick(ServerPlayer player) {
+        if (worldDrinkCooldown > 0){
+            worldDrinkCooldown--;
+        }
         ServerLevel serverlevel = player.level();
         Difficulty difficulty = serverlevel.getDifficulty();
         if (this.exhaustionLevel > 4.0F) {
@@ -122,5 +144,33 @@ public class HydrationData implements ValueIOSerializable {
             this.saturationLevel = input.getFloatOr("waterSaturationLevel", 5.0F);
             this.exhaustionLevel = input.getFloatOr("waterExhaustionLevel", 0.0F);
 
+    }
+
+    public void tryDrinkingWaterSource(Player player,InteractionHand hand){
+        if (canHandDrinkInWorld(player,hand)){
+            this.tryDrinkFromWorld(player);
+        }
+    }
+
+
+    private void tryDrinkFromWorld(Player player){
+        Level level = player.level();
+        BlockHitResult rayTraceResult = Item.getPlayerPOVHitResult(player.level(), player, ClipContext.Fluid.SOURCE_ONLY);
+
+        if (rayTraceResult.getType() == HitResult.Type.BLOCK)
+        {
+            BlockPos pos = rayTraceResult.getBlockPos();
+
+            if (level.mayInteract(player, pos) && level.getFluidState(pos).is(FluidTags.WATER))
+            {
+                ClientPacketDistributor.sendToServer(new DrinkWaterInWorldPacket(pos));
+                player.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5f, 1.0f);
+                player.swing(InteractionHand.MAIN_HAND);
+            }
+        }
+    }
+
+    public void triggerCooldown() {
+        this.worldDrinkCooldown = WORLD_DRINK_COOLDOWN_COUNT;
     }
 }

@@ -25,10 +25,12 @@ public class TemperatureData implements ValueIOSerializable {
     public static final float ENVIRONMENT_HOTTEST = 40.0F;
     public static final double ENVIRONMENT_MEDIAN = 20.0F;
     private static final float BASE_BODY_TEMPERATURE = 37.0F;
-    private static final int BLOCK_SCAN_TICK_RATE = 5;
+    private static final int BLOCK_SCAN_TICK_RATE = 3;
     private float bodyTemperature = 37.0F;
     private float environmentTemperature = 20.0F;
     private float energy = 0.0F;
+    private float toAdd = 0.0F;
+
     public static final StreamCodec<RegistryFriendlyByteBuf, TemperatureData> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT,
             TemperatureData::getBodyTemperature,
@@ -72,6 +74,14 @@ public class TemperatureData implements ValueIOSerializable {
         float bodyAdjustment = 0;
         float hydration = ((PlayerEnvironment)player).getHydrationData().getWaterLevel();
 
+        if (player.isInWater()){
+            temperatureIntake -= 0.00005F;
+        }
+        if (player.isOnFire()){
+            temperatureIntake += 0.005F;
+        }
+        temperatureIntake += this.toAdd;
+        this.toAdd = 0;
         ChunkGenerator gen = serverlevel.getChunkSource().getGenerator();
         if (gen instanceof WildChunkGenerator generator){
             TerrainParameters.Environment environment = generator.terrainParameters().environment(player.getX(),player.getZ());
@@ -79,7 +89,7 @@ public class TemperatureData implements ValueIOSerializable {
 
             if (difficulty != Difficulty.PEACEFUL) {
                 float envApparent = environment.temperature() / 1.5F;
-                temperatureIntake += envApparent * 0.0025F;
+                temperatureIntake += envApparent * 0.0020F;
                 ((ServerPlayerEnvironment) player).addExhaustion(Math.max(envApparent,0) * 0.001F);
                 bodyAdjustment -= envApparent * 0.0015F;
             }
@@ -89,35 +99,35 @@ public class TemperatureData implements ValueIOSerializable {
             if (difference < 0.5F) {
                 float multiplier = (float) Math.clamp(difference / 0.5, 0, 1);
                 if (this.bodyTemperature > BASE_BODY_TEMPERATURE) {
-                    bodyAdjustment -= 0.0005F * multiplier;
+                    bodyAdjustment -= 0.00075F * multiplier;
 
                 } else {
-                    bodyAdjustment += 0.0005F * multiplier;
+                    bodyAdjustment += 0.00075F * multiplier;
 
                 }
 
 
             }else if (difference < 0.85F){
                 if (this.bodyTemperature < BASE_BODY_TEMPERATURE) {
-                    bodyAdjustment += 0.0005F;
-                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.00025F);
+                    bodyAdjustment += 0.00075F;
+                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.0005F);
 
                 }
 
                 if (this.bodyTemperature > BASE_BODY_TEMPERATURE) {
-                    bodyAdjustment -= 0.0005F;
-                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.001F);
+                    bodyAdjustment -= 0.00075F;
+                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.005F);
 
                 }
             }else{
                 if (this.bodyTemperature < BASE_BODY_TEMPERATURE) {
-                    bodyAdjustment += 0.001F;
-                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.00025F);
+                    bodyAdjustment += 0.0015F;
+                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.001F);
 
                 }
 
                 if (this.bodyTemperature > BASE_BODY_TEMPERATURE) {
-                    bodyAdjustment -= 0.001F;
+                    bodyAdjustment -= 0.0015F;
                     ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.05F);
 
                 }
@@ -161,7 +171,7 @@ public class TemperatureData implements ValueIOSerializable {
             float movementHydrationMultiplier = isMoving ? 1.0F : 0.01F;
 
 
-            this.energy = (float) Math.max(this.energy - (hydration / 20 * 0.01),0);
+            this.energy = (float) Math.max(this.energy - (hydration / 20 * 0.05),0);
             temperatureIntake += energy * 0.000005F;
             ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature),0) * 0.005F * movementHydrationMultiplier);
 
@@ -205,5 +215,12 @@ public class TemperatureData implements ValueIOSerializable {
     }
     public void addEnergy(float energy) {
         this.energy += energy;
+    }
+
+    public void heatUp(float heat) {
+        this.toAdd += heat;
+    }
+    public void coolDown(float cooling) {
+        this.toAdd -= cooling;
     }
 }

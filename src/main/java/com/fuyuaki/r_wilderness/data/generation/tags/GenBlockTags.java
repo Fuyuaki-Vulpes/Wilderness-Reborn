@@ -132,7 +132,7 @@ public class GenBlockTags extends IntrinsicHolderTagsProvider<Block> {
                 Blocks.SOUL_FIRE
         );
         this.tag(ModTags.Blocks.GREATLY_DECREASES_TEMPERATURE).add(
-                Blocks.TORCH
+                Blocks.SNOW
         );
         this.tag(ModTags.Blocks.DECREASES_TEMPERATURE)
                 .addTag(ModTags.Blocks.SLIGHTLY_DECREASES_TEMPERATURE)

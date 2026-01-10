@@ -67,6 +67,7 @@ public class ModTags {
         public static final TagKey<Biome> HAS_SAND_DUNES = tag("has_sand_dunes");
         public static final TagKey<Biome> HAS_BIG_SAND_DUNES = tag("has_sand_dunes");
         public static final TagKey<Biome> LAVA_AQUIFERS_ONLY = tag("lava_aquifers_only");
+        public static final TagKey<Biome> HAS_SALT_WATER = tag("has_salt_water");
 
 
         private static TagKey<Biome> tag(String name) {
@@ -79,7 +80,12 @@ public class ModTags {
         }
     }
     public static class DamageTypes {
+
+        public static final TagKey<DamageType> CAUSES_TEMPERATURE_INCREASE = tag("causes_temperature_increase");
+        public static final TagKey<DamageType> CAUSES_TEMPERATURE_DECREASE = tag("causes_temperature_decrease");
+
         private static TagKey<DamageType> tag(String name) {
+
             return TagKey.create(Registries.DAMAGE_TYPE, RWildernessMod.modLocation(name));
         }
     }
