@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
 
-public class ModTags {
+public class RTags {
 
     public static class Blocks {
         public static final TagKey<Block> ROOT_BLOCK_GROWS_INTO = tag("root_block_grows_into");

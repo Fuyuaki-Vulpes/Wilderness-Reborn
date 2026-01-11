@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation.terrain;
 
-import com.fuyuaki.r_wilderness.api.common.ModTags;
+import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.world.level.levelgen.ModNoises;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -122,7 +122,7 @@ public class SurfaceSystemExtension {
                 int x1 = x + (4*xOff);
                 int z1 = z + (4*zOff);
                 count++;
-                if (manager.getNoiseBiomeAtPosition(new BlockPos(x1,height,z1)).is(ModTags.Biomes.HAS_SAND_DUNES)){
+                if (manager.getNoiseBiomeAtPosition(new BlockPos(x1,height,z1)).is(RTags.Biomes.HAS_SAND_DUNES)){
                     matches++;
                 }
             }
@@ -146,7 +146,7 @@ public class SurfaceSystemExtension {
                 int x1 = x + (4*xOff);
                 int z1 = z + (4*zOff);
                 count++;
-                if (manager.getNoiseBiomeAtPosition(new BlockPos(x1,height,z1)).is(ModTags.Biomes.HAS_BIG_SAND_DUNES)){
+                if (manager.getNoiseBiomeAtPosition(new BlockPos(x1,height,z1)).is(RTags.Biomes.HAS_BIG_SAND_DUNES)){
                     matches++;
                 }
             }

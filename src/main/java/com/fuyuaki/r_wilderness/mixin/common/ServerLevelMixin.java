@@ -16,23 +16,33 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.WritableLevelData;
+import net.neoforged.neoforge.event.EventHooks;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 @Mixin(ServerLevel.class)
-public abstract class ServerWorldMixin extends Level implements ServerEntityGetter, WorldGenLevel {
+public abstract class ServerLevelMixin extends Level implements ServerEntityGetter, WorldGenLevel {
     @Shadow @Final private SleepStatus sleepStatus;
 
     @Shadow public abstract List<ServerPlayer> players();
 
     @Shadow @Final private List<ServerPlayer> players;
 
-    protected ServerWorldMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
+    @Shadow public abstract GameRules getGameRules();
+
+    @Shadow public abstract void setDayTime(long time);
+
+    @Shadow protected abstract void wakeUpAllPlayers();
+
+    protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
         super(levelData, dimension, registryAccess, dimensionTypeRegistration, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
     }
 
@@ -40,6 +50,23 @@ public abstract class ServerWorldMixin extends Level implements ServerEntityGett
     @Redirect(method = "tick",at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/SleepStatus;areEnoughSleeping(I)Z"))
     private boolean skipThroughNight(SleepStatus instance, int requiredSleepPercentage){
         return false;
+    }
+
+    @Inject(method = "tick",at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;updateSkyBrightness()V"))
+    private void tickWorld(BooleanSupplier hasTimeLeft, CallbackInfo ci){
+        int i = this.getGameRules().get(GameRules.PLAYERS_SLEEPING_PERCENTAGE);
+
+
+        if (this.sleepStatus.areEnoughSleeping(i) && this.sleepStatus.areEnoughDeepSleeping(i, this.players)) {
+            if (this.getGameRules().get(GameRules.ADVANCE_TIME)) {
+                long k = this.levelData.getDayTime() + 600L;
+                this.setDayTime(EventHooks.onSleepFinished((ServerLevel) (Object) this, k - k % 600L, this.getDayTime()));
+            }
+        }
+        if (this.sleepStatus.amountSleeping() > 0 && this.levelData.getDayTime() > 23400) {
+            this.wakeUpAllPlayers();
+        }
+
     }
 
 

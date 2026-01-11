@@ -10,7 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -20,7 +19,7 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
 @EventBusSubscriber(modid = MODID)
-public class ModCommonEvents {
+public class RCommonEvents {
 
 
     @SubscribeEvent

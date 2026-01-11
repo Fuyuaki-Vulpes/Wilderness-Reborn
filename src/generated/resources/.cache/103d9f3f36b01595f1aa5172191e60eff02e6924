@@ -1,4 +1,6 @@
-// 1.21.11	2026-01-08T11:25:23.4097397	Registries
+// 1.21.11	2026-01-10T19:05:41.6274595	Registries
+d6449b67cfb3da904bdeb9e5995201f98f986ef9 data/r_wilderness/damage_type/hyperthermia.json
+65129d679074558883d2e29107a3afec0fdd3762 data/r_wilderness/damage_type/hypothermia.json
 fdbf91ba9360561935d2dcd5776bdcf0962463bd data/r_wilderness/dimension_type/overworld.json
 2d1810b2c1dedbefb9477b91d904ebabc26855a6 data/r_wilderness/neoforge/biome_modifier/add_large_caves.json
 722cd10a80d461b4ef0633f3b3c493f2e3349321 data/r_wilderness/neoforge/biome_modifier/add_sinkholes.json

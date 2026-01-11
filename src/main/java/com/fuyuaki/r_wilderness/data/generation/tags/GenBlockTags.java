@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.data.generation.tags;
 
-import com.fuyuaki.r_wilderness.api.common.ModTags;
+import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -24,7 +24,7 @@ public class GenBlockTags extends IntrinsicHolderTagsProvider<Block> {
 
     @Override
     protected void addTags(HolderLookup.Provider pProvider) {
-        this.tag(ModTags.Blocks.ROOT_BLOCK_GROWS_INTO).addTag(BlockTags.DIRT);
+        this.tag(RTags.Blocks.ROOT_BLOCK_GROWS_INTO).addTag(BlockTags.DIRT);
 
         this.tag(Tags.Blocks.VILLAGER_FARMLANDS).add(
                 RBlocks.CHALKY_FARMLAND.get(),
@@ -93,51 +93,51 @@ public class GenBlockTags extends IntrinsicHolderTagsProvider<Block> {
                 RBlocks.MALATITE.get(),
                 RBlocks.COBBLED_MALATITE.get()
         );
-        this.tag(ModTags.Blocks.SCHINITE_ORE_REPLACEABLES).add(
+        this.tag(RTags.Blocks.SCHINITE_ORE_REPLACEABLES).add(
                 RBlocks.SCHINITE.get()
         );
-        this.tag(ModTags.Blocks.MAGNEISS_ORE_REPLACEABLES).add(
+        this.tag(RTags.Blocks.MAGNEISS_ORE_REPLACEABLES).add(
                 RBlocks.MAGNEISS.get()
         );
-        this.tag(ModTags.Blocks.MALATITE_ORE_REPLACEABLES).add(
+        this.tag(RTags.Blocks.MALATITE_ORE_REPLACEABLES).add(
                 RBlocks.MALATITE.get()
         );
 
-        this.tag(ModTags.Blocks.SLIGHTLY_INCREASES_TEMPERATURE).add(
+        this.tag(RTags.Blocks.SLIGHTLY_INCREASES_TEMPERATURE).add(
                 Blocks.TORCH,
                 Blocks.LANTERN
         );
-        this.tag(ModTags.Blocks.MODERATELY_INCREASES_TEMPERATURE).add(
+        this.tag(RTags.Blocks.MODERATELY_INCREASES_TEMPERATURE).add(
                 Blocks.CAMPFIRE,
                 Blocks.FIRE
         );
-        this.tag(ModTags.Blocks.GREATLY_INCREASES_TEMPERATURE).add(
+        this.tag(RTags.Blocks.GREATLY_INCREASES_TEMPERATURE).add(
                 Blocks.LAVA,
                 Blocks.LAVA_CAULDRON,
                 Blocks.MAGMA_BLOCK
         );
 
-        this.tag(ModTags.Blocks.INCREASES_TEMPERATURE)
-                .addTag(ModTags.Blocks.SLIGHTLY_INCREASES_TEMPERATURE)
-                .addTag(ModTags.Blocks.MODERATELY_INCREASES_TEMPERATURE)
-                .addTag(ModTags.Blocks.GREATLY_INCREASES_TEMPERATURE);
+        this.tag(RTags.Blocks.INCREASES_TEMPERATURE)
+                .addTag(RTags.Blocks.SLIGHTLY_INCREASES_TEMPERATURE)
+                .addTag(RTags.Blocks.MODERATELY_INCREASES_TEMPERATURE)
+                .addTag(RTags.Blocks.GREATLY_INCREASES_TEMPERATURE);
 
 
-        this.tag(ModTags.Blocks.SLIGHTLY_DECREASES_TEMPERATURE).add(
+        this.tag(RTags.Blocks.SLIGHTLY_DECREASES_TEMPERATURE).add(
                 Blocks.SOUL_FIRE,
                 Blocks.SOUL_LANTERN
         );
-        this.tag(ModTags.Blocks.MODERATELY_DECREASES_TEMPERATURE).add(
+        this.tag(RTags.Blocks.MODERATELY_DECREASES_TEMPERATURE).add(
                 Blocks.SOUL_CAMPFIRE,
                 Blocks.SOUL_FIRE
         );
-        this.tag(ModTags.Blocks.GREATLY_DECREASES_TEMPERATURE).add(
+        this.tag(RTags.Blocks.GREATLY_DECREASES_TEMPERATURE).add(
                 Blocks.SNOW
         );
-        this.tag(ModTags.Blocks.DECREASES_TEMPERATURE)
-                .addTag(ModTags.Blocks.SLIGHTLY_DECREASES_TEMPERATURE)
-                .addTag(ModTags.Blocks.MODERATELY_DECREASES_TEMPERATURE)
-                .addTag(ModTags.Blocks.GREATLY_DECREASES_TEMPERATURE);
+        this.tag(RTags.Blocks.DECREASES_TEMPERATURE)
+                .addTag(RTags.Blocks.SLIGHTLY_DECREASES_TEMPERATURE)
+                .addTag(RTags.Blocks.MODERATELY_DECREASES_TEMPERATURE)
+                .addTag(RTags.Blocks.GREATLY_DECREASES_TEMPERATURE);
 
 
 

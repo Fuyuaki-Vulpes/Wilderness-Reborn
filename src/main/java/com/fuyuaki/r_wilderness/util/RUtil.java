@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 
 import java.util.Arrays;
 
-public class ModUtil {
+public class RUtil {
 
     public static final Direction[] DIRECTIONS = Direction.values();
     public static final DyeColor[] DYE_COLORS = DyeColor.values();

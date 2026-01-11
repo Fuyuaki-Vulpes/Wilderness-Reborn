@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation.hydrology;
 
-import com.fuyuaki.r_wilderness.api.common.ModTags;
+import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
 import net.minecraft.SharedConstants;
@@ -378,7 +378,7 @@ public class RAquifer implements Aquifer {
         FluidStatus fluidStatus = new FluidStatus(fluidSurfaceLevel, this.computeFluidType(x, y, z, globalFluid, fluidSurfaceLevel));
         if (fluidStatus.fluidType() == Blocks.WATER.defaultBlockState()
                 && y < lowestPreliminarySurface - 20
-                && this.biomeSource.getNoiseBiome(x,lowestPreliminarySurface,z).is(ModTags.Biomes.LAVA_AQUIFERS_ONLY)){
+                && this.biomeSource.getNoiseBiome(x,lowestPreliminarySurface,z).is(RTags.Biomes.LAVA_AQUIFERS_ONLY)){
             fluidStatus = new FluidStatus(fluidSurfaceLevel, Blocks.LAVA.defaultBlockState());
         }
         return fluidStatus;

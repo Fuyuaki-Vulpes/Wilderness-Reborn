@@ -1,6 +1,5 @@
 package com.fuyuaki.r_wilderness.world.generation.terrain;
 
-import com.fuyuaki.r_wilderness.api.common.ModTags;
 import com.fuyuaki.r_wilderness.mixin.accessor.BiomeAccessAccessor;
 import com.fuyuaki.r_wilderness.world.generation.RandomStateExtension;
 import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;

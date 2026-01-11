@@ -1,19 +1,15 @@
 package com.fuyuaki.r_wilderness.network;
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
-import com.fuyuaki.r_wilderness.api.common.ModTags;
+import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.world.environment.HydrationData;
-import com.fuyuaki.r_wilderness.world.environment.PlayerEnvironment;
 import com.fuyuaki.r_wilderness.world.environment.ServerPlayerEnvironment;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -44,7 +40,7 @@ public record DrinkWaterInWorldPacket(BlockPos position) implements CustomPacket
             {
                 Holder<Biome> biome = level.getBiome(packet.position);
 
-                if (biome.is(ModTags.Biomes.HAS_SALT_WATER) && level.random.nextFloat() < HydrationData.THISRT_CHANCE)
+                if (biome.is(RTags.Biomes.HAS_SALT_WATER) && level.random.nextFloat() < HydrationData.THISRT_CHANCE)
                 {
                     ((ServerPlayerEnvironment)player).drinkInWorld(4,0);
 

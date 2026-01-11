@@ -1,6 +1,8 @@
 package com.fuyuaki.r_wilderness.world.environment;
 
-import com.fuyuaki.r_wilderness.api.common.ModTags;
+import com.fuyuaki.r_wilderness.api.RWildernessMod;
+import com.fuyuaki.r_wilderness.api.common.RTags;
+import com.fuyuaki.r_wilderness.init.RDamageTypes;
 import com.fuyuaki.r_wilderness.world.generation.WildChunkGenerator;
 import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
 import net.minecraft.core.BlockPos;
@@ -10,6 +12,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.storage.ValueInput;
@@ -26,6 +29,9 @@ public class TemperatureData implements ValueIOSerializable {
     public static final double ENVIRONMENT_MEDIAN = 20.0F;
     private static final float BASE_BODY_TEMPERATURE = 37.0F;
     private static final int BLOCK_SCAN_TICK_RATE = 3;
+    private static final float HYPERTHERMIA_THRESHOLD = 40.0F;
+    private static final float HYPOTHERMIA_THRESHOLD = 35.0F;
+    private static final int DAMAGE_TICK_RATE = 40;
     private float bodyTemperature = 37.0F;
     private float environmentTemperature = 20.0F;
     private float energy = 0.0F;
@@ -75,7 +81,13 @@ public class TemperatureData implements ValueIOSerializable {
         float hydration = ((PlayerEnvironment)player).getHydrationData().getWaterLevel();
 
         if (player.isInWater()){
-            temperatureIntake -= 0.00005F;
+            temperatureIntake -= 0.0003F;
+        }
+        if (player.isInPowderSnow){
+            temperatureIntake -= 0.001F;
+        }
+        if (player.isFreezing()){
+            temperatureIntake -= 0.0025F;
         }
         if (player.isOnFire()){
             temperatureIntake += 0.005F;
@@ -107,7 +119,7 @@ public class TemperatureData implements ValueIOSerializable {
                 }
 
 
-            }else if (difference < 0.85F){
+            }else {
                 if (this.bodyTemperature < BASE_BODY_TEMPERATURE) {
                     bodyAdjustment += 0.00075F;
                     ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.0005F);
@@ -119,46 +131,31 @@ public class TemperatureData implements ValueIOSerializable {
                     ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.005F);
 
                 }
-            }else{
-                if (this.bodyTemperature < BASE_BODY_TEMPERATURE) {
-                    bodyAdjustment += 0.0015F;
-                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.001F);
-
-                }
-
-                if (this.bodyTemperature > BASE_BODY_TEMPERATURE) {
-                    bodyAdjustment -= 0.0015F;
-                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.05F);
-
-                }
             }
-
-
-
         }
         if (player.tickCount % BLOCK_SCAN_TICK_RATE == 0){
 
             for (BlockPos pos : BlockPos.betweenClosed(player.getBoundingBox().inflate(5,5,5))){
                 BlockState state = serverlevel.getBlockState(pos);
-                if (state.is(ModTags.Blocks.INCREASES_TEMPERATURE)){
-                    if (state.is(ModTags.Blocks.SLIGHTLY_INCREASES_TEMPERATURE)){
+                if (state.is(RTags.Blocks.INCREASES_TEMPERATURE)){
+                    if (state.is(RTags.Blocks.SLIGHTLY_INCREASES_TEMPERATURE)){
                         temperatureIntake += 0.000025F;
-                    }else if (state.is(ModTags.Blocks.MODERATELY_INCREASES_TEMPERATURE)){
+                    }else if (state.is(RTags.Blocks.MODERATELY_INCREASES_TEMPERATURE)){
                         temperatureIntake += 0.00005F;
 
-                    }else if (state.is(ModTags.Blocks.GREATLY_INCREASES_TEMPERATURE)){
+                    }else if (state.is(RTags.Blocks.GREATLY_INCREASES_TEMPERATURE)){
                         temperatureIntake += 0.0001F;
 
                     }
                 }
-                else if (state.is(ModTags.Blocks.DECREASES_TEMPERATURE)){
-                    if (state.is(ModTags.Blocks.SLIGHTLY_DECREASES_TEMPERATURE)){
+                else if (state.is(RTags.Blocks.DECREASES_TEMPERATURE)){
+                    if (state.is(RTags.Blocks.SLIGHTLY_DECREASES_TEMPERATURE)){
                         temperatureIntake -= 0.000025F;
 
-                    }else if (state.is(ModTags.Blocks.MODERATELY_DECREASES_TEMPERATURE)){
+                    }else if (state.is(RTags.Blocks.MODERATELY_DECREASES_TEMPERATURE)){
                         temperatureIntake -= 0.00005F;
 
-                    }else if (state.is(ModTags.Blocks.GREATLY_DECREASES_TEMPERATURE)){
+                    }else if (state.is(RTags.Blocks.GREATLY_DECREASES_TEMPERATURE)){
                         temperatureIntake -= 0.0001F;
 
                     }
@@ -173,13 +170,46 @@ public class TemperatureData implements ValueIOSerializable {
 
             this.energy = (float) Math.max(this.energy - (hydration / 20 * 0.05),0);
             temperatureIntake += energy * 0.000005F;
+            if (this.bodyTemperature < BASE_BODY_TEMPERATURE){
+                float adjustment = BASE_BODY_TEMPERATURE - this.bodyTemperature;
+                bodyAdjustment += adjustment * (energy / 10) * 0.005F * hydration / 20;
+            }
             ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature),0) * 0.005F * movementHydrationMultiplier);
 
         }
 
         this.bodyTemperature += temperatureIntake;
-        this.bodyTemperature += bodyAdjustment * (hydration / 20 );
+        if (temperatureIntake > bodyAdjustment && this.bodyTemperature > BASE_BODY_TEMPERATURE){
+            float dif = bodyAdjustment - temperatureIntake;
+            float difference = Math.abs(this.bodyTemperature - BASE_BODY_TEMPERATURE);
+            float multiplier = (float) Math.clamp((difference - 0.25) / 0.25, 0, 1);
 
+            float ratio = hydration / 20;
+            bodyAdjustment += ratio * dif * multiplier;
+            ((ServerPlayerEnvironment) player).addExhaustion(dif * 0.25F * multiplier);
+
+        }
+        this.bodyTemperature += bodyAdjustment * (hydration / 20);
+
+
+        if (player.tickCount % DAMAGE_TICK_RATE == 0){
+            if (this.bodyTemperature >= HYPERTHERMIA_THRESHOLD){
+                float strength = this.bodyTemperature - HYPERTHERMIA_THRESHOLD;
+                player.hurtServer(serverlevel, hyperthermia(serverlevel),Math.max(strength * 2,1));
+            }else if (this.bodyTemperature <= HYPOTHERMIA_THRESHOLD){
+                float strength = HYPOTHERMIA_THRESHOLD - this.bodyTemperature;
+                player.hurtServer(serverlevel, hypothermia(serverlevel),Math.max(strength * 1.5F,1));
+            }
+        }
+
+
+    }
+
+    private DamageSource hyperthermia(ServerLevel level) {
+        return new DamageSource(level.damageSources().damageTypes.getOrThrow(RDamageTypes.HYPERTHERMIA),null,null,null);
+    }
+    private DamageSource hypothermia(ServerLevel level) {
+        return new DamageSource(level.damageSources().damageTypes.getOrThrow(RDamageTypes.HYPOTHERMIA),null,null,null);
     }
 
 

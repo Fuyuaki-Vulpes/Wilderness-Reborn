@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation.hydrology.river.old_backup;
 
-import com.fuyuaki.r_wilderness.util.ModUtil;
+import com.fuyuaki.r_wilderness.util.RUtil;
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
@@ -436,8 +436,8 @@ public class RiverData extends SavedData {
                 double delta = Math.min(d / deltaSize, 1);
 
                 double sizeAt = Mth.lerp(delta, previous.getSize(), target.getSize());
-                double tX = ModUtil.catmullrom(delta, pX, fX, sX, nX);
-                double tZ = ModUtil.catmullrom(delta, pZ, fZ, sZ, nZ);
+                double tX = RUtil.catmullrom(delta, pX, fX, sX, nX);
+                double tZ = RUtil.catmullrom(delta, pZ, fZ, sZ, nZ);
 
                 Vec2 flowAt = new Vec2((float) Mth.lerp(delta, previous.getFlow().x, target.getFlow().x), (float) Mth.lerp(delta, previous.getFlow().y, target.getFlow().y));
                 TerrainParameters.Sampled sampled = this.terrain.samplerAt((int) tX, (int) tZ);

@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlers
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
 @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
-public class ModClientEvents {
+public class RClientEvents {
 
     @SubscribeEvent
     public static void registerBindings(RegisterKeyMappingsEvent event) {

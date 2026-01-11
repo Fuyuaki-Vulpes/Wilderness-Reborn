@@ -21,7 +21,7 @@
     "common.RuinedPortalStructureMixin",
     "common.ServerChunkCacheMixin",
     "common.ServerPlayerMixin",
-    "common.ServerWorldMixin",
+    "common.ServerLevelMixin",
     "common.SnowAndFreezeFeatureMixin",
     "common.SoundEventMixin",
     "common.StructureMixin",
