@@ -12,6 +12,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -49,6 +50,10 @@ public class LootBlocks extends BlockLootSubProvider {
         dropSelf(RBlocks.SCHINITE_STAIRS.get());
         dropSelf(RBlocks.SCHINITE_SLAB.get());
         dropSelf(RBlocks.SCHINITE_WALL.get());
+        dropSelf(RBlocks.WEATHERED_BEDROCK.get());
+        dropSelf(RBlocks.WEATHERED_BEDROCK_STAIRS.get());
+        dropSelf(RBlocks.WEATHERED_BEDROCK_SLAB.get());
+        dropSelf(RBlocks.WEATHERED_BEDROCK_WALL.get());
         dropSelf(RBlocks.MAGNEISS_STAIRS.get());
         dropSelf(RBlocks.MAGNEISS_SLAB.get());
         dropSelf(RBlocks.MAGNEISS_WALL.get());
@@ -68,6 +73,33 @@ public class LootBlocks extends BlockLootSubProvider {
         dropSelf(RBlocks.COBBLED_MALATITE_STAIRS.get());
         dropSelf(RBlocks.COBBLED_MALATITE_SLAB.get());
         dropSelf(RBlocks.COBBLED_MALATITE_WALL.get());
+
+        this.add(RBlocks.SCHINITE_COAL_ORE.get(), p_250359_ -> this.createOreDrop(p_250359_, Items.COAL));
+        this.add(RBlocks.SCHINITE_EMERALD_ORE.get(), p_249260_ -> this.createOreDrop(p_249260_, Items.EMERALD));
+        this.add(RBlocks.SCHINITE_DIAMOND_ORE.get(), p_249219_ -> this.createOreDrop(p_249219_, Items.DIAMOND));
+        this.add(RBlocks.SCHINITE_COPPER_ORE.get(), p_249767_ -> this.createCopperOreDrops(p_249767_));
+        this.add(RBlocks.SCHINITE_IRON_ORE.get(), p_250898_ -> this.createOreDrop(p_250898_, Items.RAW_IRON));
+        this.add(RBlocks.SCHINITE_GOLD_ORE.get(), p_249323_ -> this.createOreDrop(p_249323_, Items.RAW_GOLD));
+        this.add(RBlocks.SCHINITE_LAPIS_ORE.get(), p_250507_ -> this.createLapisOreDrops(p_250507_));
+        this.add(RBlocks.SCHINITE_REDSTONE_ORE.get(), p_249321_ -> this.createRedstoneOreDrops(p_249321_));
+
+        this.add(RBlocks.MAGNEISS_COAL_ORE.get(), p_250359_ -> this.createOreDrop(p_250359_, Items.COAL));
+        this.add(RBlocks.MAGNEISS_EMERALD_ORE.get(), p_249260_ -> this.createOreDrop(p_249260_, Items.EMERALD));
+        this.add(RBlocks.MAGNEISS_DIAMOND_ORE.get(), p_249219_ -> this.createOreDrop(p_249219_, Items.DIAMOND));
+        this.add(RBlocks.MAGNEISS_COPPER_ORE.get(), p_249767_ -> this.createCopperOreDrops(p_249767_));
+        this.add(RBlocks.MAGNEISS_IRON_ORE.get(), p_250898_ -> this.createOreDrop(p_250898_, Items.RAW_IRON));
+        this.add(RBlocks.MAGNEISS_GOLD_ORE.get(), p_249323_ -> this.createOreDrop(p_249323_, Items.RAW_GOLD));
+        this.add(RBlocks.MAGNEISS_LAPIS_ORE.get(), p_250507_ -> this.createLapisOreDrops(p_250507_));
+        this.add(RBlocks.MAGNEISS_REDSTONE_ORE.get(), p_249321_ -> this.createRedstoneOreDrops(p_249321_));
+
+        this.add(RBlocks.MALATITE_COAL_ORE.get(), p_250359_ -> this.createOreDrop(p_250359_, Items.COAL));
+        this.add(RBlocks.MALATITE_EMERALD_ORE.get(), p_249260_ -> this.createOreDrop(p_249260_, Items.EMERALD));
+        this.add(RBlocks.MALATITE_DIAMOND_ORE.get(), p_249219_ -> this.createOreDrop(p_249219_, Items.DIAMOND));
+        this.add(RBlocks.MALATITE_COPPER_ORE.get(), p_249767_ -> this.createCopperOreDrops(p_249767_));
+        this.add(RBlocks.MALATITE_IRON_ORE.get(), p_250898_ -> this.createOreDrop(p_250898_, Items.RAW_IRON));
+        this.add(RBlocks.MALATITE_GOLD_ORE.get(), p_249323_ -> this.createOreDrop(p_249323_, Items.RAW_GOLD));
+        this.add(RBlocks.MALATITE_LAPIS_ORE.get(), p_250507_ -> this.createLapisOreDrops(p_250507_));
+        this.add(RBlocks.MALATITE_REDSTONE_ORE.get(), p_249321_ -> this.createRedstoneOreDrops(p_249321_));
 
         dropSelf(RBlocks.CHALKY_SOIL.get());
         dropOther(RBlocks.CHALKY_FARMLAND.get(), RBlocks.CHALKY_SOIL);
@@ -106,12 +138,8 @@ public class LootBlocks extends BlockLootSubProvider {
         //Flowers
         dropSelf(RBlocks.BELLFLOWER.get());
         add(RBlocks.POTTED_BELLFLOWER.get(), createPotFlowerItemTable(RBlocks.BELLFLOWER));
-        dropSelf(RBlocks.MOSS_COMPANION.get());
-        add(RBlocks.POTTED_MOSS_COMPANION.get(), createPotFlowerItemTable(RBlocks.MOSS_COMPANION));
         dropSelf(RBlocks.MOUNTAIN_HEATHER.get());
         add(RBlocks.POTTED_MOUNTAIN_HEATHER.get(), createPotFlowerItemTable(RBlocks.MOUNTAIN_HEATHER));
-        dropSelf(RBlocks.SNOWBELL.get());
-        add(RBlocks.POTTED_SNOWBELL.get(), createPotFlowerItemTable(RBlocks.SNOWBELL));
     }
 
     @Override

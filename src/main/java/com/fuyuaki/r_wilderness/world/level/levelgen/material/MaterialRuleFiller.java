@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.world.level.levelgen.material;
 
-import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
+import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.WRNoiseChunk;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseChunk;

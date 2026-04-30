@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.init;
 
-import com.fuyuaki.r_wilderness.world.generation.WildChunkGenerator;
+import com.fuyuaki.r_wilderness.world.level.levelgen.WildChunkGenerator;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.chunk.ChunkGenerator;

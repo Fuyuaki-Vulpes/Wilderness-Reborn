@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SnowyDirtBlock;
+import net.minecraft.world.level.block.SnowyBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -51,15 +51,15 @@ public abstract class SnowAndFreezeFeatureMixin extends Feature<NoneFeatureConfi
                 if (biome.shouldSnow(worldgenlevel, motionBlockingMutable)) {
                     worldgenlevel.setBlock(motionBlockingMutable, Blocks.SNOW.defaultBlockState(), 2);
                     BlockState blockstate = worldgenlevel.getBlockState(motionBlockingBelow);
-                    if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
-                        worldgenlevel.setBlock(motionBlockingBelow, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
+                    if (blockstate.hasProperty(SnowyBlock.SNOWY)) {
+                        worldgenlevel.setBlock(motionBlockingBelow, blockstate.setValue(SnowyBlock.SNOWY, true), 2);
                     }
                 }
                 if (biome.shouldSnow(worldgenlevel, worldSurfaceMutable)) {
                     worldgenlevel.setBlock(worldSurfaceMutable, Blocks.SNOW.defaultBlockState(), 2);
                     BlockState blockstate = worldgenlevel.getBlockState(worldSurfaceBelow);
-                    if (blockstate.hasProperty(SnowyDirtBlock.SNOWY)) {
-                        worldgenlevel.setBlock(worldSurfaceBelow, blockstate.setValue(SnowyDirtBlock.SNOWY, true), 2);
+                    if (blockstate.hasProperty(SnowyBlock.SNOWY)) {
+                        worldgenlevel.setBlock(worldSurfaceBelow, blockstate.setValue(SnowyBlock.SNOWY, true), 2);
                     }
                 }
             }

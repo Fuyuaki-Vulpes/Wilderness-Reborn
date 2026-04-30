@@ -1,7 +1,7 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
 
-import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
+import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.WRNoiseChunk;
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.util.ChunkAccessModifier;
 import com.fuyuaki.r_wilderness.world.level.levelgen.util.LevelChunkSectionModifier;

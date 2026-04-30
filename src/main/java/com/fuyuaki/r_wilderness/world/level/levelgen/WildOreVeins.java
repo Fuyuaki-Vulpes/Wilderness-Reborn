@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.world.level.levelgen;
 
-import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
+import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.WRNoiseChunk;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;

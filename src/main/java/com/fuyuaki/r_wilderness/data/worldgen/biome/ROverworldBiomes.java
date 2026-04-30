@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.data.worldgen.biome;
 
-import com.fuyuaki.r_wilderness.client.RSoundEvents;
+import com.fuyuaki.r_wilderness.init.RSoundEvents;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
 import net.minecraft.data.worldgen.placement.AquaticPlacements;

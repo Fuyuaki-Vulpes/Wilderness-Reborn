@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.world.level.biome;
 
-import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
+import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.TerrainParameters;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;

@@ -1,11 +1,10 @@
 package com.fuyuaki.r_wilderness.api;
 
-import com.fuyuaki.r_wilderness.world.generation.WildGeneratorSettings;
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomePlacement;
+import com.fuyuaki.r_wilderness.world.level.levelgen.WildGeneratorSettings;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.registries.RegistryBuilder;
+import net.minecraft.resources.ResourceKey;
 
 public class WildRegistries {
 

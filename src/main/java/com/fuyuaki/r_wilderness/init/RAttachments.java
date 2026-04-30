@@ -3,7 +3,7 @@ package com.fuyuaki.r_wilderness.init;
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import com.fuyuaki.r_wilderness.world.environment.HydrationData;
 import com.fuyuaki.r_wilderness.world.environment.TemperatureData;
-import com.fuyuaki.r_wilderness.world.generation.chunk.ChunkData;
+import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.ChunkData;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;

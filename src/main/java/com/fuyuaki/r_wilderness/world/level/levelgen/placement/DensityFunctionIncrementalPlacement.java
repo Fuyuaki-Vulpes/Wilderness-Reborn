@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.util.valueproviders.IntProviders;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.placement.RepeatingPlacement;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.levelgen.placement.RepeatingPlacement;
 public class DensityFunctionIncrementalPlacement extends RepeatingPlacement {
     public static final MapCodec<DensityFunctionIncrementalPlacement> CODEC = RecordCodecBuilder.mapCodec(
             grouped -> grouped.group(
-                            IntProvider.codec(0, 256).fieldOf("count").forGetter(instance -> instance.count),
+                            IntProviders.codec(0, 256).fieldOf("count").forGetter(instance -> instance.count),
                             DensityFunction.CODEC.fieldOf("density_function").forGetter(instance -> instance.densityFunction),
                             Codec.FLOAT.fieldOf("density_min_exclusive").orElse(Float.MIN_VALUE).forGetter(instance -> instance.densityMinExclusive),
                             Codec.FLOAT.fieldOf("density_max_inclusive").orElse(Float.MAX_VALUE).forGetter(instance -> instance.densityMaxInclusive),

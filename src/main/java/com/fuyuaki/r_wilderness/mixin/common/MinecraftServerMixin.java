@@ -1,8 +1,8 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
 
-import com.fuyuaki.r_wilderness.world.generation.ChunkGeneratorExtension;
-import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
+import com.fuyuaki.r_wilderness.world.level.levelgen.ChunkGeneratorExtension;
+import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.TerrainParameters;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
@@ -33,7 +33,7 @@ public class MinecraftServerMixin {
         if (generator instanceof ChunkGeneratorExtension extension){
             TerrainParameters t = extension.terrainParameters();
 
-            ChunkPos chunkpos = new ChunkPos(TerrainParameters.findSpawnPosition(TerrainParameters.SPAWN_TARGET,t,level));
+            ChunkPos chunkpos = ChunkPos.containing(TerrainParameters.findSpawnPosition(TerrainParameters.SPAWN_TARGET,t,level));
 //            extension.prepare(chunkpos);
 
             listener.start(LevelLoadListener.Stage.PREPARE_GLOBAL_SPAWN, 0);
@@ -54,7 +54,7 @@ public class MinecraftServerMixin {
 
             for (int i1 = 0; i1 < Mth.square(11); i1++) {
                 if (xOffset >= -5 && xOffset <= 5 && zOffset >= -5 && zOffset <= 5) {
-                    ChunkPos newChunk = new ChunkPos(chunkpos.x + xOffset, chunkpos.z + zOffset);
+                    ChunkPos newChunk = new ChunkPos(chunkpos.x() + xOffset, chunkpos.z() + zOffset);
                     extension.prepare(newChunk);
 
                     BlockPos blockpos1 = PlayerSpawnFinder.getSpawnPosInChunk(level, newChunk);
@@ -79,7 +79,7 @@ public class MinecraftServerMixin {
                         .lookup(Registries.CONFIGURED_FEATURE)
                         .flatMap(features -> features.get(MiscOverworldFeatures.BONUS_CHEST))
                         .ifPresent(
-                                reference -> reference.value().place(level, serverChunkCache.getGenerator(), level.random, levelData.getRespawnData().pos())
+                                reference -> reference.value().place(level, serverChunkCache.getGenerator(), level.getRandom(), levelData.getRespawnData().pos())
                         );
             }
 

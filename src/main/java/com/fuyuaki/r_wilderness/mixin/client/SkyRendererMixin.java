@@ -7,6 +7,7 @@ import com.fuyuaki.r_wilderness.client.sky.star.Gradient;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -41,8 +42,7 @@ public abstract class SkyRendererMixin {
                     .withLocation("pipeline/stars")
                     .withVertexShader("core/stars")
                     .withFragmentShader("core/stars")
-                    .withBlend(BlendFunction.OVERLAY)
-                    .withDepthWrite(false)
+                    .withColorTargetState(new ColorTargetState(BlendFunction.OVERLAY))
                     .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
                     .build()
     );

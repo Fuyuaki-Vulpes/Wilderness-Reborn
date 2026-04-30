@@ -3,7 +3,7 @@ package com.fuyuaki.r_wilderness.data.worldgen.biome;
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import com.fuyuaki.r_wilderness.api.WildRegistries;
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
-import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
+import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.TerrainParameters;
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomePlacement;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -87,7 +87,7 @@ public abstract class ModBiomePlacements {
     public static final ResourceKey<RebornBiomePlacement> MUSHROOM_ISLAND = register("mushrooms");
 
     //FLATLAND
-    public static final ResourceKey<RebornBiomePlacement> PLAINS = register("plains");
+    public static final ResourceKey<RebornBiomePlacement> PLAINS = register("hills");
     public static final ResourceKey<RebornBiomePlacement> SUNFLOWER_PLAINS = register("sunflower_plains");
     public static final ResourceKey<RebornBiomePlacement> SNOWY_PLAINS = register("snowy_plains");
     public static final ResourceKey<RebornBiomePlacement> ICE_SPIKES = register("ice_spikes");

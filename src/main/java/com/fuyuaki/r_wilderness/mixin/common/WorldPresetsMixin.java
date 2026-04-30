@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
-import com.fuyuaki.r_wilderness.world.generation.WildChunkGenerator;
+import com.fuyuaki.r_wilderness.world.level.levelgen.WildChunkGenerator;
 import com.fuyuaki.r_wilderness.world.level.levelgen.ModWorldPresets;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;

@@ -2,7 +2,7 @@ package com.fuyuaki.r_wilderness.world.level.biome;
 
 import com.fuyuaki.r_wilderness.api.WildRegistries;
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
-import com.fuyuaki.r_wilderness.world.generation.terrain.TerrainParameters;
+import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.TerrainParameters;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;

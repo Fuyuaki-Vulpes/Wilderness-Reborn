@@ -10,7 +10,9 @@ import net.minecraft.data.recipes.*;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CookingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -45,13 +47,13 @@ public class GenRecipes  extends RecipeProvider {
                 .save(this.output);
 
 
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(RBlocks.COBBLED_SCHINITE), RecipeCategory.BUILDING_BLOCKS, RBlocks.SCHINITE.asItem(), 0.1F, 200)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(RBlocks.COBBLED_SCHINITE), RecipeCategory.BUILDING_BLOCKS, CookingBookCategory.BLOCKS, RBlocks.SCHINITE.asItem(), 0.1F, 200)
                 .unlockedBy("has_cobbled_schinite", this.has(RBlocks.COBBLED_SCHINITE))
                 .save(this.output);
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(RBlocks.COBBLED_MAGNEISS), RecipeCategory.BUILDING_BLOCKS,  RBlocks.MAGNEISS.asItem(), 0.1F, 200)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(RBlocks.COBBLED_MAGNEISS), RecipeCategory.BUILDING_BLOCKS, CookingBookCategory.BLOCKS,  RBlocks.MAGNEISS.asItem(), 0.1F, 200)
                 .unlockedBy("has_cobbled_magneiss", this.has(RBlocks.COBBLED_MAGNEISS))
                 .save(this.output);
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(RBlocks.COBBLED_MALATITE), RecipeCategory.BUILDING_BLOCKS, RBlocks.MALATITE.asItem(), 0.1F, 200)
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(RBlocks.COBBLED_MALATITE), RecipeCategory.BUILDING_BLOCKS, CookingBookCategory.BLOCKS, RBlocks.MALATITE.asItem(), 0.1F, 200)
                 .unlockedBy("has_cobbled_malatite", this.has(RBlocks.COBBLED_MALATITE))
                 .save(this.output);
 
@@ -64,9 +66,9 @@ public class GenRecipes  extends RecipeProvider {
     protected void cuttingStoneSetRecipe(Block ing, Block slab, Block stair, Block wall) {
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(ing), RecipeCategory.BUILDING_BLOCKS, slab, 2)
                 .unlockedBy(getHasName(ing), has(ing)).save(this.output,getConversionRecipeName(ing,slab) + "_stonecutter");
-        SingleItemRecipeBuilder.stonecutting(Ingredient.of(ing), RecipeCategory.BUILDING_BLOCKS, stair)
+        SingleItemRecipeBuilder.stonecutting(Ingredient.of(ing), RecipeCategory.BUILDING_BLOCKS, stair,1)
                 .unlockedBy(getHasName(ing), has(ing)).save(this.output,getConversionRecipeName(ing,stair) + "_stonecutter");
-        SingleItemRecipeBuilder.stonecutting(Ingredient.of(ing), RecipeCategory.BUILDING_BLOCKS, wall)
+        SingleItemRecipeBuilder.stonecutting(Ingredient.of(ing), RecipeCategory.BUILDING_BLOCKS, wall,2)
                 .unlockedBy(getHasName(ing), has(ing)).save(this.output,getConversionRecipeName(ing,wall) + "_stonecutter");
     }
 
@@ -96,7 +98,7 @@ public class GenRecipes  extends RecipeProvider {
 
     @Override
     protected void generateForEnabledBlockFamilies(FeatureFlagSet enabledFeatures) {
-        ModFamilies.getAllFamilies().filter(BlockFamily::shouldGenerateRecipe).forEach(p_359455_ -> this.generateRecipes(p_359455_, enabledFeatures));
+        ModFamilies.getAllFamilies().forEach(p_359455_ -> this.generateRecipes(p_359455_, enabledFeatures));
     }
 
 

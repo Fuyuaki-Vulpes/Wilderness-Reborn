@@ -7,7 +7,7 @@ import com.fuyuaki.r_wilderness.world.environment.PlayerEnvironment;
 import com.fuyuaki.r_wilderness.world.environment.TemperatureData;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
@@ -41,7 +41,7 @@ public class RWildernessGui {
     private static final Identifier BODY_TEMPERATURE_BOILING_SPRITE = RWildernessMod.modLocation("hud/body_temperature/boiling");
     private static final Identifier BODY_TEMPERATURE_HYPERTHERMIA_SPRITE = RWildernessMod.modLocation("hud/body_temperature/hyperthermia");
 
-    public static void environmentTemperatureLayer(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static void environmentTemperatureLayer(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.options.hideGui) return;
         Entity entity = minecraft.getCameraEntity();
@@ -56,7 +56,7 @@ public class RWildernessGui {
             float offset = TemperatureData.temperaturePercentage(temperature) * 32 - 3;
             guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TEMPERATURE_BAR_SPRITE, left, top - 5, 32, 5);
             guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, pointerSprite(temperature), Mth.floor(left + offset), top - 9, 6, 8);
-            guiGraphics.drawString(minecraft.font,decimalformat.format(temperature) + "o C",left + 36,top - 10, ARGB.white(1.0F),true);
+            guiGraphics.text(minecraft.font,decimalformat.format(temperature) + "o C",left + 36,top - 10, ARGB.white(1.0F),true);
 
         }
     }
@@ -71,7 +71,7 @@ public class RWildernessGui {
         return TEMPERATURE_POINTER_SPRITE;
     }
 
-    public static void bodyTemperatureLayer(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static void bodyTemperatureLayer(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.options.hideGui) return;
         Entity entity = minecraft.getCameraEntity();
@@ -89,7 +89,7 @@ public class RWildernessGui {
             guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, left, top, 16, 16);
 
 
-            guiGraphics.drawString(minecraft.font,decimalformat.format(temperature) + "o C",left + 16,top + 4, ARGB.white(1.0F),true);
+            guiGraphics.text(minecraft.font,decimalformat.format(temperature) + "o C",left + 16,top + 4, ARGB.white(1.0F),true);
 
         }
     }
@@ -116,7 +116,7 @@ public class RWildernessGui {
         return BODY_TEMPERATURE_NEUTRAL_SPRITE;
     }
 
-    public static void hydrationLayer(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static void hydrationLayer(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.options.hideGui) return;
         Entity entity = minecraft.getCameraEntity();

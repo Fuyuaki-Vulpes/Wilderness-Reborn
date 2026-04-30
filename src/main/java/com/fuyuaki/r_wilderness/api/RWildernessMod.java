@@ -48,11 +48,11 @@ public class RWildernessMod {
         RItems.init(modEventBus);
         RCreativeModeTabs.init(modEventBus);
         RSoundEvents.init(modEventBus);
+        RDataComponents.init(modEventBus);
         RFeatures.init(modEventBus);
         RChunkGenerators.init(modEventBus);
         RWorldCarvers.init(modEventBus);
         RPlacementModifierTypes.init(modEventBus);
-        com.fuyuaki.r_wilderness.client.RSoundEvents.init(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 

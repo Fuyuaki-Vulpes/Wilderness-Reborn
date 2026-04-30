@@ -1,6 +1,7 @@
 package com.fuyuaki.r_wilderness.world.environment;
 
 import com.fuyuaki.r_wilderness.network.DrinkWaterInWorldPacket;
+import com.fuyuaki.r_wilderness.world.item.components.Drinkable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -112,8 +113,8 @@ public class HydrationData implements ValueIOSerializable {
         this.add(hydrationLevelModifier, FoodConstants.saturationByModifier(hydrationLevelModifier, saturationLevelModifier));
     }
 
-    public void drink(HydrationProperties foodProperties) {
-        this.add(foodProperties.hydration(), foodProperties.saturation());
+    public void drink(Drinkable drinkable) {
+        this.add(drinkable.hydration(), drinkable.saturation());
     }
 
     public float getSaturationLevel() {

@@ -2,6 +2,7 @@ package com.fuyuaki.r_wilderness.data.generation.model;
 
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -9,25 +10,25 @@ import net.minecraft.world.level.block.Block;
 
 public class RebornMapping {
 
-    public static TextureMapping singleSlot(TextureSlot slot, Identifier texture) {
+    public static TextureMapping singleSlot(TextureSlot slot, Material texture) {
         return new TextureMapping().put(slot, texture);
     }
     public static TextureMapping crossEmissive(Block block) {
         return new TextureMapping().put(TextureSlot.CROSS, getBlockTexture(block)).put(TextureSlot.CROSS_EMISSIVE, getBlockTexture(block, "_emissive"));
     }
 
-    public static TextureMapping cross(Identifier texture) {
+    public static TextureMapping cross(Material texture) {
         return singleSlot(TextureSlot.CROSS, texture);
     }
 
-    public static Identifier getBlockTexture(Block block) {
-        Identifier Identifier = BuiltInRegistries.BLOCK.getKey(block);
-        return Identifier.withPrefix("block/");
+    public static Material getBlockTexture(Block block) {
+        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
+        return new Material(id.withPath(path -> "block/" + path));
     }
 
-    public static Identifier getBlockTexture(Block block, String suffix) {
-        Identifier Identifier = BuiltInRegistries.BLOCK.getKey(block);
-        return Identifier.withPath(string -> "block/" + string + suffix);
+    public static Material getBlockTexture(Block block, String suffix) {
+        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
+        return new Material(id.withPath(path -> "block/" + path + suffix));
     }
 
     public static Identifier getItemTexture(Item item) {

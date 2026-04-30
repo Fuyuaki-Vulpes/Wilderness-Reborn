@@ -18,7 +18,7 @@ public class WildernessConstants {
     public static final float CLOUD_HEIGHT = 320;
 
 
-    public static final boolean DEBUG_GEN = true;
+    public static final boolean DISABLE_CARVERS = true;
     public static long DAY_PERIOD = 24000;
     public static long EARTH_ORBIT_PERIOD = 365 * DAY_PERIOD;
 }

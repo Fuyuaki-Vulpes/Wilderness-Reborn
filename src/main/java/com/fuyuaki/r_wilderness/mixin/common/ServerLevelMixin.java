@@ -97,7 +97,7 @@ public abstract class ServerLevelMixin extends Level implements ServerEntityGett
 
         if (asleepPlayers >= 1) {
             for (ServerPlayer serverplayer : this.players) {
-                serverplayer.displayClientMessage(message, true);
+                serverplayer.sendOverlayMessage(message);
             }        }
 
     }

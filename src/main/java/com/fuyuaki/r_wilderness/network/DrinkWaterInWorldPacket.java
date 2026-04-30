@@ -42,11 +42,11 @@ public record DrinkWaterInWorldPacket(BlockPos position) implements CustomPacket
 
                 if (biome.is(RTags.Biomes.HAS_SALT_WATER) && level.random.nextFloat() < HydrationData.THISRT_CHANCE)
                 {
-                    ((ServerPlayerEnvironment)player).drinkInWorld(4,0);
+                    ((ServerPlayerEnvironment)player).drinkInWorld(8,0);
 
 //                    player.addEffect(new MobEffectInstance(ModEffects.THIRST, 600));
                 }else{
-                    ((ServerPlayerEnvironment)player).drinkInWorld(8,8);
+                    ((ServerPlayerEnvironment)player).drinkInWorld(16,4);
                 }
             }
     }

@@ -12,7 +12,8 @@ import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
-import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.dispatch.Variant;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.Weighted;
@@ -23,8 +24,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import org.jspecify.annotations.Nullable;
 
@@ -62,6 +61,8 @@ public class GenBlockModels extends BlockModelGenerators {
             RBlocks.COBBLED_MALATITE.get(),
             BlockModelGenerators::createMirroredCubeGenerator,
             RBlocks.MALATITE.get(),
+            BlockModelGenerators::createMirroredCubeGenerator,
+            RBlocks.WEATHERED_BEDROCK.get(),
             BlockModelGenerators::createMirroredCubeGenerator
     );
 
@@ -76,6 +77,38 @@ public class GenBlockModels extends BlockModelGenerators {
         createTrivialCube(RBlocks.CHALK.get());
         createTrivialCube(RBlocks.LIMESTONE.get());
         createTrivialCube(RBlocks.MUD_STONE.get());
+
+        createTrivialCube(RBlocks.SCHINITE_GOLD_ORE.get());
+        createTrivialCube(RBlocks.MAGNEISS_GOLD_ORE.get());
+        createTrivialCube(RBlocks.MALATITE_GOLD_ORE.get());
+
+        createTrivialCube(RBlocks.SCHINITE_IRON_ORE.get());
+        createTrivialCube(RBlocks.MAGNEISS_IRON_ORE.get());
+        createTrivialCube(RBlocks.MALATITE_IRON_ORE.get());
+
+        createTrivialCube(RBlocks.SCHINITE_COAL_ORE.get());
+        createTrivialCube(RBlocks.MAGNEISS_COAL_ORE.get());
+        createTrivialCube(RBlocks.MALATITE_COAL_ORE.get());
+
+        createTrivialCube(RBlocks.SCHINITE_LAPIS_ORE.get());
+        createTrivialCube(RBlocks.MAGNEISS_LAPIS_ORE.get());
+        createTrivialCube(RBlocks.MALATITE_LAPIS_ORE.get());
+
+        createTrivialCube(RBlocks.SCHINITE_DIAMOND_ORE.get());
+        createTrivialCube(RBlocks.MAGNEISS_DIAMOND_ORE.get());
+        createTrivialCube(RBlocks.MALATITE_DIAMOND_ORE.get());
+
+        createTrivialCube(RBlocks.SCHINITE_REDSTONE_ORE.get());
+        createTrivialCube(RBlocks.MAGNEISS_REDSTONE_ORE.get());
+        createTrivialCube(RBlocks.MALATITE_REDSTONE_ORE.get());
+
+        createTrivialCube(RBlocks.SCHINITE_EMERALD_ORE.get());
+        createTrivialCube(RBlocks.MAGNEISS_EMERALD_ORE.get());
+        createTrivialCube(RBlocks.MALATITE_EMERALD_ORE.get());
+
+        createTrivialCube(RBlocks.SCHINITE_COPPER_ORE.get());
+        createTrivialCube(RBlocks.MAGNEISS_COPPER_ORE.get());
+        createTrivialCube(RBlocks.MALATITE_COPPER_ORE.get());
 
         createTrivialCube(RBlocks.CHALKY_SOIL.get());
         createFarmland(RBlocks.CHALKY_FARMLAND, RBlocks.CHALKY_SOIL);
@@ -97,9 +130,7 @@ public class GenBlockModels extends BlockModelGenerators {
 
         //Flowers
         createPlantWithDefaultItem(RBlocks.BELLFLOWER.get(), RBlocks.POTTED_BELLFLOWER.get(), BlockModelGenerators.PlantType.NOT_TINTED);
-        createPlantWithDefaultItem(RBlocks.MOSS_COMPANION.get(), RBlocks.POTTED_MOSS_COMPANION.get(), BlockModelGenerators.PlantType.NOT_TINTED);
         createPlantWithDefaultItem(RBlocks.MOUNTAIN_HEATHER.get(), RBlocks.POTTED_MOUNTAIN_HEATHER.get(), BlockModelGenerators.PlantType.NOT_TINTED);
-        createPlantWithDefaultItem(RBlocks.SNOWBELL.get(), RBlocks.POTTED_SNOWBELL.get(), BlockModelGenerators.PlantType.NOT_TINTED);
 
 
         vanillaOverride();
@@ -128,7 +159,7 @@ public class GenBlockModels extends BlockModelGenerators {
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(side));
         this.blockStateOutput.accept(createSimpleBlock(block, plainVariant(ModelTemplates.CUBE_BOTTOM_TOP.create(block, texturemapping, this.modelOutput))));
     }
-    public void createVerticalBlock(Block block, Identifier side, Identifier bottom, Identifier top){
+    public void createVerticalBlock(Block block, Material side, Material bottom, Material top){
         TextureMapping texturemapping = new TextureMapping()
                 .put(TextureSlot.BOTTOM, bottom)
                 .put(TextureSlot.TOP, side)
@@ -136,16 +167,16 @@ public class GenBlockModels extends BlockModelGenerators {
         this.blockStateOutput.accept(createSimpleBlock(block, plainVariant(ModelTemplates.CUBE_BOTTOM_TOP.create(block, texturemapping, this.modelOutput))));
     }
     public void createGrassBlock(Block block, Block dirt, Block top, ItemTintSource colorSource) {
-        Identifier Identifier = TextureMapping.getBlockTexture(dirt);
+        Material material = TextureMapping.getBlockTexture(dirt);
 
         TextureMapping texturemapping = new TextureMapping()
-                .put(RebornSlots.DIRT, Identifier)
+                .put(RebornSlots.DIRT, material)
                 .copyForced(RebornSlots.DIRT, TextureSlot.PARTICLE)
                 .put(RebornSlots.GRASS, TextureMapping.getBlockTexture(top, "_top"))
                 .put(RebornSlots.OVERLAY, TextureMapping.getBlockTexture(block, "_snow_overlay"));
 
         TextureMapping texturemappingNoSnow = new TextureMapping()
-                .put(RebornSlots.DIRT, Identifier)
+                .put(RebornSlots.DIRT, material)
                 .copyForced(RebornSlots.DIRT, TextureSlot.PARTICLE)
                 .put(RebornSlots.GRASS, TextureMapping.getBlockTexture(top, "_top"))
                 .put(RebornSlots.OVERLAY, TextureMapping.getBlockTexture(block, "_overlay"));
@@ -176,20 +207,16 @@ public class GenBlockModels extends BlockModelGenerators {
     }
 
     public void createFarmland(DeferredBlock<Block> farmland, DeferredBlock<Block> soil) {
-        TextureMapping texturemapping = new TextureMapping()
+
+        TextureMapping dryTextures = (new TextureMapping())
                 .put(TextureSlot.DIRT, TextureMapping.getBlockTexture(soil.get()))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(farmland.get()));
-        TextureMapping texturemapping1 = new TextureMapping()
+        TextureMapping moistTextures = (new TextureMapping())
                 .put(TextureSlot.DIRT, TextureMapping.getBlockTexture(soil.get()))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(farmland.get(), "_moist"));
-        MultiVariant multivariant = plainVariant(ModelTemplates.FARMLAND.create(farmland.get(), texturemapping, this.modelOutput));
-        MultiVariant multivariant1 = plainVariant(
-                ModelTemplates.FARMLAND.create(TextureMapping.getBlockTexture(farmland.get(), "_moist"), texturemapping1, this.modelOutput)
-        );
-        this.blockStateOutput
-                .accept(
-                        MultiVariantGenerator.dispatch(farmland.get()).with(createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, multivariant1, multivariant))
-                );
+        MultiVariant dryModel = plainVariant(ModelTemplates.FARMLAND.create(farmland.get(), dryTextures, this.modelOutput));
+        MultiVariant moistModel = plainVariant(ModelTemplates.FARMLAND.create(ModelLocationUtils.getModelLocation(farmland.get(), "_moist"), moistTextures, this.modelOutput));
+        this.blockStateOutput.accept(MultiVariantGenerator.dispatch(farmland.get()).with(createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, moistModel, dryModel)));
     }
 
 

@@ -2,13 +2,17 @@ package com.fuyuaki.r_wilderness.mixin.client;
 
 import com.fuyuaki.r_wilderness.world.item.RCreativeModeTabs;
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.CreativeModeTab;
 import net.neoforged.neoforge.client.gui.CreativeTabsScreenPage;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,8 +26,8 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
 
     @Shadow private CreativeTabsScreenPage currentPage;
 
-    public CreativeModeInventoryScreenMixin(CreativeModeInventoryScreen.ItemPickerMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
+    public CreativeModeInventoryScreenMixin(LocalPlayer player, FeatureFlagSet enabledFeatures, boolean displayOperatorCreativeTab) {
+        super(new CreativeModeInventoryScreen.ItemPickerMenu(player), player.getInventory(), CommonComponents.EMPTY, 195, 136);
     }
 
     @Shadow protected abstract int getTabX(CreativeModeTab tab);
@@ -32,8 +36,8 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
 
     @Shadow private static CreativeModeTab selectedTab;
 
-    @Inject(method = "renderTabButton", at = @At("HEAD"), cancellable = true)
-    private void renderTabButtonWilderness(GuiGraphics guiGraphics, int p_470648_, int p_470660_, CreativeModeTab creativeModeTab, CallbackInfo ci){
+    @Inject(method = "extractTabButton", at = @At("HEAD"), cancellable = true)
+    private void renderTabButtonWilderness(GuiGraphicsExtractor guiGraphics, int p_470648_, int p_470660_, CreativeModeTab creativeModeTab, CallbackInfo ci){
         if (creativeModeTab == RCreativeModeTabs.MAIN_TAB.get()){
             boolean flag = creativeModeTab == selectedTab;
             boolean flag1 = currentPage.isTop(creativeModeTab);
@@ -48,7 +52,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
             guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, location, j, k, 26, 32);
             int l = j + 13 - 8;
             int i1 = k + 16 - 8 + (flag1 ? 1 : -1);
-            guiGraphics.renderItem(creativeModeTab.getIconItem(), l, i1);
+            guiGraphics.item(creativeModeTab.getIconItem(), l, i1);
             ci.cancel();
         }
     }

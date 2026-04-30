@@ -12,8 +12,9 @@ public class ModNoises {
     public static final ResourceKey<NormalNoise.NoiseParameters> CAVES_NOODLES_DENSITY = createKey("cave/noodle_density");
     public static final ResourceKey<NormalNoise.NoiseParameters> CAVES_NOODLES_FILTER = createKey("cave/noodle_filter");
 
-    public static final ResourceKey<NormalNoise.NoiseParameters> CAVES_EXOGENES = createKey("cave/exogene");
-    public static final ResourceKey<NormalNoise.NoiseParameters> CAVES_ENDOGENES = createKey("cave/endogene");
+    public static final ResourceKey<NormalNoise.NoiseParameters> CAVE_RIDGES = createKey("cave/ridge");
+    public static final ResourceKey<NormalNoise.NoiseParameters> CAVE_RIDGE_FILTER = createKey("cave/ridge_filter");
+    public static final ResourceKey<NormalNoise.NoiseParameters> CAVE_BUBBLES = createKey("cave/bubble");
 
     public static final ResourceKey<NormalNoise.NoiseParameters> CAVES_DENSITY = createKey("cave/density");
 
@@ -21,7 +22,11 @@ public class ModNoises {
     public static final ResourceKey<NormalNoise.NoiseParameters> CAVES_CRACKS_FREQUENCY = createKey("cave/crack_frequency");
 
 
-    public static final ResourceKey<NormalNoise.NoiseParameters> AQUIFERS = createKey("aquifers");
+
+    public static final ResourceKey<NormalNoise.NoiseParameters> AQUIFER_BARRIER = createKey("aquifer_barrier");
+    public static final ResourceKey<NormalNoise.NoiseParameters> AQUIFER_FLUID_LEVEL_FLOODEDNESS = createKey("aquifer_fluid_level_floodedness");
+    public static final ResourceKey<NormalNoise.NoiseParameters> AQUIFER_LAVA = createKey("aquifer_lava");
+    public static final ResourceKey<NormalNoise.NoiseParameters> AQUIFER_FLUID_LEVEL_SPREAD = createKey("aquifer_fluid_level_spread");
 
 
     public static final ResourceKey<NormalNoise.NoiseParameters> SAND_DUNES = createKey("sand_dunes");

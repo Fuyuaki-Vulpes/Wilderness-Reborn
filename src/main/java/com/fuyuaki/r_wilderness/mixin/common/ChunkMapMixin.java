@@ -1,8 +1,8 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
 
-import com.fuyuaki.r_wilderness.world.generation.ChunkGeneratorExtension;
-import com.fuyuaki.r_wilderness.world.generation.ChunkMapBridge;
+import com.fuyuaki.r_wilderness.world.level.levelgen.ChunkGeneratorExtension;
+import com.fuyuaki.r_wilderness.world.level.levelgen.ChunkMapBridge;
 import com.mojang.datafixers.DataFixer;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;

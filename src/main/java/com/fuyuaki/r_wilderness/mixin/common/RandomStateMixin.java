@@ -1,8 +1,8 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
-import com.fuyuaki.r_wilderness.world.generation.ChunkGeneratorExtension;
-import com.fuyuaki.r_wilderness.world.generation.RandomStateExtension;
-import com.fuyuaki.r_wilderness.world.generation.terrain.SurfaceSystemExtension;
+import com.fuyuaki.r_wilderness.world.level.levelgen.ChunkGeneratorExtension;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RandomStateExtension;
+import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.SurfaceSystemExtension;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;

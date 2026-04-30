@@ -3,9 +3,9 @@ package com.fuyuaki.r_wilderness.mixin.common;
 import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.init.RAttachments;
 import com.fuyuaki.r_wilderness.world.environment.HydrationData;
-import com.fuyuaki.r_wilderness.world.environment.HydrationProperties;
 import com.fuyuaki.r_wilderness.world.environment.ServerPlayerEnvironment;
 import com.fuyuaki.r_wilderness.world.environment.TemperatureData;
+import com.fuyuaki.r_wilderness.world.item.components.Drinkable;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -165,9 +165,9 @@ public abstract class ServerPlayerMixin extends Player implements ServerPlayerEn
     }
 
     @Override
-    public void drink(HydrationProperties foodProperties) {
+    public void drink(Drinkable drinkable) {
         HydrationData data = this.getHydrationData();
-        data.drink(foodProperties);
+        data.drink(drinkable);
         ((Player) (Object) this).setData(RAttachments.HYDRATION, data);
     }
 
