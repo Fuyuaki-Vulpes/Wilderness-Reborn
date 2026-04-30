@@ -40,7 +40,7 @@ public record DrinkWaterInWorldPacket(BlockPos position) implements CustomPacket
             {
                 Holder<Biome> biome = level.getBiome(packet.position);
 
-                if (biome.is(RTags.Biomes.HAS_SALT_WATER) && level.random.nextFloat() < HydrationData.THISRT_CHANCE)
+                if (biome.is(RTags.Biomes.HAS_SALT_WATER) && level.getRandom().nextFloat() < HydrationData.THISRT_CHANCE)
                 {
                     ((ServerPlayerEnvironment)player).drinkInWorld(8,0);
 

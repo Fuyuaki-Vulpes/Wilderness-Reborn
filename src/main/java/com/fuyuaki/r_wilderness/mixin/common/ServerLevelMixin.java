@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerEntityGetter;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.SleepStatus;
+import net.minecraft.world.clock.ClockManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.dimension.DimensionType;
@@ -38,15 +39,17 @@ public abstract class ServerLevelMixin extends Level implements ServerEntityGett
 
     @Shadow public abstract GameRules getGameRules();
 
-    @Shadow public abstract void setDayTime(long time);
 
     @Shadow protected abstract void wakeUpAllPlayers();
+
+    @Shadow
+    public abstract ClockManager clockManager();
 
     protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
         super(levelData, dimension, registryAccess, dimensionTypeRegistration, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
     }
 
-
+/*
     @Redirect(method = "tick",at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/SleepStatus;areEnoughSleeping(I)Z"))
     private boolean skipThroughNight(SleepStatus instance, int requiredSleepPercentage){
         return false;
@@ -59,17 +62,17 @@ public abstract class ServerLevelMixin extends Level implements ServerEntityGett
 
         if (this.sleepStatus.areEnoughSleeping(i) && this.sleepStatus.areEnoughDeepSleeping(i, this.players)) {
             if (this.getGameRules().get(GameRules.ADVANCE_TIME)) {
-                long k = this.levelData.getDayTime() + 600L;
-                this.setDayTime(EventHooks.onSleepFinished((ServerLevel) (Object) this, k - k % 600L, this.getDayTime()));
+                long k = this.levelData.getGameTime() + 600L;
+                this.clockManager().(EventHooks.onSleepFinished((ServerLevel) (Object) this, k - k % 600L, this.day()));
             }
         }
-        if (this.sleepStatus.amountSleeping() > 0 && this.levelData.getDayTime() > 23400) {
+        if (this.sleepStatus.amountSleeping() > 0 && this.levelData.getGameTime() > 23400) {
             this.wakeUpAllPlayers();
         }
 
     }
 
-
+*/
     @Redirect(method = "updateSleepingPlayerList",at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;announceSleepStatus()V"))
     private void mixinUpdateSleepingPlayerAnnounceSleep(ServerLevel instance){
 

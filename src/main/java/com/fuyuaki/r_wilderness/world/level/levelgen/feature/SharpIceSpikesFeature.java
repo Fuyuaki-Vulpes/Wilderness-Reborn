@@ -2,6 +2,7 @@ package com.fuyuaki.r_wilderness.world.level.levelgen.feature;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -56,7 +57,7 @@ public class SharpIceSpikesFeature extends Feature<NoneFeatureConfiguration> {
 
                             BlockState blockstate = worldgenlevel.getBlockState(blockpos.offset(xOff, yOff, zOff));
 
-                            if (blockstate.isAir() || isDirt(blockstate) || blockstate.is(Blocks.SNOW_BLOCK) || blockstate.is(Blocks.ICE)) {
+                            if (blockstate.isAir() || blockstate.is(BlockTags.DIRT) || blockstate.is(Blocks.SNOW_BLOCK) || blockstate.is(Blocks.ICE)) {
 
                                 this.setBlock(worldgenlevel, blockpos.offset(xOff, yOff, zOff), Blocks.PACKED_ICE.defaultBlockState());
                             }
@@ -65,7 +66,7 @@ public class SharpIceSpikesFeature extends Feature<NoneFeatureConfiguration> {
 
                                 blockstate = worldgenlevel.getBlockState(blockpos.offset(xOff, -yOff, zOff));
 
-                                if (blockstate.isAir() || isDirt(blockstate)|| isStone(blockstate) || blockstate.is(Blocks.SNOW_BLOCK) || blockstate.is(Blocks.ICE)) {
+                                if (blockstate.isAir() || blockstate.is(BlockTags.DIRT)|| blockstate.is(BlockTags.BASE_STONE_OVERWORLD) || blockstate.is(Blocks.SNOW_BLOCK) || blockstate.is(Blocks.ICE)) {
 
                                     this.setBlock(worldgenlevel, blockpos.offset(xOff, -yOff, zOff), Blocks.PACKED_ICE.defaultBlockState());
                                 }
@@ -93,8 +94,8 @@ public class SharpIceSpikesFeature extends Feature<NoneFeatureConfiguration> {
                     while (blockpos1.getY() > 50) {
                         BlockState blockstate1 = worldgenlevel.getBlockState(blockpos1);
                         if (!blockstate1.isAir()
-                                && !isDirt(blockstate1)
-                                && !isStone(blockstate1)
+                                && !blockstate1.is(BlockTags.DIRT)
+                                && !blockstate1.is(BlockTags.BASE_STONE_OVERWORLD)
                                 && !blockstate1.is(Blocks.SNOW_BLOCK)
                                 && !blockstate1.is(Blocks.ICE)
                                 && !blockstate1.is(Blocks.PACKED_ICE)) {

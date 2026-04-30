@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "r_wilderness:cobbled_magneiss",
+  "result": {
+    "id": "r_wilderness:cobbled_magneiss_stairs"
+  }
+}

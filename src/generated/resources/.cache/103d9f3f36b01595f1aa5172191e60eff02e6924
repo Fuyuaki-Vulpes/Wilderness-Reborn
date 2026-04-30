@@ -1,7 +1,7 @@
-// 1.21.11	2026-02-05T16:35:57.8752093	Registries
+// 26.1.2	2026-04-30T17:59:49.7055495	Registries
 d6449b67cfb3da904bdeb9e5995201f98f986ef9 data/r_wilderness/damage_type/hyperthermia.json
 65129d679074558883d2e29107a3afec0fdd3762 data/r_wilderness/damage_type/hypothermia.json
-fdbf91ba9360561935d2dcd5776bdcf0962463bd data/r_wilderness/dimension_type/overworld.json
+68e4b1730fb945124f0ed344b0e058fa81569d2d data/r_wilderness/dimension_type/overworld.json
 2d1810b2c1dedbefb9477b91d904ebabc26855a6 data/r_wilderness/neoforge/biome_modifier/add_large_caves.json
 722cd10a80d461b4ef0633f3b3c493f2e3349321 data/r_wilderness/neoforge/biome_modifier/add_sinkholes.json
 013c138a4adc7b0faa12f29dd7a3ec3b3f8780fb data/r_wilderness/neoforge/biome_modifier/remove_blobs.json
@@ -88,7 +88,7 @@ b77fe23348706b53078a09d1005f14c6794cdef4 data/r_wilderness/worldgen/biome_placem
 c4c84972e97583653a25907b016be78e4dd23ba1 data/r_wilderness/worldgen/configured_carver/large_caves.json
 bc38bb2576fd9d2c0be313d008b9ac94ef4a23b6 data/r_wilderness/worldgen/configured_carver/lava_tubes.json
 130e22f064301ffc3bbf98d01df8eb00e854289c data/r_wilderness/worldgen/configured_carver/sinkhole.json
-d60b8b0a91a28a7123d11a22a46500dba2bee83f data/r_wilderness/worldgen/configured_feature/alpine_tree.json
+303eecb1e3ddd94ab3d7813d556aaa1524cb6ec8 data/r_wilderness/worldgen/configured_feature/alpine_tree.json
 d659d499a9bca359ad55f4ea726dec97efdb8df1 data/r_wilderness/worldgen/configured_feature/large_water_delta.json
 af14b855702dee80d48df67aa03e05b218e72398 data/r_wilderness/worldgen/configured_feature/sharp_ice_spike.json
 580469d319035530d07496b04874cfc8a8bbb640 data/r_wilderness/worldgen/configured_feature/water_delta.json
