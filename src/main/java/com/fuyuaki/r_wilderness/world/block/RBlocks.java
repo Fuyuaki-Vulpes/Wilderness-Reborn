@@ -8,9 +8,9 @@ import com.fuyuaki.r_wilderness.world.item.RItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.valueproviders.ConstantInt;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -45,7 +45,7 @@ public class RBlocks {
 
     //Stones
 
-    public static final DeferredBlock<Block> CHALK = registerBlock("chalk", BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CONCRETE));
+    public static final DeferredBlock<Block> CHALK = registerBlock("chalk", BlockBehaviour.Properties.ofFullCopy(Blocks.CONCRETE.white()));
     public static final DeferredBlock<Block> LIMESTONE = registerBlock("limestone", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
     public static final DeferredBlock<Block> MUD_STONE = registerBlock("mud_stone", BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS));
 
@@ -472,7 +472,7 @@ public class RBlocks {
     }
 
     public static Boolean ocelotOrParrot(BlockState state, BlockGetter level, BlockPos pos, EntityType<?> entity) {
-        return entity == EntityType.OCELOT || entity == EntityType.PARROT;
+        return entity == EntityTypes.OCELOT || entity == EntityTypes.PARROT;
     }
 
     private static DeferredBlock<BedBlock> registerBed(String name, DyeColor color) {

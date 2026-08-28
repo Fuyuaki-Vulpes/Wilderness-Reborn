@@ -3,6 +3,10 @@ package com.fuyuaki.r_wilderness.world.level.levelgen;
 import com.fuyuaki.r_wilderness.api.WildRegistries;
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.mixin.accessor.ChunkMapAccessor;
+import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
+import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
+import com.fuyuaki.r_wilderness.world.generation.region.data.SerializableRegionData;
+import com.fuyuaki.r_wilderness.world.generation.region.reference.RegionLayers;
 import com.fuyuaki.r_wilderness.world.level.levelgen.carver.WildCarverContext;
 import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.WRNoiseChunk;
 import com.fuyuaki.r_wilderness.world.level.levelgen.hydrology.RAquifer;
@@ -11,14 +15,18 @@ import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.WRSurfaceSystemUtil
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomePlacement;
 import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.util.ChunkAccessModifier;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Sets;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.QuartPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ChunkMap;
@@ -38,6 +46,7 @@ import net.minecraft.world.level.levelgen.carver.CarvingContext;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.jspecify.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -112,40 +121,45 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
 
     @Override
-    public void applyCarvers(WorldGenRegion level, long seed, RandomState random, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunk) {
+    public void applyCarvers(WorldGenRegion region, long seed, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunk) {
 
         if (!SharedConstants.DEBUG_DISABLE_CARVERS && !WildernessConstants.DISABLE_CARVERS) {
-            BiomeManager biomemanager = biomeManager.withDifferentSource(
-                    (x, y, z) -> this.biomeSource.getNoiseBiome(x, y, z, random.sampler())
+            BiomeManager correctBiomeManager = biomeManager.withDifferentSource(
+                    (quartX, quartY, quartZ) -> this.biomeSource.getNoiseBiome(quartX, quartY, quartZ, randomState.sampler())
             );
-            WorldgenRandom worldgenrandom = new WorldgenRandom(new LegacyRandomSource(RandomSupport.generateUniqueSeed()));
-            int i = 8;
-            ChunkPos chunkpos = chunk.getPos();
-            WRNoiseChunk noisechunk = this.createWRNoiseChunk(chunk, structureManager, Blender.of(level), random);
-            Aquifer aquifer = new RAquifer(noisechunk,chunkpos,random.aquiferRandom(), WildernessConstants.WORLD_BOTTOM,WildernessConstants.WORLD_HEIGHT,this.globalFluidPicker.get());
-            CarvingContext carvingcontext = new WildCarverContext(
-                    this, level.registryAccess(), chunk.getHeightAccessorForGeneration(), noisechunk, random, this.settings.surfaceRule()
+            WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(RandomSupport.generateUniqueSeed()));
+            int range = 8;
+            ChunkPos pos = chunk.getPos();
+            WRNoiseChunk noiseChunk = this.createWRNoiseChunk(chunk, structureManager, Blender.of(region), randomState);
+            Aquifer aquifer = new RAquifer(noiseChunk,pos,randomState.aquiferRandom(), WildernessConstants.WORLD_BOTTOM,WildernessConstants.WORLD_HEIGHT,this.globalFluidPicker.get());
+            CarvingContext context = new WildCarverContext(
+                    this, region.registryAccess(), chunk.getHeightAccessorForGeneration(), noiseChunk, randomState, this.settings.surfaceRule()
             );
-            CarvingMask carvingmask = ((ProtoChunk)chunk).getOrCreateCarvingMask();
+            CarvingMask mask = ((ProtoChunk)chunk).getOrCreateCarvingMask();
 
-            for (int j = -i; j <= i; j++) {
-                for (int k = -i; k <= i; k++) {
-                    ChunkPos chunkpos1 = new ChunkPos(chunkpos.x() + j, chunkpos.z() + k);
-                    BiomeGenerationSettings biomegenerationsettings = this.biomeSource
+            for (int dx = -8; dx <= 8; dx++) {
+                for (int dz = -8; dz <= 8; dz++) {
+                    ChunkPos sourcePos = new ChunkPos(pos.x() + dx, pos.z() + dz);
+                    ChunkAccess carverCenterChunk = region.getChunk(sourcePos.x(), sourcePos.z());
+                    BiomeGenerationSettings sourceBiomeGenerationSettings = carverCenterChunk.carverBiome(
+                            () -> this.getBiomeGenerationSettings(
+                                    this.biomeSource
                                             .getNoiseBiome(
-                                                    chunkpos1.getMinBlockX(), 0, chunkpos1.getMinBlockZ(), random.sampler()
-                                            ).value().getGenerationSettings();
-                    Iterable<Holder<ConfiguredWorldCarver<?>>> iterable = biomegenerationsettings.getCarvers();
-                    int l = 0;
+                                                    QuartPos.fromBlock(sourcePos.getMinBlockX()), 0, QuartPos.fromBlock(sourcePos.getMinBlockZ()), randomState.sampler()
+                                            )
+                            )
+                    );
+                    Iterable<Holder<ConfiguredWorldCarver<?>>> carvers = sourceBiomeGenerationSettings.getCarvers();
+                    int index = 0;
 
-                    for (Holder<ConfiguredWorldCarver<?>> holder : iterable) {
-                        ConfiguredWorldCarver<?> configuredworldcarver = holder.value();
-                        worldgenrandom.setLargeFeatureSeed(seed + l, chunkpos1.x(), chunkpos1.z());
-                        if (configuredworldcarver.isStartChunk(worldgenrandom)) {
-                            configuredworldcarver.carve(carvingcontext, chunk, biomemanager::getBiome, worldgenrandom, aquifer, chunkpos1, carvingmask);
+                    for (Holder<ConfiguredWorldCarver<?>> carverHolder : carvers) {
+                        ConfiguredWorldCarver<?> carver = carverHolder.value();
+                        random.setLargeFeatureSeed(seed + index, sourcePos.x(), sourcePos.z());
+                        if (carver.isStartChunk(random)) {
+                            carver.carve(context, chunk, correctBiomeManager::getBiome, random, aquifer, sourcePos, mask);
                         }
 
-                        l++;
+                        index++;
                     }
                 }
             }
@@ -154,40 +168,37 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     }
 
     @Override
-    public void buildSurface(WorldGenRegion level, StructureManager structureManager, RandomState random, ChunkAccess chunk) {
-
-        WorldGenerationContext worldgenerationcontext = new WorldGenerationContext(this, level);
-        this.buildSurface(
-                chunk,
-                worldgenerationcontext,
-                random,
-                structureManager,
-                level.getBiomeManager(),
-                level.registryAccess().lookupOrThrow(Registries.BIOME),
-                Blender.of(level)
-        );
+    public void buildSurface(WorldGenRegion region, StructureManager structureManager, RandomState randomState, ChunkAccess protoChunk) {
+        WorldGenerationContext context = new WorldGenerationContext(this, region);
+        Set<Holder<Biome>> possibleBiomes = collectPossibleBiomes(region, 1);
+        this.buildSurface(protoChunk, context, randomState, structureManager, region.getBiomeManager(), Blender.of(region), possibleBiomes);
 
     }
+    private static Set<Holder<Biome>> collectPossibleBiomes(WorldGenRegion region, int chunkRadius) {
+        Set<Holder<Biome>> chunkBiomes = new ReferenceOpenHashSet<>();
+        ChunkPos center = region.getCenter();
 
+        for (int z = center.z() - chunkRadius; z <= center.z() + chunkRadius; z++) {
+            for (int x = center.x() - chunkRadius; x <= center.x() + chunkRadius; x++) {
+                region.getChunk(x, z).collectBiomesInPalette(chunkBiomes);
+            }
+        }
+
+        return chunkBiomes;
+    }
+
+    @VisibleForTesting
     public void buildSurface(
-            ChunkAccess chunk,
+            ChunkAccess protoChunk,
             WorldGenerationContext context,
-            RandomState random,
+            RandomState randomState,
             StructureManager structureManager,
             BiomeManager biomeManager,
-            Registry<Biome> biomes,
-            Blender blender
+            Blender blender,
+            @Nullable Set<Holder<Biome>> possibleBiomes
     ) {
-        WRSurfaceSystemUtil
-                .buildSurface(
-                        random,
-                        biomeManager,
-                        biomes,
-                        context,
-                        chunk,
-                        createWRNoiseChunk(chunk, structureManager, blender, random),
-                        this.settings.surfaceRule()
-                );
+        WRNoiseChunk noiseChunk = createWRNoiseChunk(protoChunk, structureManager, blender, randomState);
+        WRSurfaceSystemUtil.buildSurface(randomState, biomeManager, context, protoChunk, noiseChunk, settings.surfaceRule(), possibleBiomes);
     }
 
 
@@ -343,30 +354,43 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     @Override
     public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
         DecimalFormat decimalformat = new DecimalFormat("0.000");
-        TerrainParameters.Sampled sampled = this.parameters.samplerAtCached(pos.getX(), pos.getZ());
+        RegionMemory memory = RegionMemory.getInstance(Minecraft.getInstance().getSingleplayerServer().overworld());
+        int x = pos.getX();
+        int z = pos.getZ();
+        WorldRegion region = memory.getRegionAt(x, z);
+        RegionLayers layers = region.layers();
 
-        String continentalness = decimalformat.format(sampled.continentalness());
-        String terrainOffset = decimalformat.format(sampled.terrainOffset());
-        String erosion = decimalformat.format(sampled.erosion());
-        String tectonicActivity = decimalformat.format((1 - Math.abs(sampled.tectonicActivity())));
-        String mountainCore = decimalformat.format(sampled.mountainsCore());
-        String mountain = decimalformat.format(sampled.mountains());
-        String mountainDetail = decimalformat.format(sampled.mountainDetails());
-        String mountainNoise = decimalformat.format(sampled.mountainNoise());
-        String plateau = decimalformat.format(sampled.highlandsMap());
-        String hill = decimalformat.format(sampled.hills());
-        String terrainTypeA = decimalformat.format(sampled.terrainTypeA());
-        String terrainTypeB = decimalformat.format(sampled.terrainTypeB());
-        String postTerrainA = decimalformat.format(sampled.terrainType().a());
-        String postTerrainB = decimalformat.format(sampled.terrainType().b());
+        String continentalness = decimalformat.format(layers.getContinentalness().getUpsampled(x,z,memory));
+        String erosion = decimalformat.format(layers.getErodability().getUpsampled(x,z,memory));
+        String plateau = decimalformat.format(layers.getPlateaus().getUpsampled(x,z,memory));
+        String hill = decimalformat.format(layers.getHilliness().getUpsampled(x,z,memory));
+        String tectonicStress = decimalformat.format(layers.getTectonicStress().getUpsampled(x,z,memory));
+        String volcanicness = decimalformat.format(layers.getVolcanicness().getUpsampled(x,z,memory));
+        String plateAge = decimalformat.format(layers.getAge().getUpsampled(x,z,memory));
+        String plateSwell = decimalformat.format(layers.getSwelling().getUpsampled(x,z,memory));
+        String plateWeight = decimalformat.format(layers.getPlateWeights().getUpsampled(x,z,memory));
+        String plateDistToParent = decimalformat.format(layers.getDistToParent().getUpsampled(x,z,memory));
+        String plateEdges = decimalformat.format(layers.getPlateEdges().getUpsampled(x,z,memory));
+        String plateBuoyancy = decimalformat.format(layers.getBuoyancy().getUpsampled(x,z,memory));
+        String rockiness = decimalformat.format(layers.getRockiness().getUpsampled(x,z,memory));
+        String humidity = decimalformat.format(layers.getHumidity().getUpsampled(x,z,memory));
+        String temperature = decimalformat.format(layers.getTemperature().getUpsampled(x,z,memory));
+        String atmosPressure = decimalformat.format(layers.getAtmospherePressure().getUpsampled(x,z,memory));
+        String plateElevOff = decimalformat.format(layers.getPlateElevationOffsets().getUpsampled(x,z,memory));
+        String heightmap = decimalformat.format(layers.getHeightmapBasic().getUpsampled(x,z,memory));
+        String rivers = decimalformat.format(layers.getRivers().getUpsampled(x,z,memory));
+        String elevation = decimalformat.format(layers.getElevation().getUpsampled(x,z,memory));
 
-        info.add("C: " + continentalness + " E: " + erosion + " TA: " + tectonicActivity);
-        info.add("Mountain: M: " + mountain + " C: " + mountainCore + " D: " + mountainDetail + " N: " + mountainNoise);
-        info.add("H: " + hill + " P: " + plateau + " TO: " + terrainOffset);
-        info.add("Type: A: " + terrainTypeA + " B: " + terrainTypeB + " Post: A: " + postTerrainA + " B: " + postTerrainB);
-        info.add("X: " + pos.getX() + " Y: " + pos.getY() + " Z: " + pos.getZ());
-
-
+        info.add("Plates: " );
+        info.add("St: " + tectonicStress + " A: " + plateAge + " We: " + plateWeight);
+        info.add("Vol: " + volcanicness + " Buoy: " + plateBuoyancy);
+        info.add("Dist: " + plateDistToParent + " Sw: " + plateSwell + " Edg: " + plateEdges);
+        info.add("Gen: ");
+        info.add("Hill: " + hill + " Plat: " + plateau + " Cont: " + continentalness + " Erod: " + erosion);
+        info.add("Rock: " + rockiness + " Hum: " + humidity + " Temp: " + temperature);
+        info.add("Rivr: " + rivers + " Atmos Pres: " + atmosPressure);
+        info.add("Elevations: ");
+        info.add("P Elev Off: " + plateElevOff + " Base Height: " + heightmap + " Final Elev: " + elevation);
     }
 
 

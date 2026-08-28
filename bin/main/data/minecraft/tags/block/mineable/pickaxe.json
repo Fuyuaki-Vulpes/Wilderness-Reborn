@@ -1,0 +1,14 @@
+{
+  "values": [
+    "r_wilderness:weathered_bedrock",
+    "r_wilderness:schinite",
+    "r_wilderness:magneiss",
+    "r_wilderness:malatite",
+    "r_wilderness:cobbled_schinite",
+    "r_wilderness:cobbled_magneiss",
+    "r_wilderness:cobbled_malatite",
+    "r_wilderness:chalk",
+    "r_wilderness:limestone",
+    "r_wilderness:mud_stone"
+  ]
+}

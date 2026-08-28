@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_chalk_dust": {
+      "conditions": {
+        "items": [
+          {
+            "items": "r_wilderness:chalk_dust"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "r_wilderness:chalky_soil"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_chalk_dust"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "r_wilderness:chalky_soil"
+    ]
+  }
+}

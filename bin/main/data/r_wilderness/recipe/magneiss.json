@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "experience": 0.1,
+  "ingredient": "r_wilderness:cobbled_magneiss",
+  "result": {
+    "id": "r_wilderness:magneiss"
+  }
+}

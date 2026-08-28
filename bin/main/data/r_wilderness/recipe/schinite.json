@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "experience": 0.1,
+  "ingredient": "r_wilderness:cobbled_schinite",
+  "result": {
+    "id": "r_wilderness:schinite"
+  }
+}

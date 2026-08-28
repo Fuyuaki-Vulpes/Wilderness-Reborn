@@ -43,7 +43,7 @@ public class RWildernessGui {
 
     public static void environmentTemperatureLayer(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.options.hideGui) return;
+        if (minecraft.gui.hud.isHidden()) return;
         Entity entity = minecraft.getCameraEntity();
         if (entity instanceof Player player) {
             TemperatureData temperatureData = ((PlayerEnvironment) player).getTemperatureData();
@@ -73,7 +73,7 @@ public class RWildernessGui {
 
     public static void bodyTemperatureLayer(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.options.hideGui) return;
+        if (minecraft.gui.hud.isHidden()) return;
         Entity entity = minecraft.getCameraEntity();
         if (entity instanceof Player player) {
             DecimalFormat decimalformat = new DecimalFormat("0.000");
@@ -118,7 +118,7 @@ public class RWildernessGui {
 
     public static void hydrationLayer(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.options.hideGui) return;
+        if (minecraft.gui.hud.isHidden()) return;
         Entity entity = minecraft.getCameraEntity();
         if (entity instanceof Player player && minecraft.gameMode.canHurtPlayer()) {
 

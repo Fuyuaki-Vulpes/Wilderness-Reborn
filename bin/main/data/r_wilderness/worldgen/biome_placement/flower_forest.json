@@ -1,0 +1,67 @@
+{
+  "biome": "minecraft:flower_forest",
+  "name": "r_wilderness:flower_forest",
+  "target": {
+    "continentalness": {
+      "max": 100.0,
+      "mean": 0.15,
+      "min": -0.2
+    },
+    "erosion": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "highlands": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "humidity": {
+      "max": 0.15,
+      "mean": 0.0,
+      "min": -0.15
+    },
+    "magicalness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    },
+    "rockiness": {
+      "max": -0.5,
+      "mean": -0.675,
+      "min": -0.85
+    },
+    "tectonic_activity": {
+      "max": 0.5,
+      "mean": 0.0,
+      "min": -20.0
+    },
+    "temperature": {
+      "max": 0.35,
+      "mean": 0.25,
+      "min": 0.15
+    },
+    "terrain_height": {
+      "max": 240.0,
+      "mean": 68.0,
+      "min": -256.0
+    },
+    "vegetation_density": {
+      "max": 1.5,
+      "mean": 0.45,
+      "min": 0.35
+    },
+    "weirdness": {
+      "max": -0.35,
+      "mean": -0.425,
+      "min": -0.5
+    }
+  },
+  "valid_terrain_types": [
+    "mountain",
+    "shore",
+    "neutral",
+    "highlands"
+  ]
+}

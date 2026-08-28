@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "experience": 0.1,
+  "ingredient": "r_wilderness:cobbled_malatite",
+  "result": {
+    "id": "r_wilderness:malatite"
+  }
+}

@@ -3,7 +3,6 @@ package com.fuyuaki.r_wilderness.world.level.biome;
 import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.TerrainParameters;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,10 +18,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.*;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.apache.commons.lang3.mutable.MutableDouble;
-import org.apache.commons.lang3.mutable.MutableObject;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
@@ -82,32 +78,7 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
         return knownBiomes;
     }
 
-    @Override
-    public Set<Holder<Biome>> getBiomesWithin(int x, int y, int z, int radius, Climate.Sampler sampler) {
-        int xRadMin = x - radius;
-        int yRadMin = y - radius;
-        int zRadMin = z - radius;
-        int xRadMax = x + radius;
-        int yRadMax = y + radius;
-        int zRadMax = z + radius;
-        int xDiam = xRadMax - xRadMin + 1;
-        int yDiam = yRadMax - yRadMin + 1;
-        int zDiam = zRadMax - zRadMin + 1;
-        Set<Holder<Biome>> set = Sets.newHashSet();
 
-        for (int j2 = 0; j2 < zDiam; j2++) {
-            for (int k2 = 0; k2 < xDiam; k2++) {
-                for (int l2 = 0; l2 < yDiam; l2++) {
-                    int i3 = xRadMin + k2;
-                    int j3 = yRadMin + l2;
-                    int k3 = zRadMin + j2;
-                    set.add(this.getNoiseBiome(i3, j3, k3, sampler));
-                }
-            }
-        }
-
-        return set;
-    }
 
     @Nullable
     public Pair<BlockPos, Holder<Biome>> findBiomeHorizontal(
@@ -214,7 +185,10 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
     }
 
     @Override
-    public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
+    public Holder<Biome> getNoiseBiome(int xPos, int yPos, int zPos, Climate.Sampler sampler) {
+        int x = QuartPos.toBlock(xPos);
+        int y = QuartPos.toBlock(yPos);
+        int z = QuartPos.toBlock(zPos);
         TerrainParameters.Sampled sampled = parameters.samplerAt(x,z);
 
         return cycleThroughBiomePlacements(x,y,z,sampled).biome();
@@ -222,18 +196,25 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
 
     public RebornBiomePlacement cycleThroughBiomePlacements(int x, int y, int z, TerrainParameters.Sampled sampled){
         RebornBiomePlacement biome = null;
-        double affinity = -1000;
+        double bestAffinity = -1000;
         double surfaceY = parameters.yLevelAt(x,z,true);
+        List<RebornBiomePlacement.TerrainStates> states = RebornBiomePlacement.TerrainStates.statesAt(sampled,y);
+
+        RebornBiomePlacement.Type type = RebornBiomePlacement.Type.find(surfaceY,sampled, x, y, z,states);
 
         for (RebornBiomePlacement placement : this.knownBiomes){
-            double pD = placement.tryAt(surfaceY,sampled,x,y,z);
-            if (pD > affinity){
-                affinity = pD;
+            double affinity = placement.computeAffinity(surfaceY,sampled,type,states,y);
+            if (affinity > bestAffinity){
+                bestAffinity = affinity;
                 biome = placement;
             }
         }
-        if (affinity < 0){
-            return knownBiomes.stream().filter(rebornBiomePlacement -> rebornBiomePlacement.biome().is(Biomes.THE_VOID)).findFirst().get();
+
+        if (bestAffinity < 0){
+            return knownBiomes.stream()
+                    .filter(p -> p.biome().is(Biomes.THE_VOID))
+                    .findFirst()
+                    .orElse(knownBiomes.getFirst());
         }
 
         return biome;

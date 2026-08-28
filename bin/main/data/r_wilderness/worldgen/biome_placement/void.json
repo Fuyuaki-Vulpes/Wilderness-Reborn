@@ -1,0 +1,64 @@
+{
+  "biome": "minecraft:the_void",
+  "name": "r_wilderness:void",
+  "target": {
+    "continentalness": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "erosion": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "highlands": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "humidity": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "magicalness": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "rockiness": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "tectonic_activity": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "temperature": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "terrain_height": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "vegetation_density": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    },
+    "weirdness": {
+      "max": -985.0,
+      "mean": -990.0,
+      "min": -999.0
+    }
+  },
+  "valid_terrain_types": [
+    "mountain_peak"
+  ]
+}

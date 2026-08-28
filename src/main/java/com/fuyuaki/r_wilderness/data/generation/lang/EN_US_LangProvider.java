@@ -124,6 +124,22 @@ public class EN_US_LangProvider extends LanguageProvider {
 
         add("generator.r_wilderness.reborn", "Reborn");
         add("itemGroup.r_wilderness_main", "Reborn: Wilderness");
+        add("r_wilderness.generation.regions","Generating Spawn Regions");
+        add("r_wilderness.generation.hint.initialize","Initializing Tectonic Plates");
+        add("r_wilderness.generation.hint.raster","Calculating Continents and Oceans");
+        add("r_wilderness.generation.hint.plateaus","Simulating Tectonic Plate Age, Volcanoes, and Plateaus");
+        add("r_wilderness.generation.hint.terrain","Merging and Calculating High-Resolution Heightmaps");
+        add("r_wilderness.generation.hint.river","Generating Rivers and Lakes");
+        add("r_wilderness.generation.hint.final","Eroding Terrain and Simulating Passage of time");
+
+        add("r_wilderness.generation.warn","The game may freeze and show as \"(Not Responding)\" while loading!");
+        add("r_wilderness.generation.warn_second_line","High-density terrain is being generated in the background. Please wait at least 10 minutes before closing.");
+
+        add("commands.r_wilderness.arguments.region_layer.invalid", "Region Layer must be one of %1$s, found invalid Key %2$s");
+        add("commands.r_wilderness.arguments.region_layer.success", "Best Match for value %s, for Region Layer %s, at value %s, is at %s (%s blocks away)");
+        add("commands.r_wilderness.arguments.region_layer.fail", "Could not find match for value %s within %s");
+
+
     }
 
     private void sounds() {

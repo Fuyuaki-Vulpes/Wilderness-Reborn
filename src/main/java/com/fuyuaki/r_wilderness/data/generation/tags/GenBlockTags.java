@@ -3,23 +3,34 @@ package com.fuyuaki.r_wilderness.data.generation.tags;
 import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 
-import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
+import net.minecraft.data.tags.TagAppender;
+import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.internal.NeoForgeBlockTagsProvider;
 
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenBlockTags extends IntrinsicHolderTagsProvider<Block> {
+public class GenBlockTags extends BlockTagsProvider {
 
     public GenBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(output, Registries.BLOCK, lookupProvider, block -> block.builtInRegistryHolder().key(),MODID);
+        super(output,  lookupProvider,MODID);
     }
 
     @Override
@@ -204,5 +215,103 @@ public class GenBlockTags extends IntrinsicHolderTagsProvider<Block> {
 
 
 
+    }
+    private void addColored(TagKey<Block> group, String pattern) {
+        String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        for (DyeColor color : DyeColor.values()) {
+            Identifier key = Identifier.fromNamespaceAndPath("minecraft", pattern.replace("{color}", color.getName()));
+            TagKey<Block> tag = getForgeTag(prefix + color.getName());
+            Block block = BuiltInRegistries.BLOCK.getValue(key);
+            if (block == null || block == Blocks.AIR)
+                throw new IllegalStateException("Unknown vanilla block: " + key);
+            tag(tag).add(block);
+        }
+    }
+
+    protected record Appender(TagAppender<Block> app) implements TagAppender<Block> {
+        @Override
+        public Appender add(ResourceKey<Block> element) {
+            app.add(element);
+            return this;
+        }
+
+        @Override
+        public Appender addOptional(ResourceKey<Block> element) {
+            app.addOptional(element);
+            return this;
+        }
+
+        @Override
+        public Appender addTag(TagKey<Block> tag) {
+            app.addTag(tag);
+            return this;
+        }
+
+        @Override
+        public Appender addOptionalTag(TagKey<Block> tag) {
+            app.addOptionalTag(tag);
+            return this;
+        }
+
+        @Override
+        public Appender add(TagEntry entry) {
+            app.add(entry);
+            return this;
+        }
+
+        @Override
+        public Appender replace(boolean value) {
+            app.replace(value);
+            return this;
+        }
+
+        @Override
+        public Appender remove(ResourceKey<Block> element) {
+            app.remove(element);
+            return this;
+        }
+
+        @Override
+        public Appender remove(TagKey<Block> tag) {
+            app.remove(tag);
+            return this;
+        }
+
+        public Appender add(Block... blocks) {
+            for (Block block : blocks) {
+                add(BuiltInRegistries.BLOCK.wrapAsHolder(block).getKey());
+            }
+            return this;
+        }
+
+        public Appender addAll(Iterable<Block> blocks) {
+            for (Block block : blocks) {
+                add(block);
+            }
+            return this;
+        }
+    }
+
+    @Override
+    protected Appender tag(TagKey<Block> tag) {
+        return new Appender(super.tag(tag));
+    }
+
+    private void addColoredTags(Consumer<TagKey<Block>> consumer, TagKey<Block> group) {
+        String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        for (DyeColor color : DyeColor.values()) {
+            TagKey<Block> tag = getForgeTag(prefix + color.getName());
+            consumer.accept(tag);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private TagKey<Block> getForgeTag(String name) {
+        try {
+            name = name.toUpperCase(Locale.ENGLISH);
+            return (TagKey<Block>) Tags.Blocks.class.getDeclaredField(name).get(null);
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+            throw new IllegalStateException(Tags.Blocks.class.getName() + " is missing tag name: " + name);
+        }
     }
 }

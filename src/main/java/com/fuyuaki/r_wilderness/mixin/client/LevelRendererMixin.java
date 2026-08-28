@@ -10,11 +10,6 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(LevelRenderer.class)
 public abstract class LevelRendererMixin {
-    @Shadow private SkyRenderer skyRenderer;
-
-    @Shadow @Final private LevelTargetBundle targets;
-
-    @Shadow public abstract Iterable<? extends IRenderableSection> getRenderableSections();
 /*
     @Inject(method = "addSkyPass(Lcom/mojang/blaze3d/framegraph/FrameGraphBuilder;Lnet/minecraft/client/Camera;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Matrix4f;)V", at = @At("HEAD"))
     private void skyPass(FrameGraphBuilder frameGraphBuilder, Camera camera, GpuBufferSlice shaderFog, Matrix4f modelViewMatrix, CallbackInfo ci) {

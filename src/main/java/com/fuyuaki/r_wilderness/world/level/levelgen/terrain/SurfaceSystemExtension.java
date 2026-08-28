@@ -20,13 +20,13 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import java.util.Arrays;
 
 public class SurfaceSystemExtension {
-    private static final BlockState WHITE_TERRACOTTA = Blocks.WHITE_TERRACOTTA.defaultBlockState();
-    private static final BlockState ORANGE_TERRACOTTA = Blocks.ORANGE_TERRACOTTA.defaultBlockState();
+    private static final BlockState WHITE_TERRACOTTA = Blocks.DYED_TERRACOTTA.white().defaultBlockState();
+    private static final BlockState ORANGE_TERRACOTTA = Blocks.DYED_TERRACOTTA.orange().defaultBlockState();
     private static final BlockState TERRACOTTA = Blocks.TERRACOTTA.defaultBlockState();
-    private static final BlockState YELLOW_TERRACOTTA = Blocks.YELLOW_TERRACOTTA.defaultBlockState();
-    private static final BlockState BROWN_TERRACOTTA = Blocks.BROWN_TERRACOTTA.defaultBlockState();
-    private static final BlockState RED_TERRACOTTA = Blocks.RED_TERRACOTTA.defaultBlockState();
-    private static final BlockState LIGHT_GRAY_TERRACOTTA = Blocks.LIGHT_GRAY_TERRACOTTA.defaultBlockState();
+    private static final BlockState YELLOW_TERRACOTTA = Blocks.DYED_TERRACOTTA.yellow().defaultBlockState();
+    private static final BlockState BROWN_TERRACOTTA = Blocks.DYED_TERRACOTTA.brown().defaultBlockState();
+    private static final BlockState RED_TERRACOTTA = Blocks.DYED_TERRACOTTA.red().defaultBlockState();
+    private static final BlockState LIGHT_GRAY_TERRACOTTA = Blocks.DYED_TERRACOTTA.lightGray().defaultBlockState();
     private static final BlockState PACKED_ICE = Blocks.PACKED_ICE.defaultBlockState();
     private static final BlockState SNOW_BLOCK = Blocks.SNOW_BLOCK.defaultBlockState();
     public final BlockState defaultBlock;

@@ -1,0 +1,93 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Client",
+      "presentation": {
+        "group": "Mod Development - Wilderness Reborn",
+        "order": 0
+      },
+      "projectName": "Wilderness Reborn",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@E:\\DesktopB\\Mod\\Wilderness Reborn\\build\\moddev\\clientRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@E:\\DesktopB\\Mod\\Wilderness Reborn\\build\\moddev\\clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dr_wilderness%%E:\\DesktopB\\Mod\\Wilderness Reborn\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Data",
+      "presentation": {
+        "group": "Mod Development - Wilderness Reborn",
+        "order": 1
+      },
+      "projectName": "Wilderness Reborn",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@E:\\DesktopB\\Mod\\Wilderness Reborn\\build\\moddev\\dataRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@E:\\DesktopB\\Mod\\Wilderness Reborn\\build\\moddev\\dataRunVmArgs.txt",
+        "-Dfml.modFolders\u003dr_wilderness%%E:\\DesktopB\\Mod\\Wilderness Reborn\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "GameTestServer",
+      "presentation": {
+        "group": "Mod Development - Wilderness Reborn",
+        "order": 2
+      },
+      "projectName": "Wilderness Reborn",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@E:\\DesktopB\\Mod\\Wilderness Reborn\\build\\moddev\\gameTestServerRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@E:\\DesktopB\\Mod\\Wilderness Reborn\\build\\moddev\\gameTestServerRunVmArgs.txt",
+        "-Dfml.modFolders\u003dr_wilderness%%E:\\DesktopB\\Mod\\Wilderness Reborn\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Server",
+      "presentation": {
+        "group": "Mod Development - Wilderness Reborn",
+        "order": 3
+      },
+      "projectName": "Wilderness Reborn",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@E:\\DesktopB\\Mod\\Wilderness Reborn\\build\\moddev\\serverRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@E:\\DesktopB\\Mod\\Wilderness Reborn\\build\\moddev\\serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003dr_wilderness%%E:\\DesktopB\\Mod\\Wilderness Reborn\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    }
+  ]
+}

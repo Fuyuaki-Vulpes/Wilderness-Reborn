@@ -1,0 +1,7 @@
+{
+  "parent": "r_wilderness:block/fern_bottom_large",
+  "textures": {
+    "cross": "minecraft:block/large_fern_bottom",
+    "cross_top": "minecraft:block/large_fern_top"
+  }
+}

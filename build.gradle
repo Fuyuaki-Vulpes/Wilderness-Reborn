@@ -18,6 +18,9 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    mavenCentral()
+    maven { url = uri("https://jitpack.io") }
+
     maven { url = 'https://maven.minecraftforge.net/' }
     maven { url "https://maven.shedaniel.me/" }
     maven {
@@ -53,13 +56,13 @@ neoForge {
     runs {
         client {
             client()
-            jvmArgument("-Xms2G")
+            jvmArgument("-Xms4G")
             jvmArgument("-Xmx8G")
             jvmArgument("-XX:+UseCompactObjectHeaders")
             jvmArgument("-XX:+AlwaysPreTouch")
             jvmArgument("-XX:+UseStringDeduplication")
             jvmArgument("-XX:+UseZGC")
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            jvmArgument("--enable-native-access=c2me_opts_natives_math")
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
@@ -128,15 +131,15 @@ sourceSets.main.resources {
 dependencies {
 
 
+    jarJar(implementation("org.lwjgl:lwjgl-opencl:$lwjglVersion"))
+    jarJar(implementation("com.github.CoolLoong:FastNoise2Bindings-Java:0.0.2"))
+
     compileOnly("maven.modrinth:distanthorizonsapi:$dhAPIVersion")
     runtimeOnly("maven.modrinth:DistantHorizons:$dhVersion")
-//    implementation("maven.modrinth:lithium:$lithiumVersion")
-    implementation("maven.modrinth:c2me-neoforge:$c2meVersion")
-    implementation("maven.modrinth:spark:$sparkVersion")
-//    implementation "com.zigythebird.playeranim:PlayerAnimationLibNeo:$palVersion"
-
-//    implementation "maven.modrinth:better-combat:$bcVersion-neoforge"
-//    api "me.shedaniel.cloth:cloth-config-neoforge:$clothVersion"
+    runtimeOnly("maven.modrinth:xaeros-minimap:$xaerosVersion")
+    runtimeOnly("maven.modrinth:xaeros-world-map:$xaerosWorldVersion")
+//    implementation("maven.modrinth:c2me-neoforge:$c2meVersion")
+//    implementation("maven.modrinth:spark:$sparkVersion")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

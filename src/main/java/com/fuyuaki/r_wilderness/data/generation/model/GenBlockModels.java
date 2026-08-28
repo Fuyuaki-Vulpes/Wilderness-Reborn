@@ -126,7 +126,6 @@ public class GenBlockModels extends BlockModelGenerators {
         woodProvider(RBlocks.STRIPPED_ALPINE_LOG.get()).logWithHorizontal(RBlocks.STRIPPED_ALPINE_LOG.get()).wood(RBlocks.STRIPPED_ALPINE_WOOD.get());
         createTintedLeaves(RBlocks.ALPINE_LEAVES.get(), TexturedModel.LEAVES, FoliageColor.FOLIAGE_EVERGREEN);
         createPlantWithDefaultItem(RBlocks.ALPINE_SAPLING.get(),RBlocks.POTTED_ALPINE_SAPLING.get(),PlantType.NOT_TINTED);
-        createHangingSign(RBlocks.STRIPPED_ALPINE_LOG.get(), RBlocks.ALPINE_HANGING_SIGN.get(), RBlocks.ALPINE_HANGING_WALL_SIGN.get());
 
         //Flowers
         createPlantWithDefaultItem(RBlocks.BELLFLOWER.get(), RBlocks.POTTED_BELLFLOWER.get(), BlockModelGenerators.PlantType.NOT_TINTED);

@@ -36,7 +36,7 @@ import java.util.OptionalInt;
 
 @Mixin(SkyRenderer.class)
 public abstract class SkyRendererMixin {
-
+/*
     private static final RenderPipeline R_STARS = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
                     .withLocation("pipeline/stars")
@@ -47,7 +47,7 @@ public abstract class SkyRendererMixin {
                     .build()
     );
 
-
+*/
     @Shadow private int starIndexCount;
     @Shadow @Final private GpuBuffer starBuffer;
 
@@ -92,7 +92,7 @@ public abstract class SkyRendererMixin {
         ci.cancel();
     }
 */
-
+/*
     @Inject(method = "buildStars", at = @At("HEAD"), cancellable = true)
     private void buildStars(CallbackInfoReturnable<GpuBuffer> cir) {
         RandomSource randomsource = RandomSource.create(10842L);
@@ -154,5 +154,5 @@ public abstract class SkyRendererMixin {
         matrix4fstack.popMatrix();
 
         ci.cancel();
-    }
+    }*/
 }

@@ -5,10 +5,12 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.KeyDispatchDataCodec;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -25,17 +27,13 @@ public class RSurfaceRuleData {
 
     private static final SurfaceRules.RuleSource AIR = makeStateRule(Blocks.AIR);
     private static final SurfaceRules.RuleSource BEDROCK = makeStateRule(Blocks.BEDROCK);
-    private static final SurfaceRules.RuleSource WHITE_TERRACOTTA = makeStateRule(Blocks.WHITE_TERRACOTTA);
-    private static final SurfaceRules.RuleSource ORANGE_TERRACOTTA = makeStateRule(Blocks.ORANGE_TERRACOTTA);
+    private static final SurfaceRules.RuleSource WHITE_TERRACOTTA = makeStateRule(Blocks.DYED_TERRACOTTA.white());
+    private static final SurfaceRules.RuleSource ORANGE_TERRACOTTA = makeStateRule(Blocks.DYED_TERRACOTTA.orange());
     private static final SurfaceRules.RuleSource TERRACOTTA = makeStateRule(Blocks.TERRACOTTA);
-    private static final SurfaceRules.RuleSource GLASS = makeStateRule(Blocks.GLASS);
     private static final SurfaceRules.RuleSource RED_SAND = makeStateRule(Blocks.RED_SAND);
     private static final SurfaceRules.RuleSource RED_SANDSTONE = makeStateRule(Blocks.RED_SANDSTONE);
     private static final SurfaceRules.RuleSource STONE = makeStateRule(Blocks.STONE);
     private static final SurfaceRules.RuleSource DEEPSLATE = makeStateRule(Blocks.DEEPSLATE);
-    private static final SurfaceRules.RuleSource SCHINITE = makeStateRule(RBlocks.SCHINITE.get());
-    private static final SurfaceRules.RuleSource MAGNEISS = makeStateRule(RBlocks.MAGNEISS.get());
-    private static final SurfaceRules.RuleSource MALATITE = makeStateRule(RBlocks.MALATITE.get());
     private static final SurfaceRules.RuleSource DIRT = makeStateRule(Blocks.DIRT);
     private static final SurfaceRules.RuleSource PODZOL = makeStateRule(Blocks.PODZOL);
     private static final SurfaceRules.RuleSource COARSE_DIRT = makeStateRule(Blocks.COARSE_DIRT);
@@ -51,27 +49,22 @@ public class RSurfaceRuleData {
     private static final SurfaceRules.RuleSource POWDER_SNOW = makeStateRule(Blocks.POWDER_SNOW);
     private static final SurfaceRules.RuleSource ICE = makeStateRule(Blocks.ICE);
     private static final SurfaceRules.RuleSource WATER = makeStateRule(Blocks.WATER);
-    private static final SurfaceRules.RuleSource LAVA = makeStateRule(Blocks.LAVA);
-    private static final SurfaceRules.RuleSource NETHERRACK = makeStateRule(Blocks.NETHERRACK);
-    private static final SurfaceRules.RuleSource SOUL_SAND = makeStateRule(Blocks.SOUL_SAND);
-    private static final SurfaceRules.RuleSource SOUL_SOIL = makeStateRule(Blocks.SOUL_SOIL);
-    private static final SurfaceRules.RuleSource BASALT = makeStateRule(Blocks.BASALT);
-    private static final SurfaceRules.RuleSource BLACKSTONE = makeStateRule(Blocks.BLACKSTONE);
-    private static final SurfaceRules.RuleSource WARPED_WART_BLOCK = makeStateRule(Blocks.WARPED_WART_BLOCK);
-    private static final SurfaceRules.RuleSource WARPED_NYLIUM = makeStateRule(Blocks.WARPED_NYLIUM);
-    private static final SurfaceRules.RuleSource NETHER_WART_BLOCK = makeStateRule(Blocks.NETHER_WART_BLOCK);
-    private static final SurfaceRules.RuleSource CRIMSON_NYLIUM = makeStateRule(Blocks.CRIMSON_NYLIUM);
-    private static final SurfaceRules.RuleSource ENDSTONE = makeStateRule(Blocks.END_STONE);
+    private static final SurfaceRules.RuleSource CINNABAR = makeStateRule(Blocks.CINNABAR);
+    private static final SurfaceRules.RuleSource SULFUR = makeStateRule(Blocks.SULFUR);
+
+    //OUR ADDITIONAL SURFACE RULE SOURCES
+    private static final SurfaceRules.RuleSource SCHINITE = makeStateRule(RBlocks.SCHINITE.get());
+    private static final SurfaceRules.RuleSource MAGNEISS = makeStateRule(RBlocks.MAGNEISS.get());
+    private static final SurfaceRules.RuleSource MALATITE = makeStateRule(RBlocks.MALATITE.get());
 
     private static SurfaceRules.RuleSource makeStateRule(Block block) {
         return SurfaceRules.state(block.defaultBlockState());
     }
-
-    public static SurfaceRules.RuleSource overworld() {
-        return overworldLike(true, true);
+    public static SurfaceRules.RuleSource overworld(HolderGetter<Biome> biomes) {
+        return overworldLike(biomes, true, false, true);
     }
-
-    public static SurfaceRules.RuleSource overworldLike(boolean aboveGround, boolean bedrockFloor) {
+    public static SurfaceRules.RuleSource overworldLike(HolderGetter<Biome> biomes, boolean doPreliminarySurfaceCheck, boolean bedrockRoof, boolean bedrockFloor
+    ) {
 
         SurfaceRules.ConditionSource woodedBadlandsTop = SurfaceRules.yBlockCheck(VerticalAnchor.absolute(97), 2);
         SurfaceRules.ConditionSource badlandsTop = SurfaceRules.yBlockCheck(VerticalAnchor.absolute(256), 0);
@@ -83,341 +76,246 @@ public class RSurfaceRuleData {
         SurfaceRules.ConditionSource notUnderwater = SurfaceRules.waterBlockCheck(-1, 0);
         SurfaceRules.ConditionSource aboveWater = SurfaceRules.waterBlockCheck(0, 0);
         SurfaceRules.ConditionSource notUnderDeepWater = SurfaceRules.waterStartCheck(-6, -1);
-        SurfaceRules.ConditionSource isHole = SurfaceRules.hole();
-        SurfaceRules.ConditionSource isFrozenOcean = SurfaceRules.isBiome(Biomes.FROZEN_OCEAN, Biomes.DEEP_FROZEN_OCEAN);
-        SurfaceRules.ConditionSource isSteep = SurfaceRules.steep();
-        SurfaceRules.RuleSource dirtNoSteep = SurfaceRules.ifTrue(SurfaceRules.not(isSteep),DIRT);
-        SurfaceRules.RuleSource coarseDirtNoSteep = SurfaceRules.ifTrue(SurfaceRules.not(isSteep),COARSE_DIRT);
-        SurfaceRules.RuleSource podzolNoSteep = SurfaceRules.ifTrue(SurfaceRules.not(isSteep),PODZOL);
-        SurfaceRules.RuleSource makeGrassSurfance = SurfaceRules.sequence(SurfaceRules.ifTrue(aboveWater, GRASS_BLOCK), DIRT);
-        SurfaceRules.RuleSource grassSurfaceNoSteep = SurfaceRules.ifTrue(SurfaceRules.not(isSteep),makeGrassSurfance);
-        SurfaceRules.RuleSource makeSandSurface = SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, SANDSTONE), SAND);
-        SurfaceRules.RuleSource makeGravelSurface = SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, STONE), GRAVEL);
-        SurfaceRules.ConditionSource isWarmOceanSnowyOceanOrBeach = SurfaceRules.isBiome(Biomes.WARM_OCEAN, Biomes.BEACH, Biomes.SNOWY_BEACH);
-        SurfaceRules.ConditionSource isDesert = SurfaceRules.isBiome(Biomes.DESERT);
-        SurfaceRules.RuleSource surfacerules$rulesource3 = SurfaceRules.sequence(
+        SurfaceRules.ConditionSource hole = SurfaceRules.hole();
+        SurfaceRules.ConditionSource frozenOcean = SurfaceRules.isBiome(biomes, Biomes.FROZEN_OCEAN, Biomes.DEEP_FROZEN_OCEAN);
+        SurfaceRules.ConditionSource steep = SurfaceRules.steep();
+        SurfaceRules.RuleSource grassOrDirtIfUnderwater = SurfaceRules.sequence(SurfaceRules.ifTrue(aboveWater, GRASS_BLOCK), DIRT);
+        SurfaceRules.RuleSource sandOrSandstoneIfCeiling = SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, SANDSTONE), SAND);
+        SurfaceRules.RuleSource gravelOrStoneIfCeiling = SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, STONE), GRAVEL);
+        SurfaceRules.ConditionSource biomesWithSandAndSandstone = SurfaceRules.isBiome(biomes, Biomes.WARM_OCEAN, Biomes.BEACH, Biomes.SNOWY_BEACH);
+        SurfaceRules.ConditionSource biomesWithSandAndVeryDeepSandstone = SurfaceRules.isBiome(biomes, Biomes.DESERT);
+        SurfaceRules.RuleSource sulfurCaveBands = SurfaceRules.sequence(
+                SurfaceRules.ifTrue(SurfaceRules.noiseCondition3d(Noises.SULFUR_CAVE_GRADIENT, -0.4F, -0.1F), CINNABAR),
+                SurfaceRules.ifTrue(SurfaceRules.noiseCondition3d(Noises.SULFUR_CAVE_GRADIENT, 0.0, 0.4F), SULFUR),
+                SurfaceRules.ifTrue(SurfaceRules.noiseCondition3d(Noises.SULFUR_CAVE_GRADIENT, 0.4F), CINNABAR)
+        );
+        SurfaceRules.RuleSource commonSurfaceAndUnderRules = SurfaceRules.sequence(
                 SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.STONY_PEAKS),
-                        SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.CALCITE, -0.0125, 0.0125), CALCITE), STONE)
+                        SurfaceRules.isBiome(biomes, Biomes.STONY_PEAKS),
+                        SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.noiseCondition2d(Noises.CALCITE, -0.0125, 0.0125), CALCITE), STONE)
                 ),
                 SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.STONY_SHORE),
-                        SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.GRAVEL, -0.05, 0.05), makeGravelSurface), STONE)
+                        SurfaceRules.isBiome(biomes, Biomes.STONY_SHORE),
+                        SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.noiseCondition2d(Noises.GRAVEL, -0.05, 0.05), gravelOrStoneIfCeiling), STONE)
                 ),
-                SurfaceRules.ifTrue(isSteep, STONE),
-                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.WINDSWEPT_HILLS), SurfaceRules.ifTrue(surfaceNoiseAbove(1.0), STONE)),
-                SurfaceRules.ifTrue(isWarmOceanSnowyOceanOrBeach, makeSandSurface),
-                SurfaceRules.ifTrue(isDesert, makeSandSurface),
-                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.DRIPSTONE_CAVES), STONE)
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.WINDSWEPT_HILLS), SurfaceRules.ifTrue(surfaceNoiseAbove(1.0), STONE)),
+                SurfaceRules.ifTrue(biomesWithSandAndSandstone, sandOrSandstoneIfCeiling),
+                SurfaceRules.ifTrue(biomesWithSandAndVeryDeepSandstone, sandOrSandstoneIfCeiling),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.DRIPSTONE_CAVES), STONE),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.SULFUR_CAVES), SurfaceRules.sequence(sulfurCaveBands, STONE))
         );
-        SurfaceRules.RuleSource makePowderSnow = SurfaceRules.ifTrue(
-                SurfaceRules.noiseCondition(Noises.POWDER_SNOW, 0.45, 0.58), SurfaceRules.ifTrue(aboveWater, POWDER_SNOW)
+        SurfaceRules.RuleSource powderSnowUnderRule = SurfaceRules.ifTrue(
+                SurfaceRules.noiseCondition2d(Noises.POWDER_SNOW, 0.45, 0.58), SurfaceRules.ifTrue(aboveWater, POWDER_SNOW)
         );
-        SurfaceRules.RuleSource makePowderSnowLarge = SurfaceRules.ifTrue(
-                SurfaceRules.noiseCondition(Noises.POWDER_SNOW, 0.35, 0.6), SurfaceRules.ifTrue(aboveWater, POWDER_SNOW)
+        SurfaceRules.RuleSource powderSnowSurfaceRule = SurfaceRules.ifTrue(
+                SurfaceRules.noiseCondition2d(Noises.POWDER_SNOW, 0.35, 0.6), SurfaceRules.ifTrue(aboveWater, POWDER_SNOW)
         );
-
-
-
-        SurfaceRules.RuleSource underSurfaceRule = SurfaceRules.sequence(
+        SurfaceRules.RuleSource biomeUnderSurfaceRule = SurfaceRules.sequence(
                 SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.FROZEN_PEAKS),
+                        SurfaceRules.isBiome(biomes, Biomes.FROZEN_PEAKS),
                         SurfaceRules.sequence(
-                                SurfaceRules.ifTrue(isSteep, PACKED_ICE),
-                                SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.PACKED_ICE, -0.5, 0.2), PACKED_ICE),
-                                SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.ICE, -0.0625, 0.025), ICE),
+                                SurfaceRules.ifTrue(steep, PACKED_ICE),
+                                SurfaceRules.ifTrue(SurfaceRules.noiseCondition2d(Noises.PACKED_ICE, -0.5, 0.2), PACKED_ICE),
+                                SurfaceRules.ifTrue(SurfaceRules.noiseCondition2d(Noises.ICE, -0.0625, 0.025), ICE),
                                 SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK)
                         )
                 ),
                 SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.SNOWY_SLOPES),
-                        SurfaceRules.sequence(
-                                SurfaceRules.ifTrue(isSteep, STONE),
-                                makePowderSnow,
-                                SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK)
-                        )
+                        SurfaceRules.isBiome(biomes, Biomes.SNOWY_SLOPES),
+                        SurfaceRules.sequence(SurfaceRules.ifTrue(steep, STONE), powderSnowUnderRule, SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK))
                 ),
-                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.JAGGED_PEAKS), STONE),
-                surfacerules$rulesource3,
-                SurfaceRules.ifTrue(SurfaceRules.not(isSteep),
-                        SurfaceRules.sequence(
-                                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.GROVE), SurfaceRules.sequence(makePowderSnow, dirtNoSteep)),
-                                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.WINDSWEPT_SAVANNA), SurfaceRules.ifTrue(surfaceNoiseAbove(1.75), STONE)),
-                                SurfaceRules.ifTrue(
-                                        SurfaceRules.isBiome(Biomes.WINDSWEPT_GRAVELLY_HILLS),
-                                        SurfaceRules.sequence(
-                                                SurfaceRules.ifTrue(surfaceNoiseAbove(2.0), makeGravelSurface),
-                                                SurfaceRules.ifTrue(surfaceNoiseAbove(1.0), STONE),
-                                                SurfaceRules.ifTrue(surfaceNoiseAbove(-1.0), dirtNoSteep),
-                                                makeGravelSurface
-                                        )
-                                ),
-                                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MANGROVE_SWAMP), MUD)
-                        )
-                ),
-                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.RIVER,Biomes.FROZEN_RIVER),
-                        SurfaceRules.ifTrue(RSurfaceRuleData.continental_threshold(NoiseRouterData.CONTINENTS,-0.2F,-0.111F), makeSandSurface)),
-                dirtNoSteep
-        );
-        SurfaceRules.RuleSource surfaceRule = SurfaceRules.sequence(
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.JAGGED_PEAKS), STONE),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.GROVE), SurfaceRules.sequence(powderSnowUnderRule, DIRT)),
+                commonSurfaceAndUnderRules,
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.WINDSWEPT_SAVANNA), SurfaceRules.ifTrue(surfaceNoiseAbove(1.75), STONE)),
                 SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.FROZEN_PEAKS),
+                        SurfaceRules.isBiome(biomes, Biomes.WINDSWEPT_GRAVELLY_HILLS),
                         SurfaceRules.sequence(
-                                SurfaceRules.ifTrue(isSteep, PACKED_ICE),
-                                SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.PACKED_ICE, 0.0, 0.2), PACKED_ICE),
-                                SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.ICE, 0.0, 0.025), ICE),
-                                SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK)
-                        )
-                ),
-                SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.SNOWY_SLOPES),
-                        SurfaceRules.sequence(
-                                SurfaceRules.ifTrue(isSteep, STONE),
-                                makePowderSnowLarge,
-                                SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK)
-                        )
-                ),
-                SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.JAGGED_PEAKS),
-                        SurfaceRules.sequence(
-                                SurfaceRules.ifTrue(isSteep, STONE), SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK)
-                        )
-                ),
-                SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.GROVE),
-                        SurfaceRules.sequence(makePowderSnowLarge, SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK))
-                ),
-                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.ICE_SPIKES), SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK)),
-                surfacerules$rulesource3,
-                SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.WINDSWEPT_SAVANNA),
-                        SurfaceRules.sequence(SurfaceRules.ifTrue(surfaceNoiseAbove(1.75), STONE), SurfaceRules.ifTrue(surfaceNoiseAbove(-0.5), coarseDirtNoSteep))
-                ),
-                SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.WINDSWEPT_GRAVELLY_HILLS),
-                        SurfaceRules.sequence(
-                                SurfaceRules.ifTrue(surfaceNoiseAbove(2.0), makeGravelSurface),
+                                SurfaceRules.ifTrue(surfaceNoiseAbove(2.0), gravelOrStoneIfCeiling),
                                 SurfaceRules.ifTrue(surfaceNoiseAbove(1.0), STONE),
-                                SurfaceRules.ifTrue(surfaceNoiseAbove(-1.0), grassSurfaceNoSteep),
-                                makeGravelSurface
+                                SurfaceRules.ifTrue(surfaceNoiseAbove(-1.0), DIRT),
+                                gravelOrStoneIfCeiling
+                        )
+                ),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.MANGROVE_SWAMP), MUD),
+                DIRT
+        );
+        SurfaceRules.RuleSource biomeSurfaceRule = SurfaceRules.sequence(
+                SurfaceRules.ifTrue(
+                        SurfaceRules.isBiome(biomes, Biomes.FROZEN_PEAKS),
+                        SurfaceRules.sequence(
+                                SurfaceRules.ifTrue(steep, PACKED_ICE),
+                                SurfaceRules.ifTrue(SurfaceRules.noiseCondition2d(Noises.PACKED_ICE, 0.0, 0.2), PACKED_ICE),
+                                SurfaceRules.ifTrue(SurfaceRules.noiseCondition2d(Noises.ICE, 0.0, 0.025), ICE),
+                                SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK)
                         )
                 ),
                 SurfaceRules.ifTrue(
-                        SurfaceRules.isBiome(Biomes.OLD_GROWTH_PINE_TAIGA, Biomes.OLD_GROWTH_SPRUCE_TAIGA),
-                        SurfaceRules.sequence(SurfaceRules.ifTrue(surfaceNoiseAbove(1.75), coarseDirtNoSteep), SurfaceRules.ifTrue(surfaceNoiseAbove(-0.95), podzolNoSteep))
+                        SurfaceRules.isBiome(biomes, Biomes.SNOWY_SLOPES),
+                        SurfaceRules.sequence(SurfaceRules.ifTrue(steep, STONE), powderSnowSurfaceRule, SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK))
                 ),
-                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MANGROVE_SWAMP), MUD),
-                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.MUSHROOM_FIELDS), MYCELIUM),
-                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.RIVER,Biomes.FROZEN_RIVER),
-                        SurfaceRules.ifTrue(RSurfaceRuleData.continental_threshold(NoiseRouterData.CONTINENTS,-0.2F,-0.1F), makeSandSurface)),
-                grassSurfaceNoSteep
+                SurfaceRules.ifTrue(
+                        SurfaceRules.isBiome(biomes, Biomes.JAGGED_PEAKS),
+                        SurfaceRules.sequence(SurfaceRules.ifTrue(steep, STONE), SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK))
+                ),
+                SurfaceRules.ifTrue(
+                        SurfaceRules.isBiome(biomes, Biomes.GROVE), SurfaceRules.sequence(powderSnowSurfaceRule, SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK))
+                ),
+                commonSurfaceAndUnderRules,
+                SurfaceRules.ifTrue(
+                        SurfaceRules.isBiome(biomes, Biomes.WINDSWEPT_SAVANNA),
+                        SurfaceRules.sequence(SurfaceRules.ifTrue(surfaceNoiseAbove(1.75), STONE), SurfaceRules.ifTrue(surfaceNoiseAbove(-0.5), COARSE_DIRT))
+                ),
+                SurfaceRules.ifTrue(
+                        SurfaceRules.isBiome(biomes, Biomes.WINDSWEPT_GRAVELLY_HILLS),
+                        SurfaceRules.sequence(
+                                SurfaceRules.ifTrue(surfaceNoiseAbove(2.0), gravelOrStoneIfCeiling),
+                                SurfaceRules.ifTrue(surfaceNoiseAbove(1.0), STONE),
+                                SurfaceRules.ifTrue(surfaceNoiseAbove(-1.0), grassOrDirtIfUnderwater),
+                                gravelOrStoneIfCeiling
+                        )
+                ),
+                SurfaceRules.ifTrue(
+                        SurfaceRules.isBiome(biomes, Biomes.OLD_GROWTH_PINE_TAIGA, Biomes.OLD_GROWTH_SPRUCE_TAIGA),
+                        SurfaceRules.sequence(SurfaceRules.ifTrue(surfaceNoiseAbove(1.75), COARSE_DIRT), SurfaceRules.ifTrue(surfaceNoiseAbove(-0.95), PODZOL))
+                ),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.ICE_SPIKES), SurfaceRules.ifTrue(aboveWater, SNOW_BLOCK)),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.MANGROVE_SWAMP), MUD),
+                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.MUSHROOM_FIELDS), MYCELIUM),
+                grassOrDirtIfUnderwater
         );
-        SurfaceRules.ConditionSource surfaceNoiseVeryNegative = SurfaceRules.noiseCondition(Noises.SURFACE, -0.909, -0.5454);
-        SurfaceRules.ConditionSource surfaceNoiseMedian = SurfaceRules.noiseCondition(Noises.SURFACE, -0.1818, 0.1818);
-        SurfaceRules.ConditionSource surfaceNoiseVeryPositive = SurfaceRules.noiseCondition(Noises.SURFACE, 0.5454, 0.909);
-        SurfaceRules.RuleSource badlandsClay = SurfaceRules.ifTrue(
-                SurfaceRules.isBiome(Biomes.BADLANDS, Biomes.ERODED_BADLANDS, Biomes.WOODED_BADLANDS),
-                SurfaceRules.sequence(
-                        SurfaceRules.ifTrue(
-                                SurfaceRules.ON_FLOOR,
-                                SurfaceRules.sequence(
-                                        SurfaceRules.ifTrue(badlandsTop, ORANGE_TERRACOTTA),
-                                        SurfaceRules.ifTrue(
-                                                badlandsMid,
-                                                SurfaceRules.sequence(
-                                                        SurfaceRules.ifTrue(surfaceNoiseVeryNegative, TERRACOTTA),
-                                                        SurfaceRules.ifTrue(surfaceNoiseMedian, TERRACOTTA),
-                                                        SurfaceRules.ifTrue(surfaceNoiseVeryPositive, TERRACOTTA),
-                                                        SurfaceRules.bandlands()
-                                                )
-                                        ),
-                                        SurfaceRules.ifTrue(
-                                                notUnderwater, SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, RED_SANDSTONE), RED_SAND)
-                                        ),
-                                        SurfaceRules.ifTrue(SurfaceRules.not(isHole), ORANGE_TERRACOTTA),
-                                        SurfaceRules.ifTrue(notUnderDeepWater, WHITE_TERRACOTTA),
-                                        SurfaceRules.bandlands()
-                                )
-                        ),
-                        SurfaceRules.ifTrue(
-                                badlandsHeightCondition,
-                                SurfaceRules.sequence(
-                                        SurfaceRules.ifTrue(
-                                                aboveOverworldSeaLevel, SurfaceRules.ifTrue(SurfaceRules.not(badlandsMid), ORANGE_TERRACOTTA)
-                                        ),
-                                        SurfaceRules.bandlands()
-                                )
-                        ),
-                        SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, SurfaceRules.ifTrue(notUnderDeepWater, WHITE_TERRACOTTA))
-                )
-        );
-        SurfaceRules.RuleSource badlandsAndSurfaces = SurfaceRules.sequence(
+        SurfaceRules.ConditionSource clayBand1 = SurfaceRules.noiseCondition2d(Noises.SURFACE, -0.909, -0.5454);
+        SurfaceRules.ConditionSource clayBand2 = SurfaceRules.noiseCondition2d(Noises.SURFACE, -0.1818, 0.1818);
+        SurfaceRules.ConditionSource clayBand3 = SurfaceRules.noiseCondition2d(Noises.SURFACE, 0.5454, 0.909);
+        SurfaceRules.RuleSource mainRuleCloseToSurface = SurfaceRules.sequence(
                 SurfaceRules.ifTrue(
                         SurfaceRules.ON_FLOOR,
                         SurfaceRules.sequence(
                                 SurfaceRules.ifTrue(
-                                        SurfaceRules.isBiome(Biomes.WOODED_BADLANDS),
+                                        SurfaceRules.isBiome(biomes, Biomes.WOODED_BADLANDS),
                                         SurfaceRules.ifTrue(
                                                 woodedBadlandsTop,
-                                                SurfaceRules.ifTrue(SurfaceRules.not(isSteep),
                                                 SurfaceRules.sequence(
-                                                        SurfaceRules.ifTrue(surfaceNoiseVeryNegative, coarseDirtNoSteep),
-                                                        SurfaceRules.ifTrue(surfaceNoiseMedian, coarseDirtNoSteep),
-                                                        SurfaceRules.ifTrue(surfaceNoiseVeryPositive, coarseDirtNoSteep),
-                                                        makeGrassSurfance
-                                                )
+                                                        SurfaceRules.ifTrue(clayBand1, COARSE_DIRT),
+                                                        SurfaceRules.ifTrue(clayBand2, COARSE_DIRT),
+                                                        SurfaceRules.ifTrue(clayBand3, COARSE_DIRT),
+                                                        grassOrDirtIfUnderwater
                                                 )
                                         )
                                 ),
                                 SurfaceRules.ifTrue(
-                                        SurfaceRules.isBiome(Biomes.SWAMP),
+                                        SurfaceRules.isBiome(biomes, Biomes.SWAMP),
                                         SurfaceRules.ifTrue(
                                                 swampPuddleLevel,
                                                 SurfaceRules.ifTrue(
-                                                        SurfaceRules.not(aboveOverworldSeaLevel), SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.SWAMP, 0.0), WATER)
+                                                        SurfaceRules.not(aboveOverworldSeaLevel), SurfaceRules.ifTrue(SurfaceRules.noiseCondition2d(Noises.SWAMP, 0.0), WATER)
                                                 )
                                         )
                                 ),
                                 SurfaceRules.ifTrue(
-                                        SurfaceRules.isBiome(Biomes.MANGROVE_SWAMP),
+                                        SurfaceRules.isBiome(biomes, Biomes.MANGROVE_SWAMP),
                                         SurfaceRules.ifTrue(
                                                 mangroveSwampPuddleLevel,
                                                 SurfaceRules.ifTrue(
-                                                        SurfaceRules.not(aboveOverworldSeaLevel), SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Noises.SWAMP, 0.0), WATER)
+                                                        SurfaceRules.not(aboveOverworldSeaLevel), SurfaceRules.ifTrue(SurfaceRules.noiseCondition2d(Noises.SWAMP, 0.0), WATER)
                                                 )
                                         )
                                 )
                         )
                 ),
-                badlandsClay,
+                SurfaceRules.ifTrue(
+                        SurfaceRules.isBiome(biomes, Biomes.BADLANDS, Biomes.ERODED_BADLANDS, Biomes.WOODED_BADLANDS),
+                        SurfaceRules.sequence(
+                                SurfaceRules.ifTrue(
+                                        SurfaceRules.ON_FLOOR,
+                                        SurfaceRules.sequence(
+                                                SurfaceRules.ifTrue(badlandsTop, ORANGE_TERRACOTTA),
+                                                SurfaceRules.ifTrue(
+                                                        badlandsMid,
+                                                        SurfaceRules.sequence(
+                                                                SurfaceRules.ifTrue(clayBand1, TERRACOTTA),
+                                                                SurfaceRules.ifTrue(clayBand2, TERRACOTTA),
+                                                                SurfaceRules.ifTrue(clayBand3, TERRACOTTA),
+                                                                SurfaceRules.bandlands()
+                                                        )
+                                                ),
+                                                SurfaceRules.ifTrue(notUnderwater, SurfaceRules.sequence(SurfaceRules.ifTrue(SurfaceRules.ON_CEILING, RED_SANDSTONE), RED_SAND)),
+                                                SurfaceRules.ifTrue(SurfaceRules.not(hole), ORANGE_TERRACOTTA),
+                                                SurfaceRules.ifTrue(notUnderDeepWater, WHITE_TERRACOTTA),
+                                                gravelOrStoneIfCeiling
+                                        )
+                                ),
+                                SurfaceRules.ifTrue(
+                                        badlandsHeightCondition,
+                                        SurfaceRules.sequence(
+                                                SurfaceRules.ifTrue(aboveOverworldSeaLevel, SurfaceRules.ifTrue(SurfaceRules.not(badlandsMid), ORANGE_TERRACOTTA)),
+                                                SurfaceRules.bandlands()
+                                        )
+                                ),
+                                SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, SurfaceRules.ifTrue(notUnderDeepWater, WHITE_TERRACOTTA))
+                        )
+                ),
                 SurfaceRules.ifTrue(
                         SurfaceRules.ON_FLOOR,
                         SurfaceRules.ifTrue(
                                 notUnderwater,
                                 SurfaceRules.sequence(
                                         SurfaceRules.ifTrue(
-                                                isFrozenOcean,
+                                                frozenOcean,
                                                 SurfaceRules.ifTrue(
-                                                        isHole,
-                                                        SurfaceRules.sequence(
-                                                                SurfaceRules.ifTrue(aboveWater, AIR), SurfaceRules.ifTrue(SurfaceRules.temperature(), ICE), WATER
-                                                        )
+                                                        hole, SurfaceRules.sequence(SurfaceRules.ifTrue(aboveWater, AIR), SurfaceRules.ifTrue(SurfaceRules.temperature(), ICE), WATER)
                                                 )
                                         ),
-                                        surfaceRule
+                                        biomeSurfaceRule
                                 )
                         )
                 ),
                 SurfaceRules.ifTrue(
                         notUnderDeepWater,
                         SurfaceRules.sequence(
-                                SurfaceRules.ifTrue(
-                                        SurfaceRules.ON_FLOOR, SurfaceRules.ifTrue(isFrozenOcean, SurfaceRules.ifTrue(isHole, WATER))
-                                ),
-                                SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, underSurfaceRule),
-                                SurfaceRules.ifTrue(isWarmOceanSnowyOceanOrBeach, SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, SANDSTONE)),
-                                SurfaceRules.ifTrue(isDesert, SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, SANDSTONE))
+                                SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, SurfaceRules.ifTrue(frozenOcean, SurfaceRules.ifTrue(hole, WATER))),
+                                SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, biomeUnderSurfaceRule),
+                                SurfaceRules.ifTrue(biomesWithSandAndSandstone, SurfaceRules.ifTrue(SurfaceRules.DEEP_UNDER_FLOOR, SANDSTONE)),
+                                SurfaceRules.ifTrue(biomesWithSandAndVeryDeepSandstone, SurfaceRules.ifTrue(SurfaceRules.VERY_DEEP_UNDER_FLOOR, SANDSTONE))
                         )
                 ),
                 SurfaceRules.ifTrue(
                         SurfaceRules.ON_FLOOR,
                         SurfaceRules.sequence(
-                                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.FROZEN_PEAKS, Biomes.JAGGED_PEAKS), STONE),
-                                SurfaceRules.ifTrue(SurfaceRules.isBiome(Biomes.WARM_OCEAN, Biomes.LUKEWARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN), makeSandSurface),
-                                makeGravelSurface
+                                SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.FROZEN_PEAKS, Biomes.JAGGED_PEAKS), STONE),
+                                SurfaceRules.ifTrue(
+                                        SurfaceRules.isBiome(biomes, Biomes.WARM_OCEAN, Biomes.LUKEWARM_OCEAN, Biomes.DEEP_LUKEWARM_OCEAN), sandOrSandstoneIfCeiling
+                                ),
+                                gravelOrStoneIfCeiling
                         )
                 )
         );
         ImmutableList.Builder<SurfaceRules.RuleSource> builder = ImmutableList.builder();
+        if (bedrockRoof) {
+            builder.add(
+                    SurfaceRules.ifTrue(SurfaceRules.not(SurfaceRules.verticalGradient("bedrock_roof", VerticalAnchor.belowTop(5), VerticalAnchor.top())), BEDROCK)
+            );
+        }
 
         if (bedrockFloor) {
             builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("bedrock_floor", VerticalAnchor.bottom(), VerticalAnchor.aboveBottom(5)), BEDROCK));
         }
 
-        SurfaceRules.RuleSource abovePreliminarySurfaceRules = SurfaceRules.ifTrue(SurfaceRules.abovePreliminarySurface(), badlandsAndSurfaces);
-        builder.add(aboveGround ? abovePreliminarySurfaceRules : badlandsAndSurfaces);
+        SurfaceRules.RuleSource ruleAbovePreliminarySurface = SurfaceRules.ifTrue(SurfaceRules.abovePreliminarySurface(), mainRuleCloseToSurface);
+        builder.add(doPreliminarySurfaceCheck ? ruleAbovePreliminarySurface : mainRuleCloseToSurface);
+        builder.add(SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.SULFUR_CAVES), sulfurCaveBands));
         builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("malatite", VerticalAnchor.absolute(-192), VerticalAnchor.absolute(-184)), MALATITE));
         builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("magneiss", VerticalAnchor.absolute(-128), VerticalAnchor.absolute(-120)), MAGNEISS));
         builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("schinite", VerticalAnchor.absolute(-64), VerticalAnchor.absolute(-56)), SCHINITE));
         builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("deepslate", VerticalAnchor.absolute(0), VerticalAnchor.absolute(8)), DEEPSLATE));
-
-
         return SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
     }
-
-    private static SurfaceRules.ConditionSource continental_threshold(ResourceKey<DensityFunction> densityFunction, double minThreshold, double maxThreshold) {
-        return new ContinentalnessSource(densityFunction, minThreshold, maxThreshold);
-    }
-
-
     public static SurfaceRules.RuleSource air() {
         return AIR;
     }
 
-    private static SurfaceRules.ConditionSource surfaceNoiseAbove(double value) {
-        return SurfaceRules.noiseCondition(Noises.SURFACE, value / 8.25, Double.MAX_VALUE);
+    private static SurfaceRules.ConditionSource surfaceNoiseAbove(double threshold) {
+        return SurfaceRules.noiseCondition2d(Noises.SURFACE, threshold / 8.25, Double.MAX_VALUE);
     }
 
-    record ContinentalnessSource(ResourceKey<DensityFunction> densityMap, double minThreshold, double maxThreshold) implements SurfaceRules.ConditionSource {
-        static final KeyDispatchDataCodec<ContinentalnessSource> CODEC = KeyDispatchDataCodec.of(
-                RecordCodecBuilder.mapCodec(
-                        p_258995_ -> p_258995_.group(
-                                        ResourceKey.codec(Registries.DENSITY_FUNCTION).fieldOf("densityMap").forGetter(ContinentalnessSource::densityMap),
-                                        Codec.DOUBLE.fieldOf("min_threshold").forGetter(ContinentalnessSource::minThreshold),
-                                        Codec.DOUBLE.fieldOf("max_threshold").forGetter(ContinentalnessSource::maxThreshold)
-                                )
-                                .apply(p_258995_, ContinentalnessSource::new)
-                )
-        );
-
-        @Override
-        public KeyDispatchDataCodec<? extends SurfaceRules.ConditionSource> codec() {
-            return CODEC;
-        }
-
-        @Override
-        public SurfaceRules.Condition apply(SurfaceRules.Context ruleContext) {
-            final DensityFunction densityFunction = ruleContext.randomState.router().continents();
-            final DensityFunction.FunctionContext functionContext = new DensityFunction.FunctionContext() {
-                @Override
-                public int blockX() {
-                    return ruleContext.blockX;
-                }
-
-                @Override
-                public int blockY() {
-                    return ruleContext.blockY;
-                }
-
-                @Override
-                public int blockZ() {
-                    return ruleContext.blockZ;
-                }
-            };
-
-            class ContinentalnessThresholdCondition extends SurfaceRules.LazyXZCondition {
-                ContinentalnessThresholdCondition() {
-                    super(ruleContext);
-                }
-
-                @Override
-                protected boolean compute() {
-                    double d0 = densityFunction.compute(functionContext);
-                    return d0 >= ContinentalnessSource.this.minThreshold && d0 <= ContinentalnessSource.this.maxThreshold;
-                }
-            }
-
-            return new ContinentalnessThresholdCondition();
-        }
-    }
-    public interface ConditionSource extends Function<SurfaceRules.Context, SurfaceRules.Condition> {
-        static final DeferredRegister<MapCodec<? extends SurfaceRules.ConditionSource>> CONDITIONS = DeferredRegister.create(BuiltInRegistries.MATERIAL_CONDITION,MODID);
-
-        public static final DeferredHolder<MapCodec<? extends SurfaceRules.ConditionSource>, MapCodec<? extends SurfaceRules.ConditionSource>> CONTINENTALNESS_CONDITION =
-                CONDITIONS.register("continentalness_threshold", ContinentalnessSource.CODEC::codec);
-
-        public static void init(IEventBus bus){
-            CONDITIONS.register(bus);
-        }
-    }
 }

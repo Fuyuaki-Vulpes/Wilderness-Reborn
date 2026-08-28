@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_malatite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "r_wilderness:malatite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "r_wilderness:malatite_stairs"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_malatite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "r_wilderness:malatite_stairs"
+    ]
+  }
+}

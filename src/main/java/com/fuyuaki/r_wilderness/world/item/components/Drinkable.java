@@ -3,7 +3,7 @@ package com.fuyuaki.r_wilderness.world.item.components;
 import com.fuyuaki.r_wilderness.world.environment.ServerPlayerEnvironment;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

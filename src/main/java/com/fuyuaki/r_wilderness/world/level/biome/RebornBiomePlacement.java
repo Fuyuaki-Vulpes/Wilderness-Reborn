@@ -54,16 +54,17 @@ public record RebornBiomePlacement(
         this(name,biome,target,validTerrainTypes,Optional.empty(),Optional.empty());
     }
 
-    public double tryAt(double yLevel, TerrainParameters.Sampled sampled,int x, int y, int z){
-        List<TerrainStates> states = TerrainStates.statesAt(sampled,y);
-        Type type = Type.find(yLevel,sampled, x, y, z,states);
-        double affinity = target.affinity(sampled,Math.min(y,yLevel),false);
+    public double computeAffinity(double yLevel, TerrainParameters.Sampled sampled, Type type, List<TerrainStates> states, int y){
+        double affinity = target.affinity(sampled,Math.min(y,yLevel));
+
         if (!this.validTerrainTypes.contains(type)) affinity -= 60;
+
         if (this.tectonicStates.isPresent()){
-            boolean v = false;
+            List<TerrainStates> likedStates = this.tectonicStates.get();
+            boolean matchesAnyLiked = false;
             for (TerrainStates state : states){
-                if (this.tectonicStates.get().contains(state)) {
-                    v = true;
+                if (likedStates.contains(state)) {
+                    matchesAnyLiked = true;
                     if (state.strongerRelevancy){
                         affinity += 7;
                     } else {
@@ -72,16 +73,14 @@ public record RebornBiomePlacement(
 
                 }
             }
-            if (!v) affinity -= 12;
-        }if (this.dislikedTectonicStates.isPresent()){
-            for (TerrainStates state : states){
-                if (this.dislikedTectonicStates.get().contains(state)) {
-                    if (state.strongerRelevancy){
-                        affinity -= 5;
-                    } else {
-                        affinity -= 2;
-                    }
+            if (!matchesAnyLiked) affinity -= 12;
+        }
 
+        if (this.dislikedTectonicStates.isPresent()){
+            List<TerrainStates> dislikedStates = this.dislikedTectonicStates.get();
+            for (TerrainStates state : states){
+                if (dislikedStates.contains(state)) {
+                    affinity -= state.strongerRelevancy ? 5 : 2;
                 }
             }
         }

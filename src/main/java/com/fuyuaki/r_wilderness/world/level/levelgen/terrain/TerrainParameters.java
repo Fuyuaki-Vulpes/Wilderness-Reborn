@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 import net.minecraft.world.level.levelgen.synth.PerlinNoise;
 import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -1403,23 +1404,23 @@ public class TerrainParameters {
                         .apply(p_223591_,Range::new)
         );
 
-        public boolean accepts(double v){
-            return v >= min && v <= max;
+        public boolean accepts(double value){
+            return value >= min && value <= max;
         }
 
-        public double affinity(double v, boolean extremeNegative){
+        public double affinity(double value){
 
 
             double p;
             double a;
 
-            if (v > mean){
+            if (value > mean){
                 p = max - mean;
-                a = v - mean;
+                a = value - mean;
 
             }else{
                 p = mean - min;
-                a = mean - v;
+                a = mean - value;
 
             }
 
@@ -1430,8 +1431,38 @@ public class TerrainParameters {
                 n = (a / p);
             }
 
-            if (!accepts(v)) {
-                return (1-n) - (extremeNegative ? 1000 : 0);
+            if (!accepts(value)) {
+                return (1-n);
+            }
+
+            return 1-n;
+
+        }
+        public double affinityHarsh(double value){
+
+
+            double p;
+            double a;
+
+            if (value > mean){
+                p = max - mean;
+                a = value - mean;
+
+            }else{
+                p = mean - min;
+                a = mean - value;
+
+            }
+
+            double n;
+            if (p == 0){
+                n = a;
+            }else {
+                n = (a / p);
+            }
+
+            if (!accepts(value)) {
+                return (1-n) - 1000;
             }
 
             return 1-n;
@@ -1440,12 +1471,12 @@ public class TerrainParameters {
     }
     public record Target(
             Range temperature,
-            Range humidity,
+            Range humidity, // Rainfall, Water retention, etc
             Range vegetationDensity,
             Range rockiness,
             Range continentalness,
             Range tectonicActivity,
-            Range highlands,
+            Range highlands, // Local Elevation based on regular sea Level and others, doesnt increase from things such as mountains and hills.
             Range erosion,
             Range terrainHeight,
             Range weirdness,
@@ -1515,27 +1546,46 @@ public class TerrainParameters {
             return t && h && v && r && c && tA && p && e && height;
         }
 
-        public double affinity(TerrainParameters.Sampled parameters, double yLevel, boolean extremeNegative){
-            double t = temperature.affinity(parameters.temperature,extremeNegative) * temperatureInfluence;
-            double h = humidity.affinity(parameters.humidity,extremeNegative) * humidityInfluence;
-            double v = vegetationDensity.affinity(parameters.vegetationDensity,extremeNegative) * vegetationDensityInfluence;
-            double r = rockiness.affinity(parameters.rockyness,extremeNegative) * rockinessInfluence;
-            double c = continentalness.affinity(parameters.continentalness,extremeNegative) * continentalnessInfluence;
-            double tA = tectonicActivity.affinity(1 - Math.abs(parameters.tectonicActivity),extremeNegative) * tectonicActivityInfluence;
-            double p = highlands.affinity(Math.pow(Math.clamp(parameters.highlandsMap, 0, 1), 5),extremeNegative) * highlandsInfluence;
-            double e = erosion.affinity(parameters.erosion,extremeNegative) * erosionInfluence;
-            double height = Math.min(terrainHeight.affinity(yLevel,extremeNegative),1) * terrainHeightInfluence;
-            height = height > 0.15 ? 1 : -5;
-            double w = weirdness.affinity(parameters.weirdness,extremeNegative) * weirdnessInfluence;
-            double m = magicalness.affinity(parameters.magicalness,extremeNegative) * magicalnessInfluence;
+        public double affinity(TerrainParameters.Sampled parameters, double yLevel){
+            double t = temperature.affinity(parameters.temperature) * temperatureInfluence;
+            double h = humidity.affinity(parameters.humidity) * humidityInfluence;
+            double v = vegetationDensity.affinity(parameters.vegetationDensity) * vegetationDensityInfluence;
+            double r = rockiness.affinity(parameters.rockyness) * rockinessInfluence;
+            double c = continentalness.affinity(parameters.continentalness) * continentalnessInfluence;
+            double tA = tectonicActivity.affinity(1 - Math.abs(parameters.tectonicActivity)) * tectonicActivityInfluence;
+            double p = highlands.affinity(Math.pow(Math.clamp(parameters.highlandsMap, 0, 1), 5)) * highlandsInfluence;
+            double e = erosion.affinity(parameters.erosion) * erosionInfluence;
+            double height = Math.min(terrainHeight.affinityHarsh(yLevel),1);
+            height = (height > 0.15 ? 1 : -5) * terrainHeightInfluence;
+            double w = weirdness.affinity(parameters.weirdness) * weirdnessInfluence;
+            double m = magicalness.affinity(parameters.magicalness) * magicalnessInfluence;
+            return t + h + v + r + c + tA + p + e + height + w + m;
+        }
+        public double affinityHarsh(TerrainParameters.Sampled parameters, double yLevel){
+            double t = temperature.affinityHarsh(parameters.temperature) * temperatureInfluence;
+            double h = humidity.affinityHarsh(parameters.humidity) * humidityInfluence;
+            double v = vegetationDensity.affinityHarsh(parameters.vegetationDensity) * vegetationDensityInfluence;
+            double r = rockiness.affinityHarsh(parameters.rockyness) * rockinessInfluence;
+            double c = continentalness.affinityHarsh(parameters.continentalness) * continentalnessInfluence;
+            double tA = tectonicActivity.affinityHarsh(1 - Math.abs(parameters.tectonicActivity)) * tectonicActivityInfluence;
+            double p = highlands.affinityHarsh(Math.pow(Math.clamp(parameters.highlandsMap, 0, 1), 5)) * highlandsInfluence;
+            double e = erosion.affinityHarsh(parameters.erosion) * erosionInfluence;
+            double height = Math.min(terrainHeight.affinityHarsh(yLevel),1);
+            height = (height > 0.15 ? 1 : -5) * terrainHeightInfluence;
+            double w = weirdness.affinityHarsh(parameters.weirdness) * weirdnessInfluence;
+            double m = magicalness.affinityHarsh(parameters.magicalness) * magicalnessInfluence;
             double affinity = t + h + v + r + c + tA + p + e + height + w + m;
-            if (!test(parameters,yLevel) && extremeNegative) return affinity -1000;
+            if (!test(parameters,yLevel)) return affinity -1000;
 
             return affinity;
         }
 
-        public double affinity(TerrainParameters.Sampled parameters, BlockPos pos, boolean extremeNegative){
-            return affinity(parameters,pos.getCenter().y,extremeNegative);
+        public double affinity(TerrainParameters.Sampled parameters, BlockPos pos){
+            return affinity(parameters, Vec3.atCenterOf(pos).y);
+        }
+
+        public double affinityHarsh(TerrainParameters.Sampled parameters, BlockPos pos){
+            return affinityHarsh(parameters, Vec3.atCenterOf(pos).y);
         }
 
     }
@@ -1549,7 +1599,7 @@ public class TerrainParameters {
         Result result;
 
         SpawnFinder(Target points, TerrainParameters parameters, BlockPos pos, Level level) {
-            this.result = Result.of(pos,points.affinity(parameters.samplerAtCached(pos.getX(),pos.getZ()),pos.atY(Mth.floor(parameters.yLevelAt(pos.getX(),pos.getZ())) + 1),true));
+            this.result = Result.of(pos,points.affinityHarsh(parameters.samplerAtCached(pos.getX(),pos.getZ()),pos.atY(Mth.floor(parameters.yLevelAt(pos.getX(),pos.getZ())) + 1)));
             this.radialSearch(points, parameters, 512.0F, 32.0F,level);
             if (this.result.affinity < Target.TOTAL_MAX / 2){
                 this.radialSearch(points, parameters, 4096.0F, 512.0F,level);
@@ -1569,7 +1619,7 @@ public class TerrainParameters {
                 int z = blockpos.getZ() + (int)(Math.cos(f) * f1);
                 Sampled sampled = parameters.samplerAtCached(x,z);
                 int y = Mth.floor(parameters.yLevelAt(x,z) + 1);
-                double affinity = point.affinity(sampled,y,true);
+                double affinity = point.affinityHarsh(sampled,y);
 
                 if (affinity > this.result.affinity) {
                     this.result = Result.of(new BlockPos(x,y,z), affinity);

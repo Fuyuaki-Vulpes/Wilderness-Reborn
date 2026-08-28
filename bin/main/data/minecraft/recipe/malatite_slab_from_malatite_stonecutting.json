@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "r_wilderness:malatite",
+  "result": {
+    "count": 2,
+    "id": "r_wilderness:malatite_slab"
+  }
+}

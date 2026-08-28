@@ -1,0 +1,6 @@
+{
+  "effects": "burning",
+  "exhaustion": 0.25,
+  "message_id": "hyperthermia",
+  "scaling": "never"
+}

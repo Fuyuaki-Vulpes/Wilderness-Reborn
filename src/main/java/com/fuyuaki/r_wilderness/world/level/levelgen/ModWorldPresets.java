@@ -74,7 +74,7 @@
                                          WildWorldSettings.OVERWORLD_NOISE_SETTINGS,
                                          Blocks.STONE.defaultBlockState(),
                                          Blocks.WATER.defaultBlockState(),
-                                         RSurfaceRuleData.overworld(),
+                                         RSurfaceRuleData.overworld(biomes),
                                          68
                                  )
                          )

@@ -13,10 +13,9 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class SurfaceSystemMixin {
 
     @ModifyVariable(
-            method = {"buildSurface(Lnet/minecraft/world/level/levelgen/RandomState;Lnet/minecraft/world/level/biome/BiomeManager;Lnet/minecraft/core/Registry;ZLnet/minecraft/world/level/levelgen/WorldGenerationContext;Lnet/minecraft/world/level/chunk/ChunkAccess;Lnet/minecraft/world/level/levelgen/NoiseChunk;Lnet/minecraft/world/level/levelgen/SurfaceRules$RuleSource;)V"},
+            method = {"buildSurface"},
             at = @At("HEAD"),
-            ordinal = 0,
-            argsOnly = true)
+            argsOnly = true, name = "biomeManager")
     private BiomeManager injectDitheringBiomeAccess(BiomeManager biomeAccess) {
         BiomeAccessAccessor biomeAccessAccessor = (BiomeAccessAccessor)biomeAccess;
         return new BiomeDitherer(biomeAccessAccessor.getBiomeSource(), biomeAccessAccessor.getSeed());

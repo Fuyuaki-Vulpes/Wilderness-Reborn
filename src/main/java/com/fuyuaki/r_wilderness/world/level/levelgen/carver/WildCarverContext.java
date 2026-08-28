@@ -35,17 +35,17 @@ public class WildCarverContext extends CarvingContext {
 
     @Override
     public Optional<BlockState> topMaterial(Function<BlockPos, Holder<Biome>> biomeMapper, ChunkAccess access, BlockPos pos, boolean hasFluid) {
-        SurfaceRules.Context surfacerules$context = new SurfaceRules.Context(this.randomState.surfaceSystem(), randomState, access, null, biomeMapper, this.registryAccess().lookupOrThrow(Registries.BIOME), this);
+        SurfaceRules.Context surfacerules$context = new SurfaceRules.Context(this.randomState.surfaceSystem(), randomState, access, null, biomeMapper, this, null);
 
         ((SurfaceRulesContextExtension) (Object) surfacerules$context).setNoiseChunk(noiseChunk);
 
-        SurfaceRules.SurfaceRule surfacerules$surfacerule = this.surfaceRule.apply(surfacerules$context);
+        SurfaceRules.SurfaceRule surfaceRule = this.surfaceRule.apply(surfacerules$context);
         int i = pos.getX();
         int j = pos.getY();
         int k = pos.getZ();
         surfacerules$context.updateXZ(i, k);
-        surfacerules$context.updateY(1, 1, hasFluid ? j + 1 : Integer.MIN_VALUE, i, j, k);
-        BlockState blockstate = surfacerules$surfacerule.tryApply(i, j, k);
+        surfacerules$context.updateY(1, 1, hasFluid ? j + 1 : Integer.MIN_VALUE, j);
+        BlockState blockstate = surfaceRule.tryApply(i, j, k);
         return Optional.ofNullable(blockstate);
     }
     public RegistryAccess registryAccess() {

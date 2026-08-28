@@ -17,118 +17,112 @@ import net.minecraft.world.level.chunk.BlockColumn;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.*;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Set;
 
 public class WRSurfaceSystemUtil {
 
     public static void buildSurface(
-
             RandomState randomState,
-            BiomeManager manager,
-            Registry<Biome> biomes,
-            WorldGenerationContext context,
-            final ChunkAccess chunk,
+            BiomeManager biomeManager,
+            WorldGenerationContext generationContext,
+            ChunkAccess protoChunk,
             WRNoiseChunk noiseChunk,
-            SurfaceRules.RuleSource ruleSource
+            SurfaceRules.RuleSource ruleSource,
+            @Nullable Set<Holder<Biome>> possibleBiomes
     ) {
 
-        BiomeAccessAccessor biomeAccessAccessor = (BiomeAccessAccessor)manager;
 
-        BiomeManager biomeManager = new BiomeDitherer(biomeAccessAccessor.getBiomeSource(), biomeAccessAccessor.getSeed());
         SurfaceSystem surfaceSystem = randomState.surfaceSystem();
         SurfaceSystemExtension extendedSurfaceSystem = ((RandomStateExtension) (Object) randomState).getSurfaceSystemExtension();
-        final BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-        final ChunkPos chunkpos = chunk.getPos();
-        int chunkMinX = chunkpos.getMinBlockX();
-        int chunkMinZ = chunkpos.getMinBlockZ();
-        BlockColumn blockcolumn = new BlockColumn() {
+        final BlockPos.MutableBlockPos columnPos = new BlockPos.MutableBlockPos();
+        final ChunkPos chunkPos = protoChunk.getPos();
+        int minBlockX = chunkPos.getMinBlockX();
+        int minBlockZ = chunkPos.getMinBlockZ();
+        BlockColumn column = new BlockColumn() {
             @Override
-            public BlockState getBlock(int p_190006_) {
-                return chunk.getBlockState(blockpos$mutableblockpos.setY(p_190006_));
+            public BlockState getBlock(int blockY) {
+                return protoChunk.getBlockState(columnPos.setY(blockY));
             }
 
             @Override
-            public void setBlock(int p_190008_, BlockState p_190009_) {
-                LevelHeightAccessor levelheightaccessor = chunk.getHeightAccessorForGeneration();
-                if (levelheightaccessor.isInsideBuildHeight(p_190008_)) {
-                    chunk.setBlockState(blockpos$mutableblockpos.setY(p_190008_), p_190009_);
-                    if (!p_190009_.getFluidState().isEmpty()) {
-                        chunk.markPosForPostprocessing(blockpos$mutableblockpos);
+            public void setBlock(int blockY, BlockState state) {
+                LevelHeightAccessor heightAccessor = protoChunk.getHeightAccessorForGeneration();
+                if (heightAccessor.isInsideBuildHeight(blockY)) {
+                    protoChunk.setBlockState(columnPos.setY(blockY), state);
+                    if (!state.getFluidState().isEmpty()) {
+                        protoChunk.markPosForPostProcessing(columnPos);
                     }
                 }
             }
 
             @Override
             public String toString() {
-                return "ChunkBlockColumn " + chunkpos;
+                return "ChunkBlockColumn " + chunkPos;
             }
         };
-        SurfaceRules.Context surfacerules$context = new SurfaceRules.Context(surfaceSystem, randomState, chunk, null, biomeManager::getBiome, biomes, context);
-        ((SurfaceRulesContextExtension) (Object) surfacerules$context).setNoiseChunk(noiseChunk);
-        SurfaceRules.SurfaceRule surfacerules$surfacerule = ruleSource.apply(surfacerules$context);
-        BlockPos.MutableBlockPos blockpos$mutableblockpos1 = new BlockPos.MutableBlockPos();
+        SurfaceRules.Context context = new SurfaceRules.Context(
+                surfaceSystem, randomState, protoChunk, null, biomeManager::getBiome, generationContext, possibleBiomes
+        );
+        ((SurfaceRulesContextExtension) (Object) context).setNoiseChunk(noiseChunk);
+        SurfaceRules.SurfaceRule rule = ruleSource.apply(context);
+        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
 
-        for (int chunkX = 0; chunkX < 16; chunkX++) {
-            for (int chunkZ = 0; chunkZ < 16; chunkZ++) {
-                int x = chunkMinX + chunkX;
-                int z = chunkMinZ + chunkZ;
-                int height = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, chunkX, chunkZ);
-                int oceanFloor = chunk.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, chunkX, chunkZ);
-                blockpos$mutableblockpos.setX(x).setZ(z);
-                Holder<Biome> holder = manager.getBiome(blockpos$mutableblockpos1.set(x, height, z));
-                if (holder.is(Biomes.ERODED_BADLANDS)) {
-                    surfaceSystem.erodedBadlandsExtension(blockcolumn, x, z, height, chunk);
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                int blockX = minBlockX + x;
+                int blockZ = minBlockZ + z;
+                int startingHeight = protoChunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) + 1;
+                columnPos.setX(blockX).setZ(blockZ);
+                Holder<Biome> surfaceBiome = biomeManager.getBiome(blockPos.set(blockX, startingHeight, blockZ));
+                if (surfaceBiome.is(Biomes.ERODED_BADLANDS)) {
+                    surfaceSystem.erodedBadlandsExtension(column, blockX, blockZ, startingHeight, protoChunk);
                 }
-                /*
-                if (holder.is(ModTags.Biomes.HAS_SAND_DUNES)) {
-                    extendedSurfaceSystem.sandDunes(manager,blockcolumn, x, z, oceanFloor, chunk);
-                }if (holder.is(ModTags.Biomes.HAS_BIG_SAND_DUNES)) {
-                    extendedSurfaceSystem.sandDunesLarge(manager,blockcolumn, x, z, oceanFloor, chunk);
-                }*/
 
+                int height = protoChunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) + 1;
+                context.updateXZ(blockX, blockZ);
+                int stoneAboveDepth = 0;
+                int waterHeight = Integer.MIN_VALUE;
+                int nextCeilingStoneY = Integer.MAX_VALUE;
+                int endY = protoChunk.getMinY();
 
-                int l1 = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, chunkX, chunkZ) + 1;
-                surfacerules$context.updateXZ(x, z);
-                int i2 = 0;
-                int j2 = Integer.MIN_VALUE;
-                int k2 = Integer.MAX_VALUE;
-                int l2 = chunk.getMinY();
-
-                for (int i3 = l1; i3 >= l2; i3--) {
-                    BlockState blockstate = blockcolumn.getBlock(i3);
-                    if (blockstate.isAir()) {
-                        i2 = 0;
-                        j2 = Integer.MIN_VALUE;
-                    } else if (!blockstate.getFluidState().isEmpty()) {
-                        if (j2 == Integer.MIN_VALUE) {
-                            j2 = i3 + 1;
+                for (int y = height; y >= endY; y--) {
+                    BlockState old = column.getBlock(y);
+                    if (old.isAir()) {
+                        stoneAboveDepth = 0;
+                        waterHeight = Integer.MIN_VALUE;
+                    } else if (!old.getFluidState().isEmpty()) {
+                        if (waterHeight == Integer.MIN_VALUE) {
+                            waterHeight = y + 1;
                         }
                     } else {
-                        if (k2 >= i3) {
-                            k2 = DimensionType.WAY_BELOW_MIN_Y;
+                        if (nextCeilingStoneY >= y) {
+                            nextCeilingStoneY = DimensionType.WAY_BELOW_MIN_Y;
 
-                            for (int j3 = i3 - 1; j3 >= l2 - 1; j3--) {
-                                BlockState blockstate1 = blockcolumn.getBlock(j3);
-                                if (!surfaceSystem.isStone(blockstate1)) {
-                                    k2 = j3 + 1;
+                            for (int lookaheadY = y - 1; lookaheadY >= endY - 1; lookaheadY--) {
+                                BlockState nextState = column.getBlock(lookaheadY);
+                                if (!surfaceSystem.isStone(nextState)) {
+                                    nextCeilingStoneY = lookaheadY + 1;
                                     break;
                                 }
                             }
                         }
 
-                        i2++;
-                        int k3 = i3 - k2 + 1;
-                        surfacerules$context.updateY(i2, k3, j2, x, i3, z);
-                        if (blockstate == surfaceSystem.defaultBlock) {
-                            BlockState blockstate2 = surfacerules$surfacerule.tryApply(x, i3, z);
-                            if (blockstate2 != null) {
-                                blockcolumn.setBlock(i3, blockstate2);
+                        stoneAboveDepth++;
+                        int stoneBelowDepth = y - nextCeilingStoneY + 1;
+                        context.updateY(stoneAboveDepth, stoneBelowDepth, waterHeight, y);
+                        if (old == surfaceSystem.defaultBlock) {
+                            BlockState state = rule.tryApply(blockX, y, blockZ);
+                            if (state != null) {
+                                column.setBlock(y, state);
                             }
                         }
                     }
                 }
 
-                if (holder.is(Biomes.FROZEN_OCEAN) || holder.is(Biomes.DEEP_FROZEN_OCEAN)) {
-                    surfaceSystem.frozenOceanExtension(surfacerules$context.getMinSurfaceLevel(), holder.value(), blockcolumn, blockpos$mutableblockpos1, x, z, height);
+                if (surfaceBiome.is(Biomes.FROZEN_OCEAN) || surfaceBiome.is(Biomes.DEEP_FROZEN_OCEAN)) {
+                    surfaceSystem.frozenOceanExtension(context.getMinSurfaceLevel(), surfaceBiome.value(), column, blockPos, blockX, blockZ, startingHeight);
                 }
             }
         }

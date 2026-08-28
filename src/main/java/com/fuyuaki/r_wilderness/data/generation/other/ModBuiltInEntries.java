@@ -9,6 +9,7 @@ import com.fuyuaki.r_wilderness.data.worldgen.features.ModFeatureUtils;
 import com.fuyuaki.r_wilderness.data.worldgen.placement.ModPlacementUtils;
 import com.fuyuaki.r_wilderness.data.worldgen.ModNoiseData;
 import com.fuyuaki.r_wilderness.init.RDamageTypes;
+import com.fuyuaki.r_wilderness.server.commands.arguments.RArgumentTypes;
 import com.fuyuaki.r_wilderness.world.item.enchantment.ModEnchantments;
 import com.fuyuaki.r_wilderness.world.level.levelgen.ModWorldPresets;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildWorldSettings;
@@ -37,7 +38,6 @@ public class ModBuiltInEntries extends DatapackBuiltinEntriesProvider {
             .add(Registries.WORLD_PRESET, ModWorldPresets::bootstrap)
             .add(Registries.DIMENSION_TYPE, WildWorldSettings.DimensionTypes::bootstrap)
             .add(Registries.DAMAGE_TYPE, RDamageTypes::bootstrap)
-
             ;
 
 

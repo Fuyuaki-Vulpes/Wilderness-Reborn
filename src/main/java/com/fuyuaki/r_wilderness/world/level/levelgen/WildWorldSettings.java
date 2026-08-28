@@ -15,6 +15,7 @@ import net.minecraft.world.attribute.*;
 import net.minecraft.world.clock.WorldClock;
 import net.minecraft.world.clock.WorldClocks;
 import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.NoiseSettings;
@@ -31,6 +32,7 @@ public class WildWorldSettings {
 
 
         public static void bootstrap(BootstrapContext<DimensionType> context) {
+            HolderGetter<Block> blocks = context.lookup(Registries.BLOCK);
             HolderGetter<Timeline> timelines = context.lookup(Registries.TIMELINE);
             HolderGetter<WorldClock> clocks = context.lookup(Registries.WORLD_CLOCK);
             EnvironmentAttributeMap overworldAttributes = EnvironmentAttributeMap.builder()
@@ -55,7 +57,7 @@ public class WildWorldSettings {
                             WildernessConstants.WORLD_BOTTOM,
                             WildernessConstants.WORLD_HEIGHT,
                             WildernessConstants.WORLD_HEIGHT,
-                            BlockTags.INFINIBURN_OVERWORLD,
+                            blocks.getOrThrow(BlockTags.INFINIBURN_OVERWORLD),
                             0.0F,
                             new DimensionType.MonsterSettings(UniformInt.of(0, 7), 0),
                             DimensionType.Skybox.OVERWORLD,

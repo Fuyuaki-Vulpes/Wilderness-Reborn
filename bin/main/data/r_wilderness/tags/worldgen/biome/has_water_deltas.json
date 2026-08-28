@@ -1,0 +1,8 @@
+{
+  "values": [
+    "#r_wilderness:has_water_deltas_large",
+    "#r_wilderness:has_water_deltas_very_common",
+    "#r_wilderness:has_water_deltas_common",
+    "#r_wilderness:has_water_deltas_regular"
+  ]
+}

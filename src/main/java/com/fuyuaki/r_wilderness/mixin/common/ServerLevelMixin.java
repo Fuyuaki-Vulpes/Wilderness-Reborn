@@ -1,12 +1,15 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
-
+import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
+import com.fuyuaki.r_wilderness.world.generation.region.ServerLevelRegionMemoryFetcher;
+import com.fuyuaki.r_wilderness.world.level.levelgen.WildWorldSettings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerEntityGetter;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,7 +18,10 @@ import net.minecraft.world.clock.ClockManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.neoforged.neoforge.event.EventHooks;
 import org.spongepowered.asm.mixin.Final;
@@ -27,11 +33,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.function.BooleanSupplier;
 
 @Mixin(ServerLevel.class)
-public abstract class ServerLevelMixin extends Level implements ServerEntityGetter, WorldGenLevel {
+public abstract class ServerLevelMixin extends Level implements ServerEntityGetter, WorldGenLevel, ServerLevelRegionMemoryFetcher {
     @Shadow @Final private SleepStatus sleepStatus;
+    private RegionMemory regionMemory;
 
     @Shadow public abstract List<ServerPlayer> players();
 
@@ -44,10 +52,18 @@ public abstract class ServerLevelMixin extends Level implements ServerEntityGett
 
     @Shadow
     public abstract ClockManager clockManager();
-
     protected ServerLevelMixin(WritableLevelData levelData, ResourceKey<Level> dimension, RegistryAccess registryAccess, Holder<DimensionType> dimensionTypeRegistration, boolean isClientSide, boolean isDebug, long biomeZoomSeed, int maxChainedNeighborUpdates) {
         super(levelData, dimension, registryAccess, dimensionTypeRegistration, isClientSide, isDebug, biomeZoomSeed, maxChainedNeighborUpdates);
     }
+
+    //Initializes the Region Generator before ChunkGenerator.
+    @Inject(method = "<init>",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/LevelStem;generator()Lnet/minecraft/world/level/chunk/ChunkGenerator;"), cancellable = false)
+    private void init(MinecraftServer server, Executor executor, LevelStorageSource.LevelStorageAccess levelStorage, ServerLevelData levelData, ResourceKey dimension, LevelStem levelStem, boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime, CallbackInfo ci){
+        if (dimension == Level.OVERWORLD){
+        this.regionMemory = new RegionMemory();
+        }
+    }
+
 
 /*
     @Redirect(method = "tick",at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/SleepStatus;areEnoughSleeping(I)Z"))
@@ -103,5 +119,15 @@ public abstract class ServerLevelMixin extends Level implements ServerEntityGett
                 serverplayer.sendOverlayMessage(message);
             }        }
 
+    }
+
+    @Override
+    public void setRegionMemory(RegionMemory regionMemory) {
+        this.regionMemory = regionMemory;
+    }
+
+    @Override
+    public RegionMemory getRegionMemory() {
+        return this.regionMemory;
     }
 }

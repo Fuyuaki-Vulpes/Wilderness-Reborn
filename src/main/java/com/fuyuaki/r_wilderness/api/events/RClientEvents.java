@@ -1,6 +1,8 @@
 package com.fuyuaki.r_wilderness.api.events;
 
 import com.fuyuaki.r_wilderness.client.gui.RWildernessLayers;
+import com.fuyuaki.r_wilderness.client.gui.components.debug.DebugEntryRegionStatus;
+import com.fuyuaki.r_wilderness.client.gui.components.debug.RDebugScreenEntries;
 import com.fuyuaki.r_wilderness.client.menu.hud.RWildernessGui;
 import com.fuyuaki.r_wilderness.network.DrinkWaterInWorldPacket;
 import com.fuyuaki.r_wilderness.world.block.woods.ModWoodTypes;
@@ -46,12 +48,11 @@ public class RClientEvents {
 
     }
 
-
-    @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        Sheets.addWoodType(ModWoodTypes.ALPINE);
-
-    }
+//
+//    @SubscribeEvent
+//    public static void onClientSetup(FMLClientSetupEvent event) {
+//
+//    }
 
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
@@ -66,6 +67,10 @@ public class RClientEvents {
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         //event.registerLayerDefinition(ModModelLayers.ALPINE_BOAT, BoatModel::createBoatModel);
         //event.registerLayerDefinition(ModModelLayers.ALPINE_CHEST_BOAT,BoatModel::createChestBoatModel);
+    }
+    @SubscribeEvent
+    public static void registerLayerDefinitions(RegisterDebugEntriesEvent event) {
+        event.register(RDebugScreenEntries.LOADED_REGIONS_LIST, new DebugEntryRegionStatus());
     }
 
 }
