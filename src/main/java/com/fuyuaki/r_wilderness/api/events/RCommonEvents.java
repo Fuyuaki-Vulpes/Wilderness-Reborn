@@ -8,7 +8,7 @@ import com.fuyuaki.r_wilderness.server.commands.RCommands;
 import com.fuyuaki.r_wilderness.world.environment.PlayerEnvironment;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.item.components.Drinkables;
-import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomePlacement;
+import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Items;
@@ -35,8 +35,8 @@ public class RCommonEvents {
     public static void onDatapackRegistry(DataPackRegistryEvent.NewRegistry event){
         event.dataPackRegistry(
                 WildRegistries.REBORN_BIOME_PLACEMENT_KEY,
-                RebornBiomePlacement.CODEC,
-                RebornBiomePlacement.CODEC
+                BiomePlacementData.CODEC,
+                BiomePlacementData.CODEC
 
         );
     }
@@ -95,7 +95,6 @@ public class RCommonEvents {
     public static void onLevelLoad(LevelEvent.Load event) {
         if (event.getLevel() instanceof ServerLevel level
                 && level.dimension() == Level.OVERWORLD) {
-            RegionMemory.getInstance(level).initialize(level);
         }
     }
 

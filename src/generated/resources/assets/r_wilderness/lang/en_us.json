@@ -146,15 +146,9 @@
   "item.r_wilderness.weathered_bedrock_stairs": "Weathered Bedrock Stairs",
   "item.r_wilderness.weathered_bedrock_wall": "Weathered Bedrock Wall",
   "itemGroup.r_wilderness_main": "Reborn: Wilderness",
-  "r_wilderness.generation.hint.final": "Eroding Terrain and Simulating Passage of time",
-  "r_wilderness.generation.hint.initialize": "Initializing Tectonic Plates",
-  "r_wilderness.generation.hint.plateaus": "Simulating Tectonic Plate Age, Volcanoes, and Plateaus",
-  "r_wilderness.generation.hint.raster": "Calculating Continents and Oceans",
-  "r_wilderness.generation.hint.river": "Generating Rivers and Lakes",
-  "r_wilderness.generation.hint.terrain": "Merging and Calculating High-Resolution Heightmaps",
   "r_wilderness.generation.regions": "Generating Spawn Regions",
-  "r_wilderness.generation.warn": "The game may freeze and show as \"(Not Responding)\" while loading!",
-  "r_wilderness.generation.warn_second_line": "High-density terrain is being generated in the background. Please wait at least 10 minutes before closing.",
+  "r_wilderness.generation.warn": "The game may Slow Down, Lag, or Freeze while loading!",
+  "r_wilderness.generation.warn_second_line": "16384 to 32768 blocks are generated in every direction! Please wait at least 10 minutes before closing.",
   "system.r_wilderness.asleepMessage": "%1$s out of %2$s players asleep, speeding up time to %3$s",
   "system.r_wilderness.cancel": "No players are asleep. Returning time speed to normal"
 }

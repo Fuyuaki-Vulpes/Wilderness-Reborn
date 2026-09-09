@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.world.level.levelgen.distant_horizons;
 
+import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import com.seibel.distanthorizons.api.DhApi;
 import com.seibel.distanthorizons.api.enums.EDhApiDetailLevel;
 import com.seibel.distanthorizons.api.enums.worldGeneration.EDhApiDistantGeneratorMode;
@@ -12,8 +13,10 @@ import com.seibel.distanthorizons.api.interfaces.world.IDhApiLevelWrapper;
 import com.seibel.distanthorizons.api.objects.data.DhApiChunk;
 import com.seibel.distanthorizons.api.objects.data.DhApiTerrainDataPoint;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.QuartPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -80,7 +83,7 @@ public class WildDHChunkWorldGen extends AbstractDhApiChunkWorldGenerator {
                     BlockPos thisBlock = new BlockPos(x, y, z);
                     BlockState b = chunk.getBlockState(thisBlock);
                     IDhApiBlockStateWrapper newBlock = DhApi.Delayed.wrapperFactory.getBlockStateWrapper(new Object[]{b}, this.levelWrapper);
-                    IDhApiBiomeWrapper newBiome = DhApi.Delayed.wrapperFactory.getBiomeWrapper(new Object[]{ chunk.getNoiseBiome(x, y, z)}, this.levelWrapper);
+                    IDhApiBiomeWrapper newBiome = DhApi.Delayed.wrapperFactory.getBiomeWrapper(new Object[]{ chunk.getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y), QuartPos.fromBlock(z))}, this.levelWrapper);
                     int blockLight = chunk.getLevel().getBrightness(LightLayer.BLOCK,thisBlock);
                     int skyLight = chunk.getLevel().getBrightness(LightLayer.SKY,thisBlock);
                     if (biome == null || block == null){

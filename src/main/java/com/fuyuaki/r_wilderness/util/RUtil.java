@@ -1,5 +1,8 @@
 package com.fuyuaki.r_wilderness.util;
 
+import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
+import com.fuyuaki.r_wilderness.world.generation.region.data.RegionFloatMap;
+import com.fuyuaki.r_wilderness.world.generation.region.data.RegionPos;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -15,6 +18,7 @@ import org.apache.commons.lang3.mutable.MutableDouble;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class RUtil {
 
@@ -59,11 +63,6 @@ public class RUtil {
             return (x < 0 ? 2 - y / (-x - y) : 3 + x / (x - y));
     }
 
-    public static BlockState pickWaterBlockStateFor(boolean riverWater, Vec2 waterFlow) {
-        if (!riverWater) return Blocks.WATER.defaultBlockState();
-        BlockState waterState = Blocks.WATER.defaultBlockState();
-        return waterState;
-    }
 
     public static void centeredTextWithWordWrap(GuiGraphicsExtractor gui, Font font, FormattedText string, int x, int y, int width, int col) {
         centeredTextWithWordWrap(gui,font, string, x, y, width, col, true);
@@ -75,4 +74,6 @@ public class RUtil {
             y += 9;
         }
     }
+
+
 }

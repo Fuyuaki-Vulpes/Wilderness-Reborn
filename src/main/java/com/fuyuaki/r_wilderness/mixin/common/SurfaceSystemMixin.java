@@ -2,7 +2,7 @@ package com.fuyuaki.r_wilderness.mixin.common;
 
 
 import com.fuyuaki.r_wilderness.mixin.accessor.BiomeAccessAccessor;
-import com.fuyuaki.r_wilderness.world.level.biome.BiomeDitherer;
+import com.fuyuaki.r_wilderness.world.generation.biome.BiomeDitherer;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.levelgen.SurfaceSystem;
 import org.spongepowered.asm.mixin.Mixin;

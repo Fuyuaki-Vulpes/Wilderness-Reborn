@@ -2,16 +2,13 @@ package com.fuyuaki.r_wilderness.mixin.common;
 
 
 import com.fuyuaki.r_wilderness.world.level.levelgen.ChunkGeneratorExtension;
-import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.TerrainParameters;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.MiscOverworldFeatures;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.PlayerSpawnFinder;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.LevelLoadListener;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -31,10 +28,8 @@ public class MinecraftServerMixin {
         ServerChunkCache serverChunkCache = level.getChunkSource();
         ChunkGenerator generator =  serverChunkCache.getGenerator();
         if (generator instanceof ChunkGeneratorExtension extension){
-            TerrainParameters t = extension.terrainParameters();
 
-            ChunkPos chunkpos = ChunkPos.containing(TerrainParameters.findSpawnPosition(TerrainParameters.SPAWN_TARGET,t,level));
-//            extension.prepare(chunkpos);
+            ChunkPos chunkpos = ChunkPos.containing(BlockPos.ZERO);
 
             listener.start(LevelLoadListener.Stage.PREPARE_GLOBAL_SPAWN, 0);
             listener.updateFocus(level.dimension(), chunkpos);
@@ -47,32 +42,6 @@ public class MinecraftServerMixin {
             }
 
             levelData.setSpawn(LevelData.RespawnData.of(level.dimension(), chunkpos.getWorldPosition().offset(8, spawnY, 8), 0.0F, 0.0F));
-            int xOffset = 0;
-            int zOffset = 0;
-            int xOff = 0;
-            int zOff = -1;
-
-            for (int i1 = 0; i1 < Mth.square(11); i1++) {
-                if (xOffset >= -5 && xOffset <= 5 && zOffset >= -5 && zOffset <= 5) {
-                    ChunkPos newChunk = new ChunkPos(chunkpos.x() + xOffset, chunkpos.z() + zOffset);
-                    extension.prepare(newChunk);
-
-                    BlockPos blockpos1 = PlayerSpawnFinder.getSpawnPosInChunk(level, newChunk);
-                    if (blockpos1 != null) {
-                        levelData.setSpawn(LevelData.RespawnData.of(level.dimension(), blockpos1, 0.0F, 0.0F));
-                        break;
-                    }
-                }
-
-                if (xOffset == zOffset || xOffset < 0 && xOffset == -zOffset || xOffset > 0 && xOffset == 1 - zOffset) {
-                    int offset = xOff;
-                    xOff = -zOff;
-                    zOff = offset;
-                }
-
-                xOffset += xOff;
-                zOffset += zOff;
-            }
 
             if (generateBonusChest) {
                 level.registryAccess()

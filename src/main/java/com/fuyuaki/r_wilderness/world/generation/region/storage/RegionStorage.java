@@ -27,6 +27,7 @@ public record RegionStorage(Path path) implements AutoCloseable {
 
             NbtIo.write(region.getNbtData().toNBT(), outputStream);
             region.writeData(outputStream);
+            outputStream.flush();
 
         }catch (Throwable e) {
             LOGGER.error("Region Saving Failed for Region {}",region.getPos(), e);
@@ -38,17 +39,16 @@ public record RegionStorage(Path path) implements AutoCloseable {
         Path location = makePath(this.path,pos);
 
         try (DataInputStream inputStream = this.inputStream(location)) {
-            LOGGER.debug("Loading... \n Length : {} \nVersion: {}",inputStream.readInt(), inputStream.readShort());
             return WorldRegion.read(record,inputStream,manager,pos);
         }
     }
 
     private DataOutputStream outputStream(WorldRegion region) throws IOException {
-        return new DataOutputStream(new FastBufferedOutputStream(new GZIPOutputStream(new RegionBuffer(region))));
+        return new DataOutputStream(new FastBufferedOutputStream((new RegionBuffer(region))));
     }
 
     private DataInputStream inputStream(Path path) throws IOException {
-        return new DataInputStream(new BufferedInputStream(new GZIPInputStream(Files.newInputStream(path))));
+        return new DataInputStream(new BufferedInputStream((Files.newInputStream(path))));
     }
 
     private void writeRegion(RegionPos pos, ByteBuffer data) throws IOException {

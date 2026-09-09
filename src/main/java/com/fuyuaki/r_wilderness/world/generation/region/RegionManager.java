@@ -4,6 +4,7 @@ import com.fuyuaki.r_wilderness.world.generation.GenerationUtils;
 import com.fuyuaki.r_wilderness.world.generation.features.RegionFeatureGenerator;
 import com.fuyuaki.r_wilderness.world.generation.features.RegionNoisesRecord;
 import com.fuyuaki.r_wilderness.world.generation.features.hydrology.RegionRivers;
+import com.fuyuaki.r_wilderness.world.generation.features.hydrology.RegionWaterBodies;
 import com.fuyuaki.r_wilderness.world.generation.features.plates.RegionPlates;
 import com.fuyuaki.r_wilderness.world.generation.noise.Noise2D;
 import com.fuyuaki.r_wilderness.world.generation.noise.OpenSimplex2D;
@@ -12,6 +13,7 @@ import com.fuyuaki.r_wilderness.world.generation.region.storage.RegionStorage;
 import com.mojang.logging.LogUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import net.minecraft.world.level.storage.LevelResource;
 import org.apache.logging.log4j.core.util.Log4jThreadFactory;
 import org.slf4j.Logger;
@@ -30,7 +32,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class RegionManager {
-    private final ExecutorService cpuExecutor;
     private final ExecutorService ioExecutor;
     public static final Logger LOGGER = LogUtils.getLogger();
     private final RegionStorage storage;
@@ -51,8 +52,6 @@ public class RegionManager {
     public RegionManager(ServerLevel level) {
         int cpuThreads = Math.max(1, Runtime.getRuntime().availableProcessors() - 3);
 
-        this.cpuExecutor = Executors.newWorkStealingPool(cpuThreads);
-
         this.ioExecutor = Executors.newFixedThreadPool(cpuThreads,  Log4jThreadFactory.createDaemonThreadFactory("region-io-worker"));
 
         this.level = level;
@@ -66,7 +65,7 @@ public class RegionManager {
             LOGGER.error("Failed to create region directory at {}", this.regionDir, e);
         }
         this.storage = new RegionStorage(regionDir);
-        this.regionNoises = RegionNoisesRecord.createFor(level,seed);
+        this.regionNoises = RegionNoisesRecord.createFor(seed);
     }
 
     public void joinCompletedRegions(){
@@ -242,7 +241,7 @@ public class RegionManager {
                     r = loadOrCreateBase(pos);
                 }
                 return r;
-            },cpuExecutor);
+            },Util.backgroundExecutor());
         }
         ConcurrentHashMap<Long, CompletableFuture<WorldRegion>> phaseMap = this.getMapForPhase(phase);
 
@@ -254,43 +253,43 @@ public class RegionManager {
 
             prevRegion.query();
             CompletableFuture<WorldRegion> phaseWork = switch (phase){
-                case INITIALIZED -> CompletableFuture.supplyAsync(() -> initialize(prevRegion),cpuExecutor);
+                case INITIALIZED -> CompletableFuture.supplyAsync(() -> initialize(prevRegion),Util.backgroundExecutor());
 
                 case RASTERIZATION -> fetchNeighborsAsync(pos,1,RegionPhase.INITIALIZED)
                         .thenApplyAsync( neighbors ->{
                             WorldRegion center = neighbors.get(pos);
                             if (center.getPhase().isAtLeast(RegionPhase.RASTERIZATION)) return center;
                             return rasterize(center,neighbors);
-                        },cpuExecutor);
+                        },Util.backgroundExecutor());
 
-                case PLATEAU_AND_TERRAIN -> CompletableFuture.supplyAsync(() -> makePlateauAndTerrain(prevRegion),cpuExecutor);
+                case PLATEAU_AND_TERRAIN -> CompletableFuture.supplyAsync(() -> makePlateauAndTerrain(prevRegion),Util.backgroundExecutor());
 
                 case ROUGH_HEIGHTS -> fetchNeighborsAsync(pos,1,RegionPhase.PLATEAU_AND_TERRAIN).thenApplyAsync(
                         neighbors -> {
                             WorldRegion center = neighbors.get(pos);
                             if (center.getPhase().isAtLeast(RegionPhase.ROUGH_HEIGHTS)) return center;
                             return generateHeightmap(prevRegion, neighbors);
-                        },cpuExecutor);
+                        },Util.backgroundExecutor());
 
                 case RIVERS -> fetchNeighborsAsync(pos, 1, RegionPhase.ROUGH_HEIGHTS)
                         .thenApplyAsync(neighbors -> {
                             WorldRegion center = neighbors.get(pos);
                             if (center.getPhase().isAtLeast(RegionPhase.RIVERS)) return center;
                             return generateRivers(prevRegion, neighbors);
-                        },cpuExecutor);
+                        },Util.backgroundExecutor());
                 case RIVERS_POST -> fetchNeighborsAsync(pos, 1, RegionPhase.RIVERS)
                         .thenApplyAsync(neighbors -> {
                             WorldRegion center = neighbors.get(pos);
                             if (center.getPhase().isAtLeast(RegionPhase.RIVERS_POST)) return center;
                             return postProcessRivers(prevRegion, neighbors);
-                        },cpuExecutor);
+                        },Util.backgroundExecutor());
 
                 case LOADED_AND_FINISHED -> fetchNeighborsAsync(pos, 1, RegionPhase.RIVERS_POST)
                         .thenApplyAsync(neighbors -> {
                             WorldRegion center = neighbors.get(pos);
                             if (center.getPhase().isAtLeast(RegionPhase.LOADED_AND_FINISHED)) return center;
                             return finalizeRegion(prevRegion,neighbors);
-                        },cpuExecutor);
+                        },Util.backgroundExecutor());
                 default -> CompletableFuture.completedFuture(prevRegion);
             };
             return phaseWork.thenApply(region -> {
@@ -354,7 +353,7 @@ public class RegionManager {
 
         long startTime = System.nanoTime();
         RegionPos pos =  worldRegion.getPos();
-        SerializableRegionData data = new SerializableRegionData(worldRegion.getPos(), new RegionPlates(pos,this.seed,this.regionNoises), new RegionRivers(regionNoises));
+        SerializableRegionData data = new SerializableRegionData(worldRegion.getPos(), new RegionPlates(pos,this.seed,this.regionNoises), new RegionRivers(regionNoises), new RegionWaterBodies(regionNoises));
         worldRegion.setNbtData(data);
         worldRegion.updateStatus(RegionPhase.INITIALIZED);
         long endTime = System.nanoTime();
@@ -367,7 +366,7 @@ public class RegionManager {
 
         long startTime = System.nanoTime();
         RegionPos pos = worldRegion.getPos();
-        worldRegion.layers().setErodability(this.regionNoises.erodability().generate(worldRegion.layers().getErodability().getIndex(),worldRegion.getPos()));
+        worldRegion.layers().setErodability(this.regionNoises.erodability().generate(worldRegion.layers().getErodability(),worldRegion.getPos()));
         RegionFloatMap[] maps = RegionFeatureGenerator.createRasterizedPlateLayers(pos, neighbors,worldRegion);
         worldRegion.layers().setPlateWeights(maps[GenerationUtils.TectonicArrayIndex.WEIGHT]);
         worldRegion.layers().setPlateEdges(maps[GenerationUtils.TectonicArrayIndex.EDGES]);
@@ -391,12 +390,12 @@ public class RegionManager {
         long startTime = System.nanoTime();
         RegionPos pos = worldRegion.getPos();
 
-        worldRegion.layers().setAtmospherePressure(this.regionNoises.atmospherePressure().generate(worldRegion.layers().getAtmospherePressure().getIndex(),worldRegion.getPos()));
-        worldRegion.layers().setTemperature(this.regionNoises.temperature().generate(worldRegion.layers().getTemperature().getIndex(),worldRegion.getPos()));
-        worldRegion.layers().setVegetation(this.regionNoises.vegetation().generate(worldRegion.layers().getVegetation().getIndex(),worldRegion.getPos()));
-        worldRegion.layers().setHumidity(this.regionNoises.humidity().generate(worldRegion.layers().getHumidity().getIndex(),worldRegion.getPos()));
-        worldRegion.layers().setRockiness(this.regionNoises.rockiness().generate(worldRegion.layers().getRockiness().getIndex(),worldRegion.getPos()));
-        worldRegion.layers().setMagicalness(this.regionNoises.magicalness().generate(worldRegion.layers().getMagicalness().getIndex(),worldRegion.getPos()));
+        worldRegion.layers().setAtmospherePressure(this.regionNoises.atmospherePressure().generate(worldRegion.layers().getAtmospherePressure(),worldRegion.getPos()));
+        worldRegion.layers().setTemperature(this.regionNoises.temperature().generate(worldRegion.layers().getTemperature(),worldRegion.getPos()));
+        worldRegion.layers().setVegetation(this.regionNoises.vegetation().generate(worldRegion.layers().getVegetation(),worldRegion.getPos()));
+        worldRegion.layers().setHumidity(this.regionNoises.humidity().generate(worldRegion.layers().getHumidity(),worldRegion.getPos()));
+        worldRegion.layers().setRockiness(this.regionNoises.rockiness().generate(worldRegion.layers().getRockiness(),worldRegion.getPos()));
+        worldRegion.layers().setMagicalness(this.regionNoises.magicalness().generate(worldRegion.layers().getMagicalness(),worldRegion.getPos()));
 
         RegionFloatMap plateau = RegionFeatureGenerator.plateauMap(pos,level, worldRegion);
         worldRegion.layers().setPlateaus(plateau);
@@ -429,11 +428,9 @@ public class RegionManager {
         long startTime = System.nanoTime();
         RegionPos pos = worldRegion.getPos();
 
-        worldRegion.getNbtData().rivers().processRiverTerrainAdaptation(neighbors, worldRegion);
-
         int maxIterations = 10;
         for (int iterations = 0; iterations < maxIterations; iterations++) {
-            worldRegion.getNbtData().rivers().computeEntireRivers(pos, neighbors, worldRegion,this.seed);
+            worldRegion.getNbtData().rivers().computeEntireRivers(pos, neighbors, worldRegion);
         }
         worldRegion.getNbtData().rivers().postProcessRiverCliffsAndFlow(pos, neighbors,worldRegion,this.seed);
         worldRegion.updateStatus(RegionPhase.RIVERS);
@@ -447,9 +444,9 @@ public class RegionManager {
         long startTime = System.nanoTime();
         RegionPos pos = worldRegion.getPos();
 
-        worldRegion.getNbtData().rivers().computeEntireRivers(pos, neighbors, worldRegion,this.seed);
+        worldRegion.getNbtData().rivers().computeEntireRivers(pos, neighbors, worldRegion);
         worldRegion.getNbtData().rivers().postProcessRiverCliffsAndFlow(pos, neighbors,worldRegion,this.seed);
-        worldRegion.getNbtData().rivers().generatePointsForAllRivers(pos,worldRegion, neighbors,this.seed);
+        worldRegion.getNbtData().rivers().generatePointsForAllRivers(pos,worldRegion, neighbors);
 
         worldRegion.updateStatus(RegionPhase.RIVERS_POST);
 
@@ -476,9 +473,9 @@ public class RegionManager {
 
     protected WorldRegion getOrCreateCompleteWorldRegion(RegionPos pos) {
         WorldRegion region = getOrCreateWorldRegionOfPhase(pos,RegionPhase.LOADED_AND_FINISHED);
-        if (region.getNbtData().status().isAtLeast(RegionPhase.LOADED_AND_FINISHED) && !region.getNbtData().rivers().regionHasGeneratedPoints()){
+        if (region.getNbtData().status().isAtLeast(RegionPhase.RIVERS_POST) && !region.getNbtData().rivers().regionHasGeneratedPoints()){
             Map<RegionPos, WorldRegion> neighbors = fetchNeighborsAsync(pos,1,RegionPhase.RIVERS).join();
-            region.getNbtData().rivers().generatePointsForAllRivers(pos,region,neighbors,this.seed);
+            region.getNbtData().rivers().generatePointsForAllRivers(pos,region,neighbors);
         }
         region.setReadyToLoad();
         return region;

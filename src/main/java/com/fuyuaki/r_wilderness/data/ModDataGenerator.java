@@ -7,10 +7,7 @@ import com.fuyuaki.r_wilderness.data.generation.other.GenLoot;
 import com.fuyuaki.r_wilderness.data.generation.other.GenRecipes;
 import com.fuyuaki.r_wilderness.data.generation.other.GenSoundDefinition;
 import com.fuyuaki.r_wilderness.data.generation.other.ModBuiltInEntries;
-import com.fuyuaki.r_wilderness.data.generation.tags.GenBiomeTags;
-import com.fuyuaki.r_wilderness.data.generation.tags.GenBlockTags;
-import com.fuyuaki.r_wilderness.data.generation.tags.GenItemTags;
-import com.fuyuaki.r_wilderness.data.generation.tags.GenWorldPresetTags;
+import com.fuyuaki.r_wilderness.data.generation.tags.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -49,6 +46,9 @@ public class ModDataGenerator {
 */
         generator.addProvider(true,
                 new GenBiomeTags(packOutput, datapackRegistries.getRegistryProvider()));
+
+        generator.addProvider(true,
+                new GenFluidTags(packOutput, datapackRegistries.getRegistryProvider()));
 
         generator.addProvider(true,
                 new GenWorldPresetTags(packOutput, datapackRegistries.getRegistryProvider()));

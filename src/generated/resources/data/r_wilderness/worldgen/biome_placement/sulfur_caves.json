@@ -1,0 +1,44 @@
+{
+  "biome": "minecraft:sulfur_caves",
+  "name": "r_wilderness:sulfur_caves",
+  "target": {
+    "continentalness": {
+      "max": 1.5,
+      "mean": 0.75,
+      "min": 0.0
+    },
+    "erodability": {
+      "max": 1.0,
+      "mean": 0.0,
+      "min": -1.0
+    },
+    "humidity": {
+      "max": 0.0,
+      "mean": -0.25,
+      "min": -0.5
+    },
+    "rockiness": {
+      "max": 1.0,
+      "mean": 0.0,
+      "min": -1.0
+    },
+    "tags": [
+      "cave"
+    ],
+    "temperature": {
+      "max": 1.0,
+      "mean": 0.0,
+      "min": -1.0
+    },
+    "vegetation": {
+      "max": 0.25,
+      "mean": -0.125,
+      "min": -0.5
+    },
+    "volcanicness": {
+      "max": 0.75,
+      "mean": 0.5,
+      "min": 0.25
+    }
+  }
+}

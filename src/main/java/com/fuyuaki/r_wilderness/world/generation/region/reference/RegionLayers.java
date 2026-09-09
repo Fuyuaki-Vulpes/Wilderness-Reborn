@@ -34,6 +34,7 @@ public class RegionLayers {
     private RegionFloatMap continentalness;
     private RegionFloatMap hilliness;
     private RegionFloatMap rivers;
+    private RegionFloatMap glacialThickness;
 
     public RegionLayers(
             RegionNoisesRecord record,
@@ -58,7 +59,8 @@ public class RegionLayers {
             RegionFloatMap heightmapBasic,
             RegionFloatMap continentalness,
             RegionFloatMap hilliness,
-            RegionFloatMap rivers
+            RegionFloatMap rivers,
+            RegionFloatMap glacialThickness
     ) {
         this.record = record;
         this.plateWeights = plateWeights;
@@ -83,6 +85,7 @@ public class RegionLayers {
         this.continentalness = continentalness;
         this.hilliness = hilliness;
         this.rivers = rivers;
+        this.glacialThickness = glacialThickness;
     }
 
 
@@ -110,7 +113,8 @@ public class RegionLayers {
                 new RegionFloatMap(RegionLayerTypes.HEIGHTMAP_BASIC, null),
                 new RegionFloatMap(RegionLayerTypes.CONTINENTALNESS, null),
                 new RegionFloatMap(RegionLayerTypes.HILLS, null),
-                new RegionFloatMap(RegionLayerTypes.RIVER_INFLUENCE, null)
+                new RegionFloatMap(RegionLayerTypes.RIVER_INFLUENCE, null),
+                new RegionFloatMap(RegionLayerTypes.GLACIAL_THICKNESS, null)
         );
     }
 
@@ -120,7 +124,7 @@ public class RegionLayers {
                 tectonicStress, buoyancy, distToParent, age, swelling,
                 plateaus, elevation, atmospherePressure, temperature,
                 erodability, vegetation, humidity, rockiness, magicalness,
-                heightmapBasic, continentalness, hilliness,rivers
+                heightmapBasic, continentalness, hilliness,rivers,glacialThickness
         );
     }
 
@@ -130,7 +134,7 @@ public class RegionLayers {
                 tectonicStress, buoyancy, distToParent, age, swelling,
                 plateaus, elevation, atmospherePressure, temperature,
                 erodability, vegetation, humidity, rockiness, magicalness,
-                heightmapBasic, continentalness, hilliness,rivers
+                heightmapBasic, continentalness, hilliness,rivers,glacialThickness
         };
     }
 
@@ -167,6 +171,7 @@ public class RegionLayers {
             case 19 -> this.continentalness;
             case 20 -> this.hilliness;
             case 21 -> this.rivers;
+            case 22 -> this.glacialThickness;
             default -> throw new IllegalArgumentException("Index " + index + " out of range for Layers!");
         };
     }
@@ -195,7 +200,8 @@ public class RegionLayers {
                 RegionFloatMap.read(inputStream,RegionLayerTypes.HEIGHTMAP_BASIC, null),
                 RegionFloatMap.read(inputStream,RegionLayerTypes.CONTINENTALNESS, null),
                 RegionFloatMap.read(inputStream,RegionLayerTypes.HILLS, null),
-                RegionFloatMap.read(inputStream,RegionLayerTypes.RIVER_INFLUENCE, null)
+                RegionFloatMap.read(inputStream,RegionLayerTypes.RIVER_INFLUENCE, null),
+                RegionFloatMap.read(inputStream,RegionLayerTypes.GLACIAL_THICKNESS, null)
         );
     }
 
@@ -222,6 +228,7 @@ public class RegionLayers {
         continentalness.write(RegionLayerTypes.CONTINENTALNESS,output);
         hilliness.write(RegionLayerTypes.HILLS,output);
         rivers.write(RegionLayerTypes.RIVER_INFLUENCE,output);
+        glacialThickness.write(RegionLayerTypes.GLACIAL_THICKNESS,output);
     }
 
     public RegionNoisesRecord record() {
@@ -408,4 +415,12 @@ public class RegionLayers {
         this.rivers = rivers;
     }
 
+
+    public RegionFloatMap getGlacialThickness() {
+        return glacialThickness;
+    }
+
+    public void setGlacialThickness(RegionFloatMap glacialThickness) {
+        this.glacialThickness = glacialThickness;
+    }
 }

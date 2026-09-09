@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
-import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
+import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildWorldSettings;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
@@ -23,9 +23,6 @@ public class WorldDimensionsMixin {
             if(levelStem.generator().getBiomeSource() instanceof RebornBiomeSource){
                 cir.setReturnValue(true);
             }
-            cir.setReturnValue(!(
-                    levelStem.generator().getBiomeSource() instanceof MultiNoiseBiomeSource multinoisebiomesource
-                            && !multinoisebiomesource.stable(MultiNoiseBiomeSourceParameterLists.OVERWORLD)));
         }
     }
 }

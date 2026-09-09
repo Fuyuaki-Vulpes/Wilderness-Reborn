@@ -2,6 +2,7 @@ package com.fuyuaki.r_wilderness.world.generation.region.data;
 
 import com.fuyuaki.r_wilderness.world.generation.features.RegionNoisesRecord;
 import com.fuyuaki.r_wilderness.world.generation.features.hydrology.RegionRivers;
+import com.fuyuaki.r_wilderness.world.generation.features.hydrology.RegionWaterBodies;
 import com.fuyuaki.r_wilderness.world.generation.features.plates.RegionPlates;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
@@ -15,34 +16,40 @@ public class SerializableRegionData {
     private final RegionPos position;
     private final RegionPlates plates;
     private final RegionRivers rivers;
+    private final RegionWaterBodies waters;
     private RegionPhase status;
 
     public SerializableRegionData(
             RegionPos position,
             RegionPlates plates,
-            RegionRivers rivers
+            RegionRivers rivers,
+            RegionWaterBodies waters
     ){
         this.position = position;
         this.plates = plates;
         this.rivers = rivers;
+        this.waters = waters;
     }
     public SerializableRegionData(
             RegionPhase status,
             RegionPos position,
             RegionPlates plates,
-            RegionRivers rivers
+            RegionRivers rivers,
+            RegionWaterBodies waters
     ){
         this.status = status;
         this.position = position;
         this.plates = plates;
         this.rivers = rivers;
+        this.waters = waters;
     }
 
     public static SerializableRegionData makeNew(RegionPos pos, long seed, RegionNoisesRecord record) {
         return new SerializableRegionData(
                 pos,
                 new RegionPlates(pos, seed,record),
-                new RegionRivers(record)
+                new RegionRivers(record),
+                new RegionWaterBodies(record)
         );
     }
 
@@ -53,7 +60,8 @@ public class SerializableRegionData {
         Optional<Integer> z = tag.getInt("pos_z");
         RegionPlates plates = RegionPlates.readFrom(tag,record);
         RegionRivers rivers = RegionRivers.readFrom(tag,record);
-        return new SerializableRegionData(RegionPhase.fromString(status.orElse("empty")),new RegionPos(x.get(),z.get()),plates,rivers);
+        RegionWaterBodies waters = RegionWaterBodies.readFrom(tag,record);
+        return new SerializableRegionData(RegionPhase.fromString(status.orElse("empty")),new RegionPos(x.get(),z.get()),plates,rivers,waters);
     }
 
     public CompoundTag toNBT() throws Throwable{
@@ -63,6 +71,7 @@ public class SerializableRegionData {
         tag.putInt("pos_z", position.z());
         this.plates.put(tag);
         this.rivers.put(tag);
+        this.waters.put(tag);
         return tag;
     }
 
@@ -83,5 +92,7 @@ public class SerializableRegionData {
     }
 
     public RegionRivers rivers() {return rivers;}
+
+    public RegionWaterBodies waters() {return waters;}
 
 }

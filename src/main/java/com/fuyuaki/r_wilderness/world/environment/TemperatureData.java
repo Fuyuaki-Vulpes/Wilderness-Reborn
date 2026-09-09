@@ -1,10 +1,9 @@
 package com.fuyuaki.r_wilderness.world.environment;
 
-import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.init.RDamageTypes;
+import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildChunkGenerator;
-import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.TerrainParameters;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -24,9 +23,10 @@ public class TemperatureData implements ValueIOSerializable {
 
     public static final float COLD_THRESHOLD = 5.0F;
     public static final float HOT_THRESHOLD = 30.0F;
-    public static final float ENVIRONMENT_COLDEST = -50.0F;
-    public static final float ENVIRONMENT_HOTTEST = 40.0F;
-    public static final double ENVIRONMENT_MEDIAN = 20.0F;
+    public static final float ENVIRONMENT_MEDIAN = 20.0F;
+    public static final float ENVIRONMENT_DEVIATION = 40.0F;
+    public static final float ENVIRONMENT_COLDEST = ENVIRONMENT_MEDIAN - ENVIRONMENT_DEVIATION;
+    public static final float ENVIRONMENT_HOTTEST = ENVIRONMENT_MEDIAN + ENVIRONMENT_DEVIATION;
     private static final float BASE_BODY_TEMPERATURE = 37.0F;
     private static final int BLOCK_SCAN_TICK_RATE = 3;
     private static final float HYPERTHERMIA_THRESHOLD = 40.0F;
@@ -95,8 +95,8 @@ public class TemperatureData implements ValueIOSerializable {
         temperatureIntake += this.toAdd;
         this.toAdd = 0;
         ChunkGenerator gen = serverlevel.getChunkSource().getGenerator();
-        if (gen instanceof WildChunkGenerator generator){
-            TerrainParameters.Environment environment = generator.terrainParameters().environment(player.getX(),player.getZ());
+        if (gen instanceof WildChunkGenerator){
+            EnvironmentSampler environment = RegionMemory.getInstance(serverlevel).environment(player.getX(),player.getZ());
             this.environmentTemperature = environment.temperatureInDegrees();
 
             if (difficulty != Difficulty.PEACEFUL) {

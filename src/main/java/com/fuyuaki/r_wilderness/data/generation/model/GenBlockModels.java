@@ -81,6 +81,7 @@ public class GenBlockModels extends BlockModelGenerators {
         createTrivialCube(RBlocks.SCHINITE_GOLD_ORE.get());
         createTrivialCube(RBlocks.MAGNEISS_GOLD_ORE.get());
         createTrivialCube(RBlocks.MALATITE_GOLD_ORE.get());
+        this.createNonTemplateModelBlock(RBlocks.RIVER_WATER.get());
 
         createTrivialCube(RBlocks.SCHINITE_IRON_ORE.get());
         createTrivialCube(RBlocks.MAGNEISS_IRON_ORE.get());

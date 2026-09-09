@@ -26,7 +26,7 @@ public abstract class SurfaceRulesSteepConditionMixin extends SurfaceRules.LazyX
         ChunkAccess chunk = this.context.chunk;
         int heightNorth = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, chunkBlockX, zNorth);
         int heightSouth = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, chunkBlockX, zSouth);
-        if (heightSouth >= heightNorth + 4) {
+        if (heightSouth >= heightNorth + 4 || heightNorth >= heightSouth + 4) {
             cir.setReturnValue(true);
         }
 
@@ -34,7 +34,7 @@ public abstract class SurfaceRulesSteepConditionMixin extends SurfaceRules.LazyX
         int xEast = Math.min(chunkBlockX + 1, 15);
         int heightWest = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, xWest, chunkBlockZ);
         int heightEast = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, xEast, chunkBlockZ);
-        cir.setReturnValue(heightWest >= heightEast + 4);
+        cir.setReturnValue(heightWest >= heightEast + 4 || heightEast >= heightWest + 4);
 
     }
 

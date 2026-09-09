@@ -1,18 +1,13 @@
 package com.fuyuaki.r_wilderness.world.level.levelgen;
 
-import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.TerrainParameters;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
-import net.minecraft.world.level.levelgen.Aquifer;
-import net.minecraft.world.level.levelgen.RandomState;
 import net.neoforged.neoforge.client.event.RegisterPresetEditorsEvent;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 import java.util.function.UnaryOperator;
 
 public interface ChunkGeneratorExtension {
@@ -32,9 +27,6 @@ public interface ChunkGeneratorExtension {
      * @return The world generator settings.
      */
     WildGeneratorSettings settings();
-
-
-    TerrainParameters terrainParameters();
 
 
     void prepare(ChunkPos pos);

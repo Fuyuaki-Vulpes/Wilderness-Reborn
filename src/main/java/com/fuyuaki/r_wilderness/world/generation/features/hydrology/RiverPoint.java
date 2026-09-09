@@ -1,10 +1,29 @@
 package com.fuyuaki.r_wilderness.world.generation.features.hydrology;
 
 import com.fuyuaki.r_wilderness.world.generation.noise.Noise2D;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 
+import static com.fuyuaki.r_wilderness.world.generation.features.RegionFeatureGenerator.RIVER_LIMIT_SQR;
+
 public record RiverPoint(float delta,float worldX, float worldZ, float elevation, float waterHeight, float diameter, float depth, Vec2 flow, RiverNode.Cliff cliffData) {
+
+    public static final Codec<RiverPoint> CODEC = RecordCodecBuilder.create(
+            i -> i.group(
+                    Codec.FLOAT.fieldOf("delta").forGetter(RiverPoint::delta),
+                    Codec.FLOAT.fieldOf("x").forGetter(RiverPoint::worldX),
+                    Codec.FLOAT.fieldOf("z").forGetter(RiverPoint::worldZ),
+                    Codec.FLOAT.fieldOf("elevation").forGetter(RiverPoint::elevation),
+                    Codec.FLOAT.fieldOf("water_height").forGetter(RiverPoint::waterHeight),
+                    Codec.FLOAT.fieldOf("diameter").forGetter(RiverPoint::diameter),
+                    Codec.FLOAT.fieldOf("depth").forGetter(RiverPoint::depth),
+                    Vec2.CODEC.fieldOf("flow").forGetter(RiverPoint::flow),
+                    RiverNode.Cliff.CODEC.fieldOf("cliff").forGetter(RiverPoint::cliffData)
+            ).apply(i, RiverPoint::new)
+    );
+
 
     public static RiverPoint interpolated(RiverPoint first, RiverPoint second, float delta, Noise2D noise, float trueDelta, RiverPoint river0, RiverPoint river4, float lastElevation) {
         if (delta <= 0.0f) return first;
@@ -25,7 +44,7 @@ public record RiverPoint(float delta,float worldX, float worldZ, float elevation
         Vec2 flow1 = second.flow().lengthSquared() > 0.0001f ? second.flow().normalized() : fallbackDir;
 
 
-        float tangentScale = distance * 0.5f;
+        float tangentScale = distance * 0.75f;
         Vec2 tangent0 = flow0.normalized().scale(tangentScale);
         Vec2 tangent1 = flow1.normalized().scale(tangentScale);
 
@@ -59,13 +78,12 @@ public record RiverPoint(float delta,float worldX, float worldZ, float elevation
         float depth;
         float waterAt;
         RiverNode.Cliff cliffData = river0.cliffData();
-        float finalE = river4.elevation() <= 64.5f ? river4.elevation() : river4.elevation() - 2;
+        float finalE = river4.elevation();
         depth = Mth.lerp(trueDelta, river0.depth(), river4.depth());
-
-        if (cliffData == null || cliffData.start() < 0.0f || cliffData.startElevation() < 5.0f) {
-            elevation = Mth.lerp(smoothDelta, river0.elevation(), finalE);
+        elevation = Mth.lerp(smoothDelta, river0.elevation(), finalE);
+        if (cliffData == null || !cliffData.valid()) {
             float eDifference = lastElevation - elevation;
-            float depthLower = Math.min(eDifference * 3.0f, depth / 2);
+            float depthLower = eDifference * 3.0f;
             waterAt = elevation - 2 - depthLower;
         } else {
             float start = cliffData.start();
@@ -79,8 +97,8 @@ public record RiverPoint(float delta,float worldX, float worldZ, float elevation
                 elevation = Mth.lerp(postDelta, river0.elevation(), cliffData.startElevation());
                 depth = Mth.lerp(postDelta, river0.depth(), cliffStartDepth);
                 float eDifference = lastElevation - elevation;
-                float depthLower = Math.min(eDifference * 3.0f, depth / 2);
-                waterAt = elevation - 2 - depthLower;
+                float depthLower = Math.max(eDifference * 0.5f,eDifference * 7.0f * (postDelta * postDelta * postDelta * postDelta * 1.25f));
+                waterAt = elevation - 1 - depthLower;
 
             } else if (trueDelta > start && trueDelta < end) {
                 float d = Math.clamp(1 - ((trueDelta - start) / (start - end)),0,1);
@@ -89,7 +107,7 @@ public record RiverPoint(float delta,float worldX, float worldZ, float elevation
                 depth = Mth.lerp(postDelta, cliffStartDepth,cliffEndDepth);
                 elevation = Mth.lerp(postDelta, cliffData.startElevation(), cliffData.endElevation());
                 float eDifference = lastElevation - elevation;
-                float depthLower = Math.min(eDifference * 3.0f, depth / 2);
+                float depthLower = eDifference * 5.0f;
                 waterAt = Math.max(elevation - 3 - depthLower,cliffData.endElevation() - 1);
 
 
@@ -99,17 +117,18 @@ public record RiverPoint(float delta,float worldX, float worldZ, float elevation
                 depth = Mth.lerp(postDelta, cliffEndDepth, river4.depth());
                 elevation = Mth.lerp(postDelta, cliffData.endElevation(), finalE);
                 float eDifference = lastElevation - elevation;
-                float depthLower = Math.min(eDifference * 3.0f, depth / 2);
-                waterAt = elevation - 2 - depthLower;
+                float depthLower = eDifference * 0.5f;
+                waterAt = elevation - 1 - depthLower;
             }else{
-                elevation = Mth.lerp(smoothDelta, river0.elevation(), finalE);
                 float eDifference = lastElevation - elevation;
-                float depthLower = Math.min(eDifference * 3.0f, depth / 2);
-                waterAt = elevation - 2 - depthLower;
+                float depthLower = eDifference * 0.5f;
+                waterAt = elevation - 1 - depthLower;
             }
 
         }
-        waterAt = Math.max(waterAt,elevation - (depth / 2));
+        float minimumWaterHeight = elevation - depth + 2;
+
+        waterAt = Math.max(waterAt,minimumWaterHeight);
 
         float maxBendStrength = diameter/3;
         float singleNoiseVal = (float) noise.noise(x, z);
@@ -146,8 +165,8 @@ public record RiverPoint(float delta,float worldX, float worldZ, float elevation
         Vec2 flow1 = second.flow().lengthSquared() > 0.0001f ? second.flow().normalized() : fallbackDir;
 
 
-        Vec2 tangent0 = flow0.normalized().scale(distance);
-        Vec2 tangent1 = flow1.normalized().scale(distance);
+        Vec2 tangent0 = flow0.normalized().scale(distance * 0.45f);
+        Vec2 tangent1 = flow1.normalized().scale(distance * 0.45f);
 
 
         float deltaSq = delta * delta;
@@ -185,7 +204,7 @@ public record RiverPoint(float delta,float worldX, float worldZ, float elevation
         float tangentSlope = Mth.clamp((singleNoiseVal * maxDiversion * envelopeDerivative) / Math.max(distance, 16.0f),-0.4f, 0.4f);
         tangent = tangent.add(normal.scale(tangentSlope)).normalized();
 
-        float flowAngle = (float) ((noise2.noise(x,z) * 0.5f) * (Math.PI));
+        float flowAngle = (float) (noise2.noise(x,z) * (Math.PI));
 
         Vec2 flow = tangent.scale(Mth.lerp(delta, first.flow().length(), second.flow().length())).rotate(flowAngle);
 
@@ -199,7 +218,7 @@ public record RiverPoint(float delta,float worldX, float worldZ, float elevation
             float start = cliffData.start();
             float end = cliffData.end();
             if (delta > start && delta < end) {
-                waterAt = Math.max(elevation - 4,cliffData.endElevation() - 1);
+                waterAt = Math.max(elevationHere - 4,cliffData.endElevation() - 1);
             }
         }
         return new RiverPoint(delta,this.worldX,this.worldZ,elevationHere, waterAt,this.diameter,this.depth,this.flow,this.cliffData);
@@ -220,6 +239,47 @@ public record RiverPoint(float delta,float worldX, float worldZ, float elevation
 
     public float radius(){
         return this.diameter() / 2;
+    }
+
+    public boolean isCliff() {
+        return this.delta >= cliffData.start() && this.delta <= cliffData.end();
+    }
+
+    public float adaptElevationToRiver(float originalHeight, float xPos, float zPos){
+        float distSqr = this.distanceSqr(xPos, zPos);
+
+        if (distSqr > RIVER_LIMIT_SQR) return originalHeight;
+
+        float distance = (float) Math.sqrt(distSqr);
+
+        if (Float.isNaN(distance) || distance <= 0) {
+            distance = 0.0f;
+        }
+        float targetHeight;
+        float distDelta;
+
+        float e = this.elevation();
+        boolean flag = originalHeight > 68 && e < 63;
+        float elevation = flag ? Math.min(originalHeight, 64 - this.depth()) : e;
+        if (elevation == originalHeight) return originalHeight;
+
+
+        float radius = this.radius();
+        if (distance <= radius) {
+            distDelta = distance / radius;
+            float w = 1 - Math.clamp(distDelta, 0.0f, 1.0f);
+            float pointDepth = w * this.depth();
+            targetHeight = elevation - pointDepth;
+        } else {
+
+            float range = Math.clamp(radius * 1.5f, 8.0f, 64.0f);
+            distDelta = (distance - radius) / range;
+
+            if (distDelta > 1.0f) return originalHeight;
+
+            targetHeight = Mth.lerp((float) Mth.smoothstep(distDelta),originalHeight,elevation);
+        }
+        return targetHeight;
     }
 
 }

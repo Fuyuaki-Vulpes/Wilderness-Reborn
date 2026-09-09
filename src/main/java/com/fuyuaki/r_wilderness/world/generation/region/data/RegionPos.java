@@ -64,6 +64,10 @@ public record RegionPos(int x, int z) {
         return blockCoord >> REGION_BITS;
     }
 
+    public static RegionPos fromBlockCoord(int x,int z) {
+        return new RegionPos(fromBlockCoord(x),fromBlockCoord(z));
+    }
+
     public static int chunkToRegionCoord(int chunkCoord) {
         return chunkCoord >> CHUNK_SHIFT;
     }

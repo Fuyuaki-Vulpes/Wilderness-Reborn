@@ -2,6 +2,7 @@ package com.fuyuaki.r_wilderness.mixin.common;
 
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.generation.region.ServerLevelRegionMemoryFetcher;
+import com.fuyuaki.r_wilderness.world.level.levelgen.WildChunkGenerator;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildWorldSettings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -59,8 +60,9 @@ public abstract class ServerLevelMixin extends Level implements ServerEntityGett
     //Initializes the Region Generator before ChunkGenerator.
     @Inject(method = "<init>",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/LevelStem;generator()Lnet/minecraft/world/level/chunk/ChunkGenerator;"), cancellable = false)
     private void init(MinecraftServer server, Executor executor, LevelStorageSource.LevelStorageAccess levelStorage, ServerLevelData levelData, ResourceKey dimension, LevelStem levelStem, boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime, CallbackInfo ci){
-        if (dimension == Level.OVERWORLD){
+        if (levelStem.generator() instanceof WildChunkGenerator){
         this.regionMemory = new RegionMemory();
+        this.regionMemory.initialize((ServerLevel)(Object)this);
         }
     }
 

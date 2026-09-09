@@ -3,62 +3,34 @@
   "name": "r_wilderness:stony_shore",
   "target": {
     "continentalness": {
-      "max": 0.1,
-      "mean": 0.0,
-      "min": -0.1
+      "max": 0.15,
+      "mean": -0.024999991,
+      "min": -0.2
     },
-    "erosion": {
+    "erodability": {
       "max": 0.1,
-      "mean": -0.35,
-      "min": -1.5
-    },
-    "highlands": {
-      "max": 1.0,
-      "mean": 0.5,
-      "min": 0.0
+      "mean": -0.45,
+      "min": -1.0
     },
     "humidity": {
-      "max": 0.0,
-      "mean": -0.5,
-      "min": -2.5
-    },
-    "magicalness": {
-      "max": 0.15,
+      "max": 1.0,
       "mean": 0.0,
-      "min": -5.5
+      "min": -1.0
     },
     "rockiness": {
-      "max": 0.85,
-      "mean": 0.675,
+      "max": 1.5,
+      "mean": 1.0,
       "min": 0.5
     },
-    "tectonic_activity": {
-      "max": 25.0,
-      "mean": 0.0,
-      "min": -20.0
-    },
     "temperature": {
-      "max": 2.5,
-      "mean": 0.5,
-      "min": 0.0
-    },
-    "terrain_height": {
-      "max": 92.0,
-      "mean": 64.0,
-      "min": -256.0
-    },
-    "vegetation_density": {
-      "max": -0.85,
-      "mean": -0.95,
-      "min": -10.0
-    },
-    "weirdness": {
-      "max": 1.5,
+      "max": 0.25,
       "mean": 0.0,
+      "min": -0.25
+    },
+    "vegetation": {
+      "max": -0.5,
+      "mean": -1.0,
       "min": -1.5
     }
-  },
-  "valid_terrain_types": [
-    "shore"
-  ]
+  }
 }

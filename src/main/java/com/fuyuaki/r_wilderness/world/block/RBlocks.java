@@ -5,6 +5,8 @@ import com.fuyuaki.r_wilderness.world.block.soils.ModFarmBlock;
 import com.fuyuaki.r_wilderness.world.block.soils.ModSoilBlock;
 import com.fuyuaki.r_wilderness.world.block.woods.*;
 import com.fuyuaki.r_wilderness.world.item.RItems;
+import com.fuyuaki.r_wilderness.world.level.material.RFluids;
+import com.fuyuaki.r_wilderness.world.level.material.RiverFluidBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.valueproviders.ConstantInt;
@@ -42,6 +44,24 @@ public class RBlocks {
 
     //Blocks
 
+    //Unobtainable & World Gen Exclusives
+
+
+    //World Generation Semi-Exclusives
+
+    public static final DeferredBlock<Block> RIVER_WATER = register("river_water",
+            (p) -> new RiverFluidBlock(RFluids.RIVER.get(), p),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WATER)
+                    .replaceable()
+                    .noCollision()
+                    .strength(100.0F)
+                    .pushReaction(PushReaction.DESTROY)
+                    .noLootTable()
+                    .liquid()
+                    .sound(SoundType.EMPTY)
+
+            );
 
     //Stones
 
@@ -407,7 +427,6 @@ public class RBlocks {
     public static final DeferredBlock<Block> POTTED_MOUNTAIN_HEATHER = register("potted_mountain_heather", properties -> new FlowerPotBlock(MOUNTAIN_HEATHER.get(), properties), flowerPotProperties());
 
     //Methods
-
 
 
     private static  <B extends Block> DeferredBlock<B> register(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {

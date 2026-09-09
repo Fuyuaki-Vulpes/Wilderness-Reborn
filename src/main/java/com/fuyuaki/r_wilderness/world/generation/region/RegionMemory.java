@@ -1,9 +1,9 @@
 package com.fuyuaki.r_wilderness.world.generation.region;
 
+import com.fuyuaki.r_wilderness.world.environment.EnvironmentSampler;
+import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.generation.features.plates.RegionPlates;
 import com.fuyuaki.r_wilderness.world.generation.features.plates.TectonicPlateNode;
-import com.fuyuaki.r_wilderness.world.generation.progress.RegionLoadTracker;
-import com.fuyuaki.r_wilderness.world.generation.progress.RegionProgress;
 import com.fuyuaki.r_wilderness.world.generation.region.data.RegionPhase;
 import com.fuyuaki.r_wilderness.world.generation.region.data.RegionPos;
 import com.fuyuaki.r_wilderness.world.generation.region.reference.RegionLayerTypes;
@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.phys.Vec2;
 import org.joml.Vector2i;
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ import org.slf4j.Logger;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class RegionMemory implements AutoCloseable{
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -34,14 +34,13 @@ public class RegionMemory implements AutoCloseable{
     private RegionManager regionManager = null;
     private RandomSource random;
     private long seed;
-    RegionLoadTracker regionLoadTracker = new RegionLoadTracker();
 
     private final ConcurrentHashMap<Long, WorldRegion> activeRegions =
             new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, CompletableFuture<WorldRegion>> queriedLoads =
             new ConcurrentHashMap<>();
 
-    private final ConcurrentHashMap<Long, RegionProgress> progress = new ConcurrentHashMap<>();
+    private CompletableFuture<Void> initializationFutures;
 
     public static RegionMemory getInstance(ServerLevel level) {
         return ((ServerLevelRegionMemoryFetcher)level).getRegionMemory() ;
@@ -51,50 +50,22 @@ public class RegionMemory implements AutoCloseable{
         return activeRegions;
     }
 
-    protected void updateProgress(WorldRegion region) {
-        int x = region.getPos().x();
-        int z = region.getPos().z();
-        if (x > 0 || x < -1 || z > 0 || z < -1) {
-            return;
+    public WorldRegion requestImmediately(BlockPos middleBlockPosition){
+        WorldRegion regionAt = getRegionAt(middleBlockPosition);
+        if (regionAt.getPhase().isAtLeast(RegionPhase.LOADED_AND_FINISHED)){
+            regionAt.setReadyToLoad();
         }
-
-        RegionProgress prog = this.progress.getOrDefault(region.getPos().pack(), new RegionProgress());
-        prog.upgrade(region.getPhase());
-        this.progress.put(region.getPos().pack(), prog);
-
-        this.regionLoadTracker.setPos(region.getPos(), prog);
-        this.runUpdatesToTracker();
-
+        put(regionAt);
+        return regionAt;
     }
 
-    private void runUpdatesToTracker() {
-        RegionLoadTracker.Stage stage = RegionLoadTracker.Stage.INITIALIZING;
-        AtomicReference<RegionPhase> phase = new AtomicReference<>(RegionPhase.EMPTY);
-        this.progress.forEach((pos,region) -> {
-            if (!phase.get().isAtLeast(region.getPhase())) {
-                phase.set(region.getPhase());
-            }
-        });
 
-        stage = switch (phase.get()){
-            case EMPTY, INITIALIZED -> RegionLoadTracker.Stage.INITIALIZING;
-            case RASTERIZATION -> RegionLoadTracker.Stage.RASTERIZING;
-            case PLATEAU_AND_TERRAIN -> RegionLoadTracker.Stage.PLATEAUS;
-            case ROUGH_HEIGHTS -> RegionLoadTracker.Stage.TERRAIN;
-            case RIVERS -> RegionLoadTracker.Stage.GENERATING_RIVERS;
-            case RIVERS_POST -> RegionLoadTracker.Stage.POST_PROCESSING_RIVERS;
-            case LOADED_AND_FINISHED -> RegionLoadTracker.Stage.FINISHING;
-        };
-        if (stage.ordinal() >  this.regionLoadTracker.getCurrentStage().ordinal()) {
-            int totalRegionsToProcess = this.progress.size();
-            this.regionLoadTracker.startStage(stage, totalRegionsToProcess);
-        }
-        this.regionLoadTracker.tick();
+    protected void put(WorldRegion region){
+        this.activeRegions.putIfAbsent(region.getPos().pack(),region);
     }
 
     protected void putRegion(long packedPos, WorldRegion region) {
         this.activeRegions.put(packedPos, region);
-        this.updateProgress(region);
     }
 
     public List<WorldRegion> activeRegionList(){
@@ -102,8 +73,17 @@ public class RegionMemory implements AutoCloseable{
     }
 
     public WorldRegion getRegionOfIndex(long packedPos) {
+        WorldRegion region = getRegionOfIndex(packedPos,RegionPhase.LOADED_AND_FINISHED);
+        if (region.getNbtData().status().isAtLeast(RegionPhase.RIVERS_POST) && !region.getNbtData().rivers().regionHasGeneratedPoints()){
+            RegionPos pos = RegionPos.unpack(packedPos);
+            if (region.getNbtData().status().isAtLeast(RegionPhase.RIVERS_POST) && !region.getNbtData().rivers().regionHasGeneratedPoints()){
+                Map<RegionPos, WorldRegion> neighbors = this.regionManager.fetchNeighborsAsync(pos,1,RegionPhase.RIVERS).join();
+                region.getNbtData().rivers().generatePointsForAllRivers(pos,region,neighbors);
+            }
+        }
+        region.setReadyToLoad();
 
-        return getRegionOfIndex(packedPos,RegionPhase.LOADED_AND_FINISHED);
+        return region;
     }
 
 
@@ -268,6 +248,12 @@ public class RegionMemory implements AutoCloseable{
 
            }
        }
+
+        BiomeSource source = level.getChunkSource().getGenerator().getBiomeSource();
+        if (source instanceof  RebornBiomeSource) {
+            ((RebornBiomeSource)level.getChunkSource().getGenerator().getBiomeSource()).setMemory(this);
+        }
+
     }
 
     private boolean shouldRemove(WorldRegion worldRegion, List<ServerPlayer> players) {
@@ -314,7 +300,6 @@ public class RegionMemory implements AutoCloseable{
     }
 
     public void initialize(ServerLevel level) {
-
         LOGGER.info("Initializing RegionMemory for level {}", level);
         this.random = level.getRandom();
         this.seed = level.getSeed();
@@ -327,29 +312,9 @@ public class RegionMemory implements AutoCloseable{
                 futures.add(CompletableFuture.supplyAsync(() -> loadOrCreate(regionPos)));
             }
         }
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
-        futures.forEach(future -> {
-            if (future.isDone() && future.isCompletedExceptionally()){
-                WorldRegion region = future.join();
-                long packed = region.getPos().pack();
-                activeRegions.put(packed,region);
-            }
-        });
+        this.initializationFutures = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
-        for (int x = -LOAD_RANGE; x <= LOAD_RANGE - 1; x++) {
-            for (int z = -LOAD_RANGE; z <= LOAD_RANGE - 1; z++) {
-                RegionPos regionPos = new RegionPos(x, z);
-                long packed = regionPos.pack();
-
-
-                if (!activeRegions.containsKey(packed)) {
-                    activeRegions.put(packed,loadOrCreate(regionPos));
-                }
-
-            }
-        }
-        LOGGER.info("Finished RegionMemory spawn initialization.");
     }
 
     public void shutdown() {
@@ -369,10 +334,6 @@ public class RegionMemory implements AutoCloseable{
 
     public void updateManager() {
         this.regionManager.joinCompletedRegions();
-    }
-
-    public RegionLoadTracker getTracker() {
-        return this.regionLoadTracker;
     }
 
     public Pair<Vector2i, Float> spiralLocate(RegionLayerTypes layer, float targetValue, int searchRange, Vec2 position) {
@@ -417,6 +378,19 @@ public class RegionMemory implements AutoCloseable{
 
     public Map<RegionPos, WorldRegion> fetchRegionsAround(BlockPos middleBlockPosition, int range) {
         return null;
+    }
+
+    public EnvironmentSampler environment(double x, double z){
+        int xPos = Mth.floor(x);
+        int zPos = Mth.floor(z);
+        WorldRegion regionAt = this.getRegionAt(xPos, zPos);
+
+        return new EnvironmentSampler(
+                regionAt.layers().getVegetation().getUpsampled(xPos,zPos,this),
+                regionAt.layers().getHumidity().getUpsampled(xPos,zPos,this),
+                regionAt.layers().getTemperature().getUpsampled(xPos,zPos,this),
+                regionAt.layers().getContinentalness().getUpsampled(xPos,zPos,this)
+        );
     }
 
     public boolean readyForChunkReading(BlockPos middleBlockPosition) {

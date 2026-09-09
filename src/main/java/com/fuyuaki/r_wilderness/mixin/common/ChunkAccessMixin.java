@@ -2,10 +2,7 @@ package com.fuyuaki.r_wilderness.mixin.common;
 
 
 import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.WRNoiseChunk;
-import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.util.ChunkAccessModifier;
-import com.fuyuaki.r_wilderness.world.level.levelgen.util.LevelChunkSectionModifier;
-import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.BiomeManager;
@@ -13,7 +10,6 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.LightChunk;
 import net.minecraft.world.level.chunk.StructureAccess;
-import net.minecraft.world.level.levelgen.RandomState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,22 +33,6 @@ public abstract class ChunkAccessMixin implements ChunkAccessModifier, BiomeMana
 
     @Shadow
     public abstract LevelChunkSection getSection(int index);
-
-
-
-    @Override
-    public void fillBiomesReborn(RebornBiomeSource biomeSource, RandomState state) {
-        ChunkPos chunkpos = this.getPos();
-        int x = chunkpos.getMinBlockX();
-        int z = chunkpos.getMinBlockZ();
-        LevelHeightAccessor levelheightaccessor = this.getHeightAccessorForGeneration();
-
-        for (int k = levelheightaccessor.getMinSectionY(); k <= levelheightaccessor.getMaxSectionY(); k++) {
-            LevelChunkSection levelchunksection = this.getSection(this.getSectionIndexFromSectionY(k));
-            int y = SectionPos.sectionToBlockCoord(k);
-            ((LevelChunkSectionModifier) levelchunksection).fillBiomesReborn(biomeSource, state, x, y, z);
-        }
-    }
 
 
     @Nullable

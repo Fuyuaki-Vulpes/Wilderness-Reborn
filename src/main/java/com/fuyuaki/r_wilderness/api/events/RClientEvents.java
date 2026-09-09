@@ -4,16 +4,20 @@ import com.fuyuaki.r_wilderness.client.gui.RWildernessLayers;
 import com.fuyuaki.r_wilderness.client.gui.components.debug.DebugEntryRegionStatus;
 import com.fuyuaki.r_wilderness.client.gui.components.debug.RDebugScreenEntries;
 import com.fuyuaki.r_wilderness.client.menu.hud.RWildernessGui;
+import com.fuyuaki.r_wilderness.client.renderer.block.RFluidStateModels;
 import com.fuyuaki.r_wilderness.network.DrinkWaterInWorldPacket;
-import com.fuyuaki.r_wilderness.world.block.woods.ModWoodTypes;
-import net.minecraft.client.renderer.Sheets;
+import com.fuyuaki.r_wilderness.world.block.RBlocks;
+import com.fuyuaki.r_wilderness.world.level.material.RFluids;
+import net.minecraft.client.color.block.BlockTintSources;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
+
+import java.util.List;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
@@ -23,6 +27,10 @@ public class RClientEvents {
     @SubscribeEvent
     public static void registerBindings(RegisterKeyMappingsEvent event) {
     }
+    @SubscribeEvent
+    public static void blockColorsEvent(RegisterColorHandlersEvent.BlockTintSources event) {
+        event.register(List.of(BlockTintSources.waterParticles()), RBlocks.RIVER_WATER.get());
+    }
 
     @SubscribeEvent
     public static void registerPayloads(RegisterClientPayloadHandlersEvent event) {
@@ -31,6 +39,19 @@ public class RClientEvents {
                 DrinkWaterInWorldPacket::handle
         );
     }
+
+    @SubscribeEvent
+    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+
+    }
+
+
+    @SubscribeEvent
+    public static void registerClientExtensions(RegisterFluidModelsEvent event) {
+        event.register(RFluidStateModels.RIVER_WATER, RFluids.RIVER.get());
+        event.register(RFluidStateModels.RIVER_WATER, RFluids.FLOWING_RIVER.get());
+    }
+
 
 
     @SubscribeEvent

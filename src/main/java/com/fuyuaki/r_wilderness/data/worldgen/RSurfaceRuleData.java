@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.data.worldgen;
 
+import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
@@ -22,6 +23,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Function;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
+import static com.fuyuaki.r_wilderness.api.WildernessConstants.*;
 
 public class RSurfaceRuleData {
 
@@ -304,10 +306,14 @@ public class RSurfaceRuleData {
         SurfaceRules.RuleSource ruleAbovePreliminarySurface = SurfaceRules.ifTrue(SurfaceRules.abovePreliminarySurface(), mainRuleCloseToSurface);
         builder.add(doPreliminarySurfaceCheck ? ruleAbovePreliminarySurface : mainRuleCloseToSurface);
         builder.add(SurfaceRules.ifTrue(SurfaceRules.isBiome(biomes, Biomes.SULFUR_CAVES), sulfurCaveBands));
-        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("malatite", VerticalAnchor.absolute(-192), VerticalAnchor.absolute(-184)), MALATITE));
-        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("magneiss", VerticalAnchor.absolute(-128), VerticalAnchor.absolute(-120)), MAGNEISS));
-        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("schinite", VerticalAnchor.absolute(-64), VerticalAnchor.absolute(-56)), SCHINITE));
-        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("deepslate", VerticalAnchor.absolute(0), VerticalAnchor.absolute(8)), DEEPSLATE));
+        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("malatite",
+                VerticalAnchor.absolute(MALATITE_Y), VerticalAnchor.absolute(MALATITE_Y+ LAYER_GRADIENT_BLOCKS)), MALATITE));
+        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("magneiss",
+                VerticalAnchor.absolute(MAGNEISS_Y), VerticalAnchor.absolute(MAGNEISS_Y+ LAYER_GRADIENT_BLOCKS)), MAGNEISS));
+        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("schinite",
+                VerticalAnchor.absolute(SCHINITE_Y), VerticalAnchor.absolute(SCHINITE_Y+ LAYER_GRADIENT_BLOCKS)), SCHINITE));
+        builder.add(SurfaceRules.ifTrue(SurfaceRules.verticalGradient("deepslate",
+                VerticalAnchor.absolute(DEEPSLATE_Y), VerticalAnchor.absolute(DEEPSLATE_Y + LAYER_GRADIENT_BLOCKS)), DEEPSLATE));
         return SurfaceRules.sequence(builder.build().toArray(SurfaceRules.RuleSource[]::new));
     }
     public static SurfaceRules.RuleSource air() {

@@ -3,63 +3,37 @@
   "name": "r_wilderness:frozen_ocean",
   "target": {
     "continentalness": {
-      "max": 0.0,
-      "mean": -0.375,
+      "max": -0.15,
+      "mean": -0.45,
       "min": -0.75
     },
-    "erosion": {
+    "erodability": {
       "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
-    },
-    "highlands": {
-      "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
-    },
-    "humidity": {
-      "max": 0.2,
-      "mean": -0.4,
+      "mean": 1.0,
       "min": -1.0
     },
-    "magicalness": {
-      "max": 0.15,
+    "humidity": {
+      "max": 1.0,
       "mean": 0.0,
-      "min": -5.5
+      "min": -1.0
     },
     "rockiness": {
-      "max": 1.5,
+      "max": 1.0,
       "mean": 0.0,
-      "min": -1.5
+      "min": -1.0
     },
-    "tectonic_activity": {
-      "max": 26.0,
-      "mean": 1.0,
-      "min": -10.0
-    },
+    "tags": [
+      "sea_level"
+    ],
     "temperature": {
       "max": -0.75,
-      "mean": -0.85,
-      "min": -2.5
-    },
-    "terrain_height": {
-      "max": 59.0,
-      "mean": -98.5,
-      "min": -256.0
-    },
-    "vegetation_density": {
-      "max": 1.5,
-      "mean": 0.0,
+      "mean": -1.0,
       "min": -1.5
     },
-    "weirdness": {
-      "max": 1.5,
+    "vegetation": {
+      "max": 1.0,
       "mean": 0.0,
-      "min": -1.5
+      "min": -1.0
     }
-  },
-  "valid_terrain_types": [
-    "sea_near_shore",
-    "sea"
-  ]
+  }
 }

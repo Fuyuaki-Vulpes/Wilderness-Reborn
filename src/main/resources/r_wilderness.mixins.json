@@ -10,13 +10,13 @@
     "accessor.ChunkGeneratorAccessor",
     "accessor.ChunkMapAccessor",
     "common.AbstractFurnaceBlockEntityMixin",
+    "common.BiomeMixin",
     "common.ChunkAccessMixin",
     "common.ChunkMapMixin",
     "common.ChunkStatusMixin",
     "common.ConsumableMixin",
     "common.ItemMixin",
     "common.ItemStackMixin",
-    "common.LevelChunkSectionMixin",
     "common.LevelMixin",
     "common.MinecraftServerMixin",
     "common.PlayerMixin",
@@ -26,10 +26,10 @@
     "common.ServerPlayerMixin",
     "common.SnowAndFreezeFeatureMixin",
     "common.SoundEventMixin",
-    "common.StructureMixin",
     "common.SurfaceRulesContextMixin",
     "common.SurfaceRulesSteepConditionMixin",
     "common.SurfaceSystemMixin",
+    "common.WaterFluidMixin",
     "common.WorldDimensionsMixin",
     "common.WorldGenerationContextMixin",
     "common.WorldPresetsMixin"
@@ -39,8 +39,8 @@
     "client.CreateWorldScreenMixin",
     "client.CreativeModeInventoryScreenMixin",
     "client.LevelRendererMixin",
-    "client.SkyRendererMixin",
-    "client.MinecraftMixin"
+    "common.MinecraftMixin",
+    "client.SkyRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

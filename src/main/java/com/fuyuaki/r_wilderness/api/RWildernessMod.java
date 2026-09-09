@@ -7,8 +7,9 @@ import com.fuyuaki.r_wilderness.server.commands.arguments.RArgumentTypes;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import com.fuyuaki.r_wilderness.world.item.RCreativeModeTabs;
 import com.fuyuaki.r_wilderness.world.item.RItems;
-import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
+import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.carver.RWorldCarvers;
+import com.fuyuaki.r_wilderness.world.level.material.RFluids;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
@@ -43,6 +44,7 @@ public class RWildernessMod {
 
         RebornBiomeSource.Registerer.init(modEventBus);
         RAttachments.init(modEventBus);
+        RFluids.init(modEventBus);
         RAttributes.init(modEventBus);
         RBlocks.init(modEventBus);
         RItems.init(modEventBus);

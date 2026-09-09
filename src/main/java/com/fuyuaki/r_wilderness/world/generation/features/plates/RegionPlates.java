@@ -9,10 +9,16 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class RegionPlates {
-    public static final int MAJOR_PLATE_GRID_SIZE = 2;
+    public static final int MAJOR_PLATE_GRID_SIZE = 4;
     public static final int MAJOR_PLATE_GRID_SQUARED = MAJOR_PLATE_GRID_SIZE * MAJOR_PLATE_GRID_SIZE;
     public static final int MINOR_PLATE_GRID_SIZE = 32;
     public static final int MINOR_PLATE_GRID_SQUARED =  MINOR_PLATE_GRID_SIZE * MINOR_PLATE_GRID_SIZE;
+
+    public static final int MAJOR_PLATE_SIZE = RegionPos.REGION_SIZE / MAJOR_PLATE_GRID_SIZE;
+    public static final int MAJOR_PLATE_BITS = Integer.numberOfTrailingZeros(MAJOR_PLATE_SIZE);
+
+    public static final int MINOR_PLATE_SIZE = RegionPos.REGION_SIZE / MINOR_PLATE_GRID_SIZE;
+    public static final int MINOR_PLATE_BITS = Integer.numberOfTrailingZeros(MINOR_PLATE_SIZE);
 
     private MajorTectonicPlate[] majorPlates = new MajorTectonicPlate[MAJOR_PLATE_GRID_SQUARED];
     private TectonicPlateNode[] plateNodes = new TectonicPlateNode[MINOR_PLATE_GRID_SQUARED];
@@ -121,16 +127,16 @@ public class RegionPlates {
     }
 
     public static int majorPlatePosition(int position){
-        return position >> 13;
+        return position >> MAJOR_PLATE_BITS;
     }
     public static int nodePlatePosition(int position){
-        return position >> 9;
+        return position >> MINOR_PLATE_BITS;
     }
     public static int majorPlateMinBlock(int position){
-        return  position << 13;
+        return  position << MAJOR_PLATE_BITS;
     }
     public static int nodePlateMinBlock(int position){
-        return position << 9;
+        return position << MINOR_PLATE_BITS;
     }
 
 

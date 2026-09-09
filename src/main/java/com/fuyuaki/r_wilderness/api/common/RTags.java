@@ -48,6 +48,7 @@ public class RTags {
     public static class Fluids {
         public static final TagKey<Fluid> COOLING = tag("cooling_fluids");
         public static final TagKey<Fluid> HEATING = tag("heating_fluids");
+        public static final TagKey<Fluid> RIVER_WATER = tag("river_water");
 
         private static TagKey<Fluid> tag(String name) {
             return FluidTags.create(RWildernessMod.modLocation(name));

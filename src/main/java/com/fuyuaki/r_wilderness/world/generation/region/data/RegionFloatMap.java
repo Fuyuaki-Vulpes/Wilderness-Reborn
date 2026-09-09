@@ -4,18 +4,15 @@ import com.fuyuaki.r_wilderness.world.generation.noise.Noise2D;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
 import com.fuyuaki.r_wilderness.world.generation.region.reference.RegionLayerTypes;
-import com.google.common.io.CharStreams;
 import com.google.common.util.concurrent.AtomicDoubleArray;
 import com.mojang.serialization.Codec;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
+import org.jspecify.annotations.NonNull;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -80,7 +77,7 @@ public class RegionFloatMap {
         int resolution = emptyMap.getResolution();
         int scale = emptyMap.getScale();
         float[] map = new float[resolution * resolution];
-        CompletableFuture<Void>[] futures = new CompletableFuture[NOISE_THREAD_COUNT];
+        CompletableFuture[] futures = new CompletableFuture[NOISE_THREAD_COUNT];
         int samples = resolution / NOISE_THREAD_COUNT;
         for (int thread = 0; thread < NOISE_THREAD_COUNT; thread++) {
             int startX = thread * samples;
@@ -155,9 +152,19 @@ public class RegionFloatMap {
 
 
     public static RegionFloatMap read(DataInputStream inputStream, RegionLayerTypes type, Noise2D noiseMap) throws IOException {
-        String name = type.getSerializedName();
+        int byte1 = inputStream.readUnsignedByte();
+        if (byte1 != 0xBA) {
+            throw new IOException("Incorrect Input at the beggining of archive: " + byte1);
+        }
 
-        String name2 = new String(inputStream.readNBytes(name.getBytes(StandardCharsets.UTF_8).length));
+        String name = type.getSaveName();
+
+        String name2;
+        try{
+            name2 = inputStream.readUTF();
+        }catch(Throwable e){
+            throw new IOException("Name was broken! Layer: " + type.name(), e);
+        }
 
         int resolution;
         float[] map;
@@ -170,14 +177,15 @@ public class RegionFloatMap {
             int b2 = inputStream.readUnsignedByte();
             if(b2 == 0x88){
                 map = fillMap(inputStream,resolution);
-            }else {
+            }else if (b2 == 0xAA){
                 map = null;
+            }else {
+                throw new IOException("Invalid byte for map array");
             }
         }else {
             throw new IOException("Invalid map format");
         }
-        RegionFloatMap regionFloatMap = new RegionFloatMap(type.getIndex(),Status.COMPLETE, map, resolution, noiseMap);
-        return regionFloatMap;
+        return new RegionFloatMap(type.getIndex(),Status.COMPLETE, map, resolution, noiseMap);
     }
 
     private static float[] fillMap(DataInputStream inputStream, int resolution) throws IOException {
@@ -189,16 +197,20 @@ public class RegionFloatMap {
     }
 
     public void write(RegionLayerTypes type, DataOutputStream output) throws IOException {
-        String name = type.getSerializedName();
-        output.write(name.getBytes(StandardCharsets.UTF_8));
+        output.writeByte(0xBA);
+        String name = type.getSaveName();
+        output.writeUTF(name);
 
         output.writeByte(0x8F);
         if (this.map == null || this.status != Status.COMPLETE) {
             output.writeByte(0xAA);
-
             return;
         }
         output.writeByte(0x88);
+        int lnt = type.getDefaultResolution() * type.getDefaultResolution();
+        if (this.map.length > lnt){
+            throw new IOException("Invalid map size for " + type.name() + ". Expected: " + lnt + "Found: " + this.map.length);
+        }
         for (float f : this.map) {
             output.writeFloat(f);
         }
@@ -315,7 +327,60 @@ public class RegionFloatMap {
         return noiseMap;
     }
 
+
+    public float upsampleFromNeighborsBufferSafe(int x, int z, Map<RegionPos, WorldRegion> neighbors) {
+        WorldRegion region = RegionMemory.getRegionAt(x, z,neighbors);
+        int xLocal = Math.floorMod(x, RegionPos.REGION_SIZE);
+        int zLocal = Math.floorMod(z, RegionPos.REGION_SIZE);
+        int xScaled = xLocal / this.scale;
+        int zScaled = zLocal / this.scale;
+
+        assert xScaled >= 0 && zScaled >= 0 && xLocal >= 0 && zLocal >= 0;
+        float nw;
+        float sw;
+        float ne;
+        float se;
+        RegionFloatMap layer = region.layers().getOfIndex(this.getIndex());
+        nw =  layer.get(xScaled,zScaled);
+        int limit = this.resolution - 1;
+        if (xScaled >= limit || zScaled >= limit){
+            int xCorner = x - (xLocal % this.scale);
+            int zCorner = z - (zLocal % this.scale);
+
+            int shift = this.scale;
+
+            if (zScaled >= limit){
+                sw = layer.getOutsideArea(xCorner, zCorner + shift,neighbors);
+            }else{
+                sw = layer.get(xScaled,zScaled + 1);
+            }
+            if (xScaled >= limit){
+                ne = layer.getOutsideArea(xCorner + shift, zCorner,neighbors);
+            }else {
+                ne = layer.get(xScaled + 1,zScaled);
+            }
+            se = layer.getOutsideArea(xCorner + shift, zCorner + shift,neighbors);
+
+
+        }else{
+            sw = layer.get(xScaled,zScaled + 1);
+            ne = layer.get(xScaled + 1,zScaled);
+            se = layer.get(xScaled + 1,zScaled + 1);
+        }
+
+        float deltaX = (float) (xLocal % this.scale) / this.scale;
+        float deltaZ = (float) (zLocal % this.scale) / this.scale;
+        return (float) Mth.lerp2(
+                deltaX, deltaZ,
+                nw,ne,
+                sw,se
+        );
+
+    }
+
+
     public float upsampleFromNeighbors(int x, int z, Map<RegionPos, WorldRegion> neighbors) {
+
         int xLocal = Math.floorMod(x,RegionPos.REGION_SIZE);
         int zLocal = Math.floorMod(z,RegionPos.REGION_SIZE);
         int xScaled =  xLocal / this.scale;
@@ -384,7 +449,7 @@ public class RegionFloatMap {
         }
 
         @Override
-        public String getSerializedName() {
+        public @NonNull String getSerializedName() {
             return name;
         }
 

@@ -1,12 +1,9 @@
 package com.fuyuaki.r_wilderness.world.level.levelgen.terrain;
 
-import com.fuyuaki.r_wilderness.mixin.accessor.BiomeAccessAccessor;
 import com.fuyuaki.r_wilderness.world.level.levelgen.RandomStateExtension;
 import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.WRNoiseChunk;
-import com.fuyuaki.r_wilderness.world.level.biome.BiomeDitherer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.Biome;

@@ -3,18 +3,15 @@ package com.fuyuaki.r_wilderness.world.level.levelgen;
 import com.fuyuaki.r_wilderness.api.WildRegistries;
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.mixin.accessor.ChunkMapAccessor;
+import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
+import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
-import com.fuyuaki.r_wilderness.world.generation.region.data.SerializableRegionData;
 import com.fuyuaki.r_wilderness.world.generation.region.reference.RegionLayers;
 import com.fuyuaki.r_wilderness.world.level.levelgen.carver.WildCarverContext;
 import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.WRNoiseChunk;
-import com.fuyuaki.r_wilderness.world.level.levelgen.hydrology.RAquifer;
-import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.TerrainParameters;
+import com.fuyuaki.r_wilderness.world.level.levelgen.feature.RAquifer;
 import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.WRSurfaceSystemUtil;
-import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomePlacement;
-import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
-import com.fuyuaki.r_wilderness.world.level.levelgen.util.ChunkAccessModifier;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -27,8 +24,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
@@ -75,9 +70,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
     private Seed seed;
     private WildGeneratorSettings settings;
-
-
-    private TerrainParameters parameters;
+    private boolean complete = false;
 
     public WildChunkGenerator(BiomeSource biomeSource, Holder<NoiseGeneratorSettings> noiseSettings, WildGeneratorSettings generatorSettings) {
         super(biomeSource);
@@ -116,7 +109,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
     private void doCreateBiomes(RandomState randomState, Blender blender, StructureManager structureManager, ChunkAccess chunk) {
         RebornBiomeSource source = (RebornBiomeSource) this.biomeSource;
-        ((ChunkAccessModifier)chunk).fillBiomesReborn(source,randomState);
+        chunk.fillBiomesFromNoise(source,randomState.sampler());
     }
 
 
@@ -251,7 +244,6 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
     private WRNoiseChunk createWRNoiseChunk(ChunkAccess chunk, StructureManager structureManager, Blender blender, RandomState random) {
         return WRNoiseChunk.forChunk(
-                this.parameters,
                 chunk,
                 random,
                 Beardifier.forStructuresInChunk(structureManager, chunk.getPos()),
@@ -280,12 +272,6 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         return this.settings;
     }
 
-
-    @Override
-    public TerrainParameters terrainParameters() {
-        return this.parameters;
-    }
-
     @Override
     public synchronized void prepare(ChunkPos pos) {
 
@@ -302,7 +288,7 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
     public void initRandomState(ChunkMap chunkMap, ServerLevel level) {
 
 
-        if (parameters != null) {
+        if (complete) {
             final WildChunkGenerator copy = copy();
 
             ((ChunkMapBridge) chunkMap).updateGenerator(copy);
@@ -313,11 +299,10 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
 
         this.seed = seed;
 
-        this.parameters = new TerrainParameters(seed, this.settings);
         if (this.biomeSource instanceof RebornBiomeSource) {
-            List<RebornBiomePlacement> knownBiomes = level.registryAccess().lookupOrThrow(WildRegistries.REBORN_BIOME_PLACEMENT_KEY).stream().toList();
+            List<BiomePlacementData> knownBiomes = level.registryAccess().lookupOrThrow(WildRegistries.REBORN_BIOME_PLACEMENT_KEY).stream().toList();
 
-            ((RebornBiomeSource)this.biomeSource).setParameters(parameters);
+            ((RebornBiomeSource)this.biomeSource).setMemory(RegionMemory.getInstance(level));
             ((RebornBiomeSource)this.biomeSource).setKnownBiomes(knownBiomes);
 
         }
@@ -327,13 +312,14 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         // We do this to be able to access the chunk generator through the random state later, i.e. in structure generation
 
         ((RandomStateExtension) (Object) ((ChunkMapAccessor) chunkMap).accessor$getRandomState()).wildernessReborn$setChunkGeneratorExtension(this);
+        this.complete = true;
     }
 
     @Override
     public void initBiomeSource(ServerLevel level) {
-        List<RebornBiomePlacement> knownBiomes = level.registryAccess().lookupOrThrow(WildRegistries.REBORN_BIOME_PLACEMENT_KEY).stream().toList();
+        List<BiomePlacementData> knownBiomes = level.registryAccess().lookupOrThrow(WildRegistries.REBORN_BIOME_PLACEMENT_KEY).stream().toList();
         this.featuresPerStep = Lazy.of(
-                () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(knownBiomes.stream().map(RebornBiomePlacement::biome).toList()), biomeHolder -> generationSettingsGetter.apply(biomeHolder).features(), true)
+                () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(knownBiomes.stream().map(BiomePlacementData::biome).toList()), biomeHolder -> generationSettingsGetter.apply(biomeHolder).features(), true)
         );
     }
 
@@ -380,17 +366,21 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
         String heightmap = decimalformat.format(layers.getHeightmapBasic().getUpsampled(x,z,memory));
         String rivers = decimalformat.format(layers.getRivers().getUpsampled(x,z,memory));
         String elevation = decimalformat.format(layers.getElevation().getUpsampled(x,z,memory));
+        String magic = decimalformat.format(layers.getMagicalness().getUpsampled(x,z,memory));
+        String vegetation = decimalformat.format(layers.getVegetation().getUpsampled(x,z,memory));
 
-        info.add("Plates: " );
-        info.add("St: " + tectonicStress + " A: " + plateAge + " We: " + plateWeight);
-        info.add("Vol: " + volcanicness + " Buoy: " + plateBuoyancy);
-        info.add("Dist: " + plateDistToParent + " Sw: " + plateSwell + " Edg: " + plateEdges);
-        info.add("Gen: ");
-        info.add("Hill: " + hill + " Plat: " + plateau + " Cont: " + continentalness + " Erod: " + erosion);
-        info.add("Rock: " + rockiness + " Hum: " + humidity + " Temp: " + temperature);
-        info.add("Rivr: " + rivers + " Atmos Pres: " + atmosPressure);
         info.add("Elevations: ");
         info.add("P Elev Off: " + plateElevOff + " Base Height: " + heightmap + " Final Elev: " + elevation);
+        info.add("Terrain Exclusive: ");
+        info.add("St: " + tectonicStress + " Age: " + plateAge + " Edg: " + plateEdges);
+        info.add(" We: " + plateWeight + " Buoy: " + plateBuoyancy);
+        info.add("Dist: " + plateDistToParent + " Sw: " + plateSwell);
+        info.add("Hill: " + hill + " Plat: " + plateau);
+        info.add("Rivr: " + rivers + " Atmos Pres: " + atmosPressure);
+        info.add("All Generation: ");
+        info.add("Temp: " + temperature + " Cont: " + continentalness + " Erod: " + erosion);
+        info.add("Hum: " + humidity + " Veg: " + vegetation + " Rock: " + rockiness);
+        info.add("Vol: " + volcanicness + " Mag: " + magic);
     }
 
 
@@ -427,7 +417,6 @@ public class WildChunkGenerator extends ChunkGenerator implements ChunkGenerator
             int bottomCellY = Mth.floorDiv(minY, cellHeight);
             int cellYCount = Mth.floorDiv(noisesettings.height(), cellHeight);
             WRNoiseChunk noisechunk = new WRNoiseChunk(
-                    this.parameters,
                     1,
                     random,
                     firstCellX,

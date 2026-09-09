@@ -2,7 +2,7 @@ package com.fuyuaki.r_wilderness.world.generation.features.hydrology;
 
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.util.RebAABB;
-import com.fuyuaki.r_wilderness.world.generation.features.RegionNoisesRecord;
+import com.fuyuaki.r_wilderness.world.generation.noise.Noise2D;
 import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
 import com.fuyuaki.r_wilderness.world.generation.region.data.RegionPos;
 import com.fuyuaki.r_wilderness.world.generation.region.reference.RegionLayers;
@@ -15,6 +15,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 import org.joml.Vector2f;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,11 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class RiverNode {
+public class RiverNode implements Comparable<RiverNode>{
+
     public static final Codec<RiverNode> CODEC = RecordCodecBuilder.create(
             i -> i.group(
                     GridPoint.CODEC.fieldOf("position").forGetter(RiverNode::getPosition),
                     Vec2.CODEC.fieldOf("offset").forGetter(RiverNode::getOffset),
+                    Codec.BOOL.fieldOf("enabled").forGetter(RiverNode::isEnabled),
                     Vec2.CODEC.fieldOf("flow").forGetter(RiverNode::getFlow),
                     WorldPosition.CODEC.fieldOf("flow_to").forGetter(RiverNode::getFlowTo),
                     WorldPosition.CODEC.fieldOf("flow_from").forGetter(RiverNode::getFlowFrom),
@@ -48,6 +51,7 @@ public class RiverNode {
     public static final int MAX_DIAMETER = 64;
 
     private final GridPoint position;
+    private boolean enabled = true;
     private Vec2 flow;
     private float slopeFrom = 0.0f;
     private float slopeTo = 0.0f;
@@ -63,8 +67,9 @@ public class RiverNode {
     private List<RiverPoint> points = new ArrayList<>();
     private RebAABB collision;
 
-    public RiverNode(GridPoint position, Vec2 offset, Vec2 flow, WorldPosition flowTo, WorldPosition flowFrom,float slopeTo,float slopeFrom, float diameter, float elevation, int nodesToDrainage,float flowFromDiameter, RegionPos pos, Optional<Cliff> oCliff) {
+    public RiverNode(GridPoint position, Vec2 offset, boolean enabled, Vec2 flow, WorldPosition flowTo, WorldPosition flowFrom,float slopeTo,float slopeFrom, float diameter, float elevation, int nodesToDrainage,float flowFromDiameter, RegionPos pos, Optional<Cliff> oCliff) {
         this.position = position;
+        this.enabled = enabled;
         this.offset = offset;
         this.flow = flow;
         this.flowTo = flowTo;
@@ -79,7 +84,7 @@ public class RiverNode {
         this.cliff = oCliff.orElse(Cliff.EMPTY);
     }
 
-    public RiverNode(RegionPos pos, int cellX, int cellZ, RegionNoisesRecord record, float centerX, float centerZ, long hash, WorldRegion region) {
+    public RiverNode(RegionPos pos, int cellX, int cellZ, float centerX, float centerZ, long hash, WorldRegion region, float lowestElevation) {
         this.position = new GridPoint(cellX, cellZ);
         this.offset = new Vec2(centerX, centerZ);
         this.regionPos = pos;
@@ -88,19 +93,43 @@ public class RiverNode {
         float worldX = getWorldX();
         float worldZ = getWorldZ();
 
+        int i = 0;
+        float enableBias = getSaltedFloat(hash,i++);
+        int xF = Mth.floor(worldX);
+        int zF = Mth.floor(worldZ);
+        float humidity = (1.0f + region.layers().getHumidity().getGlobal(xF, zF)) * 0.5f;
+        float continent = Math.max(region.layers().getContinentalness().getGlobal(xF, zF),0.0f);
+
+        float continentEffective = 1.0f - Math.min(continent * continent * 2.0f,1.0f);
+
+        float temperature = 1 - Math.abs(region.layers().getTemperature().getGlobal(xF, zF));
+        float enableMin = 0.25f;
+        float stress = region.layers().getTectonicStress().getGlobal(xF, zF);
+        float enableVal =
+                (
+                        (0.5f + continentEffective * 0.5f)
+                        + ((humidity * temperature) * 2)
+                        + (0.5f + temperature * 0.5f)
+                        + enableBias
+                ) / 5
+                - (stress * 1.25f);
+
+
+        this.enabled = enableVal >= enableMin && stress < 0.25f;
+
         this.diameter = Math.clamp(
-                (1 + getSaltedFloat(hash,3))
-                        * ((region.layers().getHumidity().getGlobal(Mth.floor(worldX), Mth.floor(worldZ)) + 1) / 2)
-                        * 8 + 8f,
+                (1 + getSaltedFloat(hash,i++))
+                        * ((humidity + 1) / 2)
+                        * 8 + 4f,
                 8, 16);
 
-        float flowL = getSaltedFloat(hash,4)  * 0.75f + 0.25f;
-        float flowAngle = (float) (getSaltedFloat(hash,5) * (2.0 * Math.PI));
+        float flowL = getSaltedFloat(hash,i++)  * 0.75f + 0.25f;
+        float flowAngle = (float) (getSaltedFloat(hash,i++) * (2.0 * Math.PI));
 
         this.flow = new Vec2((float) Math.cos(flowAngle) * flowL,(float) Math.sin(flowAngle) * flowL);
 
 
-        this.elevation = region.layers().getHeightmapBasic().getGlobal(Mth.floor(worldX), Mth.floor(worldZ));
+        this.elevation = lowestElevation;
     }
 
     public float getDistance(float targetX, float targetZ) {
@@ -114,6 +143,14 @@ public class RiverNode {
         float dz = targetZ - this.getWorldZ();
 
         return dx * dx + dz * dz;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public RegionPos getRegionPos() {
@@ -136,11 +173,11 @@ public class RiverNode {
         return worldPosition(this.getCellZ() + this.getOffset().y) + RegionPos.toBlockCoord(this.getRegionPos().z());
     }
 
-    private float getCellX() {
+    public int getCellX() {
         return this.getPosition().x;
     }
 
-    private float getCellZ() {
+    public int getCellZ() {
         return this.getPosition().z;
     }
 
@@ -302,13 +339,15 @@ public class RiverNode {
 
     public void write(CompoundTag nbt) throws Exception {
         DataResult<Tag> result = CODEC.encodeStart(NbtOps.INSTANCE,this);
-        if (result.isError() || result.getOrThrow() == null)  {
-            throw new Exception("Hey Yagasa check this out please");
-        }
         nbt.put("river",result.getOrThrow());
         if (nbt == null || nbt.isEmpty()) {
             throw new Exception("NBT cannot be null!");
         }
+    }
+
+    @Override
+    public int compareTo(@NonNull RiverNode o) {
+        return Float.compare(o.getElevation(),this.getElevation());
     }
 
     public RiverPoint asPoint(){
@@ -316,14 +355,14 @@ public class RiverNode {
                 this.getWorldX(),
                 this.getWorldZ(),
                 this.elevation,
-                this.elevation - 2,
+                this.elevation - 1,
                 this.diameter,
                 this.getDepth(),
                 this.flow,
                 this.cliff);
     }
 
-    public void setAndCalculateDownhillConnection(RiverNode bestMatch, float slope,long hash) {
+    public void setAndCalculateDownhillConnection(RiverNode bestMatch, float slope, Noise2D noise2D) {
         this.slopeTo = slope;
         this.nodesToDrainage = bestMatch.getNodesToDrainage() + 1;
         this.flowTo = bestMatch.getWorldPosition();
@@ -340,8 +379,8 @@ public class RiverNode {
         float targetSpeed = baseSpeed * slopeSpeedMultiplier;
         float blendedX = Mth.lerp(0.70f, this.flow.x, downhillDir.x * targetSpeed);
         float blendedZ = Mth.lerp(0.70f, this.flow.y, downhillDir.y * targetSpeed);
-        float flowAngle = (float) ((getSaltedFloat(hash,6) - 0.5f) * (Math.PI) * 2);
-        this.flow =this.flow.scale(0.1f).add(new Vec2(blendedX, blendedZ).scale(0.5f)).rotate(flowAngle).normalized();
+        float flowAngle = (float) ((noise2D.noise(this.getWorldX(),this.getWorldZ()) * 0.5f) * (Math.PI));
+        this.flow = this.flow.scale(0.1f).add(new Vec2(blendedX, blendedZ).scale(0.5f)).rotate(flowAngle).normalized();
     }
 
     public void setAsEndOfRiverAndCalculate(Vec2 terrainTangent) {
@@ -380,9 +419,8 @@ public class RiverNode {
         this.flow = this.flow.add(incomingFeeder.getFlow().scale(momentumWeight)).add(terrainTangent.scale(0.1f));
     }
 
-    public void generatePoints(RegionPos pos,WorldRegion worldRegion, Map<RegionPos, WorldRegion> neighbors, long seed){
+    public void generatePoints(RegionPos pos,WorldRegion worldRegion, Map<RegionPos, WorldRegion> neighbors){
 
-        this.points = new ArrayList<>();
         RiverPoint river0 = this.asPoint();
         if (this.getFlowTo() == WorldPosition.OUT_OF_BOUNDS) return;
 
@@ -395,18 +433,18 @@ public class RiverNode {
         RiverNode nodeAtBlock = reg.getNbtData().rivers().getNodeAtBlock(x1, z1);
         if (nodeAtBlock == null) return;
         RiverPoint river4 = nodeAtBlock.asPoint();
-        float interpDist = Mth.floor((this.getDistance(river4.worldX(), river4.worldZ()) + 1) / 4) + 1;
+        float distance = this.getDistance(river4.worldX(), river4.worldZ());
+        int interpDist = Math.round((distance + 1) / 3);
         float lastElevation = this.getElevation();
 
-        float maxDiversion = Math.min(this.getDistance(river4.worldX(), river4.worldZ()) / 2,128.0f);
-        RiverPoint river1 = RiverPoint.bendPoint(river0, river4, 0.25f,worldRegion.layers().record().riverSway().getNoise(),worldRegion.layers().record().riverRandom().getNoise(), maxDiversion);
+        float maxDiversion = Math.min(distance / 4,128.0f);
         RiverPoint river2 = RiverPoint.bendPoint(river0, river4, 0.50f,worldRegion.layers().record().riverSway().getNoise(),worldRegion.layers().record().riverRandom().getNoise(), maxDiversion);
-        RiverPoint river3 = RiverPoint.bendPoint(river0, river4, 0.75f,worldRegion.layers().record().riverSway().getNoise(),worldRegion.layers().record().riverRandom().getNoise(), maxDiversion);
+        List<RiverPoint> points = new ArrayList<>();
 
         RebAABB.Builder colBox = new RebAABB.Builder();
         for (int d = 0; d < interpDist; d ++) {
-            float delta = d / interpDist;
-            RiverPoint p0 = RegionRivers.interpolated4PointRiver(river0,river1,river2,river3,river4,delta,worldRegion.layers().record().riverSway().getNoise(), lastElevation);
+            float delta = (float) d / interpDist;
+            RiverPoint p0 = RegionRivers.interpolated4PointRiver(river0, river2, river4,delta,worldRegion.layers().record().riverSway().getNoise(), lastElevation);
             float interpX = p0.worldX();
             float interpZ = p0.worldZ();
             float range = p0.diameter() * 2;
@@ -426,6 +464,7 @@ public class RiverNode {
             p0 = p0.withNewElevation(elevationHere);
             points.add(p0);
         }
+        this.points = points;
         this.collision = colBox.build();
     }
 
@@ -472,22 +511,22 @@ public class RiverNode {
         }
     }
 
-    public record Cliff(float start, float end, float startElevation, float endElevation){
-        public static final Cliff EMPTY = new Cliff(-1.0f,1.0f,1.0f,1.0f);
+    public record Cliff(float start, float end, float startElevation, float endElevation, boolean valid){
+        public static final Cliff EMPTY = new Cliff(-1.0f,1.0f,1.0f,1.0f,false);
         public static final Codec<Cliff> CODEC = RecordCodecBuilder.create(
-
                 i -> i.group(
                         Codec.FLOAT.fieldOf("start").forGetter(Cliff::start),
                         Codec.FLOAT.fieldOf("end").forGetter(Cliff::end),
                         Codec.FLOAT.fieldOf("start_elevation").forGetter(Cliff::startElevation),
-                        Codec.FLOAT.fieldOf("end_elevation").forGetter(Cliff::endElevation)
+                        Codec.FLOAT.fieldOf("end_elevation").forGetter(Cliff::endElevation),
+                        Codec.BOOL.fieldOf("valid").forGetter(Cliff::valid)
                 ).apply(i, Cliff::new)
         );
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof Cliff(float start1, float end1, float startElevation1, float endElevation1))) {return false;}
-            return start1 == this.start && end1 == this.end && startElevation1 == this.startElevation && endElevation1 == this.endElevation;
+            if (!(obj instanceof Cliff(float start1, float end1, float startElevation1, float endElevation1,boolean v1))) {return false;}
+            return start1 == this.start && end1 == this.end && startElevation1 == this.startElevation && endElevation1 == this.endElevation && this.valid == v1;
         }
 
         public static Codec<Cliff> codec() {
