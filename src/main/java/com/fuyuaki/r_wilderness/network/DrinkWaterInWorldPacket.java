@@ -10,13 +10,14 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record DrinkWaterInWorldPacket(BlockPos position) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<DrinkWaterInWorldPacket> TYPE = new CustomPacketPayload.Type<>(RWildernessMod.modLocation("drink_in_world"));
+    public static final CustomPacketPayload.Type<DrinkWaterInWorldPacket> TYPE = new CustomPacketPayload.Type<>(RWildernessMod.identifier("drink_in_world"));
 
     public static final StreamCodec<ByteBuf, DrinkWaterInWorldPacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC,

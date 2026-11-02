@@ -50,6 +50,6 @@ public class ModBiomeData {
     }
 
     private static ResourceKey<MapCodec<? extends BiomeSource>> register(String name) {
-        return ResourceKey.create(Registries.BIOME_SOURCE, RWildernessMod.modLocation(name));
+        return ResourceKey.create(Registries.BIOME_SOURCE, RWildernessMod.identifier(name));
     }
 }

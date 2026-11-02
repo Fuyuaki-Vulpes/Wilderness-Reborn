@@ -1,18 +1,16 @@
 package com.fuyuaki.r_wilderness.data.generation.other;
 
-import com.fuyuaki.r_wilderness.api.WildRegistries;
+import com.fuyuaki.r_wilderness.api.RRegistries;
 import com.fuyuaki.r_wilderness.data.ModCarvers;
 import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomeData;
 import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomeModifiers;
 import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomePlacements;
 import com.fuyuaki.r_wilderness.data.worldgen.features.ModFeatureUtils;
 import com.fuyuaki.r_wilderness.data.worldgen.placement.ModPlacementUtils;
-import com.fuyuaki.r_wilderness.data.worldgen.ModNoiseData;
 import com.fuyuaki.r_wilderness.init.RDamageTypes;
-import com.fuyuaki.r_wilderness.server.commands.arguments.RArgumentTypes;
 import com.fuyuaki.r_wilderness.world.item.enchantment.ModEnchantments;
-import com.fuyuaki.r_wilderness.world.level.levelgen.ModWorldPresets;
-import com.fuyuaki.r_wilderness.world.level.levelgen.WildWorldSettings;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldPresets;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldConfiguration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -30,14 +28,14 @@ public class ModBuiltInEntries extends DatapackBuiltinEntriesProvider {
             .add(Registries.CONFIGURED_FEATURE, ModFeatureUtils::bootstrap)
             .add(Registries.CONFIGURED_CARVER, ModCarvers::bootstrap)
             .add(Registries.PLACED_FEATURE, ModPlacementUtils::bootstrap)
-            .add(Registries.NOISE, ModNoiseData::bootstrap)
             .add(Registries.BIOME, ModBiomeData::bootstrap)
-            .add(WildRegistries.REBORN_BIOME_PLACEMENT_KEY, ModBiomePlacements::bootstrap)
+            .add(RRegistries.REBORN_BIOME_PLACEMENT_KEY, ModBiomePlacements::bootstrap)
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifiers::bootstrap)
             .add(Registries.ENCHANTMENT, ModEnchantments::bootstrap)
-            .add(Registries.WORLD_PRESET, ModWorldPresets::bootstrap)
-            .add(Registries.DIMENSION_TYPE, WildWorldSettings.DimensionTypes::bootstrap)
+            .add(Registries.WORLD_PRESET, RebornWorldPresets::bootstrap)
+            .add(Registries.DIMENSION_TYPE, RebornWorldConfiguration.DimensionTypes::bootstrap)
             .add(Registries.DAMAGE_TYPE, RDamageTypes::bootstrap)
+            .add(RRegistries.WRGEN_SETTINGS, com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldSettings::bootstrap)
             ;
 
 

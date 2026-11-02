@@ -1,7 +1,7 @@
 package com.fuyuaki.r_wilderness.data.worldgen.biome;
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
-import com.fuyuaki.r_wilderness.api.WildRegistries;
+import com.fuyuaki.r_wilderness.api.RRegistries;
 import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
 import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementTags;
 import com.fuyuaki.r_wilderness.world.generation.biome.BiomeTargetProfile;
@@ -440,7 +440,7 @@ public abstract class ModBiomePlacements {
     }
 
     private static ResourceKey<BiomePlacementData> register(String name) {
-        return ResourceKey.create(WildRegistries.REBORN_BIOME_PLACEMENT_KEY, RWildernessMod.modLocation(name));
+        return ResourceKey.create(RRegistries.REBORN_BIOME_PLACEMENT_KEY, RWildernessMod.identifier(name));
     }
 
 

@@ -17,7 +17,7 @@ public class ModEnchantments {
     }
 
     private static ResourceKey<Enchantment> key(String name) {
-        return ResourceKey.create(Registries.ENCHANTMENT, RWildernessMod.modLocation(name));
+        return ResourceKey.create(Registries.ENCHANTMENT, RWildernessMod.identifier(name));
     }
 
 }

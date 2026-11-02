@@ -19,12 +19,12 @@ public class GenFluidTags extends FluidTagsProvider{
     @Override
     protected void addTags(HolderLookup.Provider registries) {
         tag(FluidTags.WATER)
-                .add(RFluids.RIVER.getKey())
-                .add(RFluids.FLOWING_RIVER.getKey());
+                .add(RFluids.RIVER.key())
+                .add(RFluids.FLOWING_RIVER.key());
 
-        this.tag(FluidTags.SUPPORTS_LILY_PAD).add(RFluids.RIVER.getKey());
-        this.tag(FluidTags.SUPPORTS_FROGSPAWN).add(RFluids.RIVER.getKey());
-        this.tag(FluidTags.BUBBLE_COLUMN_CAN_OCCUPY).add(RFluids.RIVER.getKey());
+        this.tag(FluidTags.SUPPORTS_LILY_PAD).add(RFluids.RIVER.key());
+        this.tag(FluidTags.SUPPORTS_FROGSPAWN).add(RFluids.RIVER.key());
+        this.tag(FluidTags.BUBBLE_COLUMN_CAN_OCCUPY).add(RFluids.RIVER.key());
 
     }
 }

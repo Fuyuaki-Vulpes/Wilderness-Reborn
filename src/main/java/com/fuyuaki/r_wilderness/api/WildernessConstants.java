@@ -2,6 +2,9 @@ package com.fuyuaki.r_wilderness.api;
 
 public class WildernessConstants {
 
+    public static final boolean DEBUG_DISABLE_FLUID_GENERATION = false;
+
+
     public static final int BUILD_HEIGHT = 1024;
     public static final int CAVES_BOTTOM = -240;
     public static final int CAVES_BOTTOM_CENTER = -192;
@@ -11,7 +14,11 @@ public class WildernessConstants {
     public static final float BOTTOM_DENSITY = 1.5F;
     public static final float TOP_DENSITY = -1.5F;
 
+    public static final float TERRAIN_DENSITY_VALUE = 0.3f;
+
     public static final int SEA_LEVEL = 63;
+    public static final int CAVE_LAVA = -220;
+    public static final int MAX_SPAWN_ELEVATION = 196;
 
     public static final float CLOUD_HEIGHT = 364;
 

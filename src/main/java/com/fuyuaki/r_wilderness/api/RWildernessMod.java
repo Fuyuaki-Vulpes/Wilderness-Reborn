@@ -5,10 +5,9 @@ import com.fuyuaki.r_wilderness.api.config.ClientConfig;
 import com.fuyuaki.r_wilderness.init.*;
 import com.fuyuaki.r_wilderness.server.commands.arguments.RArgumentTypes;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
+import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.item.RCreativeModeTabs;
 import com.fuyuaki.r_wilderness.world.item.RItems;
-import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
-import com.fuyuaki.r_wilderness.world.level.levelgen.carver.RWorldCarvers;
 import com.fuyuaki.r_wilderness.world.level.material.RFluids;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -53,7 +52,6 @@ public class RWildernessMod {
         RDataComponents.init(modEventBus);
         RFeatures.init(modEventBus);
         RChunkGenerators.init(modEventBus);
-        RWorldCarvers.init(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 
@@ -69,7 +67,7 @@ public class RWildernessMod {
 
 
     public static <T> ContextKey<T> contextKey(String name) {
-        return new ContextKey<>(modLocation(name));
+        return new ContextKey<>(identifier(name));
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -99,7 +97,7 @@ public class RWildernessMod {
         }
     }
 
-    public static Identifier modLocation(String id){
+    public static Identifier identifier(String id){
         return Identifier.fromNamespaceAndPath(MODID,id);
     }
 

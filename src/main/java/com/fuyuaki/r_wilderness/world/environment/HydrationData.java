@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodConstants;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
@@ -166,7 +167,7 @@ public class HydrationData implements ValueIOSerializable {
             {
                 ClientPacketDistributor.sendToServer(new DrinkWaterInWorldPacket(pos));
                 player.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5f, 1.0f);
-                player.swing(InteractionHand.MAIN_HAND);
+                player.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT,true);
             }
         }
     }

@@ -2,8 +2,6 @@ package com.fuyuaki.r_wilderness.references;
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.references.ItemIds;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -15,7 +13,7 @@ import net.minecraft.world.level.block.entity.DecoratedPotPattern;
 public class RItemIds {
 
     private static ResourceKey<Item> create(String name) {
-        return ResourceKey.create(Registries.ITEM, RWildernessMod.modLocation(name));
+        return ResourceKey.create(Registries.ITEM, RWildernessMod.identifier(name));
     }
 
     private static ResourceKey<Item> createPotterySherd(ResourceKey<DecoratedPotPattern> sherd) {

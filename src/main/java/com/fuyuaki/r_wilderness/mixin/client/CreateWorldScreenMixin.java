@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.mixin.client;
 
-import com.fuyuaki.r_wilderness.world.level.levelgen.ModWorldPresets;
+import com.fuyuaki.r_wilderness.world.level.levelgen.deprecated.ModWorldPresets;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;

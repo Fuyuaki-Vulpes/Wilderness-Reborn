@@ -2,7 +2,6 @@ package com.fuyuaki.r_wilderness.world.level.levelgen.distant_horizons;
 
 import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiLevelLoadEvent;
 import com.seibel.distanthorizons.api.methods.events.sharedParameterObjects.DhApiEventParam;
-import net.neoforged.fml.ModList;
 
 public class DHApiEventHandler extends DhApiLevelLoadEvent {
     @Override

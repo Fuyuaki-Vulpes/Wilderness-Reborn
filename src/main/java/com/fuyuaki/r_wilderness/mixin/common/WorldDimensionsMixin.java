@@ -1,10 +1,8 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
 import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
-import com.fuyuaki.r_wilderness.world.level.levelgen.WildWorldSettings;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldConfiguration;
 import net.minecraft.core.Holder;
-import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
-import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterLists;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldDimensions;
@@ -19,7 +17,7 @@ public class WorldDimensionsMixin {
     @Inject(method = "isStableOverworld", at = @At("HEAD"), cancellable = true)
     private static void isStableOverworldMixin(LevelStem levelStem, CallbackInfoReturnable<Boolean> cir){
         Holder<DimensionType> holder = levelStem.type();
-        if (holder.is(WildWorldSettings.DimensionTypes.OVERWORLD)){
+        if (holder.is(RebornWorldConfiguration.DimensionTypes.OVERWORLD)){
             if(levelStem.generator().getBiomeSource() instanceof RebornBiomeSource){
                 cir.setReturnValue(true);
             }

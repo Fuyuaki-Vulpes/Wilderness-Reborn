@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.init;
 
-import com.fuyuaki.r_wilderness.world.level.levelgen.WildChunkGenerator;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornChunkGenerator;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -14,8 +14,8 @@ public class RChunkGenerators {
     public static final DeferredRegister<MapCodec<? extends ChunkGenerator>> GENERATORS = DeferredRegister.create(BuiltInRegistries.CHUNK_GENERATOR,MODID);
 
 
-    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<WildChunkGenerator>> REBORN = GENERATORS.register(
-            "reborn", () -> WildChunkGenerator.CODEC);
+    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<RebornChunkGenerator>> REBORN = GENERATORS.register(
+            "reborn", () -> RebornChunkGenerator.CODEC);
 
 
     public static void init(IEventBus bus){

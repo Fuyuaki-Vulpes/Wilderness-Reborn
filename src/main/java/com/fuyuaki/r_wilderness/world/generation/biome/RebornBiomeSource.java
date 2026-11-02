@@ -16,7 +16,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.biome.*;
-import net.minecraft.world.level.levelgen.DensityFunction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -30,7 +29,7 @@ import java.util.stream.Stream;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class RebornBiomeSource extends BiomeSource implements BiomeManager.NoiseBiomeSource {
+public class RebornBiomeSource extends BiomeSource {
 
     protected RegionMemory memory = null;
     protected List<BiomePlacementData> knownBiomes;
@@ -50,10 +49,6 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
 
     public RebornBiomeSource(List<BiomePlacementData> knownBiomes) {
         this.knownBiomes = knownBiomes;
-    }
-
-    public boolean isDeepDarkRegion(DensityFunction.SinglePointContext context) {
-        return this.getNoiseBiome(QuartPos.fromBlock(context.blockX()),QuartPos.fromBlock(context.blockY()),QuartPos.fromBlock(context.blockZ())).is(Biomes.DEEP_DARK);
     }
 
     public RegionMemory getMemory() {
@@ -178,11 +173,15 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
         return this.knownBiomes.stream().map(BiomePlacementData::biome);
     }
 
-    @Override
-    public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
-
-        return identifyBestBiomeAffinity(QuartPos.toBlock(x),QuartPos.toBlock(y),QuartPos.toBlock(z)).biome();
+    @Override public BiomeResolver createResolver(Climate.Sampler sampler) {
+        return (quartX, quartY, quartZ) ->
+                this.identifyBestBiomeAffinity(
+                QuartPos.toBlock(quartX),
+                QuartPos.toBlock(quartY),
+                QuartPos.toBlock(quartZ))
+                .biome();
     }
+
 
     public BiomePlacementData identifyBestBiomeAffinity(int x, int y, int z){
         BiomePlacementData biome = null;
@@ -229,11 +228,6 @@ public class RebornBiomeSource extends BiomeSource implements BiomeManager.Noise
 
     private static String append(String first, String second) {
         return first + second;
-    }
-
-    @Override
-    public Holder<Biome> getNoiseBiome(int x, int y, int z) {
-        return identifyBestBiomeAffinity(QuartPos.toBlock(x),QuartPos.toBlock(y), QuartPos.toBlock(z)).biome();
     }
 
     public static class Registerer{

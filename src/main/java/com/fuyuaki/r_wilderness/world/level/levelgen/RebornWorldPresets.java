@@ -1,7 +1,7 @@
  package com.fuyuaki.r_wilderness.world.level.levelgen;
 
+ import com.fuyuaki.r_wilderness.api.RRegistries;
  import com.fuyuaki.r_wilderness.api.RWildernessMod;
- import com.fuyuaki.r_wilderness.data.worldgen.RSurfaceRuleData;
  import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
  import net.minecraft.core.Holder;
  import net.minecraft.core.HolderGetter;
@@ -9,13 +9,10 @@
  import net.minecraft.data.worldgen.BootstrapContext;
  import net.minecraft.resources.ResourceKey;
  import net.minecraft.world.level.biome.*;
- import net.minecraft.world.level.block.Blocks;
  import net.minecraft.world.level.chunk.ChunkGenerator;
  import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
  import net.minecraft.world.level.dimension.DimensionType;
  import net.minecraft.world.level.dimension.LevelStem;
- import net.minecraft.world.level.levelgen.DensityFunction;
- import net.minecraft.world.level.levelgen.DensityFunctions;
  import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
  import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
  import net.minecraft.world.level.levelgen.placement.PlacedFeature;
@@ -24,7 +21,7 @@
 
  import java.util.Map;
 
- public class ModWorldPresets {
+ public class RebornWorldPresets {
      public static final ResourceKey<WorldPreset> REBORN_WORLD = register("reborn");
 
 
@@ -33,15 +30,15 @@
          HolderGetter<DimensionType> holdergetter = context.lookup(Registries.DIMENSION_TYPE);
 
 
+         HolderGetter<RebornWorldSettings> rebornSettings  = context.lookup(RRegistries.WRGEN_SETTINGS);
          HolderGetter<NoiseGeneratorSettings> noiseSettings  = context.lookup(Registries.NOISE_SETTINGS);
-         HolderGetter<DensityFunction> densityFunctions  = context.lookup(Registries.DENSITY_FUNCTION);
          HolderGetter<Biome> biomes  = context.lookup(Registries.BIOME);
          HolderGetter<PlacedFeature> placedFeatures = context.lookup(Registries.PLACED_FEATURE);
          HolderGetter<StructureSet> structureSets = context.lookup(Registries.STRUCTURE_SET);
          HolderGetter<MultiNoiseBiomeSourceParameterList> multiNoiseBiomeSourceParameterLists
                  = context.lookup(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST);
          Holder<DimensionType> overworldDimensionType
-                 = holdergetter.getOrThrow(WildWorldSettings.DimensionTypes.OVERWORLD);
+                 = holdergetter.getOrThrow(RebornWorldConfiguration.DimensionTypes.OVERWORLD);
 
          Holder<DimensionType> holder = holdergetter.getOrThrow(BuiltinDimensionTypes.NETHER);
          Holder<NoiseGeneratorSettings> holder1 = noiseSettings.getOrThrow(NoiseGeneratorSettings.NETHER);
@@ -67,16 +64,9 @@
                  REBORN_WORLD,
                  makeOverworld(
                          overworldDimensionType,
-                         new WildChunkGenerator(
+                         new RebornChunkGenerator(
                                  biomeSource,
-                                 noiseSettings.getOrThrow(NoiseGeneratorSettings.OVERWORLD),
-                                 new WildGeneratorSettings(
-                                         WildWorldSettings.OVERWORLD_NOISE_SETTINGS,
-                                         Blocks.STONE.defaultBlockState(),
-                                         Blocks.WATER.defaultBlockState(),
-                                         RSurfaceRuleData.overworld(biomes),
-                                         68
-                                 )
+                                 rebornSettings.getOrThrow(RebornWorldSettings.OVERWORLD)
                          )
                  ),
                  netherStem,
@@ -86,11 +76,8 @@
      }
 
 
-     private static DensityFunction getFunction(HolderGetter<DensityFunction> densityFunctionRegistry, ResourceKey<DensityFunction> key) {
-         return new DensityFunctions.HolderHolder(densityFunctionRegistry.getOrThrow(key));
-     }
      private static ResourceKey<WorldPreset> register(String name) {
-         return ResourceKey.create(Registries.WORLD_PRESET, RWildernessMod.modLocation(name));
+         return ResourceKey.create(Registries.WORLD_PRESET, RWildernessMod.identifier(name));
      }
 
 

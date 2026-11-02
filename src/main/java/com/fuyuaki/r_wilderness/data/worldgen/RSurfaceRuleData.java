@@ -9,6 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.material.OverworldMaterialRules;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.biome.Biome;
@@ -62,7 +63,7 @@ public class RSurfaceRuleData {
     private static SurfaceRules.RuleSource makeStateRule(Block block) {
         return SurfaceRules.state(block.defaultBlockState());
     }
-    public static SurfaceRules.RuleSource overworld(HolderGetter<Biome> biomes) {
+    public static OverworldMaterialRules overworld(HolderGetter<Biome> biomes) {
         return overworldLike(biomes, true, false, true);
     }
     public static SurfaceRules.RuleSource overworldLike(HolderGetter<Biome> biomes, boolean doPreliminarySurfaceCheck, boolean bedrockRoof, boolean bedrockFloor

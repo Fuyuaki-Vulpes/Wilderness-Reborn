@@ -23,7 +23,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.Executor;
-import java.util.function.Supplier;
 
 @Mixin(ChunkMap.class)
 public class ChunkMapMixin implements ChunkMapBridge {
@@ -33,7 +32,7 @@ public class ChunkMapMixin implements ChunkMapBridge {
     private WorldGenContext worldGenContext;
 
     @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/ChunkGenerator;createState(Lnet/minecraft/core/HolderLookup;Lnet/minecraft/world/level/levelgen/RandomState;J)Lnet/minecraft/world/level/chunk/ChunkGeneratorStructureState;"))
-    private void createBiomeSource(ServerLevel level, LevelStorageSource.LevelStorageAccess storageSource, DataFixer fixerUpper, StructureTemplateManager structureManager, Executor dispatcher, BlockableEventLoop mainThreadExecutor, LightChunkGetter lightChunk, ChunkGenerator generator, ChunkStatusUpdateListener chunkStatusListener, Supplier overworldDataStorage, TicketStorage ticketStorage, int serverViewDistance, boolean sync, CallbackInfo ci)
+    private void createBiomeSource(ServerLevel level, LevelStorageSource.LevelStorageAccess levelStorage, DataFixer dataFixer, StructureTemplateManager structureManager, Executor executor, BlockableEventLoop mainThreadExecutor, LightChunkGetter chunkGetter, ChunkGenerator generator, ChunkStatusUpdateListener chunkStatusListener, TicketStorage ticketStorage, int serverViewDistance, boolean syncWrites, CallbackInfo ci)
     {
         if (generator instanceof ChunkGeneratorExtension ex)
         {
@@ -42,15 +41,7 @@ public class ChunkMapMixin implements ChunkMapBridge {
 
         }
     }
-/*
-    @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void createRandomStateExtension(ServerLevel level, LevelStorageSource.LevelStorageAccess storageSource, DataFixer fixerUpper, StructureTemplateManager structureManager, Executor dispatcher, BlockableEventLoop mainThreadExecutor, LightChunkGetter lightChunk, ChunkGenerator generator, ChunkStatusUpdateListener chunkStatusListener, Supplier overworldDataStorage, TicketStorage ticketStorage, int serverViewDistance, boolean sync, CallbackInfo ci)
-    {
-        if (generator instanceof ChunkGeneratorExtension ex)
-        {
-        }
-    }
-*/
+
     @Override
     public void updateGenerator(ChunkGenerator generator) {
 

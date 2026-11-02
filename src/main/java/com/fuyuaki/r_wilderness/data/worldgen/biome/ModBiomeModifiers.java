@@ -136,6 +136,6 @@ public class ModBiomeModifiers {
 
 
     private static ResourceKey<BiomeModifier> registerKey(String name) {
-        return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, RWildernessMod.modLocation(name));
+        return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, RWildernessMod.identifier(name));
     }
 }

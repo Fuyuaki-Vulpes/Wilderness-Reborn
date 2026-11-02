@@ -22,7 +22,7 @@ public class ModCarvers {
     public static final ResourceKey<ConfiguredWorldCarver<?>> SINKHOLE = createKey("sinkhole");
 
     private static ResourceKey<ConfiguredWorldCarver<?>> createKey(String name) {
-        return ResourceKey.create(Registries.CONFIGURED_CARVER, RWildernessMod.modLocation(name));
+        return ResourceKey.create(Registries.CONFIGURED_CARVER, RWildernessMod.identifier(name));
     }
 
     public static void bootstrap(BootstrapContext<ConfiguredWorldCarver<?>> context) {

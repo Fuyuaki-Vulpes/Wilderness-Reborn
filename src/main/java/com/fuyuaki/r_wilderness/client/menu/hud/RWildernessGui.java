@@ -21,25 +21,25 @@ import java.text.DecimalFormat;
 
 public class RWildernessGui {
 
-    private static final Identifier THIRST_HYDRATION_EMPTY_SPRITE = RWildernessMod.modLocation("hud/thirst_hydration_empty");
-    private static final Identifier THIRST_HYDRATION_HALF_SPRITE = RWildernessMod.modLocation("hud/thirst_hydration_half");
-    private static final Identifier THIRST_HYDRATION_FULL_SPRITE = RWildernessMod.modLocation("hud/thirst_hydration_full");
-    private static final Identifier HYDRATION_EMPTY_SPRITE = RWildernessMod.modLocation("hud/hydration_empty");
-    private static final Identifier HYDRATION_HALF_SPRITE = RWildernessMod.modLocation("hud/hydration_half");
-    private static final Identifier HYDRATION_FULL_SPRITE = RWildernessMod.modLocation("hud/hydration_full");
+    private static final Identifier THIRST_HYDRATION_EMPTY_SPRITE = RWildernessMod.identifier("hud/thirst_hydration_empty");
+    private static final Identifier THIRST_HYDRATION_HALF_SPRITE = RWildernessMod.identifier("hud/thirst_hydration_half");
+    private static final Identifier THIRST_HYDRATION_FULL_SPRITE = RWildernessMod.identifier("hud/thirst_hydration_full");
+    private static final Identifier HYDRATION_EMPTY_SPRITE = RWildernessMod.identifier("hud/hydration_empty");
+    private static final Identifier HYDRATION_HALF_SPRITE = RWildernessMod.identifier("hud/hydration_half");
+    private static final Identifier HYDRATION_FULL_SPRITE = RWildernessMod.identifier("hud/hydration_full");
 
-    private static final Identifier TEMPERATURE_POINTER_COLD_SPRITE = RWildernessMod.modLocation("hud/temperature_pointer_cold");
-    private static final Identifier TEMPERATURE_POINTER_SPRITE = RWildernessMod.modLocation("hud/temperature_pointer");
-    private static final Identifier TEMPERATURE_POINTER_HOT_SPRITE = RWildernessMod.modLocation("hud/temperature_pointer_hot");
-    private static final Identifier TEMPERATURE_BAR_SPRITE = RWildernessMod.modLocation("hud/temperature");
+    private static final Identifier TEMPERATURE_POINTER_COLD_SPRITE = RWildernessMod.identifier("hud/temperature_pointer_cold");
+    private static final Identifier TEMPERATURE_POINTER_SPRITE = RWildernessMod.identifier("hud/temperature_pointer");
+    private static final Identifier TEMPERATURE_POINTER_HOT_SPRITE = RWildernessMod.identifier("hud/temperature_pointer_hot");
+    private static final Identifier TEMPERATURE_BAR_SPRITE = RWildernessMod.identifier("hud/temperature");
 
-    private static final Identifier BODY_TEMPERATURE_HYPOTHERMIA_SPRITE = RWildernessMod.modLocation("hud/body_temperature/hypothermia");
-    private static final Identifier BODY_TEMPERATURE_FREEZING_SPRITE = RWildernessMod.modLocation("hud/body_temperature/freezing");
-    private static final Identifier BODY_TEMPERATURE_COLD_SPRITE = RWildernessMod.modLocation("hud/body_temperature/cold");
-    private static final Identifier BODY_TEMPERATURE_NEUTRAL_SPRITE = RWildernessMod.modLocation("hud/body_temperature/neutral");
-    private static final Identifier BODY_TEMPERATURE_HOT_SPRITE = RWildernessMod.modLocation("hud/body_temperature/hot");
-    private static final Identifier BODY_TEMPERATURE_BOILING_SPRITE = RWildernessMod.modLocation("hud/body_temperature/boiling");
-    private static final Identifier BODY_TEMPERATURE_HYPERTHERMIA_SPRITE = RWildernessMod.modLocation("hud/body_temperature/hyperthermia");
+    private static final Identifier BODY_TEMPERATURE_HYPOTHERMIA_SPRITE = RWildernessMod.identifier("hud/body_temperature/hypothermia");
+    private static final Identifier BODY_TEMPERATURE_FREEZING_SPRITE = RWildernessMod.identifier("hud/body_temperature/freezing");
+    private static final Identifier BODY_TEMPERATURE_COLD_SPRITE = RWildernessMod.identifier("hud/body_temperature/cold");
+    private static final Identifier BODY_TEMPERATURE_NEUTRAL_SPRITE = RWildernessMod.identifier("hud/body_temperature/neutral");
+    private static final Identifier BODY_TEMPERATURE_HOT_SPRITE = RWildernessMod.identifier("hud/body_temperature/hot");
+    private static final Identifier BODY_TEMPERATURE_BOILING_SPRITE = RWildernessMod.identifier("hud/body_temperature/boiling");
+    private static final Identifier BODY_TEMPERATURE_HYPERTHERMIA_SPRITE = RWildernessMod.identifier("hud/body_temperature/hyperthermia");
 
     public static void environmentTemperatureLayer(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();

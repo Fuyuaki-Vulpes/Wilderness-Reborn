@@ -1,15 +1,15 @@
 package com.fuyuaki.r_wilderness.api;
 
 import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
-import com.fuyuaki.r_wilderness.world.level.levelgen.WildGeneratorSettings;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldSettings;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
-public class WildRegistries {
+public class RRegistries {
 
 
-    public static final ResourceKey<Registry<WildGeneratorSettings>> WRGEN_SETTINGS_KEY = createRegistryKey("worldgen/generator_settings");
+    public static final ResourceKey<Registry<RebornWorldSettings>> WRGEN_SETTINGS = createRegistryKey("worldgen/reborn_settings");
     public static final ResourceKey<Registry<BiomePlacementData>> REBORN_BIOME_PLACEMENT_KEY = createRegistryKey("worldgen/biome_placement");
 
     private static <T> ResourceKey<Registry<T>> createRegistryKey(String name) {

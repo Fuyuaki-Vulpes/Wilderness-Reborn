@@ -32,17 +32,17 @@ public class RTags {
         public static final TagKey<Block> DECREASES_TEMPERATURE = tag("decreases_temperature");
 
         private static TagKey<Block> tag(String name) {
-            return TagKey.create(Registries.BLOCK, RWildernessMod.modLocation(name));
+            return TagKey.create(Registries.BLOCK, RWildernessMod.identifier(name));
         }
     }
     public static class EntityTypes {
         private static TagKey<EntityType<?>> tag(String name) {
-            return TagKey.create(Registries.ENTITY_TYPE, RWildernessMod.modLocation(name));
+            return TagKey.create(Registries.ENTITY_TYPE, RWildernessMod.identifier(name));
         }
     }
     public static class Items {
         private static TagKey<Item> tag(String name) {
-            return TagKey.create(Registries.ITEM, RWildernessMod.modLocation(name));
+            return TagKey.create(Registries.ITEM, RWildernessMod.identifier(name));
         }
     }
     public static class Fluids {
@@ -51,12 +51,12 @@ public class RTags {
         public static final TagKey<Fluid> RIVER_WATER = tag("river_water");
 
         private static TagKey<Fluid> tag(String name) {
-            return FluidTags.create(RWildernessMod.modLocation(name));
+            return FluidTags.create(RWildernessMod.identifier(name));
         }
     }
     public static class Enchantments {
         private static TagKey<Enchantment> tag(String name) {
-            return TagKey.create(Registries.ENCHANTMENT, RWildernessMod.modLocation(name));
+            return TagKey.create(Registries.ENCHANTMENT, RWildernessMod.identifier(name));
         }
     }
     public static class Biomes {
@@ -72,12 +72,12 @@ public class RTags {
 
 
         private static TagKey<Biome> tag(String name) {
-            return TagKey.create(Registries.BIOME, RWildernessMod.modLocation(name));
+            return TagKey.create(Registries.BIOME, RWildernessMod.identifier(name));
         }
     }
     public static class Structures {
         private static TagKey<Structure> tag(String name) {
-            return TagKey.create(Registries.STRUCTURE, RWildernessMod.modLocation(name));
+            return TagKey.create(Registries.STRUCTURE, RWildernessMod.identifier(name));
         }
     }
     public static class DamageTypes {
@@ -87,7 +87,7 @@ public class RTags {
 
         private static TagKey<DamageType> tag(String name) {
 
-            return TagKey.create(Registries.DAMAGE_TYPE, RWildernessMod.modLocation(name));
+            return TagKey.create(Registries.DAMAGE_TYPE, RWildernessMod.identifier(name));
         }
     }
 }

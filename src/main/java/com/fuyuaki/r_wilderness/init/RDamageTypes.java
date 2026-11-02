@@ -14,7 +14,7 @@ public class RDamageTypes {
 
 
     private static ResourceKey<DamageType> create (String key){
-        return ResourceKey.create(Registries.DAMAGE_TYPE, RWildernessMod.modLocation(key));
+        return ResourceKey.create(Registries.DAMAGE_TYPE, RWildernessMod.identifier(key));
     }
 
 

@@ -18,10 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class RegionFeatureGenerator {
@@ -32,35 +29,33 @@ public class RegionFeatureGenerator {
     public static final float RIVER_MINIMUM_HEIGHT_PROCESSOR = WildernessConstants.SEA_LEVEL - RiverNode.MAX_DEPTH;
     private static final int MAX_RIVER_POINTS_HEIGHT_SCAN = 8;
 
-    public static float[] calculateRasterizedPlatesForPosition(int xPos, int zPos, Map<RegionPos, WorldRegion> neighbors, TectonicPlateNode[] nearestNodes, float[] distances, int arrayHold) {
-        TectonicPlateNode[] nodes2 = new TectonicPlateNode[9];
-        float[] dist2 = new float[9];
+    public static float[] calculateRasterizedPlatesForPosition(int xPos, int zPos, Map<RegionPos, WorldRegion> neighbors, TectonicPlateNode[] nearestNodes, float[] distances, TectonicPlateNode[] nodes2, float[] dist2, int arrayHold, float[] localDataScratch, float[] pairResultsScratch, float[] finalRasterScratch, Map<RegionPos, WorldRegion> localNeighborCache) {
         Arrays.fill(nearestNodes, null);
         Arrays.fill(distances, Float.MAX_VALUE);
         Arrays.fill(nodes2, null);
         Arrays.fill(dist2, Float.MAX_VALUE);
         int scale = RegionPlates.MINOR_PLATE_SIZE;
         int scanZone = 8;
-        int x;
-        int z;
-        RegionPos pos;
-        TectonicPlateNode nearbyNode;
-        float distance;
-        boolean shouldInsert;
+
+        // 1. Primary Scan Zone (Nearest Nodes)
         for (int xO = -scanZone; xO <= scanZone; xO++) {
             for (int zO = -scanZone; zO <= scanZone; zO++) {
-                x = xPos + (xO * scale);
-                z = zPos + (zO * scale);
+                int x = xPos + (xO * scale);
+                int z = zPos + (zO * scale);
 
-                pos = new RegionPos(RegionPos.fromBlockCoord(x),
-                        RegionPos.fromBlockCoord(z));
+                int regX = RegionPos.fromBlockCoord(x);
+                int regZ = RegionPos.fromBlockCoord(z);
 
-                nearbyNode = neighbors.get(pos).getNbtData().plates().closestNode(x, z);
+                // Use local cache to avoid redundant map lookups and RegionPos allocations
+                WorldRegion region = getCachedRegion(regX, regZ, neighbors, localNeighborCache);
+                if (region == null) continue;
 
+                TectonicPlateNode nearbyNode = region.getNbtData().plates().closestNode(x, z);
                 if (nearbyNode == null) continue;
-                distance = nearbyNode.getWeightedDistance(xPos, zPos);
 
-                shouldInsert = true;
+                float distance = nearbyNode.getWeightedDistance(xPos, zPos);
+
+                boolean shouldInsert = true;
                 for (int k = 0; k < arrayHold; k++) {
                     if (nearestNodes[k] != null && nearestNodes[k].getId() == nearbyNode.getId()) {
                         if (distance >= distances[k]) {
@@ -80,7 +75,6 @@ public class RegionFeatureGenerator {
 
                 if (!shouldInsert) continue;
 
-
                 for (int i = 0; i < arrayHold; i++) {
                     if (distance < distances[i]) {
                         for (int j = arrayHold - 1; j > i; j--) {
@@ -92,29 +86,31 @@ public class RegionFeatureGenerator {
                         break;
                     }
                 }
-
-
             }
         }
+
+        // 2. Secondary Scan Zone (nodes2)
         for (int xO = -1; xO <= 1; xO++) {
             for (int zO = -1; zO <= 1; zO++) {
-                x = xPos + (xO * scale);
-                z = zPos + (zO * scale);
+                int x = xPos + (xO * scale);
+                int z = zPos + (zO * scale);
 
-                pos = new RegionPos(RegionPos.fromBlockCoord(x),
-                        RegionPos.fromBlockCoord(z));
+                int regX = RegionPos.fromBlockCoord(x);
+                int regZ = RegionPos.fromBlockCoord(z);
 
-                nearbyNode = neighbors.get(pos).getNbtData().plates().closestNode(x, z);
+                WorldRegion region = getCachedRegion(regX, regZ, neighbors, localNeighborCache);
+                if (region == null) continue;
 
+                TectonicPlateNode nearbyNode = region.getNbtData().plates().closestNode(x, z);
                 if (nearbyNode == null) continue;
-                distance = nearbyNode.getWeightedDistance(xPos, zPos);
 
-                shouldInsert = true;
+                float distance = nearbyNode.getWeightedDistance(xPos, zPos);
+
+                boolean shouldInsert = true;
                 for (TectonicPlateNode tectonicPlateNode : nodes2) {
                     if (tectonicPlateNode != null && tectonicPlateNode == nearbyNode) {
                         shouldInsert = false;
                         break;
-
                     }
                 }
                 if (!shouldInsert) continue;
@@ -132,10 +128,9 @@ public class RegionFeatureGenerator {
                 }
             }
         }
-        float[] finalMap = new float[GenerationUtils.TectonicArrayIndex.LAYER_COUNT];
-        Arrays.fill(finalMap, 0.0f);
-        if (nearestNodes[0] == null) return finalMap;
 
+        float[] finalMap = new float[GenerationUtils.TectonicArrayIndex.LAYER_COUNT];
+        if (nearestNodes[0] == null) return finalMap;
 
         int weightI = GenerationUtils.TectonicArrayIndex.WEIGHT;
         int edgeI = GenerationUtils.TectonicArrayIndex.EDGES;
@@ -153,12 +148,12 @@ public class RegionFeatureGenerator {
         finalMap[volcanicI] = 0;
         finalMap[stressI] = 0;
 
-        float[] localData = makePlateData(dist2, nodes2);
-        finalMap[buoyancyI] = localData[0];
-        finalMap[distI] = localData[1];
-        float localAge = localData[2];
+        makePlateData(dist2, nodes2, localDataScratch);
+        finalMap[buoyancyI] = localDataScratch[0];
+        finalMap[distI] = localDataScratch[1];
+        float localAge = localDataScratch[2];
         finalMap[ageI] = localAge;
-        finalMap[swellI] = localData[3];
+        finalMap[swellI] = localDataScratch[3];
 
         if (nearestNodes[1] == null) return finalMap;
 
@@ -166,36 +161,56 @@ public class RegionFeatureGenerator {
         while (validNodeCount < nearestNodes.length && nearestNodes[validNodeCount] != null) {
             validNodeCount++;
         }
-        if (validNodeCount < 2) return new float[]{nearestNodes[0].getWeight(), 0, 0, 0, 0};
+        if (validNodeCount < 2) {
+            finalMap[weightI] = nearestNodes[0].getWeight();
+            return finalMap;
+        }
 
         float closestDist = distances[0];
         TectonicPlateNode closestNode = nearestNodes[0];
 
-        float[] rasterFinal = calculatePlateRasterization(validNodeCount, nearestNodes, distances, closestNode, closestDist);
-        finalMap[weightI] = rasterFinal[weightI];
-        finalMap[edgeI] = rasterFinal[edgeI];
+        calculatePlateRasterization(validNodeCount, nearestNodes, distances, closestNode, closestDist, finalRasterScratch, pairResultsScratch);
 
-        pos = new RegionPos(RegionPos.fromBlockCoord(xPos),
-                RegionPos.fromBlockCoord(zPos));
+        finalMap[weightI] = finalRasterScratch[weightI];
+        finalMap[edgeI] = finalRasterScratch[edgeI];
 
-        WorldRegion regionAt = neighbors.get(pos);
-        float volcanicness;
-        try {
-            float min = 0.35f;
-            volcanicness = Math.max(((float) regionAt.layers().record().volcanicness().getNoise().noise(xPos,zPos) - min) / (1 - min),0.0f);
-        }catch (Exception e) {
-            volcanicness = 0.0f;
+        int centerRegX = RegionPos.fromBlockCoord(xPos);
+        int centerRegZ = RegionPos.fromBlockCoord(zPos);
+        WorldRegion regionAt = getCachedRegion(centerRegX, centerRegZ, neighbors, localNeighborCache);
+
+        float volcanicness = 0.0f;
+        if (regionAt != null) {
+            try {
+                float min = 0.35f;
+                float noiseVal = (float) regionAt.layers().record().volcanicness().getNoise().noise(xPos, zPos);
+                volcanicness = Math.max((noiseVal - min) / (1.0f - min), 0.0f);
+            } catch (Exception ignored) {}
         }
 
-        finalMap[heightI] = rasterFinal[heightI] * (0.75f + ((float) neighbors.get(pos).layers().record().tectonicIntensity().getNoise().noise(xPos,zPos) * 0.25f));
-        finalMap[volcanicI] = Mth.clamp(rasterFinal[volcanicI] + (volcanicness * volcanicness * localAge * localAge),0.0f,1.0f);
-        finalMap[stressI] = rasterFinal[stressI];
-        finalMap[buoyancyI] = localData[0];
+        float tectonicIntensity = 1.0f;
+        if (regionAt != null) {
+            try {
+                tectonicIntensity = 0.75f + ((float) regionAt.layers().record().tectonicIntensity().getNoise().noise(xPos, zPos) * 0.25f);
+            } catch (Exception ignored) {}
+        }
+
+        finalMap[heightI] = finalRasterScratch[heightI] * tectonicIntensity;
+        finalMap[volcanicI] = Mth.clamp(finalRasterScratch[volcanicI] + (volcanicness * volcanicness * localAge * localAge), 0.0f, 1.0f);
+        finalMap[stressI] = finalRasterScratch[stressI];
+        finalMap[buoyancyI] = localDataScratch[0];
+
         return finalMap;
     }
 
-    private static float[] makePlateData(float[] distances, TectonicPlateNode[] nodes) {
+    // Helper for local region caching without object allocation thrashing
+    private static WorldRegion getCachedRegion(int regX, int regZ, Map<RegionPos, WorldRegion> sourceMap, Map<RegionPos, WorldRegion> cache) {
+        // If using Java, you can pool or use a temporary lookup object if RegionPos is immutable.
+        // Ideally, pass a reusable wrapper or use primitive long keys if performance is critical.
+        RegionPos tempPos = new RegionPos(regX, regZ);
+        return cache.computeIfAbsent(tempPos, sourceMap::get);
+    }
 
+    private static void makePlateData(float[] distances, TectonicPlateNode[] nodes, float[] outResult) {
         float closestDist = distances[0];
         TectonicPlateNode closest = nodes[0];
 
@@ -213,22 +228,18 @@ public class RegionFeatureGenerator {
         while (validNodeCount < nodes.length && nodes[validNodeCount] != null) {
             validNodeCount++;
         }
-        float otherDist;
-        float distanceDifference;
-        float d2;
-        float pairBias;
-        float parentDist;
+
         for (int i = 0; i < validNodeCount; i++) {
             float range = effectRange;
-
             TectonicPlateNode otherNode = nodes[i];
-            otherDist = distances[i];
-            if (closest.getId() != otherNode.getId()) range = effectRange / 2;
+            float otherDist = distances[i];
+            if (closest.getId() != otherNode.getId()) range = effectRange / 2f;
 
-            distanceDifference = otherDist - closestDist;
-            d2 = Math.clamp(1 - (distanceDifference / range), 0, 1);
-            pairBias = (d2 * d2 * (3.0f - 2.0f * d2));
-            parentDist = Math.clamp(otherNode.getDistToParent() / maxParentDist, 0, 1);
+            float distanceDifference = otherDist - closestDist;
+            float d2 = Math.clamp(1.0f - (distanceDifference / range), 0.0f, 1.0f);
+            float pairBias = (d2 * d2 * (3.0f - (2.0f * d2)));
+
+            float parentDist = Math.clamp(otherNode.getDistToParent() / maxParentDist, 0.0f, 1.0f);
             distToParent += parentDist * pairBias;
             buoyancies += otherNode.getBuoyancy() * pairBias;
             age += otherNode.getAge() * pairBias;
@@ -236,15 +247,13 @@ public class RegionFeatureGenerator {
             total += pairBias;
         }
 
-        return new float[]{
-                buoyancies / total,
-                distToParent / total,
-                age / total,
-                swell / total,
-        };
+        outResult[0] = buoyancies / total;
+        outResult[1] = distToParent / total;
+        outResult[2] = age / total;
+        outResult[3] = swell / total;
     }
 
-    private static float[] calculatePlateRasterization(int validNodeCount, TectonicPlateNode[] nearestNodes, float[] distances, TectonicPlateNode closestNode, float closestDist) {
+    private static void calculatePlateRasterization(int validNodeCount, TectonicPlateNode[] nearestNodes, float[] distances, TectonicPlateNode closestNode, float closestDist, float[] finalRaster, float[] pairResultsScratch) {
         float boundaryWidth = RegionPlates.MAJOR_PLATE_SIZE * 0.35f;
         int weightI = GenerationUtils.TectonicArrayIndex.WEIGHT;
         int edgeI = GenerationUtils.TectonicArrayIndex.EDGES;
@@ -262,84 +271,74 @@ public class RegionFeatureGenerator {
         float weights = closestNode.getWeight();
 
         float dist12 = distances[1] - closestDist;
-        float multiplier = Math.clamp(dist12 / (boundaryWidth / 2), 0.0f, 1.0f);
+        float multiplier = Math.clamp(dist12 / (boundaryWidth / 2f), 0.0f, 1.0f);
 
         final float blendFactor = 0.25f;
         float total = 1.0f;
-        TectonicPlateNode otherNode;
-        float otherDist;
-        float distanceDifference;
-        float d;
-        float pairWeight;
-        float pairFarWeight;
-        float d2;
-        float pairWeight2;
-        float[] pairResults;
-        float effectiveDeform;
+
         for (int i = 0; i < validNodeCount; i++) {
-            otherNode = nearestNodes[i];
-            otherDist = distances[i];
+            TectonicPlateNode otherNode = nearestNodes[i];
+            float otherDist = distances[i];
             if (closestNode.getId() == otherNode.getId()) continue;
 
-            distanceDifference = otherDist - closestDist;
-            d = Math.clamp(1 - (distanceDifference / boundaryWidth), 0, 1);
-            pairWeight = (d * d * (3.0f - 2.0f * d));
-            pairFarWeight = d ;
-            d2 = Math.clamp(1 - (distanceDifference / (boundaryWidth / 2)), 0, 1);
-            pairWeight2 = (d2 * d2 * (3.0f - 2.0f * d2));
-            pairResults = getRasterizedDeformation(closestNode, otherNode, otherDist, closestDist, boundaryWidth);
+            float distanceDifference = otherDist - closestDist;
+            float d = Math.clamp(1.0f - (distanceDifference / boundaryWidth), 0.0f, 1.0f);
+            float pairWeight = (d * d * (3.0f - (2.0f * d)));
 
-            effectiveDeform = pairResults[0] * pairWeight;
+            float pairFarWeight = d;
+            float d2 = Math.clamp(1.0f - (distanceDifference / (boundaryWidth / 2f)), 0.0f, 1.0f);
+            float pairWeight2 = (d2 * d2 * (3.0f - (2.0f * d2)));
+
+            getRasterizedDeformation(closestNode, otherNode, otherDist, closestDist, boundaryWidth, pairResultsScratch);
+
+            float effectiveDeform = pairResultsScratch[0] * pairWeight;
             if (effectiveDeform > 0.0f) {
                 if (effectiveDeform > highestDeform) {
                     subHighDeform += highestDeform * blendFactor;
                     highestDeform = effectiveDeform;
-
                 } else {
                     subHighDeform += effectiveDeform;
-
                 }
-            } else if (effectiveDeform <= 0.0f) {
+            } else {
                 if (effectiveDeform < lowestDeform) {
                     subLowDeform += lowestDeform * blendFactor;
                     lowestDeform = effectiveDeform;
-
                 } else {
                     subLowDeform += effectiveDeform;
-
                 }
             }
-            totalVolcanicness += pairResults[1] * pairWeight;
-            totalStress += pairResults[2] * pairFarWeight * 2.0f;
+            totalVolcanicness += pairResultsScratch[1] * pairWeight;
+            totalStress += pairResultsScratch[2] * pairFarWeight * 2.0f;
 
             weights += otherNode.getWeight() * pairWeight2;
             total += pairWeight2;
         }
 
-        float[] finalRaster = new float[5];
         finalRaster[weightI] = weights / total;
-        float edge1 = 1 - multiplier;
+        float edge1 = 1.0f - multiplier;
+
         finalRaster[edgeI] = edge1;
         finalRaster[heightI] = highestDeform + subHighDeform + lowestDeform + subLowDeform;
         finalRaster[volcanicI] = Math.clamp(totalVolcanicness, 0.0f, 1.0f);
         finalRaster[stressI] = Math.clamp(totalStress, 0.0f, 1.0f);
-
-
-        return finalRaster;
     }
 
-    public static float[] getRasterizedDeformation(TectonicPlateNode closestNode, TectonicPlateNode otherNode, float otherDist, float closestDist, float boundaryWidth) {
+    public static void getRasterizedDeformation(TectonicPlateNode closestNode, TectonicPlateNode otherNode, float otherDist, float closestDist, float boundaryWidth, float[] resultsOut) {
         boolean lockedHeightOffset = false;
         float finalHeightOff = 0.0f;
         float distWithSideBias = otherDist - closestDist;
         float distToEdge = Math.abs(distWithSideBias);
-        float[] otherResults = new float[]{0.0f, 0.0f};
+
+        resultsOut[0] = 0.0f; // height
+        resultsOut[1] = 0.0f; // volcanic / stress accumulator
+
         if (distToEdge >= boundaryWidth) {
             lockedHeightOffset = true;
         }
 
         float bF = 1.0f - (distToEdge / boundaryWidth);
-        float boundaryFadeSmooth = bF * bF * (3.0f - 2.0f * bF);
+        float boundaryFadeSmooth = bF * bF * (3.0f - (2.0f * bF));
+
         float weight1 = closestNode.getWeight();
         float weight2 = otherNode.getWeight();
 
@@ -359,8 +358,6 @@ public class RegionFeatureGenerator {
                 lockedHeightOffset = true;
             }
             if (!lockedHeightOffset) {
-
-
                 distToBX /= length;
                 distToBZ /= length;
 
@@ -373,19 +370,16 @@ public class RegionFeatureGenerator {
                 float collisionSpeed = Math.max(0.0f, -directSpeed);
                 float separationSpeed = Math.max(0.0f, directSpeed);
 
-                float convergenceShift = makeConvergence(distToEdge, collisionSpeed, weightDifference, boundaryWidth, otherResults);
-                float divergenceShift = makeDivergence(distToEdge, separationSpeed, boundaryWidth, otherResults);
-
-
-                float shearDeformation = makeShear(transformSpeed, distToEdge, boundaryWidth, otherResults);
+                float convergenceShift = makeConvergence(distToEdge, collisionSpeed, weightDifference, boundaryWidth, resultsOut);
+                float divergenceShift = makeDivergence(distToEdge, separationSpeed, boundaryWidth, resultsOut);
+                float shearDeformation = makeShear(transformSpeed, distToEdge, boundaryWidth, resultsOut);
 
                 float heightOffset = convergenceShift + divergenceShift + shearDeformation;
-
                 finalHeightOff = heightOffset * boundaryFadeSmooth;
             }
         }
 
-        return new float[]{finalHeightOff, otherResults[0], otherResults[1]};
+        resultsOut[0] = finalHeightOff;
     }
 
     private static float makeShear(float transformSpeed, float distToEdge, float boundaryWidth, float[] results) {
@@ -403,35 +397,29 @@ public class RegionFeatureGenerator {
 
     private static float makeConvergence(float distanceToEdge, float convergenceSpeed, float weightDifference, float boundaryWidth, float[] results) {
         float wShift = Math.signum(weightDifference);
-
-
         float shiftIntensity = 3.0f;
         float subdueBias = Math.clamp(weightDifference * shiftIntensity, -1.0f, 1.0f);
-        float collisionBias = 1.0f - Math.abs(subdueBias);
-
 
         float mountainRadius = boundaryWidth * 0.25f;
         float mDistanceRatio = distanceToEdge / mountainRadius;
 
         float collisionGaussian = (float) Math.exp(-mDistanceRatio * mDistanceRatio);
-        float collisionShift = WildernessConstants.MAX_MOUNTAIN_HEIGHT * collisionBias * collisionGaussian;
+        float collisionShift = WildernessConstants.MAX_MOUNTAIN_HEIGHT * Math.clamp(1.0f - Math.abs(subdueBias), 0.0f, 1.0f) * collisionGaussian;
         float subdueShift;
         float volcanicArcFactor = 0.0f;
 
-        //TRENCH
         if (wShift < 0.0f) {
             float trenchRatio = distanceToEdge / (boundaryWidth * 0.3f);
             if (trenchRatio > 1.0f) {
                 subdueShift = 0.0f;
             } else {
-                subdueShift = -WildernessConstants.MAX_TRENCH_DEPTH * (1.0f - trenchRatio * trenchRatio);
+                subdueShift = -WildernessConstants.MAX_TRENCH_DEPTH * (1.0f - (trenchRatio * trenchRatio));
             }
         } else {
-            //OVERRIDE
             float arcPeakDist = boundaryWidth * 0.25f;
             if (distanceToEdge < arcPeakDist) {
                 float t = distanceToEdge / arcPeakDist;
-                float smoothT = (t * t * (3.0f - 2.0f * t));
+                float smoothT = (t * t * (3.0f - (2.0f * t)));
                 subdueShift = -WildernessConstants.MAX_TRENCH_DEPTH + ((WildernessConstants.MAX_TRENCH_DEPTH + WildernessConstants.MAX_ARC_HEIGHT) * smoothT);
                 volcanicArcFactor = smoothT;
             } else {
@@ -444,9 +432,10 @@ public class RegionFeatureGenerator {
 
         float subdueShiftPost = subdueShift * Math.abs(subdueBias);
 
-        results[0] += volcanicArcFactor * Math.abs(subdueBias) * convergenceSpeed;
+        results[1] += volcanicArcFactor * Math.abs(subdueBias) * convergenceSpeed;
         float compressionalStress = Math.max(collisionGaussian, 1.0f - Math.min(1.0f, distanceToEdge / (boundaryWidth * 0.3f)));
         results[1] += compressionalStress * convergenceSpeed;
+
         return (subdueShiftPost + collisionShift) * (convergenceSpeed * 0.5f + 0.5f);
     }
 
@@ -458,11 +447,10 @@ public class RegionFeatureGenerator {
 
         float riftGaussian = (float) Math.exp(-distanceRatio * distanceRatio);
         float riftValleyDownShift = -riftValleyDepth * riftGaussian;
-        results[0] += divergenceSpeed * riftGaussian;
+        results[1] += divergenceSpeed * riftGaussian;
 
         return divergenceSpeed * (riftValleyDownShift + riftValleyUpShift);
     }
-
 
     public static RegionFloatMap[] createRasterizedPlateLayers(RegionPos pos, Map<RegionPos, WorldRegion> neighbors, WorldRegion worldRegion) {
         int minX = RegionPos.toBlockCoord(pos.x());
@@ -483,18 +471,34 @@ public class RegionFeatureGenerator {
             int startX = thread * samples;
             int endX = startX + samples;
             futures[thread] = CompletableFuture.runAsync(() -> {
+                // Allocate scratch buffers once per thread, not per pixel!
                 TectonicPlateNode[] nearestNodes = new TectonicPlateNode[arrayHold];
                 float[] distances = new float[arrayHold];
+                TectonicPlateNode[] nodes2 = new TectonicPlateNode[9];
+                float[] dist2 = new float[9];
+                float[] localDataScratch = new float[4];
+                float[] pairResultsScratch = new float[2];
+                float[] finalRasterScratch = new float[5];
+                Map<RegionPos, WorldRegion> localNeighborCache = new HashMap<>();
+
                 int trueX;
                 int trueZ;
                 float[] rasterLocal;
                 float r;
+
                 for (int xPos = startX; xPos < endX; xPos++) {
                     int xAdapted = xPos * resolution;
                     for (int zPos = 0; zPos < resolution; zPos++) {
                         trueX = xPos * scale + minX;
                         trueZ = zPos * scale + minZ;
-                        rasterLocal = calculateRasterizedPlatesForPosition(trueX, trueZ, neighbors, nearestNodes, distances, arrayHold);
+
+                        localNeighborCache.clear(); // Clear cache per pixel or keep per row if stable
+
+                        rasterLocal = calculateRasterizedPlatesForPosition(
+                                trueX, trueZ, neighbors, nearestNodes, distances, nodes2, dist2,
+                                arrayHold, localDataScratch, pairResultsScratch, finalRasterScratch, localNeighborCache
+                        );
+
                         for (int i = 0; i < GenerationUtils.TectonicArrayIndex.LAYER_COUNT; i++) {
                             r = rasterLocal[i];
                             if (rasterizedPlates[i].getNoiseMap() != null) {
@@ -507,6 +511,7 @@ public class RegionFeatureGenerator {
             });
         }
         CompletableFuture.allOf(futures).join();
+
         for (int i = 0; i < GenerationUtils.TectonicArrayIndex.LAYER_COUNT; i++) {
             rasterizedPlates[i].updateMap(maps[i]);
             rasterizedPlates[i].setStatus(RegionFloatMap.Status.COMPLETE);

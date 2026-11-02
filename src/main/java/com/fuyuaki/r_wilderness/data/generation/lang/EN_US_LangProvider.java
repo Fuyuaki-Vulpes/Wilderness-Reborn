@@ -128,10 +128,6 @@ public class EN_US_LangProvider extends LanguageProvider {
         add("r_wilderness.generation.warn","The game may Slow Down, Lag, or Freeze while loading!");
         add("r_wilderness.generation.warn_second_line","16384 to 32768 blocks are generated in every direction! Please wait at least 10 minutes before closing.");
 
-        add("commands.r_wilderness.arguments.region_layer.invalid", "Region Layer must be one of %1$s, found invalid Key %2$s");
-        add("commands.r_wilderness.arguments.region_layer.success", "Best Match for value %s, for Region Layer %s, at value %s, is at %s (%s blocks away)");
-        add("commands.r_wilderness.arguments.region_layer.fail", "Could not find match for value %s within %s");
-
 
     }
 
@@ -148,15 +144,11 @@ public class EN_US_LangProvider extends LanguageProvider {
 
 
     private void commands() {
+        add("commands.r_wilderness.arguments.region_layer.invalid", "Region Layer must be one of %1$s, found invalid Key %2$s");
+        add("commands.r_wilderness.arguments.region_layer.success", "Best Match for value %s, for Region Layer %s, at value %s, is at %s (%s blocks away)");
+        add("commands.r_wilderness.arguments.region_layer.fail", "Could not find match for value %s within %s");
 
-/*
-        add("r_wilderness.commands.locate.not_found", "Could not find goal within reasonable distance");
-        add("r_wilderness.commands.locate.river.success", "The nearest River is at %s (%s blocks away)");
-        add("r_wilderness.commands.locate.terrain.success", "The nearest Target Terrain is at %s (%s blocks away)");
-        add("r_wilderness.chat.horizontal_coordinates", "%s , %s");
-        add("r_wilderness.chat.horizontal_coordinates.tooltip", "Click to teleport");
 
-*/
     }
 
 

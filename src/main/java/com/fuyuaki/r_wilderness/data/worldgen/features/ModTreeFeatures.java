@@ -23,9 +23,9 @@ import net.minecraft.world.level.levelgen.feature.treedecorators.PlaceOnGroundDe
 import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
 
 public class ModTreeFeatures {
-    public static final ResourceKey<ConfiguredFeature<?,?>> ALPINE_TREE = ModFeatureUtils.createKey("alpine_tree");
+    public static final ResourceKey<Feature> ALPINE_TREE = ModFeatureUtils.createKey("alpine_tree");
 
-    public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
+    public static void bootstrap(BootstrapContext<Feature> context) {
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
 
         BeehiveDecorator beehive0002 = new BeehiveDecorator(0.002F);

@@ -1,10 +1,11 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
+import com.fuyuaki.r_wilderness.world.level.levelgen.MaterialSystemExtension;
 import com.fuyuaki.r_wilderness.world.level.levelgen.ChunkGeneratorExtension;
 import com.fuyuaki.r_wilderness.world.level.levelgen.RandomStateExtension;
-import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.SurfaceSystemExtension;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.NoiseRouter;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 import net.minecraft.world.level.levelgen.RandomState;
 import org.jetbrains.annotations.Nullable;
@@ -26,25 +27,25 @@ public class RandomStateMixin implements RandomStateExtension {
     private ChunkGeneratorExtension wildernessReborn$chunkGeneratorExtension = null;
     @Unique
     @Nullable
-    private SurfaceSystemExtension surfaceSystemExtension = null;
+    private MaterialSystemExtension materialSystemExtension = null;
 
     @Inject(method = "<init>",at = @At("RETURN"))
-    private void initMethod(NoiseGeneratorSettings settings, HolderGetter noiseParametersGetter, long levelSeed, CallbackInfo ci){
-        this.surfaceSystemExtension = new SurfaceSystemExtension((RandomState)(Object)this, settings.defaultBlock(), settings.seaLevel(), this.random);
+    private void initMethod(HolderGetter noises, long seed, boolean useLegacyRandom, BlockState defaultBlock, int seaLevel, NoiseRouter router, CallbackInfo ci){
+        this.materialSystemExtension = new MaterialSystemExtension((RandomState)(Object)this, seaLevel,defaultBlock, this.random);
     }
     @Override
-    public void wildernessReborn$setChunkGeneratorExtension(@Nullable ChunkGeneratorExtension ex) {
+    public void setChunkGeneratorExtension(@Nullable ChunkGeneratorExtension ex) {
         wildernessReborn$chunkGeneratorExtension = ex;
     }
 
     @Nullable
     @Override
-    public ChunkGeneratorExtension wildernessReborn$getChunkGeneratorExtension() {
+    public ChunkGeneratorExtension getChunkGeneratorExtension() {
         return wildernessReborn$chunkGeneratorExtension;
     }
 
     @Override
-    public SurfaceSystemExtension getSurfaceSystemExtension() {
-        return this.surfaceSystemExtension;
+    public MaterialSystemExtension getMaterialSystemExtension() {
+        return this.materialSystemExtension;
     }
 }

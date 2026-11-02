@@ -3,26 +3,30 @@ package com.fuyuaki.r_wilderness.util.math;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public record FloatRange (float min, float mean, float max) {
-
+public record FloatRange (float min, float mean, float max, boolean any) {
 
     public static final Codec<FloatRange> CODEC = RecordCodecBuilder.create(
             p_223591_ -> p_223591_.group(
                             Codec.FLOAT.fieldOf("min").forGetter(FloatRange::min),
                             Codec.FLOAT.fieldOf("mean").forGetter(FloatRange::mean),
-                            Codec.FLOAT.fieldOf("max").forGetter(FloatRange::max)
+                            Codec.FLOAT.fieldOf("max").forGetter(FloatRange::max),
+                            Codec.BOOL.fieldOf("any").forGetter(FloatRange::any)
                     )
                     .apply(p_223591_, FloatRange::new)
     );
-    public static final FloatRange ZERO = new FloatRange(0.0f, 0.0f, 0.0f);
-    public static final FloatRange ANY = new FloatRange(-1.0f, 0.0f, 1.0f);
-    public static final FloatRange MILD = new FloatRange(-0.15f, 0.0f, 0.15f);
+    public static final FloatRange ZERO = new FloatRange(0.0f, 0.0f, 0.0f,false);
+    public static final FloatRange ANY = new FloatRange(-1.5f, 0.0f, 1.5f,true);
+    public static final FloatRange MILD = new FloatRange(-0.15f, 0.0f, 0.15f,false);
 
+
+    public FloatRange(float min, float mean, float max) {
+        this(min,mean,max,false);
+    }
     @Override
     public boolean equals(Object obj) {
         return obj instanceof FloatRange(
-                float min1, float mean1, float max1
-        ) && min1 == this.min && mean1 == this.mean && max1 == this.max;
+                float min1, float mean1, float max1, boolean any1
+        ) && min1 == this.min && mean1 == this.mean && max1 == this.max && any1 == this.any;
     }
 
     public static FloatRange of(float min, float max) {
@@ -30,17 +34,24 @@ public record FloatRange (float min, float mean, float max) {
         return of(min,mean,max);
     }
     public static FloatRange of(float min, float mean, float max) {
-        return new FloatRange(min,mean,max);
+        return new FloatRange(min,mean,max,false);
     }
-
+    public static FloatRange anyIn(float min, float max) {
+        float mean = min + (max-min) / 2.0f;
+        return new FloatRange(min,mean,max,true);
+    }
+    public static FloatRange anyIn(float min, float mean, float max) {
+        return new FloatRange(min,mean,max,true);
+    }
 
     public boolean accepts(float value) {
         return value >= min && value <= max;
     }
 
     public float affinity(float value) {
-
-
+        if (any && value > min && value < max) {
+            return 1.0f;
+        }
         float p;
         float a;
 
@@ -70,7 +81,9 @@ public record FloatRange (float min, float mean, float max) {
     }
 
     public float affinityHarsh(float value) {
-
+        if (any && value > min && value < max) {
+            return 1.0f;
+        }
 
         float p;
         float a;

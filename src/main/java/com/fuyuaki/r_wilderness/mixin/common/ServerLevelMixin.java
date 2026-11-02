@@ -2,8 +2,7 @@ package com.fuyuaki.r_wilderness.mixin.common;
 
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.generation.region.ServerLevelRegionMemoryFetcher;
-import com.fuyuaki.r_wilderness.world.level.levelgen.WildChunkGenerator;
-import com.fuyuaki.r_wilderness.world.level.levelgen.WildWorldSettings;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornChunkGenerator;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -24,7 +23,6 @@ import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
-import net.neoforged.neoforge.event.EventHooks;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,7 +33,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.function.BooleanSupplier;
 
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin extends Level implements ServerEntityGetter, WorldGenLevel, ServerLevelRegionMemoryFetcher {
@@ -60,9 +57,9 @@ public abstract class ServerLevelMixin extends Level implements ServerEntityGett
     //Initializes the Region Generator before ChunkGenerator.
     @Inject(method = "<init>",at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/dimension/LevelStem;generator()Lnet/minecraft/world/level/chunk/ChunkGenerator;"), cancellable = false)
     private void init(MinecraftServer server, Executor executor, LevelStorageSource.LevelStorageAccess levelStorage, ServerLevelData levelData, ResourceKey dimension, LevelStem levelStem, boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime, CallbackInfo ci){
-        if (levelStem.generator() instanceof WildChunkGenerator){
-        this.regionMemory = new RegionMemory();
-        this.regionMemory.initialize((ServerLevel)(Object)this);
+        if (levelStem.generator() instanceof RebornChunkGenerator){
+            this.regionMemory = new RegionMemory();
+            this.regionMemory.initialize((ServerLevel)(Object)this);
         }
     }
 

@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 public class DebugEntryRegionStatus implements DebugScreenEntry {
-    public static final Identifier GROUP = RWildernessMod.modLocation("regions");
+    public static final Identifier GROUP = RWildernessMod.identifier("regions");
 
     @Override
     public void display(DebugScreenDisplayer displayer, @Nullable Level serverOrClientLevel, @Nullable LevelChunk clientChunk, @Nullable LevelChunk serverChunk) {

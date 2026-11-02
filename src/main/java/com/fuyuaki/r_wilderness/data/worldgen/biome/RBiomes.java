@@ -31,6 +31,6 @@ public class RBiomes {
 
 
     public static ResourceKey<Biome> biome(String name){
-        return ResourceKey.create(Registries.BIOME, RWildernessMod.modLocation(name));
+        return ResourceKey.create(Registries.BIOME, RWildernessMod.identifier(name));
     }
 }

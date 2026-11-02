@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.data.generation.tags;
 
-import com.fuyuaki.r_wilderness.world.level.levelgen.ModWorldPresets;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldPresets;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -22,7 +22,7 @@ public class GenWorldPresetTags extends TagsProvider<WorldPreset> {
     @Override
     protected void addTags(HolderLookup.Provider p_255734_) {
         this.tag(WorldPresetTags.NORMAL)
-                .add(ModWorldPresets.REBORN_WORLD);
+                .add(RebornWorldPresets.REBORN_WORLD);
 
     }
 }

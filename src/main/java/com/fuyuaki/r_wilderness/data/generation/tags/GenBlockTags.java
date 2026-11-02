@@ -11,6 +11,7 @@ import net.minecraft.data.tags.TagAppender;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BlockItemTagId;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
@@ -49,14 +50,14 @@ public class GenBlockTags extends BlockTagsProvider {
                 RBlocks.MAGNEISS.get(),
                 RBlocks.MALATITE.get()
         );
-        this.tag(Tags.Blocks.STONES).add(
+        this.tag(Tags.BlockItems.STONES).add(
                 RBlocks.WEATHERED_BEDROCK.get(),
                 RBlocks.SCHINITE.get(),
                 RBlocks.MAGNEISS.get(),
                 RBlocks.MALATITE.get()
         );
 
-        this.tag(Tags.Blocks.COBBLESTONES).add(
+        this.tag(Tags.BlockItems.COBBLESTONES).add(
                RBlocks.COBBLED_SCHINITE.get(),
                RBlocks.COBBLED_MAGNEISS.get(),
                RBlocks.COBBLED_MALATITE.get()
@@ -279,7 +280,7 @@ public class GenBlockTags extends BlockTagsProvider {
 
         public Appender add(Block... blocks) {
             for (Block block : blocks) {
-                add(BuiltInRegistries.BLOCK.wrapAsHolder(block).getKey());
+                add(BuiltInRegistries.BLOCK.wrapAsHolder(block).key());
             }
             return this;
         }
@@ -297,6 +298,9 @@ public class GenBlockTags extends BlockTagsProvider {
         return new Appender(super.tag(tag));
     }
 
+    private Appender tag(BlockItemTagId tag) {
+        return tag(tag.block());
+    }
     private void addColoredTags(Consumer<TagKey<Block>> consumer, TagKey<Block> group) {
         String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color : DyeColor.values()) {

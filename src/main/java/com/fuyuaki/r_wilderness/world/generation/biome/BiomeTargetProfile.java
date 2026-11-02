@@ -593,7 +593,8 @@ public record BiomeTargetProfile(
             return withErodability(0.3f, 1.0f);
         }
         public Builder anyErosion() {
-            return withErodability(-1.0f, 1.0f,1.5f);
+            this.erodability = new FloatRange(-99.9f,0.0f,99.9f,true);
+            return this;
         }
 
         //VEGETATION
@@ -646,6 +647,12 @@ public record BiomeTargetProfile(
 
         //VOLCANO
 
+        public Builder zeroVolcanicActivity() {
+            return withVolcanicness(-1.0f,0.0f,0.015f);
+        }
+        public Builder lowVolcanicActivity() {
+            return withVolcanicness(-0.1f, 0.25f);
+        }
         public Builder dormantVolcano() {
             return withVolcanicness(0.25f, 0.75f);
         }

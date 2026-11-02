@@ -112,15 +112,15 @@ public class GenBlockModels extends BlockModelGenerators {
         createTrivialCube(RBlocks.MALATITE_COPPER_ORE.get());
 
         createTrivialCube(RBlocks.CHALKY_SOIL.get());
-        createFarmland(RBlocks.CHALKY_FARMLAND, RBlocks.CHALKY_SOIL);
+        createFarmland(RBlocks.CHALKY_FARMLAND, RBlocks.CHALKY_SOIL, ModelTemplates.CUBE_BOTTOM_TOP_INDENTED);
         createTrivialCube(RBlocks.CLAY_SOIL.get());
-        createFarmland(RBlocks.CLAY_FARMLAND, RBlocks.CLAY_SOIL);
+        createFarmland(RBlocks.CLAY_FARMLAND, RBlocks.CLAY_SOIL, ModelTemplates.CUBE_BOTTOM_TOP_INDENTED);
         createTrivialCube(RBlocks.PEAT.get());
-        createFarmland(RBlocks.PEAT_FARMLAND, RBlocks.PEAT);
+        createFarmland(RBlocks.PEAT_FARMLAND, RBlocks.PEAT, ModelTemplates.CUBE_BOTTOM_TOP_INDENTED);
         createTrivialCube(RBlocks.SANDY_SOIL.get());
-        createFarmland(RBlocks.SANDY_FARMLAND, RBlocks.SANDY_SOIL);
+        createFarmland(RBlocks.SANDY_FARMLAND, RBlocks.SANDY_SOIL, ModelTemplates.CUBE_BOTTOM_TOP_INDENTED);
         createTrivialCube(RBlocks.SILT.get());
-        createFarmland(RBlocks.SILT_FARMLAND, RBlocks.SILT);
+        createFarmland(RBlocks.SILT_FARMLAND, RBlocks.SILT, ModelTemplates.CUBE_BOTTOM_TOP_INDENTED);
 
         //Trees & Wood
         woodProvider(RBlocks.ALPINE_LOG.get()).logWithHorizontal(RBlocks.ALPINE_LOG.get()).wood(RBlocks.ALPINE_WOOD.get());
@@ -206,7 +206,7 @@ public class GenBlockModels extends BlockModelGenerators {
     this.createGrassBlock(block,dirt,block, colorSource);
     }
 
-    public void createFarmland(DeferredBlock<Block> farmland, DeferredBlock<Block> soil) {
+    public void createFarmland(DeferredBlock<Block> farmland, DeferredBlock<Block> soil,ModelTemplate template) {
 
         TextureMapping dryTextures = (new TextureMapping())
                 .put(TextureSlot.DIRT, TextureMapping.getBlockTexture(soil.get()))
@@ -214,8 +214,8 @@ public class GenBlockModels extends BlockModelGenerators {
         TextureMapping moistTextures = (new TextureMapping())
                 .put(TextureSlot.DIRT, TextureMapping.getBlockTexture(soil.get()))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(farmland.get(), "_moist"));
-        MultiVariant dryModel = plainVariant(ModelTemplates.FARMLAND.create(farmland.get(), dryTextures, this.modelOutput));
-        MultiVariant moistModel = plainVariant(ModelTemplates.FARMLAND.create(ModelLocationUtils.getModelLocation(farmland.get(), "_moist"), moistTextures, this.modelOutput));
+        MultiVariant dryModel = plainVariant(template.create(farmland.get(), dryTextures, this.modelOutput));
+        MultiVariant moistModel = plainVariant(template.create(ModelLocationUtils.getModelLocation(farmland.get(), "_moist"), moistTextures, this.modelOutput));
         this.blockStateOutput.accept(MultiVariantGenerator.dispatch(farmland.get()).with(createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, moistModel, dryModel)));
     }
 
@@ -320,10 +320,11 @@ public class GenBlockModels extends BlockModelGenerators {
             return this.flowerPotTemplate;
         }
 
-        public Identifier createItemModel(BlockModelGenerators generator, Block block) {
+        public Identifier createItemModel(BlockModelGenerators generator, Block block,String suffix) {
             Item item = block.asItem();
+            Material material = TextureMapping.getBlockTexture(block, suffix);
             return this.isEmissive
-                    ? generator.createFlatItemModelWithBlockTextureAndOverlay(item, block, "_emissive")
+                    ? generator.createTwoLayeredItemModel(item, material, material.withSuffix("_emissive"))
                     : generator.createFlatItemModelWithBlockTexture(item, block);
         }
 

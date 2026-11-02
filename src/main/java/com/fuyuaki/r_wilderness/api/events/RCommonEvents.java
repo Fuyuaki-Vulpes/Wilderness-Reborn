@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.api.events;
 
-import com.fuyuaki.r_wilderness.api.WildRegistries;
+import com.fuyuaki.r_wilderness.api.RRegistries;
 import com.fuyuaki.r_wilderness.init.RAttributes;
 import com.fuyuaki.r_wilderness.init.RDataComponents;
 import com.fuyuaki.r_wilderness.network.DrinkWaterInWorldPacket;
@@ -9,6 +9,7 @@ import com.fuyuaki.r_wilderness.world.environment.PlayerEnvironment;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.item.components.Drinkables;
 import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldSettings;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Items;
@@ -23,7 +24,7 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+import net.neoforged.neoforge.registries.NewDatapackRegistryEvent;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
@@ -32,12 +33,17 @@ public class RCommonEvents {
 
 
     @SubscribeEvent
-    public static void onDatapackRegistry(DataPackRegistryEvent.NewRegistry event){
-        event.dataPackRegistry(
-                WildRegistries.REBORN_BIOME_PLACEMENT_KEY,
+    public static void onDatapackRegistry(NewDatapackRegistryEvent event){
+        event.worldRegistry(
+                RRegistries.REBORN_BIOME_PLACEMENT_KEY,
                 BiomePlacementData.CODEC,
                 BiomePlacementData.CODEC
 
+        );
+        event.worldRegistry(
+                RRegistries.WRGEN_SETTINGS,
+                RebornWorldSettings.DIRECT_CODEC,
+                RebornWorldSettings.DIRECT_CODEC
         );
     }
 

@@ -51,10 +51,10 @@ public class RebornModels {
 
     public static Identifier decorateBlockModelLocation(String name) {
         // Neo: Use Identifier.parse to support modded paths
-        return RWildernessMod.modLocation(name).withPrefix("block/");
+        return RWildernessMod.identifier(name).withPrefix("block/");
     }
     public static Identifier decorateItemModelLocation(String name) {
-        return RWildernessMod.modLocation(name).withPrefix("item/");
+        return RWildernessMod.identifier(name).withPrefix("item/");
     }
 
 

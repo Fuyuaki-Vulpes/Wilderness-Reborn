@@ -9,6 +9,7 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.advancements.AdvancementSubProvider;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -18,17 +19,22 @@ import net.minecraft.world.level.block.Block;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ModAdventureAdvancements implements AdvancementSubProvider {
-    @Override
-    public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> writer) {
+public class ModAdventureAdvancements extends AdvancementSubProvider {
 
-        HolderGetter<EntityType<?>> entityRegistry = registries.lookupOrThrow(Registries.ENTITY_TYPE);
-        HolderGetter<Item> itemRegistry = registries.lookupOrThrow(Registries.ITEM);
-        HolderGetter<Block> blockRegistry = registries.lookupOrThrow(Registries.BLOCK);
-        HolderGetter<Biome> biomeRegistry = registries.lookupOrThrow(Registries.BIOME);
-        AdvancementRequirements.Strategy needAny = AdvancementRequirements.Strategy.OR;
-        AdvancementRequirements.Strategy needAll = AdvancementRequirements.Strategy.AND;
+    private final HolderGetter<EntityType<?>> entityRegistry;
+    private final HolderGetter<Item> itemRegistry;
+    private final HolderGetter<Block> blockRegistry;
+    private final HolderGetter<Biome> biomeRegistry;
+    private static final AdvancementRequirements.Strategy needAny = AdvancementRequirements.Strategy.OR;
+    private static final AdvancementRequirements.Strategy needAll = AdvancementRequirements.Strategy.AND;
 
+    public ModAdventureAdvancements(BootstrapContext<Advancement> output) {
+        super(output);
+
+        this.entityRegistry = output.lookup(Registries.ENTITY_TYPE);
+        this.itemRegistry = output.lookup(Registries.ITEM);
+        this.blockRegistry = output.lookup(Registries.BLOCK);
+        this.biomeRegistry = output.lookup(Registries.BIOME);
     }
 
     private String nameKey(String name){
@@ -58,4 +64,7 @@ public class ModAdventureAdvancements implements AdvancementSubProvider {
     }
 
 
+    @Override public void generate() {
+
+    }
 }

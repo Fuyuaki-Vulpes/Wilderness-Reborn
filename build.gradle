@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'idea'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev' version '2.0.148'
 }
 tasks.named('wrapper', Wrapper).configure {
     // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
@@ -132,14 +132,11 @@ dependencies {
 
 
     jarJar(implementation("org.lwjgl:lwjgl-opencl:$lwjglVersion"))
-    jarJar(implementation("com.github.CoolLoong:FastNoise2Bindings-Java:0.0.2"))
 
     compileOnly("maven.modrinth:distanthorizonsapi:$dhAPIVersion")
     runtimeOnly("maven.modrinth:DistantHorizons:$dhVersion")
     runtimeOnly("maven.modrinth:xaeros-minimap:$xaerosVersion")
     runtimeOnly("maven.modrinth:xaeros-world-map:$xaerosWorldVersion")
-//    implementation("maven.modrinth:c2me-neoforge:$c2meVersion")
-//    implementation("maven.modrinth:spark:$sparkVersion")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

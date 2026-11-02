@@ -4,7 +4,7 @@ import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
-import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.WRNoiseChunk;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornNoiseChunk;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.*;
-import net.minecraft.world.level.levelgen.synth.PerlinNoise;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.jspecify.annotations.Nullable;
 
@@ -46,7 +45,7 @@ public class RAquifer implements Aquifer {
     private static final int MAX_CELL_SAMPLE_X = 1;
     private static final int MAX_CELL_SAMPLE_Y = 1;
     private static final int MAX_CELL_SAMPLE_Z = 1;
-    private final WRNoiseChunk chunk;
+    private final RebornNoiseChunk chunk;
     private final PositionalRandomFactory positionalRandomFactory;
     private final Aquifer.FluidStatus[] aquiferCache;
     private final long[] aquiferLocationCache;
@@ -61,7 +60,7 @@ public class RAquifer implements Aquifer {
     private static final int[][] SURFACE_SAMPLING_OFFSETS_IN_CHUNKS = new int[][]{{0, 0}, {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {-3, 0}, {-2, 0}, {-1, 0}, {1, 0}, {-2, 1}, {-1, 1}, {0, 1}, {1, 1}};
     private final RebornBiomeSource biomeSource;
 
-    public RAquifer(final WRNoiseChunk noiseChunk, final ChunkPos pos, final PositionalRandomFactory positionalRandomFactory, final int minBlockY, final int yBlockSize, final FluidPicker globalFluidPicker) {
+    public RAquifer(final RebornNoiseChunk noiseChunk, final ChunkPos pos, final PositionalRandomFactory positionalRandomFactory, final int minBlockY, final int yBlockSize, final FluidPicker globalFluidPicker) {
         this.chunk = noiseChunk;
         this.biomeSource = noiseChunk.biomeSource();
         this.positionalRandomFactory = positionalRandomFactory;

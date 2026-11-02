@@ -9,7 +9,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -23,10 +22,10 @@ public class RCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
 
-    private static final Identifier SCROLLBAR = RWildernessMod.modLocation("container/creative_inventory/scroller");
-    private static final Identifier TAB = RWildernessMod.modLocation("container/creative_inventory/tab");
-    private static final Identifier DEFAULT_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/generic.png");
-    private static final Identifier MAIN_TAB_TEXTURE = RWildernessMod.modLocation("textures/gui/container/creative_inventory/tab/main.png");
+    private static final Identifier SCROLLBAR = RWildernessMod.identifier("container/creative_inventory/scroller");
+    private static final Identifier TAB = RWildernessMod.identifier("container/creative_inventory/tab");
+    private static final Identifier DEFAULT_TEXTURE = RWildernessMod.identifier("textures/gui/container/creative_inventory/tab/generic.png");
+    private static final Identifier MAIN_TAB_TEXTURE = RWildernessMod.identifier("textures/gui/container/creative_inventory/tab/main.png");
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN_TAB = registerTab("r_wilderness_main",() -> CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.r_wilderness_main").withStyle(ChatFormatting.ITALIC,ChatFormatting.GREEN,ChatFormatting.BOLD))
@@ -34,7 +33,6 @@ public class RCreativeModeTabs {
             .hideTitle()
             .withScrollBarSpriteLocation(SCROLLBAR)
             .withSearchBar()
-            .withTabsImage(TAB)
             .backgroundTexture(MAIN_TAB_TEXTURE)
             .icon(Blocks.BIRCH_LEAVES.asItem()::getDefaultInstance)
             .displayItems(((parameters, output) -> {
@@ -139,7 +137,7 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.SANDY_SOIL);
                 output.accept(RBlocks.SANDY_FARMLAND);
                 output.accept(RBlocks.SILT);
-                output.accept(RBlocks.SILT_FARMLAND);
+                output.ac(RBlocks.SILT_FARMLAND);
             }))
             .build());
 

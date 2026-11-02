@@ -24,11 +24,11 @@ public class RBlockItemIds {
     }
 
     public static BlockItemId create(String blockName, String itemName) {
-        return create(RWildernessMod.modLocation(blockName), RWildernessMod.modLocation(itemName));
+        return create(RWildernessMod.identifier(blockName), RWildernessMod.identifier(itemName));
     }
 
     public static BlockItemId create(String name) {
-        Identifier id = RWildernessMod.modLocation(name);
+        Identifier id = RWildernessMod.identifier(name);
         return create(id, id);
     }
 

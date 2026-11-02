@@ -3,7 +3,7 @@ package com.fuyuaki.r_wilderness.world.environment;
 import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.init.RDamageTypes;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
-import com.fuyuaki.r_wilderness.world.level.levelgen.WildChunkGenerator;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -95,7 +95,7 @@ public class TemperatureData implements ValueIOSerializable {
         temperatureIntake += this.toAdd;
         this.toAdd = 0;
         ChunkGenerator gen = serverlevel.getChunkSource().getGenerator();
-        if (gen instanceof WildChunkGenerator){
+        if (gen instanceof RebornChunkGenerator){
             EnvironmentSampler environment = RegionMemory.getInstance(serverlevel).environment(player.getX(),player.getZ());
             this.environmentTemperature = environment.temperatureInDegrees();
 
