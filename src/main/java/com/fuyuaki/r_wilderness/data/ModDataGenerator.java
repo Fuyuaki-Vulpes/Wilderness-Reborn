@@ -9,12 +9,14 @@ import com.fuyuaki.r_wilderness.data.generation.other.GenSoundDefinition;
 import com.fuyuaki.r_wilderness.data.generation.other.ModBuiltInEntries;
 import com.fuyuaki.r_wilderness.data.generation.tags.*;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.data.event.GatherDataRegistryEntriesEvent;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -76,5 +78,13 @@ public class ModDataGenerator {
 
 
     }
+
+
+    @SubscribeEvent
+    public static void gatherData(GatherDataRegistryEntriesEvent event){
+        event.add(Registries.ADVANCEMENT, );
+        event.recipe();
+    }
+
 
 }
