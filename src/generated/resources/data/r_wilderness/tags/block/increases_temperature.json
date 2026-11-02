@@ -1,0 +1,7 @@
+{
+  "values": [
+    "#r_wilderness:slightly_increases_temperature",
+    "#r_wilderness:moderately_increases_temperature",
+    "#r_wilderness:greatly_increases_temperature"
+  ]
+}

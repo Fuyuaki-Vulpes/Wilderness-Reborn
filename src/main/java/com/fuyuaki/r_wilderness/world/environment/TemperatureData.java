@@ -1,0 +1,256 @@
+package com.fuyuaki.r_wilderness.world.environment;
+
+import com.fuyuaki.r_wilderness.api.common.RTags;
+import com.fuyuaki.r_wilderness.init.RDamageTypes;
+import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
+import com.fuyuaki.r_wilderness.world.level.levelgen.WildChunkGenerator;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
+
+public class TemperatureData implements ValueIOSerializable {
+
+
+    public static final float COLD_THRESHOLD = 5.0F;
+    public static final float HOT_THRESHOLD = 30.0F;
+    public static final float ENVIRONMENT_MEDIAN = 20.0F;
+    public static final float ENVIRONMENT_DEVIATION = 40.0F;
+    public static final float ENVIRONMENT_COLDEST = ENVIRONMENT_MEDIAN - ENVIRONMENT_DEVIATION;
+    public static final float ENVIRONMENT_HOTTEST = ENVIRONMENT_MEDIAN + ENVIRONMENT_DEVIATION;
+    private static final float BASE_BODY_TEMPERATURE = 37.0F;
+    private static final int BLOCK_SCAN_TICK_RATE = 3;
+    private static final float HYPERTHERMIA_THRESHOLD = 40.0F;
+    private static final float HYPOTHERMIA_THRESHOLD = 35.0F;
+    private static final int DAMAGE_TICK_RATE = 40;
+    private float bodyTemperature = 37.0F;
+    private float environmentTemperature = 20.0F;
+    private float energy = 0.0F;
+    private float toAdd = 0.0F;
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, TemperatureData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.FLOAT,
+            TemperatureData::getBodyTemperature,
+            ByteBufCodecs.FLOAT,
+            TemperatureData::getEnvironmentTemperature,
+            ByteBufCodecs.FLOAT,
+            TemperatureData::getEnergy,
+            TemperatureData::new
+    );
+
+    public TemperatureData(float waterLevel, float saturationLevel, float energy){
+        this.bodyTemperature = waterLevel;
+        this.environmentTemperature = saturationLevel;
+        this.energy = energy;
+    }
+    public TemperatureData(){}
+
+    public float getBodyTemperature() {
+        return bodyTemperature;
+    }
+
+    public float getEnvironmentTemperature() {
+        return environmentTemperature;
+    }
+
+    public float getEnergy() {
+        return energy;
+    }
+
+    public void tick(ServerPlayer player) {
+        ServerLevel serverlevel = player.level();
+        Difficulty difficulty = serverlevel.getDifficulty();
+        doTick(serverlevel,player,difficulty);
+    }
+
+    private void doTick(ServerLevel serverlevel, ServerPlayer player, Difficulty difficulty) {
+        if (Float.isNaN(this.bodyTemperature)){
+            this.bodyTemperature = BASE_BODY_TEMPERATURE;
+        }
+        float temperatureIntake = 0;
+        float bodyAdjustment = 0;
+        float hydration = ((PlayerEnvironment)player).getHydrationData().getWaterLevel();
+
+        if (player.isInWater()){
+            temperatureIntake -= 0.0003F;
+        }
+        if (player.isInPowderSnow){
+            temperatureIntake -= 0.001F;
+        }
+        if (player.isFreezing()){
+            temperatureIntake -= 0.0025F;
+        }
+        if (player.isOnFire()){
+            temperatureIntake += 0.005F;
+        }
+        temperatureIntake += this.toAdd;
+        this.toAdd = 0;
+        ChunkGenerator gen = serverlevel.getChunkSource().getGenerator();
+        if (gen instanceof WildChunkGenerator){
+            EnvironmentSampler environment = RegionMemory.getInstance(serverlevel).environment(player.getX(),player.getZ());
+            this.environmentTemperature = environment.temperatureInDegrees();
+
+            if (difficulty != Difficulty.PEACEFUL) {
+                float envApparent = environment.temperature() / 1.5F;
+                temperatureIntake += envApparent * 0.0020F;
+                ((ServerPlayerEnvironment) player).addExhaustion(Math.max(envApparent,0) * 0.001F);
+                bodyAdjustment -= envApparent * 0.0015F;
+            }
+        }
+        if (difficulty != Difficulty.PEACEFUL) {
+            float difference = Math.abs(this.bodyTemperature - BASE_BODY_TEMPERATURE);
+            if (difference < 0.5F) {
+                float multiplier = (float) Math.clamp(difference / 0.5, 0, 1);
+                if (this.bodyTemperature > BASE_BODY_TEMPERATURE) {
+                    bodyAdjustment -= 0.00075F * multiplier;
+
+                } else {
+                    bodyAdjustment += 0.00075F * multiplier;
+
+                }
+
+
+            }else {
+                if (this.bodyTemperature < BASE_BODY_TEMPERATURE) {
+                    bodyAdjustment += 0.00075F;
+                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.0005F);
+
+                }
+
+                if (this.bodyTemperature > BASE_BODY_TEMPERATURE) {
+                    bodyAdjustment -= 0.00075F;
+                    ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature), 0) * 0.005F);
+
+                }
+            }
+        }
+        if (player.tickCount % BLOCK_SCAN_TICK_RATE == 0){
+
+            for (BlockPos pos : BlockPos.betweenClosed(player.getBoundingBox().inflate(5,5,5))){
+                BlockState state = serverlevel.getBlockState(pos);
+                if (state.is(RTags.Blocks.INCREASES_TEMPERATURE)){
+                    if (state.is(RTags.Blocks.SLIGHTLY_INCREASES_TEMPERATURE)){
+                        temperatureIntake += 0.000025F;
+                    }else if (state.is(RTags.Blocks.MODERATELY_INCREASES_TEMPERATURE)){
+                        temperatureIntake += 0.00005F;
+
+                    }else if (state.is(RTags.Blocks.GREATLY_INCREASES_TEMPERATURE)){
+                        temperatureIntake += 0.0001F;
+
+                    }
+                }
+                else if (state.is(RTags.Blocks.DECREASES_TEMPERATURE)){
+                    if (state.is(RTags.Blocks.SLIGHTLY_DECREASES_TEMPERATURE)){
+                        temperatureIntake -= 0.000025F;
+
+                    }else if (state.is(RTags.Blocks.MODERATELY_DECREASES_TEMPERATURE)){
+                        temperatureIntake -= 0.00005F;
+
+                    }else if (state.is(RTags.Blocks.GREATLY_DECREASES_TEMPERATURE)){
+                        temperatureIntake -= 0.0001F;
+
+                    }
+                }
+            }
+        }
+
+        if (energy > 0){
+            boolean isMoving = player.getDeltaMovement().horizontalDistance() > 0.1F;
+            float movementHydrationMultiplier = isMoving ? 1.0F : 0.01F;
+
+
+            this.energy = (float) Math.max(this.energy - (hydration / 20 * 0.05),0);
+            temperatureIntake += energy * 0.000005F;
+            if (this.bodyTemperature < BASE_BODY_TEMPERATURE){
+                float adjustment = BASE_BODY_TEMPERATURE - this.bodyTemperature;
+                bodyAdjustment += adjustment * (energy / 10) * 0.005F * hydration / 20;
+            }
+            ((ServerPlayerEnvironment) player).addExhaustion(Math.max(temperaturePercentage(this.environmentTemperature),0) * 0.005F * movementHydrationMultiplier);
+
+        }
+
+        this.bodyTemperature += temperatureIntake;
+        if (temperatureIntake > bodyAdjustment && this.bodyTemperature > BASE_BODY_TEMPERATURE){
+            float dif = bodyAdjustment - temperatureIntake;
+            float difference = Math.abs(this.bodyTemperature - BASE_BODY_TEMPERATURE);
+            float multiplier = (float) Math.clamp((difference - 0.25) / 0.25, 0, 1);
+
+            float ratio = hydration / 20;
+            bodyAdjustment += ratio * dif * multiplier;
+            ((ServerPlayerEnvironment) player).addExhaustion(dif * 0.25F * multiplier);
+
+        }
+        this.bodyTemperature += bodyAdjustment * (hydration / 20);
+
+
+        if (player.tickCount % DAMAGE_TICK_RATE == 0){
+            if (this.bodyTemperature >= HYPERTHERMIA_THRESHOLD){
+                float strength = this.bodyTemperature - HYPERTHERMIA_THRESHOLD;
+                player.hurtServer(serverlevel, hyperthermia(serverlevel),Math.max(strength * 2,1));
+            }else if (this.bodyTemperature <= HYPOTHERMIA_THRESHOLD){
+                float strength = HYPOTHERMIA_THRESHOLD - this.bodyTemperature;
+                player.hurtServer(serverlevel, hypothermia(serverlevel),Math.max(strength * 1.5F,1));
+            }
+        }
+
+
+    }
+
+    private DamageSource hyperthermia(ServerLevel level) {
+        return new DamageSource(level.damageSources().damageTypes.getOrThrow(RDamageTypes.HYPERTHERMIA),null,null,null);
+    }
+    private DamageSource hypothermia(ServerLevel level) {
+        return new DamageSource(level.damageSources().damageTypes.getOrThrow(RDamageTypes.HYPOTHERMIA),null,null,null);
+    }
+
+
+    @Override
+    public void serialize(ValueOutput output) {
+        output.putFloat("body", this.bodyTemperature);
+        output.putFloat("environment", this.environmentTemperature);
+        output.putFloat("energy", this.energy);
+    }
+
+    @Override
+    public void deserialize(ValueInput input) {
+        this.bodyTemperature = input.getFloatOr("body", 37.0F);
+        this.environmentTemperature = input.getFloatOr("environment", 25.0F);
+        this.energy = input.getFloatOr("energy", 25.0F);
+    }
+
+
+
+    public static float temperaturePercentage(float temperature){
+        if (temperature >= ENVIRONMENT_MEDIAN){
+            return (float) Math.clamp(((temperature - ENVIRONMENT_MEDIAN) / (ENVIRONMENT_HOTTEST - ENVIRONMENT_MEDIAN) / 2) + 0.5,0.5,1);
+        }
+        return (float) Math.clamp((temperature - ENVIRONMENT_COLDEST) / (ENVIRONMENT_MEDIAN - ENVIRONMENT_COLDEST) / 2,0,0.5);
+    }
+
+    private static float toScale(float input){
+        return Math.clamp((input + 1.5F) / 2,0,1);
+    }
+
+    public void setEnergy(float energy) {
+        this.energy = energy;
+    }
+    public void addEnergy(float energy) {
+        this.energy += energy;
+    }
+
+    public void heatUp(float heat) {
+        this.toAdd += heat;
+    }
+    public void coolDown(float cooling) {
+        this.toAdd -= cooling;
+    }
+}

@@ -1,67 +1,46 @@
 {
   "biome": "minecraft:deep_dark",
-  "liked_tectonic_states": [
-    "very_deep_underground"
-  ],
   "name": "r_wilderness:deep_dark",
   "target": {
     "continentalness": {
       "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
+      "mean": 0.75,
+      "min": 0.0
     },
-    "erosion": {
-      "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
-    },
-    "highlands": {
-      "max": 1.5,
-      "mean": 0.0,
+    "erodability": {
+      "max": -0.3,
+      "mean": -1.0,
       "min": -1.5
     },
     "humidity": {
-      "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
+      "max": 0.0,
+      "mean": -0.25,
+      "min": -0.5
     },
     "magicalness": {
-      "max": 1.5,
-      "mean": 0.875,
-      "min": 0.25
+      "max": 1.0,
+      "mean": 0.5,
+      "min": 0.0
     },
     "rockiness": {
-      "max": 1.5,
+      "max": 1.0,
       "mean": 0.0,
-      "min": -1.5
+      "min": -1.0
     },
-    "tectonic_activity": {
-      "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
-    },
+    "tags": [
+      "cave",
+      "deepslate",
+      "deep_underground"
+    ],
     "temperature": {
-      "max": -0.35,
-      "mean": -0.55,
-      "min": -0.75
-    },
-    "terrain_height": {
-      "max": -64.0,
-      "mean": -160.0,
-      "min": -256.0
-    },
-    "vegetation_density": {
-      "max": 1.5,
+      "max": 0.25,
       "mean": 0.0,
-      "min": -1.5
+      "min": -0.25
     },
-    "weirdness": {
-      "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
+    "vegetation": {
+      "max": 0.25,
+      "mean": -0.125,
+      "min": -0.5
     }
-  },
-  "valid_terrain_types": [
-    "cave"
-  ]
+  }
 }

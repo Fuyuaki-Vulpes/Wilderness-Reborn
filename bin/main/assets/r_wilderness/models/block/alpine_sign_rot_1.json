@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_sign_rot_1",
+  "textures": {
+    "all": "r_wilderness:block/alpine_sign",
+    "particle": "r_wilderness:block/alpine_planks"
+  }
+}

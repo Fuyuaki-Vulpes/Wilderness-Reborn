@@ -1,0 +1,6 @@
+{
+  "effects": "freezing",
+  "exhaustion": 0.25,
+  "message_id": "hypothermia",
+  "scaling": "never"
+}

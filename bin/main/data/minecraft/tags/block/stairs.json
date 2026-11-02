@@ -1,0 +1,12 @@
+{
+  "values": [
+    "r_wilderness:schinite_stairs",
+    "r_wilderness:magneiss_stairs",
+    "r_wilderness:malatite_stairs",
+    "r_wilderness:cobbled_schinite_stairs",
+    "r_wilderness:cobbled_magneiss_stairs",
+    "r_wilderness:cobbled_malatite_stairs",
+    "r_wilderness:weathered_bedrock_stairs",
+    "r_wilderness:alpine_stairs"
+  ]
+}

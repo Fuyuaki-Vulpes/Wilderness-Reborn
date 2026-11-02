@@ -1,0 +1,11 @@
+{
+  "values": [
+    "r_wilderness:schinite_wall",
+    "r_wilderness:magneiss_wall",
+    "r_wilderness:malatite_wall",
+    "r_wilderness:cobbled_schinite_wall",
+    "r_wilderness:cobbled_magneiss_wall",
+    "r_wilderness:cobbled_malatite_wall",
+    "r_wilderness:weathered_bedrock_wall"
+  ]
+}

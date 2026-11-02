@@ -3,65 +3,34 @@
   "name": "r_wilderness:bamboo_jungle",
   "target": {
     "continentalness": {
-      "max": 100.0,
-      "mean": 0.15,
-      "min": -0.2
-    },
-    "erosion": {
       "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
+      "mean": 0.75,
+      "min": 0.0
     },
-    "highlands": {
+    "erodability": {
       "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
+      "mean": 1.0,
+      "min": -1.0
     },
     "humidity": {
-      "max": 0.85,
-      "mean": 0.675,
-      "min": 0.5
-    },
-    "magicalness": {
       "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
+      "mean": 1.0,
+      "min": 0.5
     },
     "rockiness": {
       "max": 0.0,
-      "mean": -0.5,
-      "min": -2.5
-    },
-    "tectonic_activity": {
-      "max": 1.0,
-      "mean": 0.0,
-      "min": -6.0
+      "mean": -1.0,
+      "min": -1.5
     },
     "temperature": {
-      "max": 2.5,
-      "mean": 0.85,
+      "max": 0.8,
+      "mean": 0.575,
+      "min": 0.35
+    },
+    "vegetation": {
+      "max": 1.5,
+      "mean": 1.0,
       "min": 0.75
-    },
-    "terrain_height": {
-      "max": 240.0,
-      "mean": 68.0,
-      "min": -256.0
-    },
-    "vegetation_density": {
-      "max": 0.85,
-      "mean": 0.675,
-      "min": 0.5
-    },
-    "weirdness": {
-      "max": 2.5,
-      "mean": 0.5,
-      "min": 0.0
     }
-  },
-  "valid_terrain_types": [
-    "mountain",
-    "shore",
-    "neutral",
-    "highlands"
-  ]
+  }
 }

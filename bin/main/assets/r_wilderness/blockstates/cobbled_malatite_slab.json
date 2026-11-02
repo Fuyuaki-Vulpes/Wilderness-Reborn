@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "r_wilderness:block/cobbled_malatite_slab"
+    },
+    "type=double": {
+      "model": "r_wilderness:block/cobbled_malatite"
+    },
+    "type=top": {
+      "model": "r_wilderness:block/cobbled_malatite_slab_top"
+    }
+  }
+}

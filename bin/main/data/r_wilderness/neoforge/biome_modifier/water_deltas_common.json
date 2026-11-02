@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#r_wilderness:has_water_deltas_common",
+  "features": "r_wilderness:water_deltas_common",
+  "step": "surface_structures"
+}

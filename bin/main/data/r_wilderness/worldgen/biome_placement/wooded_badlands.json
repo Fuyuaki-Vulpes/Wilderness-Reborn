@@ -1,0 +1,69 @@
+{
+  "biome": "minecraft:wooded_badlands",
+  "liked_tectonic_states": [
+    "badlands"
+  ],
+  "name": "r_wilderness:wooded_badlands",
+  "target": {
+    "continentalness": {
+      "max": 100.0,
+      "mean": 0.15,
+      "min": -0.2
+    },
+    "erosion": {
+      "max": 0.85,
+      "mean": -0.13749999999999996,
+      "min": -10.0
+    },
+    "highlands": {
+      "max": 25.5,
+      "mean": 0.5,
+      "min": -3.0
+    },
+    "humidity": {
+      "max": 0.15,
+      "mean": -0.475,
+      "min": -10.0
+    },
+    "magicalness": {
+      "max": 0.15,
+      "mean": 0.0,
+      "min": -5.5
+    },
+    "rockiness": {
+      "max": 10.0,
+      "mean": 0.13749999999999996,
+      "min": -0.85
+    },
+    "tectonic_activity": {
+      "max": 23.5,
+      "mean": -1.5,
+      "min": -5.5
+    },
+    "temperature": {
+      "max": 2.5,
+      "mean": 0.7,
+      "min": 0.35
+    },
+    "terrain_height": {
+      "max": 720.0,
+      "mean": 392.0,
+      "min": 64.0
+    },
+    "vegetation_density": {
+      "max": 0.35,
+      "mean": 0.0,
+      "min": -0.35
+    },
+    "weirdness": {
+      "max": 1.5,
+      "mean": 0.0,
+      "min": -1.5
+    }
+  },
+  "valid_terrain_types": [
+    "mountain",
+    "mountain",
+    "highlands"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "r_wilderness:block/cobbled_malatite",
+    "side": "r_wilderness:block/cobbled_malatite",
+    "top": "r_wilderness:block/cobbled_malatite"
+  }
+}

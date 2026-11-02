@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "r_wilderness:magneiss",
+  "result": {
+    "count": 2,
+    "id": "r_wilderness:magneiss_slab"
+  }
+}

@@ -1,69 +1,39 @@
 {
   "biome": "minecraft:jagged_peaks",
-  "liked_tectonic_states": [
-    "cliff_mountains",
-    "regular_mountains"
-  ],
   "name": "r_wilderness:jagged_peaks",
   "target": {
     "continentalness": {
       "max": 1.5,
-      "mean": 0.5,
-      "min": -0.5
+      "mean": 0.75,
+      "min": 0.0
     },
-    "erosion": {
-      "max": 0.25,
+    "erodability": {
+      "max": -0.3,
       "mean": -1.0,
-      "min": -26.0
-    },
-    "highlands": {
-      "max": 1.5,
-      "mean": 0.0,
       "min": -1.5
     },
     "humidity": {
-      "max": 1.5,
+      "max": 0.5,
       "mean": 0.0,
-      "min": -1.5
-    },
-    "magicalness": {
-      "max": 0.15,
-      "mean": 0.0,
-      "min": -5.5
-    },
-    "rockiness": {
-      "max": 26.0,
-      "mean": 1.0,
-      "min": 0.25
-    },
-    "tectonic_activity": {
-      "max": 26.0,
-      "mean": 1.0,
-      "min": 0.25
-    },
-    "temperature": {
-      "max": -0.15,
-      "mean": -0.25,
-      "min": -0.35
-    },
-    "terrain_height": {
-      "max": 720.0,
-      "mean": 440.0,
-      "min": 160.0
-    },
-    "vegetation_density": {
-      "max": -0.35,
-      "mean": -0.425,
       "min": -0.5
     },
-    "weirdness": {
-      "max": 1.5,
+    "rockiness": {
+      "max": 0.5,
+      "mean": 0.25,
+      "min": 0.0
+    },
+    "tags": [
+      "peak"
+    ],
+    "temperature": {
+      "max": 0.15,
+      "mean": -0.325,
+      "min": -0.8
+    },
+    "vegetation": {
+      "max": 1.0,
       "mean": 0.0,
-      "min": -1.5
+      "min": -1.0
     }
-  },
-  "valid_terrain_types": [
-    "mountain_peak",
-    "mountain"
-  ]
+  }
 }

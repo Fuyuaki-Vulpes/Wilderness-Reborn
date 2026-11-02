@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top_left",
+  "textures": {
+    "bottom": "r_wilderness:block/alpine_door_bottom",
+    "top": "r_wilderness:block/alpine_door_top"
+  }
+}

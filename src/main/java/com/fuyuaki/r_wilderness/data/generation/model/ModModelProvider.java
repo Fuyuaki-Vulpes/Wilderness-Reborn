@@ -7,7 +7,7 @@ import net.minecraft.client.data.models.blockstates.BlockModelDefinitionGenerato
 import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelInstance;
 import net.minecraft.client.data.models.model.ModelLocationUtils;
-import net.minecraft.client.renderer.block.model.BlockModelDefinition;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelDispatcher;
 import net.minecraft.client.renderer.item.ClientItem;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.core.Holder;
@@ -92,9 +92,9 @@ public class ModModelProvider implements DataProvider, IModelProviderExtension {
         }
 
         public CompletableFuture<?> save(CachedOutput output, PackOutput.PathProvider pathProvider) {
-            Map<Block, BlockModelDefinition> map = Maps.transformValues(this.generators, BlockModelDefinitionGenerator::create);
+            Map<Block, BlockStateModelDispatcher> map = Maps.transformValues(this.generators, BlockModelDefinitionGenerator::create);
             Function<Block, Path> function = p_387598_ -> pathProvider.json(p_387598_.builtInRegistryHolder().key().identifier());
-            return DataProvider.saveAll(output, BlockModelDefinition.CODEC, function, map);
+            return DataProvider.saveAll(output, BlockStateModelDispatcher.CODEC, function, map);
         }
     }
 

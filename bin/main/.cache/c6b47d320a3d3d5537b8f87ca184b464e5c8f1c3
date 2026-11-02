@@ -1,0 +1,8 @@
+// 26.2	2026-06-18T17:53:44.9968181	Tags for minecraft:worldgen/biome mod id r_wilderness
+669ce1a8139951d008adb9bdfe7d79dc050475f2 data/r_wilderness/tags/worldgen/biome/has_salt_water.json
+9dc0014384d668d4aa230080ee36bd2118354e9d data/r_wilderness/tags/worldgen/biome/has_sand_dunes.json
+8df01c9040c96767bc929a18d630a4c2a6cd2b48 data/r_wilderness/tags/worldgen/biome/has_water_deltas.json
+7631830440d86728f20bedb90ae3c06fd0d0fe8a data/r_wilderness/tags/worldgen/biome/has_water_deltas_common.json
+711efad1900954b97890e904cdfdbb67042574a6 data/r_wilderness/tags/worldgen/biome/has_water_deltas_large.json
+208ad58db65540373e309e41d4444b16f2e8a713 data/r_wilderness/tags/worldgen/biome/has_water_deltas_regular.json
+6525dda69924a36f16797ed873bffc083e1f4de5 data/r_wilderness/tags/worldgen/biome/has_water_deltas_very_common.json

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "wooden_button",
+  "ingredients": [
+    "r_wilderness:alpine_planks"
+  ],
+  "result": {
+    "id": "r_wilderness:alpine_button"
+  }
+}

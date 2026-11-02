@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.valueproviders.FloatProvider;
+import net.minecraft.util.valueproviders.FloatProviders;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.carver.CarverConfiguration;
@@ -15,8 +16,8 @@ public class RiftCarverConfiguration extends CarverConfiguration {
     public static final Codec<RiftCarverConfiguration> CODEC = RecordCodecBuilder.create(
             p_158984_ -> p_158984_.group(
                             CarverConfiguration.CODEC.forGetter(p_158990_ -> p_158990_),
-                            FloatProvider.CODEC.fieldOf("vertical_rotation").forGetter(p_158988_ -> p_158988_.verticalRotation),
-                            FloatProvider.CODEC.fieldOf("rotation").forGetter(p_158988_ -> p_158988_.rotation),
+                            FloatProviders.CODEC.fieldOf("vertical_rotation").forGetter(p_158988_ -> p_158988_.verticalRotation),
+                            FloatProviders  .CODEC.fieldOf("rotation").forGetter(p_158988_ -> p_158988_.rotation),
                             RiftShapeConfiguration.CODEC.fieldOf("shape").forGetter(p_158986_ -> p_158986_.shape)
                     )
                     .apply(p_158984_, RiftCarverConfiguration::new)
@@ -49,10 +50,10 @@ public class RiftCarverConfiguration extends CarverConfiguration {
     public static class RiftShapeConfiguration {
         public static final Codec<RiftShapeConfiguration> CODEC = RecordCodecBuilder.create(
                 p_159007_ -> p_159007_.group(
-                                FloatProvider.CODEC.fieldOf("distance_factor").forGetter(p_159019_ -> p_159019_.distanceFactor),
-                                FloatProvider.CODEC.fieldOf("thickness").forGetter(p_159017_ -> p_159017_.thickness),
+                                FloatProviders.CODEC.fieldOf("distance_factor").forGetter(p_159019_ -> p_159019_.distanceFactor),
+                                FloatProviders.CODEC.fieldOf("thickness").forGetter(p_159017_ -> p_159017_.thickness),
                                 ExtraCodecs.NON_NEGATIVE_INT.fieldOf("width_smoothness").forGetter(p_159015_ -> p_159015_.widthSmoothness),
-                                FloatProvider.CODEC.fieldOf("horizontal_radius_factor").forGetter(p_159013_ -> p_159013_.horizontalRadiusFactor),
+                                FloatProviders  .CODEC.fieldOf("horizontal_radius_factor").forGetter(p_159013_ -> p_159013_.horizontalRadiusFactor),
                                 Codec.FLOAT.fieldOf("vertical_radius_default_factor").forGetter(p_159011_ -> p_159011_.verticalRadiusDefaultFactor),
                                 Codec.FLOAT.fieldOf("vertical_radius_center_factor").forGetter(p_159009_ -> p_159009_.verticalRadiusCenterFactor)
                         )

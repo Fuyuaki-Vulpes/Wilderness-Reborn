@@ -2,17 +2,14 @@ package com.fuyuaki.r_wilderness.api;
 
 import com.fuyuaki.r_wilderness.api.compat.DHApiCompatLoader;
 import com.fuyuaki.r_wilderness.api.config.ClientConfig;
-import com.fuyuaki.r_wilderness.data.worldgen.RSurfaceRuleData;
-import com.fuyuaki.r_wilderness.init.RAttachments;
-import com.fuyuaki.r_wilderness.init.RChunkGenerators;
-import com.fuyuaki.r_wilderness.init.RFeatures;
-import com.fuyuaki.r_wilderness.init.RSoundEvents;
+import com.fuyuaki.r_wilderness.init.*;
+import com.fuyuaki.r_wilderness.server.commands.arguments.RArgumentTypes;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import com.fuyuaki.r_wilderness.world.item.RCreativeModeTabs;
 import com.fuyuaki.r_wilderness.world.item.RItems;
-import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
+import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.level.levelgen.carver.RWorldCarvers;
-import com.fuyuaki.r_wilderness.world.level.levelgen.placement.RPlacementModifierTypes;
+import com.fuyuaki.r_wilderness.world.level.material.RFluids;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
@@ -37,24 +34,26 @@ import org.slf4j.Logger;
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(RWildernessMod.MODID)
 public class RWildernessMod {
+
     public static final String MODID = "r_wilderness";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public RWildernessMod(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
+        RArgumentTypes.init(modEventBus);
 
-        RSurfaceRuleData.ConditionSource.init(modEventBus);
         RebornBiomeSource.Registerer.init(modEventBus);
         RAttachments.init(modEventBus);
+        RFluids.init(modEventBus);
+        RAttributes.init(modEventBus);
         RBlocks.init(modEventBus);
         RItems.init(modEventBus);
         RCreativeModeTabs.init(modEventBus);
         RSoundEvents.init(modEventBus);
+        RDataComponents.init(modEventBus);
         RFeatures.init(modEventBus);
         RChunkGenerators.init(modEventBus);
         RWorldCarvers.init(modEventBus);
-        RPlacementModifierTypes.init(modEventBus);
-        com.fuyuaki.r_wilderness.client.RSoundEvents.init(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 
@@ -65,9 +64,8 @@ public class RWildernessMod {
         if (ModList.get().isLoaded("distanthorizons")) {
             DHApiCompatLoader.execute();
         }
-
-
     }
+
 
 
     public static <T> ContextKey<T> contextKey(String name) {

@@ -3,65 +3,34 @@
   "name": "r_wilderness:forest",
   "target": {
     "continentalness": {
-      "max": 100.0,
-      "mean": 0.15,
-      "min": -0.2
-    },
-    "erosion": {
       "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
+      "mean": 0.75,
+      "min": 0.0
     },
-    "highlands": {
+    "erodability": {
       "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
+      "mean": 1.0,
+      "min": -1.0
     },
     "humidity": {
-      "max": 0.15,
-      "mean": 0.0,
-      "min": -0.15
-    },
-    "magicalness": {
-      "max": 1.5,
-      "mean": 0.0,
-      "min": -1.5
-    },
-    "rockiness": {
-      "max": 0.0,
-      "mean": -0.5,
-      "min": -2.5
-    },
-    "tectonic_activity": {
-      "max": 0.5,
-      "mean": 0.0,
-      "min": -10.0
-    },
-    "temperature": {
-      "max": 0.35,
-      "mean": 0.25,
-      "min": 0.15
-    },
-    "terrain_height": {
-      "max": 240.0,
-      "mean": 68.0,
-      "min": -256.0
-    },
-    "vegetation_density": {
-      "max": 1.5,
-      "mean": 0.45,
-      "min": 0.35
-    },
-    "weirdness": {
       "max": 0.35,
       "mean": 0.0,
       "min": -0.35
+    },
+    "rockiness": {
+      "max": 0.0,
+      "mean": -1.0,
+      "min": -1.5
+    },
+    "temperature": {
+      "max": 0.25,
+      "mean": 0.0,
+      "min": -0.25
+    },
+    "vegetation": {
+      "max": 0.85,
+      "mean": 0.675,
+      "min": 0.5
     }
-  },
-  "valid_terrain_types": [
-    "mountain",
-    "shore",
-    "neutral",
-    "highlands"
-  ]
+  }
 }

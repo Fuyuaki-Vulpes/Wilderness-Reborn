@@ -2,8 +2,8 @@ package com.fuyuaki.r_wilderness.mixin.common;
 
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
-import com.fuyuaki.r_wilderness.world.generation.chunk.WRNoiseChunk;
-import com.fuyuaki.r_wilderness.world.generation.terrain.SurfaceRulesContextExtension;
+import com.fuyuaki.r_wilderness.world.level.levelgen.chunk.WRNoiseChunk;
+import com.fuyuaki.r_wilderness.world.level.levelgen.terrain.SurfaceRulesContextExtension;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -69,7 +69,7 @@ public abstract class SurfaceRulesContextMixin implements SurfaceRulesContextExt
                 this.lastMinSurfaceLevelUpdate = this.lastUpdateXZ;
                 int i = blockCoordToSurfaceCell(this.blockX);
                 int j = blockCoordToSurfaceCell(this.blockZ);
-                long k = ChunkPos.asLong(i, j);
+                long k = ChunkPos.pack(i, j);
                 if (this.lastPreliminarySurfaceCellOrigin != k) {
                     this.lastPreliminarySurfaceCellOrigin = k;
                     this.preliminarySurfaceCache[0] = this.wildNoiseChunk.preliminarySurfaceLevel(surfaceCellToBlockCoord(i), surfaceCellToBlockCoord(j));

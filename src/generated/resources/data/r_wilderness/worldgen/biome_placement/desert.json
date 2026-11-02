@@ -1,76 +1,36 @@
 {
   "biome": "minecraft:desert",
-  "disliked_tectonic_states": [
-    "cliff_mountains",
-    "regular_mountains"
-  ],
-  "liked_tectonic_states": [
-    "normal",
-    "unstable",
-    "eroded_mountains"
-  ],
   "name": "r_wilderness:desert",
   "target": {
     "continentalness": {
-      "max": 100.0,
-      "mean": 0.15,
-      "min": -0.2
+      "max": 1.5,
+      "mean": 0.75,
+      "min": 0.0
     },
-    "erosion": {
-      "max": 10.0,
-      "mean": 0.8125,
-      "min": 0.5
-    },
-    "highlands": {
-      "max": 0.15,
-      "mean": 0.0,
-      "min": -1.5
+    "erodability": {
+      "max": 1.0,
+      "mean": 0.65,
+      "min": 0.3
     },
     "humidity": {
       "max": -0.5,
-      "mean": -0.8125,
-      "min": -10.0
-    },
-    "magicalness": {
-      "max": 0.15,
-      "mean": 0.0,
-      "min": -5.5
+      "mean": -1.0,
+      "min": -1.5
     },
     "rockiness": {
-      "max": 0.15,
-      "mean": -0.475,
-      "min": -10.0
-    },
-    "tectonic_activity": {
-      "max": 0.1,
-      "mean": -0.5,
-      "min": -6.0
+      "max": 0.0,
+      "mean": -1.0,
+      "min": -1.5
     },
     "temperature": {
-      "max": 2.5,
-      "mean": 0.85,
+      "max": 1.5,
+      "mean": 1.0,
       "min": 0.75
     },
-    "terrain_height": {
-      "max": 240.0,
-      "mean": 68.0,
-      "min": -256.0
-    },
-    "vegetation_density": {
+    "vegetation": {
       "max": -0.5,
-      "mean": -0.8125,
-      "min": -10.0
-    },
-    "weirdness": {
-      "max": 1.5,
-      "mean": 0.0,
+      "mean": -1.0,
       "min": -1.5
     }
-  },
-  "valid_terrain_types": [
-    "shore",
-    "neutral",
-    "mountain",
-    "highlands"
-  ]
+  }
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "r_wilderness:block/cobbled_malatite"
+  }
+}

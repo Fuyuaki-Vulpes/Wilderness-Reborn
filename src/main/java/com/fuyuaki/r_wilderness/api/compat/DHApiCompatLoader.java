@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.api.compat;
 
-import com.fuyuaki.r_wilderness.world.generation.distant_horizons.DHApiEventHandler;
+import com.fuyuaki.r_wilderness.world.level.levelgen.distant_horizons.DHApiEventHandler;
 import com.seibel.distanthorizons.api.methods.events.DhApiEventRegister;
 import com.seibel.distanthorizons.api.methods.events.abstractEvents.DhApiLevelLoadEvent;
 

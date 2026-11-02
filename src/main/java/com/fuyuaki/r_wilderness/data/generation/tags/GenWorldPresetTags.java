@@ -4,7 +4,7 @@ import com.fuyuaki.r_wilderness.world.level.levelgen.ModWorldPresets;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.KeyTagProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.WorldPresetTags;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
 
-public class GenWorldPresetTags extends KeyTagProvider<WorldPreset> {
+public class GenWorldPresetTags extends TagsProvider<WorldPreset> {
 
     public GenWorldPresetTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
         super(output, Registries.WORLD_PRESET, provider, MODID);

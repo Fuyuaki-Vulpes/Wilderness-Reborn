@@ -19,23 +19,22 @@ public abstract class SurfaceRulesSteepConditionMixin extends SurfaceRules.LazyX
 
     @Inject(method = "compute", at = @At("HEAD"), cancellable = true)
     private void computeSteepness(CallbackInfoReturnable<Boolean> cir){
-        int x = this.context.blockX & 15;
-        int z = this.context.blockZ & 15;
-        int z1 = Math.max(z - 1, 0);
-        int z2 = Math.min(z + 1, 15);
-        int x1 = Math.max(x - 1, 0);
-        int x2 = Math.min(x + 1, 15);
+        int chunkBlockX = this.context.blockX & 15;
+        int chunkBlockZ = this.context.blockZ & 15;
+        int zNorth = Math.max(chunkBlockZ - 1, 0);
+        int zSouth = Math.min(chunkBlockZ + 1, 15);
+        ChunkAccess chunk = this.context.chunk;
+        int heightNorth = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, chunkBlockX, zNorth);
+        int heightSouth = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, chunkBlockX, zSouth);
+        if (heightSouth >= heightNorth + 4 || heightNorth >= heightSouth + 4) {
+            cir.setReturnValue(true);
+        }
 
-        ChunkAccess chunkaccess = this.context.chunk;
-
-        int center = chunkaccess.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
-        int zOffset1 = chunkaccess.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z1);
-        int zOffset2 = chunkaccess.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z2);
-        int xOffset1 = chunkaccess.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x1, z);
-        int xOffset2 = chunkaccess.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x2, z);
-        int xDiff = Math.abs(center - xOffset2) + Math.abs(xOffset1 - center);
-        int zDiff = Math.abs(center - zOffset2) + Math.abs(zOffset1 - center);
-        cir.setReturnValue(xDiff + zDiff > 5 || xDiff > 4 || zDiff > 4);
+        int xWest = Math.max(chunkBlockX - 1, 0);
+        int xEast = Math.min(chunkBlockX + 1, 15);
+        int heightWest = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, xWest, chunkBlockZ);
+        int heightEast = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, xEast, chunkBlockZ);
+        cir.setReturnValue(heightWest >= heightEast + 4 || heightEast >= heightWest + 4);
 
     }
 

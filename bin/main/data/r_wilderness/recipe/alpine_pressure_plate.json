@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "wooden_pressure_plate",
+  "key": {
+    "#": "r_wilderness:alpine_planks"
+  },
+  "pattern": [
+    "##"
+  ],
+  "result": {
+    "id": "r_wilderness:alpine_pressure_plate"
+  }
+}

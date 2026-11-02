@@ -1,0 +1,177 @@
+package com.fuyuaki.r_wilderness.world.environment;
+
+import com.fuyuaki.r_wilderness.network.DrinkWaterInWorldPacket;
+import com.fuyuaki.r_wilderness.world.item.components.Drinkable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodConstants;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
+
+public class HydrationData implements ValueIOSerializable {
+    public static final float THISRT_CHANCE = 0.15F;
+    private static final int DEFAULT_TICK_TIMER = 0;
+    private static final float DEFAULT_EXHAUSTION_LEVEL = 0.0F;
+    private int waterLevel = 20;
+    private float saturationLevel = 5.0F;
+    private float exhaustionLevel;
+    private int tickTimer;
+    private int worldDrinkCooldown = 0;
+    private static final int WORLD_DRINK_COOLDOWN_COUNT = 20;
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, HydrationData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT,
+            HydrationData::getWaterLevel,
+            ByteBufCodecs.FLOAT,
+            HydrationData::getSaturationLevel,
+            HydrationData::new
+    );
+
+    public HydrationData(){
+
+    }
+
+    public HydrationData(int waterLevel, float saturationLevel) {
+        this.waterLevel = waterLevel;
+        this.saturationLevel = saturationLevel;
+    }
+
+    private void add(int waterLevel, float saturationLevel) {
+        this.waterLevel = Mth.clamp(waterLevel + this.waterLevel, 0, 20);
+        this.saturationLevel = Mth.clamp(saturationLevel + this.saturationLevel, 0.0F, (float)this.waterLevel);
+    }
+
+    private boolean canHandDrinkInWorld(Player player, InteractionHand hand)
+    {
+        return InteractionHand.MAIN_HAND == hand && player.getMainHandItem().isEmpty() && player.isCrouching() && this.getWaterLevel() < 20 && player.level().isClientSide() && worldDrinkCooldown <= 0;
+    }
+
+    public void tick(ServerPlayer player) {
+        if (worldDrinkCooldown > 0){
+            worldDrinkCooldown--;
+        }
+        ServerLevel serverlevel = player.level();
+        Difficulty difficulty = serverlevel.getDifficulty();
+        if (this.exhaustionLevel > 4.0F) {
+            this.exhaustionLevel -= 4.0F;
+            if (this.saturationLevel > 0.0F) {
+                this.saturationLevel = Math.max(this.saturationLevel - 1.0F, 0.0F);
+            } else if (difficulty != Difficulty.PEACEFUL) {
+                this.waterLevel = Math.max(this.waterLevel - 1, 0);
+            }
+        }else{
+            this.exhaustionLevel += 0.005F;
+        }
+
+        if (this.waterLevel <= 0) {
+            this.tickTimer++;
+            if (this.tickTimer >= 80) {
+                if (player.getHealth() > 10.0F || difficulty == Difficulty.HARD || player.getHealth() > 1.0F && difficulty == Difficulty.NORMAL) {
+                    player.hurtServer(serverlevel, player.damageSources().starve(), 1.0F);
+                }
+
+                this.tickTimer = 0;
+            }
+        }
+    }
+    public int getWaterLevel() {
+        return this.waterLevel;
+    }
+
+    public boolean hasEnoughFood() {
+        return this.getWaterLevel() > 6.0F;
+    }
+
+    public boolean needsFood() {
+        return this.waterLevel < 20;
+    }
+
+    /**
+     * Adds input to {@code foodExhaustionLevel} to a max of 40.
+     */
+    public void addExhaustion(float exhaustion) {
+        this.exhaustionLevel = Math.min(this.exhaustionLevel + exhaustion, 40.0F);
+    }
+    public void drink(int hydrationLevelModifier, float saturationLevelModifier) {
+        this.add(hydrationLevelModifier, FoodConstants.saturationByModifier(hydrationLevelModifier, saturationLevelModifier));
+    }
+
+    public void drink(Drinkable drinkable) {
+        this.add(drinkable.hydration(), drinkable.saturation());
+    }
+
+    public float getSaturationLevel() {
+        return this.saturationLevel;
+    }
+
+    public void setWaterLevel(int waterLevel) {
+        this.waterLevel = waterLevel;
+    }
+
+    public void setSaturation(float saturationLevel) {
+        this.saturationLevel = saturationLevel;
+    }
+
+    @Override
+    public void serialize(ValueOutput output) {
+        output.putInt("foodLevel", this.waterLevel);
+        output.putInt("foodTickTimer", this.tickTimer);
+        output.putFloat("foodSaturationLevel", this.saturationLevel);
+        output.putFloat("foodExhaustionLevel", this.exhaustionLevel);
+
+    }
+
+    @Override
+    public void deserialize(ValueInput input) {
+            this.waterLevel = input.getIntOr("waterLevel", 20);
+            this.tickTimer = input.getIntOr("waterTickTimer", 0);
+            this.saturationLevel = input.getFloatOr("waterSaturationLevel", 5.0F);
+            this.exhaustionLevel = input.getFloatOr("waterExhaustionLevel", 0.0F);
+
+    }
+
+    public void tryDrinkingWaterSource(Player player,InteractionHand hand){
+        if (canHandDrinkInWorld(player,hand)){
+            this.tryDrinkFromWorld(player);
+        }
+    }
+
+
+    private void tryDrinkFromWorld(Player player){
+        Level level = player.level();
+        BlockHitResult rayTraceResult = Item.getPlayerPOVHitResult(player.level(), player, ClipContext.Fluid.SOURCE_ONLY);
+
+        if (rayTraceResult.getType() == HitResult.Type.BLOCK)
+        {
+            BlockPos pos = rayTraceResult.getBlockPos();
+
+            if (level.mayInteract(player, pos) && level.getFluidState(pos).is(FluidTags.WATER))
+            {
+                ClientPacketDistributor.sendToServer(new DrinkWaterInWorldPacket(pos));
+                player.playSound(SoundEvents.GENERIC_DRINK.value(), 0.5f, 1.0f);
+                player.swing(InteractionHand.MAIN_HAND);
+            }
+        }
+    }
+
+    public void triggerCooldown() {
+        this.worldDrinkCooldown = WORLD_DRINK_COOLDOWN_COUNT;
+    }
+}

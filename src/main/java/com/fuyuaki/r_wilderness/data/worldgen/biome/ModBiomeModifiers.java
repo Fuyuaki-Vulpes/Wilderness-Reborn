@@ -1,7 +1,7 @@
 package com.fuyuaki.r_wilderness.data.worldgen.biome;
 
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
-import com.fuyuaki.r_wilderness.api.common.ModTags;
+import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.data.ModCarvers;
 import com.fuyuaki.r_wilderness.data.worldgen.placement.ModAquaticPlacements;
 import com.fuyuaki.r_wilderness.data.worldgen.placement.ModFrozenPlacements;
@@ -66,7 +66,7 @@ public class ModBiomeModifiers {
         );
         context.register(WATER_DELTAS,
                 new BiomeModifiers.AddFeaturesBiomeModifier(
-                        biomes.getOrThrow(ModTags.Biomes.HAS_WATER_DELTAS_REGULAR),
+                        biomes.getOrThrow(RTags.Biomes.HAS_WATER_DELTAS_REGULAR),
                         getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS),
                         GenerationStep.Decoration.SURFACE_STRUCTURES
                 )
@@ -74,7 +74,7 @@ public class ModBiomeModifiers {
 
         context.register(WATER_DELTAS_COMMON,
                 new BiomeModifiers.AddFeaturesBiomeModifier(
-                        biomes.getOrThrow(ModTags.Biomes.HAS_WATER_DELTAS_COMMON),
+                        biomes.getOrThrow(RTags.Biomes.HAS_WATER_DELTAS_COMMON),
                         getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_COMMON),
                         GenerationStep.Decoration.SURFACE_STRUCTURES
                 )
@@ -82,7 +82,7 @@ public class ModBiomeModifiers {
 
         context.register(WATER_DELTAS_VERY_COMMON,
                 new BiomeModifiers.AddFeaturesBiomeModifier(
-                        biomes.getOrThrow(ModTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON),
+                        biomes.getOrThrow(RTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON),
                         getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_VERY_COMMON),
                         GenerationStep.Decoration.SURFACE_STRUCTURES
                 )
@@ -90,7 +90,7 @@ public class ModBiomeModifiers {
 
         context.register(WATER_DELTAS_LARGE,
                 new BiomeModifiers.AddFeaturesBiomeModifier(
-                biomes.getOrThrow(ModTags.Biomes.HAS_WATER_DELTAS_LARGE),
+                biomes.getOrThrow(RTags.Biomes.HAS_WATER_DELTAS_LARGE),
                         getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_LARGE),
                         GenerationStep.Decoration.SURFACE_STRUCTURES
                 )

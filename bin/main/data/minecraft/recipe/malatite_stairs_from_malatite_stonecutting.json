@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "r_wilderness:malatite",
+  "result": {
+    "id": "r_wilderness:malatite_stairs"
+  }
+}

@@ -29,42 +29,55 @@ public class ModFamilies {
             .recipeUnlockedBy("has_planks")
             .getFamily();
 
+    public static final BlockFamily WEATHERED_BEDROCK = familyBuilder(
+            RBlocks.WEATHERED_BEDROCK.get())
+            .slab(RBlocks.WEATHERED_BEDROCK_SLAB.get())
+            .stairs(RBlocks.WEATHERED_BEDROCK_STAIRS.get())
+            .wall(RBlocks.WEATHERED_BEDROCK_WALL.get())
+            .getFamily();
+
     public static final BlockFamily MALATITE = familyBuilder(
             RBlocks.MALATITE.get())
-                .slab(RBlocks.MALATITE_SLAB.get())
-                .stairs(RBlocks.MALATITE_STAIRS.get())
-                .wall(RBlocks.MALATITE_WALL.get())
-                .getFamily();
+            .slab(RBlocks.MALATITE_SLAB.get())
+            .stairs(RBlocks.MALATITE_STAIRS.get())
+            .wall(RBlocks.MALATITE_WALL.get())
+            .generateStonecutterRecipe()
+            .getFamily();
 
     public static final BlockFamily COBBLED_MALATITE = familyBuilder(RBlocks.COBBLED_MALATITE.get())
-                .slab(RBlocks.COBBLED_MALATITE_SLAB.get())
-                .stairs(RBlocks.COBBLED_MALATITE_STAIRS.get())
-                .wall(RBlocks.COBBLED_MALATITE_WALL.get())
-                .getFamily();
+            .slab(RBlocks.COBBLED_MALATITE_SLAB.get())
+            .stairs(RBlocks.COBBLED_MALATITE_STAIRS.get())
+            .wall(RBlocks.COBBLED_MALATITE_WALL.get())
+            .generateStonecutterRecipe()
+            .getFamily();
 
     public static final BlockFamily SCHINITE = familyBuilder(RBlocks.SCHINITE.get())
-                .slab(RBlocks.SCHINITE_SLAB.get())
-                .stairs(RBlocks.SCHINITE_STAIRS.get())
-                .wall(RBlocks.SCHINITE_WALL.get())
-                .getFamily();
+            .slab(RBlocks.SCHINITE_SLAB.get())
+            .stairs(RBlocks.SCHINITE_STAIRS.get())
+            .wall(RBlocks.SCHINITE_WALL.get())
+            .generateStonecutterRecipe()
+            .getFamily();
 
     public static final BlockFamily COBBLED_SCHINITE = familyBuilder(RBlocks.COBBLED_SCHINITE.get())
-                .slab(RBlocks.COBBLED_SCHINITE_SLAB.get())
-                .stairs(RBlocks.COBBLED_SCHINITE_STAIRS.get())
-                .wall(RBlocks.COBBLED_SCHINITE_WALL.get())
-                .getFamily();
+            .slab(RBlocks.COBBLED_SCHINITE_SLAB.get())
+            .stairs(RBlocks.COBBLED_SCHINITE_STAIRS.get())
+            .wall(RBlocks.COBBLED_SCHINITE_WALL.get())
+            .generateStonecutterRecipe()
+            .getFamily();
 
     public static final BlockFamily MAGNEISS = familyBuilder(RBlocks.MAGNEISS.get())
-                .slab(RBlocks.MAGNEISS_SLAB.get())
-                .stairs(RBlocks.MAGNEISS_STAIRS.get())
-                .wall(RBlocks.MAGNEISS_WALL.get())
-                .getFamily();
+            .slab(RBlocks.MAGNEISS_SLAB.get())
+            .stairs(RBlocks.MAGNEISS_STAIRS.get())
+            .wall(RBlocks.MAGNEISS_WALL.get())
+            .generateStonecutterRecipe()
+            .getFamily();
 
     public static final BlockFamily COBBLED_MAGNEISS = familyBuilder(RBlocks.COBBLED_MAGNEISS.get())
-                .slab(RBlocks.COBBLED_MAGNEISS_SLAB.get())
-                .stairs(RBlocks.COBBLED_MAGNEISS_STAIRS.get())
-                .wall(RBlocks.COBBLED_MAGNEISS_WALL.get())
-                .getFamily();
+            .slab(RBlocks.COBBLED_MAGNEISS_SLAB.get())
+            .stairs(RBlocks.COBBLED_MAGNEISS_STAIRS.get())
+            .wall(RBlocks.COBBLED_MAGNEISS_WALL.get())
+            .generateStonecutterRecipe()
+            .getFamily();
 
 
     private static BlockFamily.Builder familyBuilder(Block baseBlock) {

@@ -7,6 +7,7 @@ import com.fuyuaki.r_wilderness.client.sky.star.Gradient;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -35,19 +36,18 @@ import java.util.OptionalInt;
 
 @Mixin(SkyRenderer.class)
 public abstract class SkyRendererMixin {
-
+/*
     private static final RenderPipeline R_STARS = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
                     .withLocation("pipeline/stars")
                     .withVertexShader("core/stars")
                     .withFragmentShader("core/stars")
-                    .withBlend(BlendFunction.OVERLAY)
-                    .withDepthWrite(false)
+                    .withColorTargetState(new ColorTargetState(BlendFunction.OVERLAY))
                     .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
                     .build()
     );
 
-
+*/
     @Shadow private int starIndexCount;
     @Shadow @Final private GpuBuffer starBuffer;
 
@@ -92,7 +92,7 @@ public abstract class SkyRendererMixin {
         ci.cancel();
     }
 */
-
+/*
     @Inject(method = "buildStars", at = @At("HEAD"), cancellable = true)
     private void buildStars(CallbackInfoReturnable<GpuBuffer> cir) {
         RandomSource randomsource = RandomSource.create(10842L);
@@ -154,5 +154,5 @@ public abstract class SkyRendererMixin {
         matrix4fstack.popMatrix();
 
         ci.cancel();
-    }
+    }*/
 }

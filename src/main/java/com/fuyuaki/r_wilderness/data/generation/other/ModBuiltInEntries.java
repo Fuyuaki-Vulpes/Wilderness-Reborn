@@ -8,8 +8,9 @@ import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomePlacements;
 import com.fuyuaki.r_wilderness.data.worldgen.features.ModFeatureUtils;
 import com.fuyuaki.r_wilderness.data.worldgen.placement.ModPlacementUtils;
 import com.fuyuaki.r_wilderness.data.worldgen.ModNoiseData;
+import com.fuyuaki.r_wilderness.init.RDamageTypes;
+import com.fuyuaki.r_wilderness.server.commands.arguments.RArgumentTypes;
 import com.fuyuaki.r_wilderness.world.item.enchantment.ModEnchantments;
-import com.fuyuaki.r_wilderness.world.level.levelgen.ModNoiseRouterData;
 import com.fuyuaki.r_wilderness.world.level.levelgen.ModWorldPresets;
 import com.fuyuaki.r_wilderness.world.level.levelgen.WildWorldSettings;
 import net.minecraft.core.HolderLookup;
@@ -30,14 +31,13 @@ public class ModBuiltInEntries extends DatapackBuiltinEntriesProvider {
             .add(Registries.CONFIGURED_CARVER, ModCarvers::bootstrap)
             .add(Registries.PLACED_FEATURE, ModPlacementUtils::bootstrap)
             .add(Registries.NOISE, ModNoiseData::bootstrap)
-            .add(Registries.DENSITY_FUNCTION, ModNoiseRouterData::bootstrap)
             .add(Registries.BIOME, ModBiomeData::bootstrap)
             .add(WildRegistries.REBORN_BIOME_PLACEMENT_KEY, ModBiomePlacements::bootstrap)
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifiers::bootstrap)
             .add(Registries.ENCHANTMENT, ModEnchantments::bootstrap)
             .add(Registries.WORLD_PRESET, ModWorldPresets::bootstrap)
             .add(Registries.DIMENSION_TYPE, WildWorldSettings.DimensionTypes::bootstrap)
-
+            .add(Registries.DAMAGE_TYPE, RDamageTypes::bootstrap)
             ;
 
 

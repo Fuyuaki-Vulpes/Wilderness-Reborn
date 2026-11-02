@@ -1,10 +1,11 @@
 package com.fuyuaki.r_wilderness.data.generation.tags;
 
-import com.fuyuaki.r_wilderness.api.common.ModTags;
+import com.fuyuaki.r_wilderness.api.common.RTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.KeyTagProvider;
+import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenBiomeTags extends KeyTagProvider<Biome> {
+public class GenBiomeTags extends TagsProvider<Biome> {
 
     public GenBiomeTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
         super(output, Registries.BIOME, provider,MODID);
@@ -21,32 +22,40 @@ public class GenBiomeTags extends KeyTagProvider<Biome> {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
 
-        this.tag(ModTags.Biomes.HAS_WATER_DELTAS_LARGE)
+        this.tag(RTags.Biomes.HAS_WATER_DELTAS_LARGE)
                 .add(Biomes.STONY_SHORE)
                 .add(Biomes.SWAMP)
                 .add(Biomes.MANGROVE_SWAMP);
-        this.tag(ModTags.Biomes.HAS_WATER_DELTAS_COMMON)
+        this.tag(RTags.Biomes.HAS_WATER_DELTAS_COMMON)
                 .add(
                         Biomes.STONY_SHORE
         );
-        this.tag(ModTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON)
+        this.tag(RTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON)
                 .add(Biomes.SWAMP)
                 .add(Biomes.MANGROVE_SWAMP
         );
-        this.tag(ModTags.Biomes.HAS_WATER_DELTAS_REGULAR)
+        this.tag(RTags.Biomes.HAS_WATER_DELTAS_REGULAR)
                 .add(Biomes.BEACH);
 
 
-        this.tag(ModTags.Biomes.HAS_WATER_DELTAS)
-                .addTag(ModTags.Biomes.HAS_WATER_DELTAS_LARGE)
-                .addTag(ModTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON)
-                .addTag(ModTags.Biomes.HAS_WATER_DELTAS_COMMON)
-                .addTag(ModTags.Biomes.HAS_WATER_DELTAS_REGULAR)
+        this.tag(RTags.Biomes.HAS_WATER_DELTAS)
+                .addTag(RTags.Biomes.HAS_WATER_DELTAS_LARGE)
+                .addTag(RTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON)
+                .addTag(RTags.Biomes.HAS_WATER_DELTAS_COMMON)
+                .addTag(RTags.Biomes.HAS_WATER_DELTAS_REGULAR)
         ;
 
-        this.tag(ModTags.Biomes.HAS_SAND_DUNES)
+        this.tag(RTags.Biomes.HAS_SALT_WATER)
+                .addTag(BiomeTags.IS_OCEAN)
+                .addTag(BiomeTags.IS_BEACH)
+        ;
+
+        this.tag(RTags.Biomes.HAS_SAND_DUNES)
                 .add(Biomes.DESERT)
+                .add(Biomes.SNOWY_BEACH)
                 .add(Biomes.BEACH);
+        this.tag(RTags.Biomes.HAS_BIG_SAND_DUNES)
+                .add(Biomes.DESERT);
 
         addWolfTags();
     }

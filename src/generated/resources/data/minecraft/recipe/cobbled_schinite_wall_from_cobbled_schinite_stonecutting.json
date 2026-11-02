@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "r_wilderness:cobbled_schinite",
+  "result": {
+    "id": "r_wilderness:cobbled_schinite_wall"
+  }
+}

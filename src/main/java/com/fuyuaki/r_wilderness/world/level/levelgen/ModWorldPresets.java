@@ -2,9 +2,7 @@
 
  import com.fuyuaki.r_wilderness.api.RWildernessMod;
  import com.fuyuaki.r_wilderness.data.worldgen.RSurfaceRuleData;
- import com.fuyuaki.r_wilderness.world.generation.WildChunkGenerator;
- import com.fuyuaki.r_wilderness.world.generation.WildGeneratorSettings;
- import com.fuyuaki.r_wilderness.world.level.biome.RebornBiomeSource;
+ import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
  import net.minecraft.core.Holder;
  import net.minecraft.core.HolderGetter;
  import net.minecraft.core.registries.Registries;
@@ -76,7 +74,7 @@
                                          WildWorldSettings.OVERWORLD_NOISE_SETTINGS,
                                          Blocks.STONE.defaultBlockState(),
                                          Blocks.WATER.defaultBlockState(),
-                                         RSurfaceRuleData.overworld(),
+                                         RSurfaceRuleData.overworld(biomes),
                                          68
                                  )
                          )

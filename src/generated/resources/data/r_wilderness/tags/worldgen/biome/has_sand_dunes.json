@@ -1,6 +1,8 @@
 {
   "values": [
     "minecraft:desert",
-    "minecraft:beach"
+    "minecraft:snowy_beach",
+    "minecraft:beach",
+    "minecraft:desert"
   ]
 }
