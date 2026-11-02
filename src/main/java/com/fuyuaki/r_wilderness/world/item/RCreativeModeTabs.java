@@ -52,7 +52,9 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.SILT);
                 output.accept(RBlocks.SILT_FARMLAND);
                 output.accept(RBlocks.BELLFLOWER);
+                output.accept(RBlocks.MOSS_COMPANION);
                 output.accept(RBlocks.MOUNTAIN_HEATHER);
+                output.accept(RBlocks.SNOWBELL);
 
                 output.accept(RItems.PEAT_BALL);
                 output.accept(RItems.CHALK_DUST);
@@ -64,69 +66,48 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.SCHINITE_STAIRS);
                 output.accept(RBlocks.SCHINITE_SLAB);
                 output.accept(RBlocks.SCHINITE_WALL);
-
                 output.accept(RBlocks.COBBLED_SCHINITE);
                 output.accept(RBlocks.COBBLED_SCHINITE_STAIRS);
                 output.accept(RBlocks.COBBLED_SCHINITE_SLAB);
                 output.accept(RBlocks.COBBLED_SCHINITE_WALL);
-
                 output.accept(RBlocks.MAGNEISS);
                 output.accept(RBlocks.MAGNEISS_STAIRS);
                 output.accept(RBlocks.MAGNEISS_SLAB);
                 output.accept(RBlocks.MAGNEISS_WALL);
-
                 output.accept(RBlocks.COBBLED_MAGNEISS);
                 output.accept(RBlocks.COBBLED_MAGNEISS_STAIRS);
                 output.accept(RBlocks.COBBLED_MAGNEISS_SLAB);
                 output.accept(RBlocks.COBBLED_MAGNEISS_WALL);
-
                 output.accept(RBlocks.MALATITE);
                 output.accept(RBlocks.MALATITE_STAIRS);
                 output.accept(RBlocks.MALATITE_SLAB);
                 output.accept(RBlocks.MALATITE_WALL);
-
                 output.accept(RBlocks.COBBLED_MALATITE);
                 output.accept(RBlocks.COBBLED_MALATITE_STAIRS);
                 output.accept(RBlocks.COBBLED_MALATITE_SLAB);
                 output.accept(RBlocks.COBBLED_MALATITE_WALL);
 
-
-                output.accept(RBlocks.SCHINITE_GOLD_ORE);
-                output.accept(RBlocks.MAGNEISS_GOLD_ORE);
-                output.accept(RBlocks.MALATITE_GOLD_ORE);
-
-                output.accept(RBlocks.SCHINITE_IRON_ORE);
-                output.accept(RBlocks.MAGNEISS_IRON_ORE);
-                output.accept(RBlocks.MALATITE_IRON_ORE);
-
-                output.accept(RBlocks.SCHINITE_COAL_ORE);
-                output.accept(RBlocks.MAGNEISS_COAL_ORE);
-                output.accept(RBlocks.MALATITE_COAL_ORE);
-
-                output.accept(RBlocks.SCHINITE_LAPIS_ORE);
-                output.accept(RBlocks.MAGNEISS_LAPIS_ORE);
-                output.accept(RBlocks.MALATITE_LAPIS_ORE);
-
-                output.accept(RBlocks.SCHINITE_DIAMOND_ORE);
-                output.accept(RBlocks.MAGNEISS_DIAMOND_ORE);
-                output.accept(RBlocks.MALATITE_DIAMOND_ORE);
-
-                output.accept(RBlocks.SCHINITE_REDSTONE_ORE);
-                output.accept(RBlocks.MAGNEISS_REDSTONE_ORE);
-                output.accept(RBlocks.MALATITE_REDSTONE_ORE);
-
-                output.accept(RBlocks.SCHINITE_EMERALD_ORE);
-                output.accept(RBlocks.MAGNEISS_EMERALD_ORE);
-                output.accept(RBlocks.MALATITE_EMERALD_ORE);
-
                 output.accept(RBlocks.SCHINITE_COPPER_ORE);
-                output.accept(RBlocks.MAGNEISS_COPPER_ORE);
+                output.accept(RBlocks.SCHINITE_IRON_ORE);
+                output.accept(RBlocks.SCHINITE_GOLD_ORE);
+                output.accept(RBlocks.SCHINITE_DIAMOND_ORE);
+                output.accept(RBlocks.SCHINITE_EMERALD_ORE);
+                output.accept(RBlocks.SCHINITE_REDSTONE_ORE);
+                output.accept(RBlocks.SCHINITE_LAPIS_ORE);
+                output.accept(RBlocks.MAGNEISS);
+                output.accept(RBlocks.MAGNEISS_IRON_ORE);
+                output.accept(RBlocks.MAGNEISS_GOLD_ORE);
+                output.accept(RBlocks.MAGNEISS_DIAMOND_ORE);
+                output.accept(RBlocks.MAGNEISS_EMERALD_ORE);
+                output.accept(RBlocks.MAGNEISS_REDSTONE_ORE);
+                output.accept(RBlocks.MAGNEISS_LAPIS_ORE);
                 output.accept(RBlocks.MALATITE_COPPER_ORE);
-
-                output.accept(RBlocks.WEATHERED_BEDROCK);
-                output.accept(RBlocks.WEATHERED_BEDROCK_STAIRS);
-                output.accept(RBlocks.WEATHERED_BEDROCK_SLAB);
-                output.accept(RBlocks.WEATHERED_BEDROCK_WALL);
+                output.accept(RBlocks.MALATITE_IRON_ORE);
+                output.accept(RBlocks.MALATITE_GOLD_ORE);
+                output.accept(RBlocks.MALATITE_DIAMOND_ORE);
+                output.accept(RBlocks.MALATITE_EMERALD_ORE);
+                output.accept(RBlocks.MALATITE_REDSTONE_ORE);
+                output.accept(RBlocks.MALATITE_LAPIS_ORE);
 
                 output.accept(RBlocks.CHALKY_SOIL);
                 output.accept(RBlocks.CHALKY_FARMLAND);

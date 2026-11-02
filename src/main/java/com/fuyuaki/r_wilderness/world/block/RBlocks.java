@@ -3,16 +3,14 @@ package com.fuyuaki.r_wilderness.world.block;
 import com.fuyuaki.r_wilderness.data.worldgen.tree.ModTreeGrower;
 import com.fuyuaki.r_wilderness.world.block.soils.ModFarmBlock;
 import com.fuyuaki.r_wilderness.world.block.soils.ModSoilBlock;
+import com.fuyuaki.r_wilderness.world.block.tree.BranchBlock;
 import com.fuyuaki.r_wilderness.world.block.woods.*;
 import com.fuyuaki.r_wilderness.world.item.RItems;
-import com.fuyuaki.r_wilderness.world.level.material.RFluids;
-import com.fuyuaki.r_wilderness.world.level.material.RiverFluidBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.valueproviders.ConstantInt;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -30,7 +28,6 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -44,279 +41,153 @@ public class RBlocks {
 
     //Blocks
 
-    //Unobtainable & World Gen Exclusives
+    //Tree Stuff
+    public static final DeferredBlock<Block> BRANCH = registerBlock("branch", BranchBlock::new, logProperties(MapColor.WOOD, SoundType.WOOD).dynamicShape().noLootTable());
 
-
-    //World Generation Semi-Exclusives
-
-    public static final DeferredBlock<Block> RIVER_WATER = register("river_water",
-            (p) -> new RiverFluidBlock(RFluids.RIVER.get(), p),
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.WATER)
-                    .replaceable()
-                    .noCollision()
-                    .strength(100.0F)
-                    .pushReaction(PushReaction.DESTROY)
-                    .noLootTable()
-                    .liquid()
-                    .sound(SoundType.EMPTY)
-
-            );
 
     //Stones
 
-    public static final DeferredBlock<Block> CHALK = registerBlock("chalk", BlockBehaviour.Properties.ofFullCopy(Blocks.CONCRETE.white()));
+    public static final DeferredBlock<Block> CHALK = registerBlock("chalk", BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CONCRETE));
     public static final DeferredBlock<Block> LIMESTONE = registerBlock("limestone", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
     public static final DeferredBlock<Block> MUD_STONE = registerBlock("mud_stone", BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS));
 
-
-
-    public static final DeferredBlock<Block> WEATHERED_BEDROCK = registerBlock("weathered_bedrock", weatheredBedrockProperties());
-    public static final DeferredBlock<StairBlock> WEATHERED_BEDROCK_STAIRS = registerStair(
-            "weathered_bedrock_stairs",
-            WEATHERED_BEDROCK,
-            weatheredBedrockProperties()
-    );
-
-    public static final DeferredBlock<Block> WEATHERED_BEDROCK_SLAB = registerBlock(
-            "weathered_bedrock_slab",
-            SlabBlock::new,
-            weatheredBedrockProperties()
-    );
-
-    public static final DeferredBlock<Block> WEATHERED_BEDROCK_WALL = registerBlock(
-            "weathered_bedrock_wall",
-            WallBlock::new,
-            weatheredBedrockProperties()
-    );
-
-
+    private static final BlockBehaviour.Properties SCHINITE_PROPERTIES =
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(4.5F, 7.0F);
     public static final DeferredBlock<Block> SCHINITE = registerBlock("schinite",
-            schiniteProperties());
+            SCHINITE_PROPERTIES);
     public static final DeferredBlock<StairBlock> SCHINITE_STAIRS = registerStair(
             "schinite_stairs",
             SCHINITE,
-            schiniteProperties()
+            SCHINITE_PROPERTIES
     );
     public static final DeferredBlock<Block> SCHINITE_SLAB = registerBlock(
             "schinite_slab",
             SlabBlock::new,
-            schiniteProperties()
+            SCHINITE_PROPERTIES
     );
     public static final DeferredBlock<Block> SCHINITE_WALL = registerBlock(
             "schinite_wall",
             WallBlock::new,
-            schiniteProperties()
+            SCHINITE_PROPERTIES
     );
-
+    private static final BlockBehaviour.Properties MAGNEISS_PROPERTIES =
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(5.5F, 5.0F);
 
     public static final DeferredBlock<Block> MAGNEISS = registerBlock("magneiss",
-            magneissProperties());
+            MAGNEISS_PROPERTIES);
     public static final DeferredBlock<StairBlock> MAGNEISS_STAIRS = registerStair(
             "magneiss_stairs",
             MAGNEISS,
-            magneissProperties()
+            MAGNEISS_PROPERTIES
     );
     public static final DeferredBlock<Block> MAGNEISS_SLAB = registerBlock(
             "magneiss_slab",
             SlabBlock::new,
-            magneissProperties()
+            MAGNEISS_PROPERTIES
     );
     public static final DeferredBlock<Block> MAGNEISS_WALL = registerBlock(
             "magneiss_wall",
             WallBlock::new,
-            magneissProperties()
+            MAGNEISS_PROPERTIES
     );
-
-
-
-
+    private static final BlockBehaviour.Properties MALATITE_PROPERTIES =
+            BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_BLACK)
+            .instrument(NoteBlockInstrument.BASEDRUM)
+            .requiresCorrectToolForDrops()
+            .strength(7.0F, 4.0F);
     public static final DeferredBlock<Block> MALATITE = registerBlock("malatite",
-            malatiteProperties());
+            MALATITE_PROPERTIES);
     public static final DeferredBlock<StairBlock> MALATITE_STAIRS = registerStair(
             "malatite_stairs",
             MALATITE,
-            malatiteProperties()
+            MALATITE_PROPERTIES
     );
 
     public static final DeferredBlock<Block> MALATITE_SLAB = registerBlock(
             "malatite_slab",
             SlabBlock::new,
-            malatiteProperties()
+            MALATITE_PROPERTIES
     );
     public static final DeferredBlock<Block> MALATITE_WALL = registerBlock(
             "malatite_wall",
             WallBlock::new,
-            malatiteProperties()
+            MALATITE_PROPERTIES
     );
 
     public static final DeferredBlock<Block> COBBLED_SCHINITE = registerBlock("cobbled_schinite",
-            schiniteProperties()
+            SCHINITE_PROPERTIES
     );
     public static final DeferredBlock<StairBlock> COBBLED_SCHINITE_STAIRS = registerStair("cobbled_schinite_stairs",
-            COBBLED_SCHINITE,schiniteProperties()
+            COBBLED_SCHINITE,SCHINITE_PROPERTIES
     );
     public static final DeferredBlock<Block> COBBLED_SCHINITE_SLAB = registerBlock("cobbled_schinite_slab",
-            SlabBlock::new, schiniteProperties()
+            SlabBlock::new, SCHINITE_PROPERTIES
     );
     public static final DeferredBlock<Block> COBBLED_SCHINITE_WALL = registerBlock("cobbled_schinite_wall",
-            WallBlock::new, schiniteProperties()
+            WallBlock::new, SCHINITE_PROPERTIES
     );
 
     public static final DeferredBlock<Block> COBBLED_MAGNEISS = registerBlock("cobbled_magneiss",
-            magneissProperties()
+            MAGNEISS_PROPERTIES
     );
     public static final DeferredBlock<StairBlock> COBBLED_MAGNEISS_STAIRS = registerStair("cobbled_magneiss_stairs",
-            COBBLED_MAGNEISS,magneissProperties()
+            COBBLED_MAGNEISS,MAGNEISS_PROPERTIES
     );
     public static final DeferredBlock<Block> COBBLED_MAGNEISS_SLAB = registerBlock("cobbled_magneiss_slab",
-            SlabBlock::new, magneissProperties()
+            SlabBlock::new, MAGNEISS_PROPERTIES
     );
     public static final DeferredBlock<Block> COBBLED_MAGNEISS_WALL = registerBlock("cobbled_magneiss_wall",
-            WallBlock::new, magneissProperties()
+            WallBlock::new, MAGNEISS_PROPERTIES
     );
 
     public static final DeferredBlock<Block> COBBLED_MALATITE = registerBlock("cobbled_malatite",
-            malatiteProperties()
+            MALATITE_PROPERTIES
     );
     public static final DeferredBlock<StairBlock> COBBLED_MALATITE_STAIRS = registerStair("cobbled_malatite_stairs",
-            COBBLED_MALATITE,malatiteProperties()
+            COBBLED_MALATITE,MALATITE_PROPERTIES
     );
     public static final DeferredBlock<Block> COBBLED_MALATITE_SLAB = registerBlock("cobbled_malatite_slab",
-            SlabBlock::new, malatiteProperties()
+            SlabBlock::new, MALATITE_PROPERTIES
     );
     public static final DeferredBlock<Block> COBBLED_MALATITE_WALL = registerBlock("cobbled_malatite_wall",
-            WallBlock::new, malatiteProperties()
+            WallBlock::new, MALATITE_PROPERTIES
     );
 
-
     //Ores
-    //GOLD
 
-    public static final DeferredBlock<Block> SCHINITE_GOLD_ORE = registerBlock("schinite_gold_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                schiniteProperties()
-        );
-    public static final DeferredBlock<Block> MAGNEISS_GOLD_ORE  = registerBlock("magneiss_gold_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                magneissProperties()
-        );
-    public static final DeferredBlock<Block> MALATITE_GOLD_ORE  = registerBlock("malatite_gold_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                malatiteProperties()
-        );
+    public static final DeferredBlock<Block> SCHINITE_COPPER_ORE = oreBlock("schinite_copper_ore", 0, 0, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_IRON_ORE = oreBlock("_iron_ore", 0, 0, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_GOLD_ORE = oreBlock("_gold_ore", 0, 0, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_DIAMOND_ORE = oreBlock("_diamond_ore", 3, 7, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_EMERALD_ORE = oreBlock("_emerald_ore", 3, 7, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_REDSTONE_ORE = oreBlock("_redstone_ore", 1, 5, SCHINITE_PROPERTIES);
+    public static final DeferredBlock<Block> SCHINITE_LAPIS_ORE = oreBlock("_lapis_ore", 2, 5,  SCHINITE_PROPERTIES);
 
-    //IRON
+    public static final DeferredBlock<Block> MAGNEISS_COPPER_ORE = oreBlock("magneiss_copper_ore", 0, 0, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_IRON_ORE = oreBlock("_iron_ore", 0, 0, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_GOLD_ORE = oreBlock("_gold_ore", 0, 0, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_DIAMOND_ORE = oreBlock("_diamond_ore", 3, 7, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_EMERALD_ORE = oreBlock("_emerald_ore", 3, 7, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_REDSTONE_ORE = oreBlock("_redstone_ore", 1, 5, MAGNEISS_PROPERTIES);
+    public static final DeferredBlock<Block> MAGNEISS_LAPIS_ORE = oreBlock("_lapis_ore", 2, 5,  MAGNEISS_PROPERTIES);
 
-    public static final DeferredBlock<Block> SCHINITE_IRON_ORE = registerBlock("schinite_iron_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                schiniteProperties()
-        );
-    public static final DeferredBlock<Block> MAGNEISS_IRON_ORE  = registerBlock("magneiss_iron_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                magneissProperties()
-        );
-    public static final DeferredBlock<Block> MALATITE_IRON_ORE  = registerBlock("malatite_iron_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                malatiteProperties()
-        );
+    public static final DeferredBlock<Block> MALATITE_COPPER_ORE = oreBlock("malatite_copper_ore", 0, 0, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_IRON_ORE = oreBlock("_iron_ore", 0, 0, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_GOLD_ORE = oreBlock("_gold_ore", 0, 0, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_DIAMOND_ORE = oreBlock("_diamond_ore", 3, 7, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_EMERALD_ORE = oreBlock("_emerald_ore", 3, 7, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_REDSTONE_ORE = oreBlock("_redstone_ore", 1, 5, MALATITE_PROPERTIES);
+    public static final DeferredBlock<Block> MALATITE_LAPIS_ORE = oreBlock("_lapis_ore", 2, 5,  MALATITE_PROPERTIES);
 
-    //COAL
-
-    public static final DeferredBlock<Block> SCHINITE_COAL_ORE = registerBlock("schinite_coal_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                schiniteProperties()
-        );
-    public static final DeferredBlock<Block> MAGNEISS_COAL_ORE  = registerBlock("magneiss_coal_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                magneissProperties()
-        );
-    public static final DeferredBlock<Block> MALATITE_COAL_ORE  = registerBlock("malatite_coal_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                malatiteProperties()
-        );
-
-
-    //LAPIS
-
-    public static final DeferredBlock<Block> SCHINITE_LAPIS_ORE = registerBlock("schinite_lapis_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                schiniteProperties()
-        );
-    public static final DeferredBlock<Block> MAGNEISS_LAPIS_ORE  = registerBlock("magneiss_lapis_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                magneissProperties()
-        );
-    public static final DeferredBlock<Block> MALATITE_LAPIS_ORE  = registerBlock("malatite_lapis_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                malatiteProperties()
-        );
-
-    //DIAMOND
-
-    public static final DeferredBlock<Block> SCHINITE_DIAMOND_ORE = registerBlock("schinite_diamond_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                schiniteProperties()
-        );
-    public static final DeferredBlock<Block> MAGNEISS_DIAMOND_ORE  = registerBlock("magneiss_diamond_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                magneissProperties()
-        );
-    public static final DeferredBlock<Block> MALATITE_DIAMOND_ORE  = registerBlock("malatite_diamond_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                malatiteProperties()
-        );
-
-    //REDSTONE
-
-    public static final DeferredBlock<Block> SCHINITE_REDSTONE_ORE = registerBlock("schinite_redstone_ore",
-            RedStoneOreBlock::new,
-                    schiniteProperties()
-                    .randomTicks()
-                    .lightLevel(litBlockEmission(9))
-        );
-    public static final DeferredBlock<Block> MAGNEISS_REDSTONE_ORE  = registerBlock("magneiss_redstone_ore",
-            RedStoneOreBlock::new,
-            magneissProperties()
-                    .randomTicks()
-                    .lightLevel(litBlockEmission(9))
-        );
-    public static final DeferredBlock<Block> MALATITE_REDSTONE_ORE  = registerBlock("malatite_redstone_ore",
-            RedStoneOreBlock::new,
-            malatiteProperties()
-                        .randomTicks()
-                        .lightLevel(litBlockEmission(9))
-        );
-
-    //EMERALD
-
-    public static final DeferredBlock<Block> SCHINITE_EMERALD_ORE = registerBlock("schinite_emerald_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                schiniteProperties()
-        );
-    public static final DeferredBlock<Block> MAGNEISS_EMERALD_ORE  = registerBlock("magneiss_emerald_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                magneissProperties()
-        );
-    public static final DeferredBlock<Block> MALATITE_EMERALD_ORE  = registerBlock("malatite_emerald_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                malatiteProperties()
-        );
-
-    //COPPER
-
-    public static final DeferredBlock<Block> SCHINITE_COPPER_ORE = registerBlock("schinite_copper_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                schiniteProperties()
-        );
-    public static final DeferredBlock<Block> MAGNEISS_COPPER_ORE  = registerBlock("magneiss_copper_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                magneissProperties()
-        );
-    public static final DeferredBlock<Block> MALATITE_COPPER_ORE  = registerBlock("malatite_copper_ore",
-                (properties) -> new DropExperienceBlock(ConstantInt.of(0),properties),
-                malatiteProperties()
-        );
 
 
     //Soils
@@ -412,7 +283,18 @@ public class RBlocks {
                     .pushReaction(PushReaction.DESTROY)
     );
     public static final DeferredBlock<Block> POTTED_BELLFLOWER = register("potted_bellflower", properties -> new FlowerPotBlock(BELLFLOWER.get(), properties), flowerPotProperties());
-
+    public static final DeferredBlock<Block> MOSS_COMPANION = registerBlock(
+            "moss_companion",
+            properties -> new FlowerBlock(MobEffects.OOZING, 5.0F, properties),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .noCollision()
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .offsetType(BlockBehaviour.OffsetType.XZ)
+                    .pushReaction(PushReaction.DESTROY)
+    );
+    public static final DeferredBlock<Block> POTTED_MOSS_COMPANION = register("potted_moss_companion", properties -> new FlowerPotBlock(MOSS_COMPANION.get(), properties), flowerPotProperties());
     public static final DeferredBlock<Block> MOUNTAIN_HEATHER = registerBlock(
             "mountain_heather",
             properties -> new FlowerBlock(MobEffects.WEAVING, 5.0F, properties),
@@ -425,8 +307,22 @@ public class RBlocks {
                     .pushReaction(PushReaction.POPPED)
     );
     public static final DeferredBlock<Block> POTTED_MOUNTAIN_HEATHER = register("potted_mountain_heather", properties -> new FlowerPotBlock(MOUNTAIN_HEATHER.get(), properties), flowerPotProperties());
+    public static final DeferredBlock<Block> SNOWBELL = registerBlock(
+            "snowbell",
+            properties -> new FlowerBlock(MobEffects.FIRE_RESISTANCE, 5.0F, properties),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .noCollision()
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .offsetType(BlockBehaviour.OffsetType.XZ)
+                    .pushReaction(PushReaction.DESTROY)
+    );
+    public static final DeferredBlock<Block> POTTED_SNOWBELL = register("potted_snowbell", properties -> new FlowerPotBlock(SNOWBELL.get(), properties), flowerPotProperties());
+
 
     //Methods
+
 
 
     private static  <B extends Block> DeferredBlock<B> register(String name, Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
@@ -464,6 +360,16 @@ public class RBlocks {
         return registerBlock(name, p -> new StairBlock(baseBlock.get().defaultBlockState(), p), () -> properties);
     }
 
+    public static DeferredBlock<Block> oreBlock(String name, int min, int max, BlockBehaviour.Properties block) {
+        return registerBlock(name, properties -> new DropExperienceBlock(
+                UniformInt.of(min, max), properties), block
+        );
+    }
+
+    private static BlockBehaviour.Properties copy(Block block) {
+        return BlockBehaviour.Properties.ofFullCopy(block);
+    }
+
     private static BlockBehaviour.Properties signWallVariant(Block baseBlock, boolean overrideDescription) {
         BlockBehaviour.Properties blockbehaviour$properties = baseBlock.properties();
         BlockBehaviour.Properties blockbehaviour$properties1 = BlockBehaviour.Properties.of().overrideLootTable(baseBlock.getLootTable());
@@ -475,7 +381,7 @@ public class RBlocks {
     }
 
     private static ToIntFunction<BlockState> litBlockEmission(int lightValue) {
-        return state -> state.getValue(BlockStateProperties.LIT) ? lightValue : 0;
+        return p_50763_ -> p_50763_.getValue(BlockStateProperties.LIT) ? lightValue : 0;
     }
 
     private static Function<BlockState, MapColor> waterloggedMapColor(MapColor unwaterloggedMapColor) {
@@ -491,7 +397,7 @@ public class RBlocks {
     }
 
     public static Boolean ocelotOrParrot(BlockState state, BlockGetter level, BlockPos pos, EntityType<?> entity) {
-        return entity == EntityTypes.OCELOT || entity == EntityTypes.PARROT;
+        return entity == EntityType.OCELOT || entity == EntityType.PARROT;
     }
 
     private static DeferredBlock<BedBlock> registerBed(String name, DyeColor color) {
@@ -602,37 +508,6 @@ public class RBlocks {
 
     private static BlockBehaviour.Properties flowerPotProperties() {
         return BlockBehaviour.Properties.of().instabreak().noOcclusion().pushReaction(PushReaction.DESTROY);
-    }
-
-    private static BlockBehaviour.@NotNull Properties schiniteProperties() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.COLOR_BLACK)
-                .instrument(NoteBlockInstrument.BASEDRUM)
-                .requiresCorrectToolForDrops()
-                .strength(4.5F, 7.0F);
-    }
-
-    private static BlockBehaviour.@NotNull Properties magneissProperties() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.COLOR_BLACK)
-                .instrument(NoteBlockInstrument.BASEDRUM)
-                .requiresCorrectToolForDrops()
-                .strength(5.5F, 5.0F);
-    }
-
-    private static BlockBehaviour.@NotNull Properties malatiteProperties() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.COLOR_BLACK)
-                .instrument(NoteBlockInstrument.BASEDRUM)
-                .requiresCorrectToolForDrops()
-                .strength(7.0F, 4.0F);
-    }
-    private static BlockBehaviour.Properties weatheredBedrockProperties() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.COLOR_BLACK)
-                .instrument(NoteBlockInstrument.BASEDRUM)
-                .requiresCorrectToolForDrops()
-                .strength(70.0F, 2400.0F);
     }
 
     private static BlockBehaviour.Properties candleProperties(MapColor mapColor) {
