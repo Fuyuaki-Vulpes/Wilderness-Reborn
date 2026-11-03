@@ -17,6 +17,7 @@ public class RTags {
 
     public static class Blocks {
         public static final TagKey<Block> ROOT_BLOCK_GROWS_INTO = tag("root_block_grows_into");
+        public static final TagKey<Block> WATER_DELTA_REPLACEABLE = tag("water_delta_replaceable");
 
         public static final TagKey<Block> SCHINITE_ORE_REPLACEABLES = tag("schinite_ore_replaceables");
         public static final TagKey<Block> MAGNEISS_ORE_REPLACEABLES = tag("magneiss_ore_replaceables");
@@ -60,11 +61,9 @@ public class RTags {
         }
     }
     public static class Biomes {
-        public static final TagKey<Biome> HAS_WATER_DELTAS = tag("has_water_deltas");
-        public static final TagKey<Biome> HAS_WATER_DELTAS_COMMON = tag("has_water_deltas_common");
-        public static final TagKey<Biome> HAS_WATER_DELTAS_VERY_COMMON = tag("has_water_deltas_very_common");
-        public static final TagKey<Biome> HAS_WATER_DELTAS_LARGE = tag("has_water_deltas_large");
-        public static final TagKey<Biome> HAS_WATER_DELTAS_REGULAR = tag("has_water_deltas_regular");
+        public static final TagKey<Biome> HAS_BEACH_WATER_DELTAS = tag("has_water_deltas_beach");
+        public static final TagKey<Biome> HAS_SWAMP_WATER_DELTAS = tag("has_water_deltas_swamp");
+        public static final TagKey<Biome> HAS_STONE_SHORES_WATER_DELTAS = tag("has_water_deltas_stony_shore");
         public static final TagKey<Biome> HAS_SAND_DUNES = tag("has_sand_dunes");
         public static final TagKey<Biome> HAS_BIG_SAND_DUNES = tag("has_sand_dunes");
         public static final TagKey<Biome> LAVA_AQUIFERS_ONLY = tag("lava_aquifers_only");

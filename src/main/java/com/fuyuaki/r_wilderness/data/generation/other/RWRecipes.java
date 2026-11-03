@@ -3,29 +3,28 @@ package com.fuyuaki.r_wilderness.data.generation.other;
 import com.fuyuaki.r_wilderness.world.item.RItems;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import com.fuyuaki.r_wilderness.world.block.ModFamilies;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.data.BlockFamily;
-import net.minecraft.data.PackOutput;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.data.recipes.*;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CookingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 
-import java.util.concurrent.CompletableFuture;
-
-public class GenRecipes  extends RecipeProvider {
+public class RWRecipes extends RecipeProvider {
 
 
-    public GenRecipes(HolderLookup.Provider registries, RecipeOutput output) {
-        super(registries, output);
+    public RWRecipes(BootstrapContext<Recipe<?>> recipeOutput, BootstrapContext<Advancement> advancementOutput) {
+        super(recipeOutput, advancementOutput);
     }
+
+
 
     @Override
     protected void buildRecipes() {
@@ -58,10 +57,6 @@ public class GenRecipes  extends RecipeProvider {
                 .save(this.output);
 
     }
-
-
-
-
 
     protected void cuttingStoneSetRecipe(Block ing, Block slab, Block stair, Block wall) {
         SingleItemRecipeBuilder.stonecutting(Ingredient.of(ing), RecipeCategory.BUILDING_BLOCKS, slab, 2)
@@ -99,22 +94,5 @@ public class GenRecipes  extends RecipeProvider {
     @Override
     protected void generateForEnabledBlockFamilies(FeatureFlagSet enabledFeatures) {
         ModFamilies.getAllFamilies().forEach(p_359455_ -> this.generateRecipes(p_359455_, enabledFeatures));
-    }
-
-
-    public static final class Runner extends RecipeProvider.Runner {
-        public Runner(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-            super(output, lookupProvider);
-        }
-
-        @Override
-        protected RecipeProvider createRecipeProvider(HolderLookup.Provider lookupProvider, RecipeOutput output) {
-            return new GenRecipes(lookupProvider, output);
-        }
-
-        @Override
-        public String getName() {
-            return "More Than Adventure recipes";
-        }
     }
 }

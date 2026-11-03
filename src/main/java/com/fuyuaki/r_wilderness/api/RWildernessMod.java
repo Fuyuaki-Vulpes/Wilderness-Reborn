@@ -4,10 +4,12 @@ import com.fuyuaki.r_wilderness.api.compat.DHApiCompatLoader;
 import com.fuyuaki.r_wilderness.api.config.ClientConfig;
 import com.fuyuaki.r_wilderness.init.*;
 import com.fuyuaki.r_wilderness.server.commands.arguments.RArgumentTypes;
+import com.fuyuaki.r_wilderness.util.PreemptiveGenerationCollector;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.item.RCreativeModeTabs;
 import com.fuyuaki.r_wilderness.world.item.RItems;
+import com.fuyuaki.r_wilderness.world.level.levelgen.feature.RWFeatureTypes;
 import com.fuyuaki.r_wilderness.world.level.material.RFluids;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -37,21 +39,21 @@ public class RWildernessMod {
     public static final String MODID = "r_wilderness";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public RWildernessMod(IEventBus modEventBus, ModContainer modContainer) {
-        modEventBus.addListener(this::commonSetup);
-        RArgumentTypes.init(modEventBus);
+    public RWildernessMod(IEventBus bus, ModContainer modContainer) {
+        bus.addListener(this::commonSetup);
+        RArgumentTypes.init(bus);
 
-        RebornBiomeSource.Registerer.init(modEventBus);
-        RAttachments.init(modEventBus);
-        RFluids.init(modEventBus);
-        RAttributes.init(modEventBus);
-        RBlocks.init(modEventBus);
-        RItems.init(modEventBus);
-        RCreativeModeTabs.init(modEventBus);
-        RSoundEvents.init(modEventBus);
-        RDataComponents.init(modEventBus);
-        RFeatures.init(modEventBus);
-        RChunkGenerators.init(modEventBus);
+        RebornBiomeSource.Registerer.init(bus);
+        RAttachments.init(bus);
+        RFluids.init(bus);
+        RAttributes.init(bus);
+        RBlocks.init(bus);
+        RItems.init(bus);
+        RCreativeModeTabs.init(bus);
+        RSoundEvents.init(bus);
+        RDataComponents.init(bus);
+        RChunkGenerators.init(bus);
+        RWFeatureTypes.init(bus);
 
         NeoForge.EVENT_BUS.register(this);
 
@@ -85,6 +87,7 @@ public class RWildernessMod {
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
+        PreemptiveGenerationCollector.instance().init(event.getServer());
     }
 
     @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)

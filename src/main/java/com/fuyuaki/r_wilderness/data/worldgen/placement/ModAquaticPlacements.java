@@ -4,38 +4,29 @@ import com.fuyuaki.r_wilderness.data.worldgen.features.ModAquaticFeatures;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.valueproviders.BiasedToBottomInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.placement.*;
 
 public class ModAquaticPlacements {
-    public static final ResourceKey<PlacedFeature> WATER_DELTAS = ModPlacementUtils.createKey("water_deltas");
-    public static final ResourceKey<PlacedFeature> WATER_DELTAS_COMMON = ModPlacementUtils.createKey("water_deltas_common");
-    public static final ResourceKey<PlacedFeature> WATER_DELTAS_VERY_COMMON = ModPlacementUtils.createKey("water_deltas_very_common");
-    public static final ResourceKey<PlacedFeature> WATER_DELTAS_LARGE = ModPlacementUtils.createKey("water_deltas_large");
+    public static final ResourceKey<PlacedFeature> WATER_DELTAS_BEACH = ModPlacementUtils.createKey("water_deltas_beach");
+    public static final ResourceKey<PlacedFeature> WATER_DELTAS_SWAMP = ModPlacementUtils.createKey("water_deltas_swamp");
+    public static final ResourceKey<PlacedFeature> WATER_DELTAS_STONY_SHORE = ModPlacementUtils.createKey("water_deltas_stony_shore");
 
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         PlacementUtils.register(context,
-                WATER_DELTAS,
-                ModPlacementUtils.holder(context,ModAquaticFeatures.WATER_DELTA),
-                RarityFilter.onAverageOnceEvery(2),
+                WATER_DELTAS_BEACH,
+                ModPlacementUtils.holder(context,ModAquaticFeatures.WATER_DELTA_SAND),
+                CountPlacement.of(BiasedToBottomInt.of(0,3)),
                 InSquarePlacement.spread(),
                 PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
                 BiomeFilter.biome()
         );
 
         PlacementUtils.register(context,
-                WATER_DELTAS_COMMON,
-                ModPlacementUtils.holder(context,ModAquaticFeatures.WATER_DELTA),
-                CountPlacement.of(UniformInt.of(1,5)),
-                InSquarePlacement.spread(),
-                PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
-                BiomeFilter.biome()
-        );
-
-        PlacementUtils.register(context,
-                WATER_DELTAS_VERY_COMMON,
-                ModPlacementUtils.holder(context,ModAquaticFeatures.WATER_DELTA),
+                WATER_DELTAS_SWAMP,
+                ModPlacementUtils.holder(context,ModAquaticFeatures.WATER_DELTA_GRASS),
                 CountPlacement.of(UniformInt.of(1,9)),
                 InSquarePlacement.spread(),
                 PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
@@ -43,9 +34,9 @@ public class ModAquaticPlacements {
         );
 
         PlacementUtils.register(context,
-                WATER_DELTAS_LARGE,
-                ModPlacementUtils.holder(context,ModAquaticFeatures.LARGE_WATER_DELTA),
-                CountPlacement.of(UniformInt.of(0,2)),
+                WATER_DELTAS_STONY_SHORE,
+                ModPlacementUtils.holder(context,ModAquaticFeatures.WATER_DELTA_STONE),
+                CountPlacement.of(BiasedToBottomInt.of(0,2)),
                 InSquarePlacement.spread(),
                 PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
                 BiomeFilter.biome()

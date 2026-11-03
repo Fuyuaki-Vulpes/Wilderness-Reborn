@@ -22,28 +22,18 @@ public class GenBiomeTags extends TagsProvider<Biome> {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
 
-        this.tag(RTags.Biomes.HAS_WATER_DELTAS_LARGE)
+        this.tag(RTags.Biomes.HAS_STONE_SHORES_WATER_DELTAS)
                 .add(Biomes.STONY_SHORE)
-                .add(Biomes.SWAMP)
-                .add(Biomes.MANGROVE_SWAMP);
-        this.tag(RTags.Biomes.HAS_WATER_DELTAS_COMMON)
-                .add(
-                        Biomes.STONY_SHORE
-        );
-        this.tag(RTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON)
-                .add(Biomes.SWAMP)
-                .add(Biomes.MANGROVE_SWAMP
-        );
-        this.tag(RTags.Biomes.HAS_WATER_DELTAS_REGULAR)
-                .add(Biomes.BEACH);
-
-
-        this.tag(RTags.Biomes.HAS_WATER_DELTAS)
-                .addTag(RTags.Biomes.HAS_WATER_DELTAS_LARGE)
-                .addTag(RTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON)
-                .addTag(RTags.Biomes.HAS_WATER_DELTAS_COMMON)
-                .addTag(RTags.Biomes.HAS_WATER_DELTAS_REGULAR)
         ;
+        this.tag(RTags.Biomes.HAS_BEACH_WATER_DELTAS)
+                .add(Biomes.BEACH)
+        ;
+        this.tag(RTags.Biomes.HAS_SWAMP_WATER_DELTAS)
+                .add(Biomes.SWAMP)
+                .add(Biomes.MANGROVE_SWAMP)
+        ;
+
+
 
         this.tag(RTags.Biomes.HAS_SALT_WATER)
                 .addTag(BiomeTags.IS_OCEAN)

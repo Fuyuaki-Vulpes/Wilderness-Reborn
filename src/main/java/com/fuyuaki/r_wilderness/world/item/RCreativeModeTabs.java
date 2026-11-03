@@ -23,7 +23,6 @@ public class RCreativeModeTabs {
 
 
     private static final Identifier SCROLLBAR = RWildernessMod.identifier("container/creative_inventory/scroller");
-    private static final Identifier TAB = RWildernessMod.identifier("container/creative_inventory/tab");
     private static final Identifier DEFAULT_TEXTURE = RWildernessMod.identifier("textures/gui/container/creative_inventory/tab/generic.png");
     private static final Identifier MAIN_TAB_TEXTURE = RWildernessMod.identifier("textures/gui/container/creative_inventory/tab/main.png");
 

@@ -3,6 +3,7 @@ package com.fuyuaki.r_wilderness.world.level.levelgen;
 import com.fuyuaki.r_wilderness.api.RRegistries;
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.mixin.accessor.ChunkMapAccessor;
+import com.fuyuaki.r_wilderness.util.PreemptiveGenerationCollector;
 import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
 import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
@@ -175,10 +176,8 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
         RandomState randomState = ((ChunkMapAccessor) chunkMap).accessor$getRandomState();
 
         if (this.biomeSource instanceof RebornBiomeSource) {
-            List<BiomePlacementData> knownBiomes = level.registryAccess().lookupOrThrow(RRegistries.REBORN_BIOME_PLACEMENT_KEY).stream().toList();
-
             ((RebornBiomeSource) this.biomeSource).setMemory(RegionMemory.getInstance(level));
-            ((RebornBiomeSource) this.biomeSource).setKnownBiomes(knownBiomes);
+            ((RebornBiomeSource) this.biomeSource).setKnownBiomes(PreemptiveGenerationCollector.instance().getKnownBiomePlacements());
 
         }
 
@@ -192,7 +191,7 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
 
     @Override
     public void initBiomeSource(ServerLevel level) {
-        List<BiomePlacementData> knownBiomes = level.registryAccess().lookupOrThrow(RRegistries.REBORN_BIOME_PLACEMENT_KEY).stream().toList();
+        List<BiomePlacementData> knownBiomes = PreemptiveGenerationCollector.instance().getKnownBiomePlacements();
         this.featuresPerStep = Lazy.of(
                 () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(knownBiomes.stream().map(BiomePlacementData::biome).toList()), biomeHolder -> generationSettingsGetter.apply(biomeHolder).features(), true)
         );

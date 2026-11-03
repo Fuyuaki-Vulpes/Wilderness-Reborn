@@ -7,8 +7,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.biome.*;
-import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.biome.FixedBiomeSource;
+import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 public class ModBiomeData {
@@ -17,7 +19,7 @@ public class ModBiomeData {
 
     public static void bootstrap(BootstrapContext<Biome> context) {
         HolderGetter<PlacedFeature> features = context.lookup(Registries.PLACED_FEATURE);
-        HolderGetter<ConfiguredWorldCarver<?>> carver = context.lookup(Registries.CONFIGURED_CARVER);
+        HolderGetter<WorldCarver> carver = context.lookup(Registries.CARVER);
 
         context.register(RBiomes.LUSH_RIVER, ROverworldBiomes.lushRiver(features,carver));
         context.register(RBiomes.SPARSE_CHERRY_GROVE, ROverworldBiomes.sparseCherryGrove(features,carver));

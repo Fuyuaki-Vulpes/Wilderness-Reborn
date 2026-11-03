@@ -5,6 +5,7 @@ import com.fuyuaki.r_wilderness.init.RAttributes;
 import com.fuyuaki.r_wilderness.init.RDataComponents;
 import com.fuyuaki.r_wilderness.network.DrinkWaterInWorldPacket;
 import com.fuyuaki.r_wilderness.server.commands.RCommands;
+import com.fuyuaki.r_wilderness.util.PreemptiveGenerationCollector;
 import com.fuyuaki.r_wilderness.world.environment.PlayerEnvironment;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.item.components.Drinkables;
@@ -21,6 +22,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -115,6 +117,11 @@ public class RCommonEvents {
     }
 
 
+
+    @SubscribeEvent
+    public static void serverStoppedEvent(ServerStoppedEvent event){
+        PreemptiveGenerationCollector.instance().flush();
+    }
 
 
 

@@ -19,7 +19,7 @@ import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.jspecify.annotations.Nullable;
 
@@ -33,7 +33,7 @@ public class ROverworldBiomes {
     private static final Music NORMAL_MUSIC = null;
     public static final int SWAMP_SKELETON_WEIGHT = 70;
 
-    protected static Biome dense_savanna(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome dense_savanna(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
         BiomeDefaultFeatures.farmAnimals(spawnBuilder);
@@ -77,11 +77,10 @@ public class ROverworldBiomes {
                 .build();
     }
 
-    protected static Biome caatinga(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome caatinga(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
         BiomeDefaultFeatures.desertSpawns(spawnBuilder);
         spawnBuilder.addSpawn(MobCategory.CREATURE,6,  new MobSpawnSettings.SpawnerData(EntityTypes.ARMADILLO, 1, 2));
-        spawnBuilder.creatureGenerationProbability(0.2F);
 
         BiomeGenerationSettings.Builder biomeBuilder =
                 new BiomeGenerationSettings.Builder(placedFeatures,worldCarvers);
@@ -128,7 +127,7 @@ public class ROverworldBiomes {
                 .build();
     }
 
-    protected static Biome cerrado(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome cerrado(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
         spawnBuilder.addSpawn(MobCategory.CREATURE, 12, new MobSpawnSettings.SpawnerData(EntityTypes.WOLF, 4, 8))
                 .addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(EntityTypes.FROG, 2, 5))
@@ -177,7 +176,7 @@ public class ROverworldBiomes {
                 .build();
     }
 
-    protected static Biome alpineTundra(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome alpineTundra(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
         spawnBuilder.addSpawn(MobCategory.CREATURE,4, new MobSpawnSettings.SpawnerData(EntityTypes.WOLF,  2, 4))
@@ -218,14 +217,13 @@ public class ROverworldBiomes {
                 .build();
     }
 
-    protected static Biome polarDesert(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
-        MobSpawnSettings.Builder mobspawnsettings$builder = new MobSpawnSettings.Builder();
-        BiomeDefaultFeatures.snowySpawns(mobspawnsettings$builder,true);
-        mobspawnsettings$builder.addSpawn(MobCategory.CREATURE,8, new MobSpawnSettings.SpawnerData(EntityTypes.WOLF,  4, 4))
+    protected static Biome polarDesert(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
+        MobSpawnSettings.Builder mobs = new MobSpawnSettings.Builder();
+        BiomeDefaultFeatures.snowySpawns(mobs,true);
+        mobs.addSpawn(MobCategory.CREATURE,8, new MobSpawnSettings.SpawnerData(EntityTypes.WOLF,  4, 4))
                 .addSpawn(MobCategory.CREATURE, 12,new MobSpawnSettings.SpawnerData(EntityTypes.FOX,  2, 4))
 //                .addSpawn(MobCategory.MONSTER,40, new MobSpawnSettings.SpawnerData(MtaEntityTypes.YUKI_ONNA.get(),1, 3))
         ;
-        mobspawnsettings$builder.creatureGenerationProbability(0.05F);
         BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatures, worldCarvers);
         BiomeDefaultFeatures.addFossilDecoration(biomeBuilder);
         globalOverworldGeneration(biomeBuilder);
@@ -241,14 +239,14 @@ public class ROverworldBiomes {
                 .specialEffects(new BiomeSpecialEffects.Builder()
                         .waterColor(4159204)
                         .build())
-                .mobSpawnSettings(mobspawnsettings$builder.build())
+                .mobSpawnSettings(mobs.build())
                 .generationSettings(biomeBuilder.build())
                 .build();
 
     }
 
 
-    protected static Biome bog(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome bog(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
         spawnBuilder.addSpawn(MobCategory.CREATURE,4,  new MobSpawnSettings.SpawnerData(EntityTypes.FROG, 1, 3))
@@ -303,7 +301,7 @@ public class ROverworldBiomes {
 
 
 
-    protected static Biome lushRiver(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome lushRiver(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
 
@@ -356,7 +354,7 @@ public class ROverworldBiomes {
 
     }
 
-    protected static Biome sparseCherryGrove(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers){
+    protected static Biome sparseCherryGrove(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers){
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
         spawnBuilder.addSpawn(MobCategory.CREATURE, 1, new MobSpawnSettings.SpawnerData(EntityTypes.PIG, 1, 2))
@@ -393,7 +391,7 @@ public class ROverworldBiomes {
                 .build();
     }
 
-    protected static Biome sparseTaiga(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome sparseTaiga(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
 
@@ -429,7 +427,7 @@ public class ROverworldBiomes {
                 .build();
     }
 
-    protected static Biome oasis(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome oasis(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
 
@@ -473,7 +471,7 @@ public class ROverworldBiomes {
                 .build();
     }
 
-    protected static Biome gravelRiver(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome gravelRiver(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
 
@@ -515,7 +513,7 @@ public class ROverworldBiomes {
 
     }
 
-    protected static Biome lushMeadow(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers){
+    protected static Biome lushMeadow(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers){
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
         spawnBuilder.addSpawn(MobCategory.CREATURE, 1,new MobSpawnSettings.SpawnerData(EntityTypes.DONKEY,  1, 2))
@@ -564,7 +562,7 @@ public class ROverworldBiomes {
     }
 
 
-    protected static Biome crystallineGrotto(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers){
+    protected static Biome crystallineGrotto(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers){
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
 
@@ -601,7 +599,7 @@ public class ROverworldBiomes {
     }
 
 
-    protected static Biome tundra(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome tundra(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
         spawnBuilder.addSpawn(MobCategory.CREATURE, 4,new MobSpawnSettings.SpawnerData(EntityTypes.WOLF,  2, 4));
@@ -637,7 +635,7 @@ public class ROverworldBiomes {
 
 
 
-    protected static Biome underwaterForest(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome underwaterForest(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder mobspawnsettings$builder = new MobSpawnSettings.Builder()
                 .addSpawn(MobCategory.WATER_AMBIENT,15, new MobSpawnSettings.SpawnerData(EntityTypes.PUFFERFISH,  1, 3))
                 .addSpawn(MobCategory.WATER_AMBIENT, 4, new MobSpawnSettings.SpawnerData(EntityTypes.AXOLOTL, 1, 2))
@@ -665,7 +663,7 @@ public class ROverworldBiomes {
 
 
 
-    protected static Biome mapleForest(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome mapleForest(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder()
 //                .addSpawn(MobCategory.CREATURE, 15,new MobSpawnSettings.SpawnerData(MtaEntityTypes.BUTTERFLY.get(),  1, 3))
 //                .addSpawn(MobCategory.CREATURE, 15,new MobSpawnSettings.SpawnerData(MtaEntityTypes.DEER.get(),  1, 3))
@@ -707,7 +705,7 @@ public class ROverworldBiomes {
                 .build();
     }
 
-    protected static Biome barrenCaves(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<ConfiguredWorldCarver<?>> worldCarvers) {
+    protected static Biome barrenCaves(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawns = new MobSpawnSettings.Builder();
         BiomeDefaultFeatures.caveSpawns(spawns);
         BiomeDefaultFeatures.monsters(spawns, 95, 5, 0, 100, false);

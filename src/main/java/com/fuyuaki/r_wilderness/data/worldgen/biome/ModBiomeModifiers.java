@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.world.BiomeModifier;
@@ -31,15 +31,14 @@ public class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> REMOVE_BLOBS = registerKey("remove_blobs");
     public static final ResourceKey<BiomeModifier> SPIKES_FROZEN_PEAKS = registerKey("spikes_frozen_peaks");
     public static final ResourceKey<BiomeModifier> SPIKES_BEACH = registerKey("spikes_beach");
-    public static final ResourceKey<BiomeModifier> WATER_DELTAS = registerKey("water_deltas");
-    public static final ResourceKey<BiomeModifier> WATER_DELTAS_COMMON = registerKey("water_deltas_common");
-    public static final ResourceKey<BiomeModifier> WATER_DELTAS_VERY_COMMON = registerKey("water_deltas_very_common");
-    public static final ResourceKey<BiomeModifier> WATER_DELTAS_LARGE = registerKey("water_deltas_large");
+    public static final ResourceKey<BiomeModifier> WATER_DELTAS_BEACH = registerKey("water_deltas_beach");
+    public static final ResourceKey<BiomeModifier> WATER_DELTAS_SWAMP = registerKey("water_deltas_swamp");
+    public static final ResourceKey<BiomeModifier> WATER_DELTAS_STONE_SHORE = registerKey("water_deltas_stone_shore");
 
     public static void bootstrap(BootstrapContext<BiomeModifier> context) {
         var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
-        HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
+        HolderGetter<WorldCarver> carvers = context.lookup(Registries.CARVER);
 
         context.register(REMOVE_BLOBS,
                 new BiomeModifiers.RemoveFeaturesBiomeModifier(
@@ -64,34 +63,27 @@ public class ModBiomeModifiers {
                 )
 
         );
-        context.register(WATER_DELTAS,
+
+        context.register(WATER_DELTAS_BEACH,
                 new BiomeModifiers.AddFeaturesBiomeModifier(
-                        biomes.getOrThrow(RTags.Biomes.HAS_WATER_DELTAS_REGULAR),
-                        getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS),
+                        biomes.getOrThrow(RTags.Biomes.HAS_BEACH_WATER_DELTAS),
+                        getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_BEACH),
                         GenerationStep.Decoration.SURFACE_STRUCTURES
                 )
         );
 
-        context.register(WATER_DELTAS_COMMON,
+        context.register(WATER_DELTAS_SWAMP,
                 new BiomeModifiers.AddFeaturesBiomeModifier(
-                        biomes.getOrThrow(RTags.Biomes.HAS_WATER_DELTAS_COMMON),
-                        getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_COMMON),
+                        biomes.getOrThrow(RTags.Biomes.HAS_SWAMP_WATER_DELTAS),
+                        getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_SWAMP),
                         GenerationStep.Decoration.SURFACE_STRUCTURES
                 )
         );
 
-        context.register(WATER_DELTAS_VERY_COMMON,
+        context.register(WATER_DELTAS_STONE_SHORE,
                 new BiomeModifiers.AddFeaturesBiomeModifier(
-                        biomes.getOrThrow(RTags.Biomes.HAS_WATER_DELTAS_VERY_COMMON),
-                        getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_VERY_COMMON),
-                        GenerationStep.Decoration.SURFACE_STRUCTURES
-                )
-        );
-
-        context.register(WATER_DELTAS_LARGE,
-                new BiomeModifiers.AddFeaturesBiomeModifier(
-                biomes.getOrThrow(RTags.Biomes.HAS_WATER_DELTAS_LARGE),
-                        getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_LARGE),
+                biomes.getOrThrow(RTags.Biomes.HAS_STONE_SHORES_WATER_DELTAS),
+                        getHolder(placedFeatures, ModAquaticPlacements.WATER_DELTAS_STONY_SHORE),
                         GenerationStep.Decoration.SURFACE_STRUCTURES
                 )
         );

@@ -1,7 +1,6 @@
-package com.fuyuaki.r_wilderness.data.generation.advancement.packs;
+package com.fuyuaki.r_wilderness.data.generation.advancement;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.predicates.LocationPredicate;
 import net.minecraft.advancements.triggers.PlayerTrigger;
@@ -17,9 +16,8 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
-import java.util.function.Consumer;
 
-public class ModAdventureAdvancements extends AdvancementSubProvider {
+public class RWAdventureAdvancements extends AdvancementSubProvider {
 
     private final HolderGetter<EntityType<?>> entityRegistry;
     private final HolderGetter<Item> itemRegistry;
@@ -28,7 +26,7 @@ public class ModAdventureAdvancements extends AdvancementSubProvider {
     private static final AdvancementRequirements.Strategy needAny = AdvancementRequirements.Strategy.OR;
     private static final AdvancementRequirements.Strategy needAll = AdvancementRequirements.Strategy.AND;
 
-    public ModAdventureAdvancements(BootstrapContext<Advancement> output) {
+    public RWAdventureAdvancements(BootstrapContext<Advancement> output) {
         super(output);
 
         this.entityRegistry = output.lookup(Registries.ENTITY_TYPE);

@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation.biome;
 
+import com.fuyuaki.r_wilderness.util.PreemptiveGenerationCollector;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
@@ -44,7 +45,7 @@ public class RebornBiomeSource extends BiomeSource {
 
 
     public RebornBiomeSource() {
-        this.knownBiomes = List.of();
+        this.knownBiomes = PreemptiveGenerationCollector.instance().getKnownBiomePlacements();
     }
 
     public RebornBiomeSource(List<BiomePlacementData> knownBiomes) {
