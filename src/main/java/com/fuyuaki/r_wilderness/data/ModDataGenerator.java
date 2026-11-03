@@ -3,7 +3,7 @@ package com.fuyuaki.r_wilderness.data;
 
 import com.fuyuaki.r_wilderness.data.generation.lang.EN_US_LangProvider;
 import com.fuyuaki.r_wilderness.data.generation.model.ModModelProvider;
-import com.fuyuaki.r_wilderness.data.generation.other.GenLoot;
+import com.fuyuaki.r_wilderness.data.generation.other.RWLoot;
 import com.fuyuaki.r_wilderness.data.generation.other.GenRecipes;
 import com.fuyuaki.r_wilderness.data.generation.other.GenSoundDefinition;
 import com.fuyuaki.r_wilderness.data.generation.other.ModBuiltInEntries;
@@ -36,7 +36,7 @@ public class ModDataGenerator {
 
         event.createProvider(GenRecipes.Runner::new);
 
-        generator.addProvider(true, GenLoot.create(packOutput,lookupProvider));
+        generator.addProvider(true, RWLoot.create(packOutput,lookupProvider));
 
 
         generator.addProvider(true,new ModModelProvider(packOutput));

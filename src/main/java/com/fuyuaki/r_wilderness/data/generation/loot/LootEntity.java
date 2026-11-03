@@ -4,6 +4,7 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.EntityLootSubProvider;
+import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
@@ -16,13 +17,13 @@ public class LootEntity extends EntityLootSubProvider {
     List<EntityType<?>> knownEntities = List.of();
 //            MtaEntityTypes.ENTITY.getEntries().stream().map(Holder::value).collect(Collectors.toList());
 
-    public LootEntity(HolderLookup.Provider registries) {
-        super(FeatureFlags.REGISTRY.allFlags(), registries);
+    public LootEntity(LootTableSubProvider.Context context) {
+        super(FeatureFlags.REGISTRY.allFlags(), context);
     }
 
     @Override
     public void generate() {
-        HolderGetter<EntityType<?>> holdergetter = this.registries.lookupOrThrow(Registries.ENTITY_TYPE);
+        HolderGetter<EntityType<?>> holdergetter = this.output.lookup(Registries.ENTITY_TYPE);
 
 
     }

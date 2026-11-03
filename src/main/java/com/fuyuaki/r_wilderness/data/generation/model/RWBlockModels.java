@@ -16,8 +16,6 @@ import net.minecraft.client.renderer.block.dispatch.Variant;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.random.Weighted;
-import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
@@ -25,16 +23,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.neoforged.neoforge.registries.DeferredBlock;
-import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class GenBlockModels extends BlockModelGenerators {
+public class RWBlockModels extends BlockModelGenerators {
 
 
     // CLEAR QUARTZ CLUSTER NEEDED
@@ -43,7 +37,7 @@ public class GenBlockModels extends BlockModelGenerators {
     final BiConsumer<Identifier, ModelInstance> modelOutput;
 
 
-    public GenBlockModels(ModModelProvider.BlockStateGeneratorCollector blockStateOutput, ItemModelOutput itemModelOutput, BiConsumer<Identifier, ModelInstance> modelOutput) {
+    public RWBlockModels(ModModelProvider.BlockStateGeneratorCollector blockStateOutput, ItemModelOutput itemModelOutput, BiConsumer<Identifier, ModelInstance> modelOutput) {
         super(blockStateOutput, itemModelOutput, modelOutput);
         this.blockStateOutput = blockStateOutput;
         this.modelOutput = modelOutput;
@@ -61,7 +55,7 @@ public class GenBlockModels extends BlockModelGenerators {
             RBlocks.COBBLED_MALATITE.get(),
             BlockModelGenerators::createMirroredCubeGenerator,
             RBlocks.MALATITE.get(),
-            BlockModelGenerators::createMirroredCubeGenerator,
+            BlockModelGenerators::createMirroredCubeGenerator//,
            // RBlocks.WEATHERED_BEDROCK.get(),
             //BlockModelGenerators::createMirroredCubeGenerator
     );
@@ -81,7 +75,7 @@ public class GenBlockModels extends BlockModelGenerators {
         createTrivialCube(RBlocks.SCHINITE_GOLD_ORE.get());
         createTrivialCube(RBlocks.MAGNEISS_GOLD_ORE.get());
         createTrivialCube(RBlocks.MALATITE_GOLD_ORE.get());
-        this.createNonTemplateModelBlock(RBlocks.RIVER_WATER.get());
+        //this.createNonTemplateModelBlock(RBlocks.RIVER_WATER.get());
 
         createTrivialCube(RBlocks.SCHINITE_IRON_ORE.get());
         createTrivialCube(RBlocks.MAGNEISS_IRON_ORE.get());
