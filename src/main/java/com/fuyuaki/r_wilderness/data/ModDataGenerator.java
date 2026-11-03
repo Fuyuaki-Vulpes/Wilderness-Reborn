@@ -5,7 +5,7 @@ import com.fuyuaki.r_wilderness.data.generation.lang.EN_US_LangProvider;
 import com.fuyuaki.r_wilderness.data.generation.model.ModModelProvider;
 import com.fuyuaki.r_wilderness.data.generation.other.RWLoot;
 import com.fuyuaki.r_wilderness.data.generation.other.GenRecipes;
-import com.fuyuaki.r_wilderness.data.generation.other.GenSoundDefinition;
+import com.fuyuaki.r_wilderness.data.generation.other.RWSoundDefinition;
 import com.fuyuaki.r_wilderness.data.generation.other.ModBuiltInEntries;
 import com.fuyuaki.r_wilderness.data.generation.tags.*;
 import net.minecraft.core.HolderLookup;
@@ -41,19 +41,19 @@ public class ModDataGenerator {
 
         generator.addProvider(true,new ModModelProvider(packOutput));
 
-        event.createBlockAndItemTags(GenBlockTags::new, GenItemTags::new);
+        event.createBlockAndItemTags(RWBlockTags::new, RWItemTags::new);
 /*
         generator.addProvider(true,
                 new GenEnchantmentTags(packOutput, datapackRegistries.getRegistryProvider()));
 */
         generator.addProvider(true,
-                new GenBiomeTags(packOutput, datapackRegistries.getRegistryProvider()));
+                new RWBiomeTags(packOutput, datapackRegistries.getRegistryProvider()));
 
         generator.addProvider(true,
-                new GenFluidTags(packOutput, datapackRegistries.getRegistryProvider()));
+                new RWFluidTags(packOutput, datapackRegistries.getRegistryProvider()));
 
         generator.addProvider(true,
-                new GenWorldPresetTags(packOutput, datapackRegistries.getRegistryProvider()));
+                new RWWorldPresetTags(packOutput, datapackRegistries.getRegistryProvider()));
 /*
         generator.addProvider(true,
                 new GenEntityTags(packOutput, datapackRegistries.getRegistryProvider()));
@@ -66,7 +66,7 @@ public class ModDataGenerator {
                 new EN_US_LangProvider(packOutput));
 
       generator.addProvider(true,
-                new GenSoundDefinition(packOutput));
+                new RWSoundDefinition(packOutput));
 /*
         generator.addProvider(true,
                 new GlobalLootModifiers(packOutput,datapackRegistries.getRegistryProvider()));

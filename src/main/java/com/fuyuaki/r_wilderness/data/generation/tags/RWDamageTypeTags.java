@@ -12,8 +12,8 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenDamageTypeTags extends DamageTypeTagsProvider {
-    public GenDamageTypeTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+public class RWDamageTypeTags extends DamageTypeTagsProvider {
+    public RWDamageTypeTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider, MODID);
     }
 

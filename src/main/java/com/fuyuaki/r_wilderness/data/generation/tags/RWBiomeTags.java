@@ -13,9 +13,9 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenBiomeTags extends TagsProvider<Biome> {
+public class RWBiomeTags extends TagsProvider<Biome> {
 
-    public GenBiomeTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
+    public RWBiomeTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
         super(output, Registries.BIOME, provider,MODID);
     }
 

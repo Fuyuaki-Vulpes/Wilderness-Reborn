@@ -9,8 +9,8 @@ import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
 
 import java.util.concurrent.CompletableFuture;
 
-public class GenDataMaps extends DataMapProvider {
-    protected GenDataMaps(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+public class RWDataMaps extends DataMapProvider {
+    protected RWDataMaps(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider);
     }
 

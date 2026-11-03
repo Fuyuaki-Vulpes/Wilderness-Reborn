@@ -5,14 +5,13 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.level.material.FluidIds;
 
 import java.util.concurrent.CompletableFuture;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenFluidTags extends FluidTagsProvider{
-    public GenFluidTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+public class RWFluidTags extends FluidTagsProvider{
+    public RWFluidTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider, MODID);
     }
 

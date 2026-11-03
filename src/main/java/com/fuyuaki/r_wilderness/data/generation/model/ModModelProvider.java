@@ -61,7 +61,7 @@ public class ModModelProvider implements DataProvider, IModelProviderExtension {
 
         new RWBlockModels(blockStateGeneratorCollector, itemInfoCollector, simpleModelCollector).run();
 
-        new GenItemModels(itemInfoCollector, simpleModelCollector).run();
+        new RWItemModels(itemInfoCollector, simpleModelCollector).run();
 
         itemInfoCollector.finalizeAndValidate();
         return CompletableFuture.allOf(

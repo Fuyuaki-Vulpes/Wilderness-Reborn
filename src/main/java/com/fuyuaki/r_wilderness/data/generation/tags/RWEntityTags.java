@@ -10,8 +10,8 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenEntityTags extends TagsProvider<EntityType<?>> {
-    public GenEntityTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider) {
+public class RWEntityTags extends TagsProvider<EntityType<?>> {
+    public RWEntityTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider) {
         super(pOutput, Registries.ENTITY_TYPE, pProvider,MODID);
     }
 

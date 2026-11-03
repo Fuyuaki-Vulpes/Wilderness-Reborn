@@ -1,7 +1,6 @@
 package com.fuyuaki.r_wilderness.data.generation.other;
 
 import com.fuyuaki.r_wilderness.init.RSoundEvents;
-import com.mojang.datafixers.kinds.IdF;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.data.SoundDefinition;
@@ -9,8 +8,8 @@ import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenSoundDefinition extends SoundDefinitionsProvider {
-    public GenSoundDefinition(PackOutput output) {
+public class RWSoundDefinition extends SoundDefinitionsProvider {
+    public RWSoundDefinition(PackOutput output) {
         super(output, MODID);
     }
 
