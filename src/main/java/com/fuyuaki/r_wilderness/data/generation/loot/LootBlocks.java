@@ -6,6 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -15,12 +16,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.UniformContainerBase;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.predicates.AnyOfCondition;
 import net.minecraft.world.level.storage.loot.predicates.BonusLevelTableCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraft.world.level.storage.loot.providers.number.floats.ContextFloatProviders;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 
 import java.util.List;
 import java.util.Set;
@@ -33,14 +36,14 @@ public class LootBlocks extends BlockLootSubProvider {
 
     protected static final float[] NORMAL_LEAVES_SAPLING_CHANCES = new float[]{0.05F, 0.0625F, 0.083333336F, 0.1F};
     private static final float[] NORMAL_LEAVES_STICK_CHANCES = new float[]{0.02F, 0.022222223F, 0.025F, 0.033333335F, 0.1F};
-    public LootBlocks(HolderLookup.Provider provider) {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags(),provider);
+    public LootBlocks(LootTableSubProvider.Context context) {
+        super(Set.of(), FeatureFlags.REGISTRY.allFlags(),context);
     }
 
     @Override
     protected void generate() {
 
-        add(RBlocks.CHALK.get(), block -> createSingleItemTableWithSilkTouch(block, RItems.CHALK_DUST,ConstantValue.exactly(4.0F)));
+        add(RBlocks.CHALK.get(), block -> createSingleItemTableWithSilkTouch(block, RItems.CHALK_DUST,ContextIntProviders.exactly(4)));
         dropSelf(RBlocks.LIMESTONE.get());
         dropSelf(RBlocks.MUD_STONE.get());
         add(RBlocks.SCHINITE.get(), block -> createSingleItemTableWithSilkTouch(block, RBlocks.COBBLED_SCHINITE));
@@ -101,8 +104,8 @@ public class LootBlocks extends BlockLootSubProvider {
         dropOther(RBlocks.CHALKY_FARMLAND.get(), RBlocks.CHALKY_SOIL);
         dropSelf(RBlocks.CLAY_SOIL.get());
         dropOther(RBlocks.CLAY_FARMLAND.get(), RBlocks.CLAY_SOIL);
-        add(RBlocks.PEAT.get(), block -> createSingleItemTableWithSilkTouch(block, RItems.PEAT_BALL, ConstantValue.exactly(4.0F)));
-        add(RBlocks.PEAT_FARMLAND.get(), createSingleItemTable(RItems.PEAT_BALL, ConstantValue.exactly(4.0F)));
+        add(RBlocks.PEAT.get(), block -> createSingleItemTableWithSilkTouch(block, RItems.PEAT_BALL, ContextIntProviders.exactly(4)));
+        add(RBlocks.PEAT_FARMLAND.get(), createSingleItemTable(RItems.PEAT_BALL, ContextIntProviders.exactly(4)));
         dropSelf(RBlocks.SANDY_SOIL.get());
         dropOther(RBlocks.SANDY_FARMLAND.get(), RBlocks.SANDY_SOIL);
         dropSelf(RBlocks.SILT.get());
@@ -150,28 +153,12 @@ public class LootBlocks extends BlockLootSubProvider {
     }
 
 
-    protected LootTable.Builder createLeavesDrops(Block leavesBlock, Item saplingBlock, float... chances) {
-        HolderLookup.RegistryLookup<Enchantment> registrylookup = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
-        return this.createSilkTouchOrShearsDispatchTable(
-                        leavesBlock,
-                        ((LootPoolSingletonContainer.Builder)this.applyExplosionCondition(leavesBlock, LootItem.lootTableItem(saplingBlock)))
-                                .when(BonusLevelTableCondition.bonusLevelFlatChance(registrylookup.getOrThrow(Enchantments.FORTUNE), chances))
-                )
-                .withPool(
-                        LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1.0F))
-                                .when(this.doesNotHaveShearsOrSilkTouch())
-                                .add(
-                                        ((LootPoolSingletonContainer.Builder)this.applyExplosionDecay(
-                                                leavesBlock, LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
-                                        ))
-                                                .when(BonusLevelTableCondition.bonusLevelFlatChance(registrylookup.getOrThrow(Enchantments.FORTUNE), NORMAL_LEAVES_STICK_CHANCES))
-                                )
-                );
+    protected LootTable.Builder createLeavesDrops(Block original, Block sapling, float... saplingChances) {
+        return this.createSilkTouchOrShearsDispatchTable(original, (LootPoolEntryContainer.Builder)((UniformContainerBase.Builder)this.applyExplosionCondition(original, LootItem.lootTableItem(sapling))).when(BonusLevelTableCondition.bonusLevelFlatChance(this.enchantments.getOrThrow(Enchantments.FORTUNE), saplingChances))).withPool(((LootPool.Builder)LootPool.lootPool().setRolls(ContextIntProviders.exactly(1)).when(this.doesNotHaveShearsOrSilkTouch())).add((LootPoolEntryContainer.Builder)((UniformContainerBase.Builder)this.applyExplosionDecay(original, LootItem.lootTableItem(Items.STICK).apply(SetItemCountFunction.setCount(ContextIntProviders.between(1, 2))))).when(BonusLevelTableCondition.bonusLevelFlatChance(this.enchantments.getOrThrow(Enchantments.FORTUNE), NORMAL_LEAVES_STICK_CHANCES))));
     }
 
     private LootItemCondition.Builder hasShearsOrSilkTouch() {
-        return this.hasShears().or(this.hasSilkTouch());
+        return (new AnyOfCondition.Builder(new LootItemCondition.Builder[0])).or(this.hasShears()).or(this.hasSilkTouch());
     }
 
     private LootItemCondition.Builder doesNotHaveShearsOrSilkTouch() {

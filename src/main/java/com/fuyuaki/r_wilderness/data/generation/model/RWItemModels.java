@@ -22,13 +22,13 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import java.util.LinkedHashMap;
 import java.util.function.BiConsumer;
 
-public class GenItemModels extends ItemModelGenerators {
+public class RWItemModels extends ItemModelGenerators {
 
     private final ItemModelOutput itemModelOutput;
     private final BiConsumer<Identifier, ModelInstance> modelOutput;
 
 
-    public GenItemModels(ItemModelOutput itemModelOutput, BiConsumer<Identifier, ModelInstance> modelOutput) {
+    public RWItemModels(ItemModelOutput itemModelOutput, BiConsumer<Identifier, ModelInstance> modelOutput) {
         super(itemModelOutput, modelOutput);
         this.itemModelOutput = itemModelOutput;
         this.modelOutput = modelOutput;

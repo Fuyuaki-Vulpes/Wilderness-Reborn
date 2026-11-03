@@ -16,13 +16,13 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenItemTags extends TagsProvider<Item> {
+public class RWItemTags extends TagsProvider<Item> {
 
     private final CompletableFuture<TagLookup<Block>> blockTags;
     private final Map<TagKey<Block>, TagKey<Item>> tagsToCopy = new HashMap<>();
 
 
-    public GenItemTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pLookupProvider, CompletableFuture<TagLookup<Block>> blockTags) {
+    public RWItemTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pLookupProvider, CompletableFuture<TagLookup<Block>> blockTags) {
         super(pOutput, Registries.ITEM, pLookupProvider, MODID);
         this.blockTags = blockTags;
     }

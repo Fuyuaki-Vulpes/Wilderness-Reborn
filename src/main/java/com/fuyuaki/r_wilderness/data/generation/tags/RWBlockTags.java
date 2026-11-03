@@ -4,11 +4,9 @@ import com.fuyuaki.r_wilderness.api.common.RTags;
 import com.fuyuaki.r_wilderness.world.block.RBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 
 import net.minecraft.data.tags.TagAppender;
-import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockItemTagId;
@@ -20,7 +18,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.internal.NeoForgeBlockTagsProvider;
 
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
@@ -28,9 +25,9 @@ import java.util.function.Consumer;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenBlockTags extends BlockTagsProvider {
+public class RWBlockTags extends BlockTagsProvider {
 
-    public GenBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+    public RWBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output,  lookupProvider,MODID);
     }
 

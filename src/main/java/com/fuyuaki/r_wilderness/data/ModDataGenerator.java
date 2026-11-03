@@ -48,7 +48,7 @@ public class ModDataGenerator {
 
         generator.addProvider(true,new ModModelProvider(packOutput));
 
-        event.createBlockAndItemTags(GenBlockTags::new, GenItemTags::new);
+        event.createBlockAndItemTags(RWBlockTags::new, RWItemTags::new);
 /*
         generator.addProvider(true,
                 new GenEnchantmentTags(packOutput, datapackRegistries.getRegistryProvider()));
@@ -70,7 +70,7 @@ public class ModDataGenerator {
                 new EN_US_LangProvider(packOutput));
 
       generator.addProvider(true,
-                new GenSoundDefinition(packOutput));
+                new RWSoundDefinition(packOutput));
 /*
         generator.addProvider(true,
                 new GlobalLootModifiers(packOutput,datapackRegistries.getRegistryProvider()));

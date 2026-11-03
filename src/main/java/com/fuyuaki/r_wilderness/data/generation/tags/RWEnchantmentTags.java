@@ -8,8 +8,8 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
-public class GenEnchantmentTags extends EnchantmentTagsProvider {
-    public GenEnchantmentTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+public class RWEnchantmentTags extends EnchantmentTagsProvider {
+    public RWEnchantmentTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider, MODID);
     }
 

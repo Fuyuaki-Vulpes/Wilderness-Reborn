@@ -13,9 +13,9 @@ import java.util.concurrent.CompletableFuture;
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 
 
-public class GenWorldPresetTags extends TagsProvider<WorldPreset> {
+public class RWWorldPresetTags extends TagsProvider<WorldPreset> {
 
-    public GenWorldPresetTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
+    public RWWorldPresetTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider) {
         super(output, Registries.WORLD_PRESET, provider, MODID);
     }
 

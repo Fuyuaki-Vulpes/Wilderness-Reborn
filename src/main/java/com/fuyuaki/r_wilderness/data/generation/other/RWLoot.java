@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class GenLoot {
+public class RWLoot {
     public static LootTableProvider create(PackOutput output, CompletableFuture<HolderLookup.Provider> pRegistries) {
-        return new LootTableProvider(output, Set.of(), List.of(
+        return new LootTableProvider(Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(LootBlocks::new, LootContextParamSets.BLOCK)
                 //new LootTableProvider.SubProviderEntry(LootGift::new, LootContextParamSets.GIFT),
                 //new LootTableProvider.SubProviderEntry(LootArcheology::new, LootContextParamSets.ARCHAEOLOGY),
@@ -20,7 +20,7 @@ public class GenLoot {
                 //new LootTableProvider.SubProviderEntry(LootEntity::new, LootContextParamSets.ENTITY),
                 //new LootTableProvider.SubProviderEntry(LootEquimpent::new, LootContextParamSets.EQUIPMENT)
         )
-        ,pRegistries);
+        );
     }
 
 
