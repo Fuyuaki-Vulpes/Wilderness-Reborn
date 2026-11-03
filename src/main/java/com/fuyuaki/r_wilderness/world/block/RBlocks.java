@@ -3,11 +3,12 @@ package com.fuyuaki.r_wilderness.world.block;
 import com.fuyuaki.r_wilderness.data.worldgen.tree.ModTreeGrower;
 import com.fuyuaki.r_wilderness.world.block.soils.ModFarmBlock;
 import com.fuyuaki.r_wilderness.world.block.soils.ModSoilBlock;
-import com.fuyuaki.r_wilderness.world.block.tree.BranchBlock;
 import com.fuyuaki.r_wilderness.world.block.woods.*;
 import com.fuyuaki.r_wilderness.world.item.RItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.data.BlockFamilies;
+import net.minecraft.data.BlockFamily;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -34,6 +35,7 @@ import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
+import static net.minecraft.world.level.block.Blocks.CONCRETE;
 
 public class RBlocks {
 
@@ -41,13 +43,9 @@ public class RBlocks {
 
     //Blocks
 
-    //Tree Stuff
-    public static final DeferredBlock<Block> BRANCH = registerBlock("branch", BranchBlock::new, logProperties(MapColor.WOOD, SoundType.WOOD).dynamicShape().noLootTable());
-
-
     //Stones
 
-    public static final DeferredBlock<Block> CHALK = registerBlock("chalk", BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CONCRETE));
+    public static final DeferredBlock<Block> CHALK = registerBlock("chalk", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
     public static final DeferredBlock<Block> LIMESTONE = registerBlock("limestone", BlockBehaviour.Properties.ofFullCopy(Blocks.STONE));
     public static final DeferredBlock<Block> MUD_STONE = registerBlock("mud_stone", BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS));
 
@@ -280,7 +278,7 @@ public class RBlocks {
                     .instabreak()
                     .sound(SoundType.GRASS)
                     .offsetType(BlockBehaviour.OffsetType.XZ)
-                    .pushReaction(PushReaction.DESTROY)
+                    .pushReaction(PushReaction.POPPED)
     );
     public static final DeferredBlock<Block> POTTED_BELLFLOWER = register("potted_bellflower", properties -> new FlowerPotBlock(BELLFLOWER.get(), properties), flowerPotProperties());
     public static final DeferredBlock<Block> MOSS_COMPANION = registerBlock(
@@ -292,7 +290,7 @@ public class RBlocks {
                     .instabreak()
                     .sound(SoundType.GRASS)
                     .offsetType(BlockBehaviour.OffsetType.XZ)
-                    .pushReaction(PushReaction.DESTROY)
+                    .pushReaction(PushReaction.POPPED)
     );
     public static final DeferredBlock<Block> POTTED_MOSS_COMPANION = register("potted_moss_companion", properties -> new FlowerPotBlock(MOSS_COMPANION.get(), properties), flowerPotProperties());
     public static final DeferredBlock<Block> MOUNTAIN_HEATHER = registerBlock(
@@ -316,7 +314,7 @@ public class RBlocks {
                     .instabreak()
                     .sound(SoundType.GRASS)
                     .offsetType(BlockBehaviour.OffsetType.XZ)
-                    .pushReaction(PushReaction.DESTROY)
+                    .pushReaction(PushReaction.POPPED)
     );
     public static final DeferredBlock<Block> POTTED_SNOWBELL = register("potted_snowbell", properties -> new FlowerPotBlock(SNOWBELL.get(), properties), flowerPotProperties());
 
@@ -410,7 +408,7 @@ public class RBlocks {
                         .strength(0.2F)
                         .noOcclusion()
                         .ignitedByLava()
-                        .pushReaction(PushReaction.DESTROY)
+                        .pushReaction(PushReaction.POPPED)
         );
     }
 
@@ -471,7 +469,7 @@ public class RBlocks {
                 .isSuffocating(RBlocks::never)
                 .isViewBlocking(RBlocks::never)
                 .ignitedByLava()
-                .pushReaction(PushReaction.DESTROY)
+                .pushReaction(PushReaction.POPPED)
                 .isRedstoneConductor(RBlocks::never);
     }
 
@@ -484,7 +482,7 @@ public class RBlocks {
                 .noOcclusion()
                 .isSuffocating(NOT_CLOSED_SHULKER)
                 .isViewBlocking(NOT_CLOSED_SHULKER)
-                .pushReaction(PushReaction.DESTROY);
+                .pushReaction(PushReaction.POPPED);
     }
 
     private static BlockBehaviour.Properties pistonProperties() {
@@ -494,7 +492,7 @@ public class RBlocks {
                 .isRedstoneConductor(RBlocks::never)
                 .isSuffocating(NOT_EXTENDED_PISTON)
                 .isViewBlocking(NOT_EXTENDED_PISTON)
-                .pushReaction(PushReaction.BLOCK);
+                .pushReaction(PushReaction.IMMOVEABLE);
     }
     private static final BlockBehaviour.StatePredicate NOT_CLOSED_SHULKER = (p_304352_, p_304353_, p_304354_) -> p_304353_.getBlockEntity(p_304354_) instanceof ShulkerBoxBlockEntity shulkerboxblockentity
             ? shulkerboxblockentity.isClosed()
@@ -503,11 +501,11 @@ public class RBlocks {
 
 
     private static BlockBehaviour.Properties buttonProperties() {
-        return BlockBehaviour.Properties.of().noCollision().strength(0.5F).pushReaction(PushReaction.DESTROY);
+        return BlockBehaviour.Properties.of().noCollision().strength(0.5F).pushReaction(PushReaction.POPPED);
     }
 
     private static BlockBehaviour.Properties flowerPotProperties() {
-        return BlockBehaviour.Properties.of().instabreak().noOcclusion().pushReaction(PushReaction.DESTROY);
+        return BlockBehaviour.Properties.of().instabreak().noOcclusion().pushReaction(PushReaction.POPPED);
     }
 
     private static BlockBehaviour.Properties candleProperties(MapColor mapColor) {
@@ -517,7 +515,7 @@ public class RBlocks {
                 .strength(0.1F)
                 .sound(SoundType.CANDLE)
                 .lightLevel(CandleBlock.LIGHT_EMISSION)
-                .pushReaction(PushReaction.DESTROY);
+                .pushReaction(PushReaction.POPPED);
     }
 
     public static void init(IEventBus bus){

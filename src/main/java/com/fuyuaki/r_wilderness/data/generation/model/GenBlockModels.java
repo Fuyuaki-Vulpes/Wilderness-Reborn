@@ -62,8 +62,8 @@ public class GenBlockModels extends BlockModelGenerators {
             BlockModelGenerators::createMirroredCubeGenerator,
             RBlocks.MALATITE.get(),
             BlockModelGenerators::createMirroredCubeGenerator,
-            RBlocks.WEATHERED_BEDROCK.get(),
-            BlockModelGenerators::createMirroredCubeGenerator
+           // RBlocks.WEATHERED_BEDROCK.get(),
+            //BlockModelGenerators::createMirroredCubeGenerator
     );
 
     @Override
@@ -87,9 +87,9 @@ public class GenBlockModels extends BlockModelGenerators {
         createTrivialCube(RBlocks.MAGNEISS_IRON_ORE.get());
         createTrivialCube(RBlocks.MALATITE_IRON_ORE.get());
 
-        createTrivialCube(RBlocks.SCHINITE_COAL_ORE.get());
-        createTrivialCube(RBlocks.MAGNEISS_COAL_ORE.get());
-        createTrivialCube(RBlocks.MALATITE_COAL_ORE.get());
+        //createTrivialCube(RBlocks.SCHINITE_COAL_ORE.get());
+        //createTrivialCube(RBlocks.MAGNEISS_COAL_ORE.get());
+        //createTrivialCube(RBlocks.MALATITE_COAL_ORE.get());
 
         createTrivialCube(RBlocks.SCHINITE_LAPIS_ORE.get());
         createTrivialCube(RBlocks.MAGNEISS_LAPIS_ORE.get());

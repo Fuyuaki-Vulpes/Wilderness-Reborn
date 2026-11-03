@@ -29,13 +29,13 @@ public class ModFamilies {
             .recipeUnlockedBy("has_planks")
             .getFamily();
 
-    public static final BlockFamily WEATHERED_BEDROCK = familyBuilder(
+    /*public static final BlockFamily WEATHERED_BEDROCK = familyBuilder(
             RBlocks.WEATHERED_BEDROCK.get())
             .slab(RBlocks.WEATHERED_BEDROCK_SLAB.get())
             .stairs(RBlocks.WEATHERED_BEDROCK_STAIRS.get())
             .wall(RBlocks.WEATHERED_BEDROCK_WALL.get())
             .getFamily();
-
+*/
     public static final BlockFamily MALATITE = familyBuilder(
             RBlocks.MALATITE.get())
             .slab(RBlocks.MALATITE_SLAB.get())

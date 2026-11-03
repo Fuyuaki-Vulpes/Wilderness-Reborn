@@ -118,7 +118,7 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.SANDY_SOIL);
                 output.accept(RBlocks.SANDY_FARMLAND);
                 output.accept(RBlocks.SILT);
-                output.ac(RBlocks.SILT_FARMLAND);
+                output.accept(RBlocks.SILT_FARMLAND);
             }))
             .build());
 

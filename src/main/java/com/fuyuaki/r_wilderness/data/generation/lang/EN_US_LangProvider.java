@@ -21,10 +21,10 @@ public class EN_US_LangProvider extends LanguageProvider {
         block(RBlocks.CHALK.get(), "Chalk");
         block(RBlocks.LIMESTONE.get(), "Limestone");
         block(RBlocks.MUD_STONE.get(), "Mud Stone");
-        block(RBlocks.WEATHERED_BEDROCK.get(), "Weathered Bedrock");
-        block(RBlocks.WEATHERED_BEDROCK_WALL.get(), "Weathered Bedrock Wall");
-        block(RBlocks.WEATHERED_BEDROCK_SLAB.get(), "Weathered Bedrock Slab");
-        block(RBlocks.WEATHERED_BEDROCK_STAIRS.get(), "Weathered Bedrock Stairs");
+        //block(RBlocks.WEATHERED_BEDROCK.get(), "Weathered Bedrock");
+        //block(RBlocks.WEATHERED_BEDROCK_WALL.get(), "Weathered Bedrock Wall");
+        //block(RBlocks.WEATHERED_BEDROCK_SLAB.get(), "Weathered Bedrock Slab");
+        //block(RBlocks.WEATHERED_BEDROCK_STAIRS.get(), "Weathered Bedrock Stairs");
         block(RBlocks.SCHINITE.get(), "Schinite");
         block(RBlocks.SCHINITE_WALL.get(), "Schinite Wall");
         block(RBlocks.SCHINITE_SLAB.get(), "Schinite Slab");
@@ -59,9 +59,9 @@ public class EN_US_LangProvider extends LanguageProvider {
         block(RBlocks.MAGNEISS_IRON_ORE.get(), "Magneiss Iron Ore");
         block(RBlocks.MALATITE_IRON_ORE.get(), "Malatite Iron Ore");
 
-        block(RBlocks.SCHINITE_COAL_ORE.get(), "Schinite Coal Ore");
-        block(RBlocks.MAGNEISS_COAL_ORE.get(), "Magneiss Coal Ore");
-        block(RBlocks.MALATITE_COAL_ORE.get(), "Malatite Coal Ore");
+        //block(RBlocks.SCHINITE_COAL_ORE.get(), "Schinite Coal Ore");
+        //block(RBlocks.MAGNEISS_COAL_ORE.get(), "Magneiss Coal Ore");
+        //block(RBlocks.MALATITE_COAL_ORE.get(), "Malatite Coal Ore");
 
         block(RBlocks.SCHINITE_LAPIS_ORE.get(), "Schinite Lapis Ore");
         block(RBlocks.MAGNEISS_LAPIS_ORE.get(), "Magneiss Lapis Ore");
