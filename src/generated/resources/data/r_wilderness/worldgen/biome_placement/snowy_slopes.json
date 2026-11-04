@@ -3,21 +3,25 @@
   "name": "r_wilderness:snowy_slopes",
   "target": {
     "continentalness": {
+      "any": false,
       "max": 1.5,
       "mean": 0.75,
       "min": 0.0
     },
     "erodability": {
+      "any": false,
       "max": -0.3,
       "mean": -1.0,
       "min": -1.5
     },
     "humidity": {
+      "any": false,
       "max": 0.5,
       "mean": 0.0,
       "min": -0.5
     },
     "rockiness": {
+      "any": false,
       "max": 0.0,
       "mean": -1.0,
       "min": -1.5
@@ -26,11 +30,13 @@
       "highland"
     ],
     "temperature": {
+      "any": false,
       "max": -0.35,
       "mean": -0.575,
       "min": -0.8
     },
     "vegetation": {
+      "any": false,
       "max": 0.25,
       "mean": -0.125,
       "min": -0.5

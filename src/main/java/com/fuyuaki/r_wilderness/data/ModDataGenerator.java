@@ -5,9 +5,7 @@ import com.fuyuaki.r_wilderness.api.RRegistries;
 import com.fuyuaki.r_wilderness.data.generation.advancement.RWAdvancements;
 import com.fuyuaki.r_wilderness.data.generation.lang.EN_US_LangProvider;
 import com.fuyuaki.r_wilderness.data.generation.model.ModModelProvider;
-import com.fuyuaki.r_wilderness.data.generation.other.GenLoot;
-import com.fuyuaki.r_wilderness.data.generation.other.GenSoundDefinition;
-import com.fuyuaki.r_wilderness.data.generation.other.RWRecipes;
+import com.fuyuaki.r_wilderness.data.generation.other.*;
 import com.fuyuaki.r_wilderness.data.generation.tags.*;
 import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomeData;
 import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomeModifiers;
@@ -43,53 +41,37 @@ public class ModDataGenerator {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getReloadableLookupProvider();
-        generator.addProvider(true, GenLoot.create(packOutput,lookupProvider));
 
 
         generator.addProvider(true,new ModModelProvider(packOutput));
 
         event.createBlockAndItemTags(RWBlockTags::new, RWItemTags::new);
-/*
-        generator.addProvider(true,
-                new GenEnchantmentTags(packOutput, datapackRegistries.getRegistryProvider()));
-*/
-        generator.addProvider(true,
-                new GenBiomeTags(packOutput, lookupProvider));
 
         generator.addProvider(true,
-                new GenFluidTags(packOutput, lookupProvider));
+                new RWBiomeTags(packOutput, lookupProvider));
 
         generator.addProvider(true,
-                new GenWorldPresetTags(packOutput, lookupProvider));
-/*
-        generator.addProvider(true,
-                new GenEntityTags(packOutput, datapackRegistries.getRegistryProvider()));
+                new RWFluidTags(packOutput, lookupProvider));
 
-*/
+        generator.addProvider(true,
+                new RWWorldPresetTags(packOutput, lookupProvider));
+
         generator.addProvider(true,
                 new EN_US_LangProvider(packOutput));
 
       generator.addProvider(true,
                 new RWSoundDefinition(packOutput));
-/*
-        generator.addProvider(true,
-                new GlobalLootModifiers(packOutput,datapackRegistries.getRegistryProvider()));
-
-        generator.addProvider(true,new GenAdvancements(packOutput,datapackRegistries.getRegistryProvider()
-                )
-        );*/
 
 
 
     }
-
-
 
     @SubscribeEvent
     public static void gatherData(GatherDataRegistryEntriesEvent event){
         event.gatherFor(MODID, Identifier.DEFAULT_NAMESPACE)
                 .add(Registries.ADVANCEMENT, RWAdvancements.create())
                 .add(Registries.FEATURE, ModFeatureUtils::bootstrap)
+                .add(Registries.LOOT_TABLE, RWLoot.create())
                 .add(Registries.CARVER, ModCarvers::bootstrap)
                 .add(Registries.PLACED_FEATURE, ModPlacementUtils::bootstrap)
                 .add(Registries.BIOME, ModBiomeData::bootstrap)

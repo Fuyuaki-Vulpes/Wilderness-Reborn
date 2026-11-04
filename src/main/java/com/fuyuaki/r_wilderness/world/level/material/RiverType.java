@@ -36,7 +36,8 @@ public class RiverType extends FluidType {
     }
 
     @Override
-    public boolean move(FluidState state, LivingEntity entity, Vec3 movementVector, double gravity) {
+    public boolean move(LivingEntity entity, Vec3 movementVector, double gravity) {
+        FluidState state = entity.level().getFluidState(entity.blockPosition());
         HorizontalDirection direction = state.getValue(RiverFluid.FLOW_DIRECTION);
         float strength = state.getValue(RiverFluid.FLOW_STRENGTH) * 0.5f;
         Vec3 movement = direction.getNormal().scale(strength + (entity.level().isRainingAt(entity.blockPosition()) ? 1.0f : 0.0f));

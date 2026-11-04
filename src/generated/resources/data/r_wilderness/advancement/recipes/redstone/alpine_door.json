@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:alpine_door"
+        "recipes": "r_wilderness:alpine_door"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

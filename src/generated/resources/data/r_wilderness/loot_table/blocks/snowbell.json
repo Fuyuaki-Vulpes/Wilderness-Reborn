@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "r_wilderness:snowbell"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "r_wilderness:blocks/snowbell"
+}

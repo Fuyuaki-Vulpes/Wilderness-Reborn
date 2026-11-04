@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.data.generation.loot;
 
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.LootTableSubProvider;
@@ -10,14 +11,24 @@ import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.util.function.BiConsumer;
 
-public record LootEquimpent(HolderLookup.Provider registries) implements LootTableSubProvider {
+public class LootEquimpent implements LootTableSubProvider {
+
+    private final LootTableSubProvider.Context output;
+    private final HolderGetter<TrimPattern> trimPatterns;
+    private final HolderGetter<TrimMaterial> trimMaterials;
+    private final HolderGetter<Enchantment> enchantments;
+
+    public LootEquimpent(LootTableSubProvider.Context output) {
+        this.output = output;
+        this.trimPatterns = output.lookup(Registries.TRIM_PATTERN);
+        this.trimMaterials = output.lookup(Registries.TRIM_MATERIAL);
+        this.enchantments = output.lookup(Registries.ENCHANTMENT);
+    }
+
     @Override
-    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
-        HolderLookup.RegistryLookup<TrimPattern> registrylookup = this.registries.lookupOrThrow(Registries.TRIM_PATTERN);
-        HolderLookup.RegistryLookup<TrimMaterial> registrylookup1 = this.registries.lookupOrThrow(Registries.TRIM_MATERIAL);
-        HolderLookup.RegistryLookup<Enchantment> registrylookup2 = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
-        ArmorTrim armortrim = new ArmorTrim(registrylookup1.getOrThrow(TrimMaterials.COPPER), registrylookup.getOrThrow(TrimPatterns.FLOW));
-        ArmorTrim armortrim1 = new ArmorTrim(registrylookup1.getOrThrow(TrimMaterials.COPPER), registrylookup.getOrThrow(TrimPatterns.BOLT));
+    public void run() {
+        ArmorTrim flowTrim = new ArmorTrim(this.trimMaterials.getOrThrow(TrimMaterials.COPPER), this.trimPatterns.getOrThrow(TrimPatterns.FLOW));
+        ArmorTrim boltTrim = new ArmorTrim(this.trimMaterials.getOrThrow(TrimMaterials.COPPER), this.trimPatterns.getOrThrow(TrimPatterns.BOLT));
 
     }
 }

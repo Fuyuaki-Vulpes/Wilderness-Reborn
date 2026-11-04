@@ -3,21 +3,25 @@
   "name": "r_wilderness:old_growth_pine_taiga",
   "target": {
     "continentalness": {
+      "any": false,
       "max": 1.5,
       "mean": 0.75,
       "min": 0.0
     },
     "erodability": {
-      "max": 1.5,
-      "mean": 1.0,
-      "min": -1.0
+      "any": true,
+      "max": 99.9,
+      "mean": 0.0,
+      "min": -99.9
     },
     "humidity": {
+      "any": false,
       "max": 0.35,
       "mean": 0.0,
       "min": -0.35
     },
     "rockiness": {
+      "any": false,
       "max": 0.0,
       "mean": -1.0,
       "min": -1.5
@@ -26,11 +30,13 @@
       "old"
     ],
     "temperature": {
+      "any": false,
       "max": 0.15,
       "mean": -0.325,
       "min": -0.8
     },
     "vegetation": {
+      "any": false,
       "max": 0.85,
       "mean": 0.675,
       "min": 0.5

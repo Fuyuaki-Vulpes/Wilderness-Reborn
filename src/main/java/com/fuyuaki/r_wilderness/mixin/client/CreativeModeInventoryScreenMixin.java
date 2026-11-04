@@ -35,7 +35,7 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
     @Shadow protected abstract void selectTab(CreativeModeTab tab);
 
     @Shadow private static CreativeModeTab selectedTab;
-
+/*
     @Inject(method = "extractTabButton", at = @At("HEAD"), cancellable = true)
     private void renderTabButtonWilderness(GuiGraphicsExtractor guiGraphics, int p_470648_, int p_470660_, CreativeModeTab creativeModeTab, CallbackInfo ci){
         if (creativeModeTab == RCreativeModeTabs.MAIN_TAB.get()){
@@ -55,5 +55,5 @@ public abstract class CreativeModeInventoryScreenMixin extends AbstractContainer
             guiGraphics.item(creativeModeTab.getIconItem(), l, i1);
             ci.cancel();
         }
-    }
+    }*/
 }

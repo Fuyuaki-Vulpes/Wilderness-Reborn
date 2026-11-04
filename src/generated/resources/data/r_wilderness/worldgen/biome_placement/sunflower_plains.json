@@ -3,31 +3,37 @@
   "name": "r_wilderness:sunflower_plains",
   "target": {
     "continentalness": {
+      "any": false,
       "max": 1.5,
       "mean": 0.75,
       "min": 0.0
     },
     "erodability": {
-      "max": 1.5,
-      "mean": 1.0,
-      "min": -1.0
+      "any": true,
+      "max": 99.9,
+      "mean": 0.0,
+      "min": -99.9
     },
     "humidity": {
+      "any": false,
       "max": 0.75,
       "mean": 0.5,
       "min": 0.25
     },
     "rockiness": {
+      "any": false,
       "max": 0.0,
       "mean": -1.0,
       "min": -1.5
     },
     "temperature": {
+      "any": false,
       "max": 0.25,
       "mean": 0.0,
       "min": -0.25
     },
     "vegetation": {
+      "any": false,
       "max": 0.25,
       "mean": -0.125,
       "min": -0.5

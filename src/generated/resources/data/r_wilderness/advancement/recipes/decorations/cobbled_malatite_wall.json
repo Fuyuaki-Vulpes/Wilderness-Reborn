@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:cobbled_malatite_wall"
+        "recipes": "r_wilderness:cobbled_malatite_wall"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

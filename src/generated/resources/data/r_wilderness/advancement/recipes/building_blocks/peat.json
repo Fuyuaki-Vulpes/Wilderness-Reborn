@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:peat"
+        "recipes": "r_wilderness:peat"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

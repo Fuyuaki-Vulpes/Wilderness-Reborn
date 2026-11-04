@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:chalky_soil"
+        "recipes": "r_wilderness:chalky_soil"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

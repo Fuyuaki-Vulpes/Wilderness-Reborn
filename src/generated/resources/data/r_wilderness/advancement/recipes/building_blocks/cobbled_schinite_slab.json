@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:cobbled_schinite_slab"
+        "recipes": "r_wilderness:cobbled_schinite_slab"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

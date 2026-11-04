@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class RWLoot {
-    public static LootTableProvider create(PackOutput output, CompletableFuture<HolderLookup.Provider> pRegistries) {
+    public static LootTableProvider create() {
         return new LootTableProvider(Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(LootBlocks::new, LootContextParamSets.BLOCK)
                 //new LootTableProvider.SubProviderEntry(LootGift::new, LootContextParamSets.GIFT),

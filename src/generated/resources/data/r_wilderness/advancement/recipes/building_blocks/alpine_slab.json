@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:alpine_slab"
+        "recipes": "r_wilderness:alpine_slab"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

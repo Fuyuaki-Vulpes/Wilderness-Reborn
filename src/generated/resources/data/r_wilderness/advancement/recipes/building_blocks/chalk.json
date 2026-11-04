@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:chalk"
+        "recipes": "r_wilderness:chalk"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

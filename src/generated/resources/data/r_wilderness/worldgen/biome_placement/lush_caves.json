@@ -3,34 +3,40 @@
   "name": "r_wilderness:lush_caves",
   "target": {
     "continentalness": {
+      "any": false,
       "max": 1.5,
       "mean": 0.75,
       "min": 0.0
     },
     "erodability": {
-      "max": 1.0,
+      "any": true,
+      "max": 1.5,
       "mean": 0.0,
-      "min": -1.0
+      "min": -1.5
     },
     "humidity": {
+      "any": false,
       "max": 1.5,
       "mean": 1.0,
       "min": 0.5
     },
     "rockiness": {
-      "max": 1.0,
+      "any": true,
+      "max": 1.5,
       "mean": 0.0,
-      "min": -1.0
+      "min": -1.5
     },
     "tags": [
       "cave"
     ],
     "temperature": {
+      "any": false,
       "max": 0.5,
       "mean": 0.325,
       "min": 0.15
     },
     "vegetation": {
+      "any": false,
       "max": 1.0,
       "mean": 0.5,
       "min": 0.0

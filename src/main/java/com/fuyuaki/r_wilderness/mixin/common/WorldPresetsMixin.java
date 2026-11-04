@@ -1,7 +1,7 @@
 package com.fuyuaki.r_wilderness.mixin.common;
 
 import com.fuyuaki.r_wilderness.world.level.levelgen.RebornChunkGenerator;
-import com.fuyuaki.r_wilderness.world.level.levelgen.deprecated.ModWorldPresets;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldPresets;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -40,7 +40,7 @@ public class WorldPresetsMixin {
                 case FlatLevelSource var3 -> var6 = Optional.of(FLAT);
                 case DebugLevelSource var4 -> var6 = Optional.of(DEBUG);
                 case NoiseBasedChunkGenerator var5 -> var6 = Optional.of(NORMAL);
-                case RebornChunkGenerator var7 -> var6 = Optional.of(ModWorldPresets.REBORN_WORLD);
+                case RebornChunkGenerator var7 -> var6 = Optional.of(RebornWorldPresets.REBORN_WORLD);
                 default -> var6 = Optional.empty();
             }
 

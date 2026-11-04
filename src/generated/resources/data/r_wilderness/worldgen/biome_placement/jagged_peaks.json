@@ -3,21 +3,25 @@
   "name": "r_wilderness:jagged_peaks",
   "target": {
     "continentalness": {
+      "any": false,
       "max": 1.5,
       "mean": 0.75,
       "min": 0.0
     },
     "erodability": {
+      "any": false,
       "max": -0.3,
       "mean": -1.0,
       "min": -1.5
     },
     "humidity": {
+      "any": false,
       "max": 0.5,
       "mean": 0.0,
       "min": -0.5
     },
     "rockiness": {
+      "any": false,
       "max": 0.5,
       "mean": 0.25,
       "min": 0.0
@@ -26,14 +30,16 @@
       "peak"
     ],
     "temperature": {
+      "any": false,
       "max": 0.15,
       "mean": -0.325,
       "min": -0.8
     },
     "vegetation": {
-      "max": 1.0,
+      "any": true,
+      "max": 1.5,
       "mean": 0.0,
-      "min": -1.0
+      "min": -1.5
     }
   }
 }

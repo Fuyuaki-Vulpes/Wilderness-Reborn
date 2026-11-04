@@ -3,31 +3,37 @@
   "name": "r_wilderness:void",
   "target": {
     "continentalness": {
+      "any": false,
       "max": -80000.0,
       "mean": -90000.0,
       "min": -99999.0
     },
     "erodability": {
+      "any": false,
       "max": -80000.0,
       "mean": -90000.0,
       "min": -99999.0
     },
     "humidity": {
+      "any": false,
       "max": -80000.0,
       "mean": -90000.0,
       "min": -99999.0
     },
     "rockiness": {
+      "any": false,
       "max": -80000.0,
       "mean": -90000.0,
       "min": -99999.0
     },
     "temperature": {
+      "any": false,
       "max": -80000.0,
       "mean": -90000.0,
       "min": -99999.0
     },
     "vegetation": {
+      "any": false,
       "max": -80000.0,
       "mean": -90000.0,
       "min": -99999.0

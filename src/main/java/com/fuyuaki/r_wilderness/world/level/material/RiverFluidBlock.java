@@ -31,15 +31,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec2;
 
 public class RiverFluidBlock extends LiquidBlock {
-    private static final Codec<FlowingFluid> FLOWING_FLUID = BuiltInRegistries.FLUID
-            .byNameCodec()
-            .comapFlatMap(
-                    fluid -> fluid instanceof FlowingFluid flowing ? DataResult.success(flowing) : DataResult.error(() -> "Not a flowing fluid: " + fluid),
-                    fluid -> (Fluid)fluid
-            );
-    public static final MapCodec<LiquidBlock> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(FLOWING_FLUID.fieldOf("fluid").forGetter(b -> b.fluid), propertiesCodec()).apply(i, RiverFluidBlock::new)
-    );
 
     public static final EnumProperty<HorizontalDirection> FLOW_DIRECTION = RBlockStateProperties.HORIZONTAL_DIRECTION_16;
     public static final IntegerProperty FLOW_STRENGTH = RBlockStateProperties.FLOW_STRENGTH;
@@ -51,12 +42,6 @@ public class RiverFluidBlock extends LiquidBlock {
                         .setValue(FLOW_DIRECTION,HorizontalDirection.WEST)
                         .setValue(FLOW_STRENGTH, 10));
     }
-
-    @Override
-    public MapCodec<LiquidBlock> codec() {
-        return CODEC;
-    }
-
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.tick(state, level, pos, random);

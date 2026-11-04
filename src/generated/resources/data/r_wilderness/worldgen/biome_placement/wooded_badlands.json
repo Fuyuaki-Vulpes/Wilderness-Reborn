@@ -3,21 +3,25 @@
   "name": "r_wilderness:wooded_badlands",
   "target": {
     "continentalness": {
+      "any": false,
       "max": 1.5,
       "mean": 0.75,
       "min": 0.0
     },
     "erodability": {
+      "any": false,
       "max": 1.0,
       "mean": 0.65,
       "min": 0.3
     },
     "humidity": {
+      "any": false,
       "max": 0.25,
       "mean": -0.125,
       "min": -0.5
     },
     "rockiness": {
+      "any": false,
       "max": 0.0,
       "mean": -1.0,
       "min": -1.5
@@ -26,11 +30,13 @@
       "plateau"
     ],
     "temperature": {
+      "any": false,
       "max": 0.25,
       "mean": 0.0,
       "min": -0.25
     },
     "vegetation": {
+      "any": false,
       "max": 0.75,
       "mean": 0.5,
       "min": 0.25

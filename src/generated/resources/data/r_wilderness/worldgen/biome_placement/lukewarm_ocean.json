@@ -3,34 +3,40 @@
   "name": "r_wilderness:lukewarm_ocean",
   "target": {
     "continentalness": {
+      "any": false,
       "max": -0.15,
       "mean": -0.45,
       "min": -0.75
     },
     "erodability": {
-      "max": 1.5,
-      "mean": 1.0,
-      "min": -1.0
+      "any": true,
+      "max": 99.9,
+      "mean": 0.0,
+      "min": -99.9
     },
     "humidity": {
-      "max": 1.0,
+      "any": true,
+      "max": 1.5,
       "mean": 0.0,
-      "min": -1.0
+      "min": -1.5
     },
     "rockiness": {
-      "max": 1.0,
+      "any": true,
+      "max": 1.5,
       "mean": 0.0,
-      "min": -1.0
+      "min": -1.5
     },
     "tags": [
       "sea_level"
     ],
     "temperature": {
+      "any": false,
       "max": 0.8,
       "mean": 0.575,
       "min": 0.35
     },
     "vegetation": {
+      "any": false,
       "max": 0.75,
       "mean": 0.5,
       "min": 0.25

@@ -9,6 +9,7 @@ import net.minecraft.data.worldgen.placement.TreePlacements;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.sounds.Music;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.attribute.BackgroundMusic;
 import net.minecraft.world.attribute.EnvironmentAttributes;
@@ -37,9 +38,9 @@ public class ROverworldBiomes {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
         BiomeDefaultFeatures.farmAnimals(spawnBuilder);
-        spawnBuilder.addSpawn(MobCategory.CREATURE,1, new MobSpawnSettings.SpawnerData(EntityTypes.HORSE,  2, 6))
-                .addSpawn(MobCategory.CREATURE,1, new MobSpawnSettings.SpawnerData(EntityTypes.DONKEY,  1, 1))
-                .addSpawn(MobCategory.CREATURE, 10,new MobSpawnSettings.SpawnerData(EntityTypes.ARMADILLO,  2, 3));
+        spawnBuilder.addSpawn(EntityTypes.HORSE, 1, 2, 6)
+                .addSpawn(EntityTypes.DONKEY, 1, 1, 1)
+                .addSpawn(EntityTypes.ARMADILLO,10, 2, 3);
         BiomeDefaultFeatures.commonSpawns(spawnBuilder);
 
 
@@ -80,7 +81,7 @@ public class ROverworldBiomes {
     protected static Biome caatinga(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
         BiomeDefaultFeatures.desertSpawns(spawnBuilder);
-        spawnBuilder.addSpawn(MobCategory.CREATURE,6,  new MobSpawnSettings.SpawnerData(EntityTypes.ARMADILLO, 1, 2));
+        spawnBuilder.addSpawn(EntityTypes.ARMADILLO, 6,1, 2);
 
         BiomeGenerationSettings.Builder biomeBuilder =
                 new BiomeGenerationSettings.Builder(placedFeatures,worldCarvers);
@@ -129,11 +130,11 @@ public class ROverworldBiomes {
 
     protected static Biome cerrado(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
-        spawnBuilder.addSpawn(MobCategory.CREATURE, 12, new MobSpawnSettings.SpawnerData(EntityTypes.WOLF, 4, 8))
-                .addSpawn(MobCategory.CREATURE, 10, new MobSpawnSettings.SpawnerData(EntityTypes.FROG, 2, 5))
-                .addSpawn(MobCategory.CREATURE,20,  new MobSpawnSettings.SpawnerData(EntityTypes.PARROT, 1, 2))
-                .addSpawn(MobCategory.CREATURE, 5, new MobSpawnSettings.SpawnerData(EntityTypes.OCELOT,  1, 3))
-//                .addSpawn(MobCategory.CREATURE,8, new MobSpawnSettings.SpawnerData(MtaEntityTypes.DEER.get(),  1, 3))
+        spawnBuilder.addSpawn(EntityTypes.WOLF,12, 4, 8)
+                .addSpawn(EntityTypes.FROG, 10, 2, 5)
+                .addSpawn(EntityTypes.PARROT,20, 1, 2)
+                .addSpawn(EntityTypes.OCELOT, 5, 1, 3)
+//                .addSpawn(,8, MtaEntityTypes.DEER.get(),  1, 3))
         ;
         BiomeDefaultFeatures.commonSpawns(spawnBuilder);
         BiomeDefaultFeatures.farmAnimals(spawnBuilder);
@@ -179,17 +180,17 @@ public class ROverworldBiomes {
     protected static Biome alpineTundra(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
-        spawnBuilder.addSpawn(MobCategory.CREATURE,4, new MobSpawnSettings.SpawnerData(EntityTypes.WOLF,  2, 4))
-//                .addSpawn(MobCategory.CREATURE,15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.DEER.get(),  2, 4))
-                .addSpawn(MobCategory.CREATURE,15,  new MobSpawnSettings.SpawnerData(EntityTypes.GOAT, 2, 4))
-                .addSpawn(MobCategory.CREATURE,15, new MobSpawnSettings.SpawnerData(EntityTypes.FOX,  2, 4))
-                .addSpawn(MobCategory.CREATURE,15,  new MobSpawnSettings.SpawnerData(EntityTypes.SHEEP, 2, 4))
-                .addSpawn(MobCategory.CREATURE, 15, new MobSpawnSettings.SpawnerData(EntityTypes.RABBIT, 2, 4))
+        spawnBuilder.addSpawn(EntityTypes.WOLF, 4, 2, 4)
+//                .addSpawn(,15, MtaEntityTypes.DEER.get(),  2, 4))
+                .addSpawn(EntityTypes.GOAT,15, 2, 4)
+                .addSpawn(EntityTypes.FOX,15, 2, 4)
+                .addSpawn(EntityTypes.SHEEP,15,2, 4)
+                .addSpawn(EntityTypes.RABBIT,15,2, 4)
 
-//                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.YUKI_ONNA.get(), 2, 4))
-//                .addSpawn(MobCategory.MONSTER, 15,new MobSpawnSettings.SpawnerData(MtaEntityTypes.FROSTED_SLIME.get(),  2, 4))
-//                .addSpawn(MobCategory.MONSTER, 15,new MobSpawnSettings.SpawnerData(MtaEntityTypes.ICICLE_CREEPER.get(),  2, 4))
-                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(EntityTypes.STRAY, 2, 4));
+//                .addSpawn(, 15, MtaEntityTypes.YUKI_ONNA.get(), 2, 4))
+//                .addSpawn(, 15,MtaEntityTypes.FROSTED_SLIME.get(),  2, 4))
+//                .addSpawn(, 15,MtaEntityTypes.ICICLE_CREEPER.get(),  2, 4))
+                .addSpawn(EntityTypes.STRAY,15, 2, 4);
 
         BiomeGenerationSettings.Builder biomeBuilder =
                 new BiomeGenerationSettings.Builder(placedFeatures,worldCarvers);
@@ -220,9 +221,9 @@ public class ROverworldBiomes {
     protected static Biome polarDesert(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder mobs = new MobSpawnSettings.Builder();
         BiomeDefaultFeatures.snowySpawns(mobs,true);
-        mobs.addSpawn(MobCategory.CREATURE,8, new MobSpawnSettings.SpawnerData(EntityTypes.WOLF,  4, 4))
-                .addSpawn(MobCategory.CREATURE, 12,new MobSpawnSettings.SpawnerData(EntityTypes.FOX,  2, 4))
-//                .addSpawn(MobCategory.MONSTER,40, new MobSpawnSettings.SpawnerData(MtaEntityTypes.YUKI_ONNA.get(),1, 3))
+        mobs.addSpawn(EntityTypes.WOLF, 8, 4, 4)
+                .addSpawn(EntityTypes.FOX,12, 2, 4)
+//                .addSpawn(,40, MtaEntityTypes.YUKI_ONNA.get(),1, 3))
         ;
         BiomeGenerationSettings.Builder biomeBuilder = new BiomeGenerationSettings.Builder(placedFeatures, worldCarvers);
         BiomeDefaultFeatures.addFossilDecoration(biomeBuilder);
@@ -249,18 +250,18 @@ public class ROverworldBiomes {
     protected static Biome bog(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
-        spawnBuilder.addSpawn(MobCategory.CREATURE,4,  new MobSpawnSettings.SpawnerData(EntityTypes.FROG, 1, 3))
+        spawnBuilder.addSpawn(EntityTypes.FROG,4, 1, 3)
 
 
-                .addSpawn(MobCategory.MONSTER, 5, new MobSpawnSettings.SpawnerData(EntityTypes.WITCH,  1, 1))
-                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(EntityTypes.BOGGED,  2, 4))
-//                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.ARMORED_SKELETON.get(), 2, 4))
-//                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.FALLEN_SAMURAI.get(), 2, 4))
-//                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.BLACK_WIDOW.get(), 2, 4))
-//                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.HOST.get(), 1, 1))
-//                .addSpawn(MobCategory.MONSTER, 15,new MobSpawnSettings.SpawnerData(MtaEntityTypes.SKELETON_FIGHTER.get(),  2, 4))
-//                .addSpawn(MobCategory.MONSTER, 15,new MobSpawnSettings.SpawnerData(MtaEntityTypes.CORROSIVE_CUBE.get(),  2, 4))
-//                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.TOXIC_ZOMBIE.get(), 2, 4))
+                .addSpawn(EntityTypes.WITCH, 5, 1, 1)
+                .addSpawn(EntityTypes.BOGGED,15, 2, 4)
+//                .addSpawn(, 15, MtaEntityTypes.ARMORED_SKELETON.get(), 2, 4))
+//                .addSpawn(, 15, MtaEntityTypes.FALLEN_SAMURAI.get(), 2, 4))
+//                .addSpawn(, 15, MtaEntityTypes.BLACK_WIDOW.get(), 2, 4))
+//                .addSpawn(, 15, MtaEntityTypes.HOST.get(), 1, 1))
+//                .addSpawn(, 15,MtaEntityTypes.SKELETON_FIGHTER.get(),  2, 4))
+//                .addSpawn(, 15,MtaEntityTypes.CORROSIVE_CUBE.get(),  2, 4))
+//                .addSpawn(, 15, MtaEntityTypes.TOXIC_ZOMBIE.get(), 2, 4))
 ;
         BiomeDefaultFeatures.commonSpawns(spawnBuilder);
 
@@ -305,11 +306,11 @@ public class ROverworldBiomes {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
 
-        spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,2,  new MobSpawnSettings.SpawnerData(EntityTypes.SQUID, 1, 4))
-                .addSpawn(MobCategory.WATER_AMBIENT, 6,new MobSpawnSettings.SpawnerData(EntityTypes.SALMON,  1, 5))
-                .addSpawn(MobCategory.WATER_AMBIENT, 5, new MobSpawnSettings.SpawnerData(EntityTypes.COD, 1, 5))
-                .addSpawn(MobCategory.WATER_AMBIENT, 2,new MobSpawnSettings.SpawnerData(EntityTypes.TROPICAL_FISH,  3, 8));
-        spawnBuilder.addSpawn(MobCategory.MONSTER, 40, new MobSpawnSettings.SpawnerData(EntityTypes.DROWNED, 1, 1));
+        spawnBuilder.addSpawn(EntityTypes.SQUID,2, 1, 4)
+                .addSpawn(EntityTypes.SALMON,6,  1, 5)
+                .addSpawn(EntityTypes.COD,5, 1, 5)
+                .addSpawn(EntityTypes.TROPICAL_FISH,2,3, 8);
+        spawnBuilder.addSpawn(EntityTypes.DROWNED,40, 1, 1);
 
         BiomeDefaultFeatures.commonSpawns(spawnBuilder);
 
@@ -357,9 +358,9 @@ public class ROverworldBiomes {
     protected static Biome sparseCherryGrove(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers){
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
-        spawnBuilder.addSpawn(MobCategory.CREATURE, 1, new MobSpawnSettings.SpawnerData(EntityTypes.PIG, 1, 2))
-                .addSpawn(MobCategory.CREATURE, 2, new MobSpawnSettings.SpawnerData(EntityTypes.RABBIT, 2, 6))
-                .addSpawn(MobCategory.CREATURE, 2,new MobSpawnSettings.SpawnerData(EntityTypes.SHEEP,  2, 4));
+        spawnBuilder.addSpawn(EntityTypes.PIG,1, 1, 2)
+                .addSpawn(EntityTypes.RABBIT,2, 2, 6)
+                .addSpawn(EntityTypes.SHEEP, 2, 2, 4);
         BiomeDefaultFeatures.commonSpawns(spawnBuilder);
 
         BiomeGenerationSettings.Builder biomeBuilder =
@@ -396,9 +397,9 @@ public class ROverworldBiomes {
 
 
         BiomeDefaultFeatures.farmAnimals(spawnBuilder);
-        spawnBuilder.addSpawn(MobCategory.CREATURE,4,  new MobSpawnSettings.SpawnerData(EntityTypes.WOLF, 2, 4))
-                .addSpawn(MobCategory.CREATURE,6,  new MobSpawnSettings.SpawnerData(EntityTypes.RABBIT, 2, 5))
-                .addSpawn(MobCategory.CREATURE,5,  new MobSpawnSettings.SpawnerData(EntityTypes.FOX, 1, 4));
+        spawnBuilder.addSpawn(EntityTypes.WOLF, 4, 2, 4)
+                .addSpawn(EntityTypes.RABBIT, 6, 2, 5)
+                .addSpawn(EntityTypes.FOX, 5, 1, 4);
         BiomeDefaultFeatures.commonSpawns(spawnBuilder);
 
 
@@ -432,7 +433,7 @@ public class ROverworldBiomes {
 
 
         BiomeDefaultFeatures.desertSpawns(spawnBuilder);
-        spawnBuilder.addSpawn(MobCategory.CREATURE,4,  new MobSpawnSettings.SpawnerData(EntityTypes.CAMEL, 1, 3));
+        spawnBuilder.addSpawn(EntityTypes.CAMEL,4, 1, 3);
 
 
         BiomeGenerationSettings.Builder biomeBuilder =
@@ -475,9 +476,9 @@ public class ROverworldBiomes {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
 
-        spawnBuilder.addSpawn(MobCategory.WATER_CREATURE,2,  new MobSpawnSettings.SpawnerData(EntityTypes.SQUID, 1, 4))
-                .addSpawn(MobCategory.WATER_AMBIENT, 6, new MobSpawnSettings.SpawnerData(EntityTypes.SALMON, 1, 5));
-        spawnBuilder.addSpawn(MobCategory.MONSTER, 40, new MobSpawnSettings.SpawnerData(EntityTypes.DROWNED, 1, 1));
+        spawnBuilder.addSpawn(EntityTypes.SQUID, 2,1, 4)
+                .addSpawn(EntityTypes.SALMON,6, 1, 5);
+        spawnBuilder.addSpawn(EntityTypes.DROWNED,40, 1, 1);
 
         BiomeDefaultFeatures.commonSpawns(spawnBuilder);
 
@@ -516,10 +517,10 @@ public class ROverworldBiomes {
     protected static Biome lushMeadow(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers){
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
-        spawnBuilder.addSpawn(MobCategory.CREATURE, 1,new MobSpawnSettings.SpawnerData(EntityTypes.DONKEY,  1, 2))
-                .addSpawn(MobCategory.CREATURE, 4, new MobSpawnSettings.SpawnerData(EntityTypes.RABBIT, 2, 6))
-//                .addSpawn(MobCategory.CREATURE, 3,new MobSpawnSettings.SpawnerData(MtaEntityTypes.BUTTERFLY.get(),  2, 5))
-                .addSpawn(MobCategory.CREATURE, 2, new MobSpawnSettings.SpawnerData(EntityTypes.SHEEP, 2, 4));
+        spawnBuilder.addSpawn(EntityTypes.DONKEY,1,  1, 2)
+                .addSpawn(EntityTypes.RABBIT,4, 2, 6)
+//                .addSpawn(, 3,MtaEntityTypes.BUTTERFLY.get(),  2, 5))
+                .addSpawn(EntityTypes.SHEEP,2, 2, 4);
         BiomeDefaultFeatures.commonSpawns(spawnBuilder);
 
         BiomeGenerationSettings.Builder biomeBuilder =
@@ -570,8 +571,7 @@ public class ROverworldBiomes {
         BiomeDefaultFeatures.caveSpawns(spawnBuilder);
         BiomeDefaultFeatures.monsters(spawnBuilder, 40, 6, 40, 50,false);
 
-        spawnBuilder.addSpawn(MobCategory.MONSTER,20,
-                new MobSpawnSettings.SpawnerData(EntityTypes.SILVERFISH, 2, 8));
+        spawnBuilder.addSpawn(EntityTypes.SILVERFISH,20, 2, 8);
 
 
         BiomeGenerationSettings.Builder biomeBuilder =
@@ -602,7 +602,7 @@ public class ROverworldBiomes {
     protected static Biome tundra(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder();
 
-        spawnBuilder.addSpawn(MobCategory.CREATURE, 4,new MobSpawnSettings.SpawnerData(EntityTypes.WOLF,  2, 4));
+        spawnBuilder.addSpawn(EntityTypes.WOLF,4 ,2, 4);
 
 
         BiomeGenerationSettings.Builder biomeBuilder =
@@ -637,9 +637,9 @@ public class ROverworldBiomes {
 
     protected static Biome underwaterForest(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder mobspawnsettings$builder = new MobSpawnSettings.Builder()
-                .addSpawn(MobCategory.WATER_AMBIENT,15, new MobSpawnSettings.SpawnerData(EntityTypes.PUFFERFISH,  1, 3))
-                .addSpawn(MobCategory.WATER_AMBIENT, 4, new MobSpawnSettings.SpawnerData(EntityTypes.AXOLOTL, 1, 2))
-                .addSpawn(MobCategory.WATER_AMBIENT, 10, new MobSpawnSettings.SpawnerData(EntityTypes.GLOW_SQUID, 2, 5));
+                .addSpawn(EntityTypes.PUFFERFISH,15,  1, 3)
+                .addSpawn(EntityTypes.AXOLOTL,4, 1, 2)
+                .addSpawn(EntityTypes.GLOW_SQUID,10, 2, 5);
         BiomeDefaultFeatures.warmOceanSpawns(mobspawnsettings$builder, 20, 2);
 
         BiomeGenerationSettings.Builder biomeBuilder =
@@ -665,17 +665,17 @@ public class ROverworldBiomes {
 
     protected static Biome mapleForest(HolderGetter<PlacedFeature> placedFeatures, HolderGetter<WorldCarver> worldCarvers) {
         MobSpawnSettings.Builder spawnBuilder = new MobSpawnSettings.Builder()
-//                .addSpawn(MobCategory.CREATURE, 15,new MobSpawnSettings.SpawnerData(MtaEntityTypes.BUTTERFLY.get(),  1, 3))
-//                .addSpawn(MobCategory.CREATURE, 15,new MobSpawnSettings.SpawnerData(MtaEntityTypes.DEER.get(),  1, 3))
-//                .addSpawn(MobCategory.CREATURE, 15,new MobSpawnSettings.SpawnerData(MtaEntityTypes.OWL.get(),  1, 3))
-//                .addSpawn(MobCategory.CREATURE, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.RACCOON.get(), 1, 3))
-//                .addSpawn(MobCategory.CREATURE, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.TURKEY.get(), 1, 3))
-//                .addSpawn(MobCategory.CREATURE, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.WISPFLY.get(), 1, 3))
-                .addSpawn(MobCategory.CREATURE, 15, new MobSpawnSettings.SpawnerData(EntityTypes.FOX, 1, 3))
+//                .addSpawn(, 15,MtaEntityTypes.BUTTERFLY.get(),  1, 3))
+//                .addSpawn(, 15,MtaEntityTypes.DEER.get(),  1, 3))
+//                .addSpawn(, 15,MtaEntityTypes.OWL.get(),  1, 3))
+//                .addSpawn(, 15, MtaEntityTypes.RACCOON.get(), 1, 3))
+//                .addSpawn(, 15, MtaEntityTypes.TURKEY.get(), 1, 3))
+//                .addSpawn(, 15, MtaEntityTypes.WISPFLY.get(), 1, 3))
+                .addSpawn( EntityTypes.FOX,15, 1, 3)
 
-//                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.FALLEN_SAMURAI.get(), 1, 3))
-//                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.GLOW_SPIDER.get(), 1, 3))
-//                .addSpawn(MobCategory.MONSTER, 15, new MobSpawnSettings.SpawnerData(MtaEntityTypes.SKELETON_FIGHTER.get(), 1, 3))
+//                .addSpawn(, 15, MtaEntityTypes.FALLEN_SAMURAI.get(), 1, 3))
+//                .addSpawn(, 15, MtaEntityTypes.GLOW_SPIDER.get(), 1, 3))
+//                .addSpawn(, 15, MtaEntityTypes.SKELETON_FIGHTER.get(), 1, 3))
 ;
 
         BiomeDefaultFeatures.commonSpawns(spawnBuilder, 20);
@@ -776,7 +776,7 @@ public class ROverworldBiomes {
                 .hasPrecipitation(pHasPrecipitation)
                 .temperature(pTemperature)
                 .downfall(pDownfall)
-                .setAttribute(EnvironmentAttributes.SKY_COLOR, calculateSkyColor(pTemperature))
+                .setAttribute(EnvironmentAttributes.SKY_COLOR, ARGB.vector3fFromRGB24(calculateSkyColor(pTemperature)))
                 .specialEffects(biomespecialeffects$builder.build())
                 .mobSpawnSettings(pMobSpawnSettings.build())
                 .generationSettings(pGenerationSettings.build());

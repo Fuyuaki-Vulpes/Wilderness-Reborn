@@ -3,34 +3,40 @@
   "name": "r_wilderness:snowy_plains",
   "target": {
     "continentalness": {
+      "any": false,
       "max": 1.5,
       "mean": 0.75,
       "min": 0.0
     },
     "erodability": {
-      "max": 1.5,
-      "mean": 1.0,
-      "min": -1.0
+      "any": true,
+      "max": 99.9,
+      "mean": 0.0,
+      "min": -99.9
     },
     "humidity": {
+      "any": false,
       "max": 0.5,
       "mean": 0.0,
       "min": -0.5
     },
     "rockiness": {
-      "max": 1.0,
+      "any": true,
+      "max": 1.5,
       "mean": 0.0,
-      "min": -1.0
+      "min": -1.5
     },
     "temperature": {
+      "any": false,
       "max": -0.35,
       "mean": -0.575,
       "min": -0.8
     },
     "vegetation": {
-      "max": 1.0,
+      "any": true,
+      "max": 1.5,
       "mean": 0.0,
-      "min": -1.0
+      "min": -1.5
     }
   }
 }

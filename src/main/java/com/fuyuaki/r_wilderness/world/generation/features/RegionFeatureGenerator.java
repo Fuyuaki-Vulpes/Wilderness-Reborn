@@ -1143,7 +1143,7 @@ public class RegionFeatureGenerator {
 
 
                         double peaks1 = peakCellular.noise(trueX, trueZ);
-                        double peaks2 = Mth.smoothstep(peakSimplex.noise(trueX, trueZ));
+                        double peaks2 = Mth.smoothstep((float) peakSimplex.noise(trueX, trueZ));
                         float peaks = (float) Math.max(peaks1 * peaks2,peaks2 * peaks2);
                         float mountainFlat = (float) mountains.noise(trueX,trueZ);
                         float mountainSq = mountainFlat * mountainFlat;

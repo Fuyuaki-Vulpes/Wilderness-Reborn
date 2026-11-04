@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:chalky_farmland"
+        "recipes": "r_wilderness:chalky_farmland"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

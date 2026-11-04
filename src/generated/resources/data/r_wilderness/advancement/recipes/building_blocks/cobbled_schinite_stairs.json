@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:cobbled_schinite_stairs"
+        "recipes": "r_wilderness:cobbled_schinite_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

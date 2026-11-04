@@ -75,15 +75,15 @@ public class RWBlockModels extends BlockModelGenerators {
         createTrivialCube(RBlocks.SCHINITE_GOLD_ORE.get());
         createTrivialCube(RBlocks.MAGNEISS_GOLD_ORE.get());
         createTrivialCube(RBlocks.MALATITE_GOLD_ORE.get());
-        //this.createNonTemplateModelBlock(RBlocks.RIVER_WATER.get());
+        this.createNonTemplateModelBlock(RBlocks.RIVER_WATER.get());
 
         createTrivialCube(RBlocks.SCHINITE_IRON_ORE.get());
         createTrivialCube(RBlocks.MAGNEISS_IRON_ORE.get());
         createTrivialCube(RBlocks.MALATITE_IRON_ORE.get());
 
-        //createTrivialCube(RBlocks.SCHINITE_COAL_ORE.get());
-        //createTrivialCube(RBlocks.MAGNEISS_COAL_ORE.get());
-        //createTrivialCube(RBlocks.MALATITE_COAL_ORE.get());
+        createTrivialCube(RBlocks.SCHINITE_COAL_ORE.get());
+        createTrivialCube(RBlocks.MAGNEISS_COAL_ORE.get());
+        createTrivialCube(RBlocks.MALATITE_COAL_ORE.get());
 
         createTrivialCube(RBlocks.SCHINITE_LAPIS_ORE.get());
         createTrivialCube(RBlocks.MAGNEISS_LAPIS_ORE.get());

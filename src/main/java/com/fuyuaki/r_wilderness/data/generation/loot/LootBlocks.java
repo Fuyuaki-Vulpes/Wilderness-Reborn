@@ -49,6 +49,13 @@ public class LootBlocks extends BlockLootSubProvider {
         add(RBlocks.SCHINITE.get(), block -> createSingleItemTableWithSilkTouch(block, RBlocks.COBBLED_SCHINITE));
         add(RBlocks.MAGNEISS.get(), block -> createSilkTouchDispatchTable(block, applyExplosionDecay(block,LootItem.lootTableItem(RBlocks.COBBLED_MAGNEISS))));
         add(RBlocks.MALATITE.get(), block -> createSilkTouchDispatchTable(block, applyExplosionDecay(block,LootItem.lootTableItem(RBlocks.COBBLED_MALATITE))));
+
+
+        dropSelf(RBlocks.WEATHERED_BEDROCK.get());
+        dropSelf(RBlocks.WEATHERED_BEDROCK_STAIRS.get());
+        dropSelf(RBlocks.WEATHERED_BEDROCK_SLAB.get());
+        dropSelf(RBlocks.WEATHERED_BEDROCK_WALL.get());
+
         dropSelf(RBlocks.SCHINITE_STAIRS.get());
         dropSelf(RBlocks.SCHINITE_SLAB.get());
         dropSelf(RBlocks.SCHINITE_WALL.get());
@@ -74,6 +81,7 @@ public class LootBlocks extends BlockLootSubProvider {
 
         //Ores
 
+        add(RBlocks.SCHINITE_COAL_ORE.get(), block -> createOreDrop(block, Items.COAL));
         add(RBlocks.SCHINITE_COPPER_ORE.get(), block -> createOreDrop(block, Items.RAW_COPPER));
         add(RBlocks.SCHINITE_IRON_ORE.get(), block -> createOreDrop(block, Items.RAW_IRON));
         add(RBlocks.SCHINITE_GOLD_ORE.get(), block -> createOreDrop(block, Items.RAW_GOLD));
@@ -82,6 +90,7 @@ public class LootBlocks extends BlockLootSubProvider {
         add(RBlocks.SCHINITE_REDSTONE_ORE.get(), block -> createOreDrop(block, Items.REDSTONE));
         add(RBlocks.SCHINITE_LAPIS_ORE.get(), block -> createOreDrop(block, Items.LAPIS_LAZULI));
 
+        add(RBlocks.MAGNEISS_COAL_ORE.get(), block -> createOreDrop(block, Items.COAL));
         add(RBlocks.MAGNEISS_COPPER_ORE.get(), block -> createOreDrop(block, Items.RAW_COPPER));
         add(RBlocks.MAGNEISS_IRON_ORE.get(), block -> createOreDrop(block, Items.RAW_IRON));
         add(RBlocks.MAGNEISS_GOLD_ORE.get(), block -> createOreDrop(block, Items.RAW_GOLD));
@@ -90,6 +99,7 @@ public class LootBlocks extends BlockLootSubProvider {
         add(RBlocks.MAGNEISS_REDSTONE_ORE.get(), block -> createOreDrop(block, Items.REDSTONE));
         add(RBlocks.MAGNEISS_LAPIS_ORE.get(), block -> createOreDrop(block, Items.LAPIS_LAZULI));
 
+        add(RBlocks.MALATITE_COAL_ORE.get(), block -> createOreDrop(block, Items.COAL));
         add(RBlocks.MALATITE_COPPER_ORE.get(), block -> createOreDrop(block, Items.RAW_COPPER));
         add(RBlocks.MALATITE_IRON_ORE.get(), block -> createOreDrop(block, Items.RAW_IRON));
         add(RBlocks.MALATITE_GOLD_ORE.get(), block -> createOreDrop(block, Items.RAW_GOLD));

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:malatite"
+        "recipes": "r_wilderness:malatite"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

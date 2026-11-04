@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.mixin.client;
 
-import com.fuyuaki.r_wilderness.world.level.levelgen.deprecated.ModWorldPresets;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldPresets;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
@@ -17,6 +17,6 @@ public class CreateWorldScreenMixin {
     index = 4)
     private static ResourceKey<WorldPreset> openFreshMixin(ResourceKey<WorldPreset> preset){
 
-        return ModWorldPresets.REBORN_WORLD;
+        return RebornWorldPresets.REBORN_WORLD;
     }
 }

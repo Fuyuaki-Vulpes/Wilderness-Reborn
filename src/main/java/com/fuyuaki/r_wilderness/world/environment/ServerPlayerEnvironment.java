@@ -10,6 +10,7 @@ public interface ServerPlayerEnvironment {
     void addEnergy(float exhaustion);
     void drinkInWorld(int hydrationLevelModifier, float saturationLevelModifier);
     void drink(Drinkable drinkable);
+    void drink(int hydrationLevelModifier, float saturationLevelModifier);
     void addHeat(float heat);
     void addCooling(float cooling);
 

@@ -59,9 +59,9 @@ public class EN_US_LangProvider extends LanguageProvider {
         block(RBlocks.MAGNEISS_IRON_ORE.get(), "Magneiss Iron Ore");
         block(RBlocks.MALATITE_IRON_ORE.get(), "Malatite Iron Ore");
 
-        //block(RBlocks.SCHINITE_COAL_ORE.get(), "Schinite Coal Ore");
-        //block(RBlocks.MAGNEISS_COAL_ORE.get(), "Magneiss Coal Ore");
-        //block(RBlocks.MALATITE_COAL_ORE.get(), "Malatite Coal Ore");
+        block(RBlocks.SCHINITE_COAL_ORE.get(), "Schinite Coal Ore");
+        block(RBlocks.MAGNEISS_COAL_ORE.get(), "Magneiss Coal Ore");
+        block(RBlocks.MALATITE_COAL_ORE.get(), "Malatite Coal Ore");
 
         block(RBlocks.SCHINITE_LAPIS_ORE.get(), "Schinite Lapis Ore");
         block(RBlocks.MAGNEISS_LAPIS_ORE.get(), "Magneiss Lapis Ore");

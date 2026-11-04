@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:schinite_wall"
+        "recipes": "r_wilderness:schinite_wall"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

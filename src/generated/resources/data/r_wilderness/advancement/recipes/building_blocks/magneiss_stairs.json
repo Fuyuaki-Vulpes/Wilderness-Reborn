@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:magneiss_stairs"
+        "recipes": "r_wilderness:magneiss_stairs"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

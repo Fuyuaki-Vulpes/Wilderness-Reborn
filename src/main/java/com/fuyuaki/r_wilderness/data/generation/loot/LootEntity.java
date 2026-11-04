@@ -17,8 +17,8 @@ public class LootEntity extends EntityLootSubProvider {
     List<EntityType<?>> knownEntities = List.of();
 //            MtaEntityTypes.ENTITY.getEntries().stream().map(Holder::value).collect(Collectors.toList());
 
-    public LootEntity(LootTableSubProvider.Context context) {
-        super(FeatureFlags.REGISTRY.allFlags(), context);
+    public LootEntity(LootTableSubProvider.Context output) {
+        super(FeatureFlags.REGISTRY.allFlags(), output);
     }
 
     @Override

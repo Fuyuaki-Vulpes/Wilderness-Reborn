@@ -3,37 +3,43 @@
   "name": "r_wilderness:frozen_peaks",
   "target": {
     "continentalness": {
+      "any": false,
       "max": 1.5,
       "mean": 0.75,
       "min": 0.0
     },
     "erodability": {
-      "max": 1.5,
-      "mean": 1.0,
-      "min": -1.0
+      "any": true,
+      "max": 99.9,
+      "mean": 0.0,
+      "min": -99.9
     },
     "humidity": {
+      "any": false,
       "max": 0.5,
       "mean": 0.0,
       "min": -0.5
     },
     "rockiness": {
-      "max": 1.0,
+      "any": true,
+      "max": 1.5,
       "mean": 0.0,
-      "min": -1.0
+      "min": -1.5
     },
     "tags": [
       "peak"
     ],
     "temperature": {
+      "any": false,
       "max": -0.75,
       "mean": -1.0,
       "min": -1.5
     },
     "vegetation": {
-      "max": 1.0,
+      "any": true,
+      "max": 1.5,
       "mean": 0.0,
-      "min": -1.0
+      "min": -1.5
     }
   }
 }

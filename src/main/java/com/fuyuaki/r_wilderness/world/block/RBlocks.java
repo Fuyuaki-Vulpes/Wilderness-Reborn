@@ -1,14 +1,12 @@
 package com.fuyuaki.r_wilderness.world.block;
 
 import com.fuyuaki.r_wilderness.data.worldgen.tree.ModTreeGrower;
-import com.fuyuaki.r_wilderness.world.block.soils.ModFarmBlock;
-import com.fuyuaki.r_wilderness.world.block.soils.ModSoilBlock;
 import com.fuyuaki.r_wilderness.world.block.woods.*;
 import com.fuyuaki.r_wilderness.world.item.RItems;
+import com.fuyuaki.r_wilderness.world.level.material.RFluids;
+import com.fuyuaki.r_wilderness.world.level.material.RiverFluidBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.data.BlockFamilies;
-import net.minecraft.data.BlockFamily;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.effect.MobEffects;
@@ -39,7 +37,6 @@ import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
 import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
-import static net.minecraft.world.level.block.Blocks.CONCRETE;
 
 public class RBlocks {
 
@@ -61,6 +58,20 @@ public class RBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
 
     //Blocks
+
+    public static final DeferredBlock<Block> RIVER_WATER = register("river_water",
+            (p) -> new RiverFluidBlock(RFluids.RIVER.get(), p),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WATER)
+                    .replaceable()
+                    .noCollision()
+                    .strength(100.0F)
+                    .pushReaction(PushReaction.POPPED)
+                    .noLootTable()
+                    .liquid()
+                    .sound(SoundType.EMPTY)
+
+    );
 
     //Stones
 
@@ -314,29 +325,29 @@ public class RBlocks {
     //Soils
 
     public static final DeferredBlock<Block> CHALKY_SOIL = registerBlock("chalky_soil",
-            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL));
+            BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL));
     public static final DeferredBlock<Block> CHALKY_FARMLAND = registerBlock("chalky_farmland",
-            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)
+            p -> new FarmlandBlock(CHALKY_SOIL.value(), p), BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)
     );
     public static final DeferredBlock<Block> CLAY_SOIL = registerBlock("clay_soil",
-            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY));
+            BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY));
     public static final DeferredBlock<Block> CLAY_FARMLAND = registerBlock("clay_farmland",
-            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY)
+            p -> new FarmlandBlock(CLAY_SOIL.value(), p), BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY)
     );
     public static final DeferredBlock<Block> PEAT = registerBlock("peat",
-            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT));
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT));
     public static final DeferredBlock<Block> PEAT_FARMLAND = registerBlock("peat_farmland",
-            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
+            p -> new FarmlandBlock(PEAT.value(), p), BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
     );
     public static final DeferredBlock<Block> SANDY_SOIL = registerBlock("sandy_soil",
-            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.SAND));
+            BlockBehaviour.Properties.ofFullCopy(Blocks.SAND));
     public static final DeferredBlock<Block> SANDY_FARMLAND = registerBlock("sandy_farmland",
-            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.SAND)
+            p -> new FarmlandBlock(SANDY_SOIL.value(), p), BlockBehaviour.Properties.ofFullCopy(Blocks.SAND)
     );
     public static final DeferredBlock<Block> SILT = registerBlock("silt",
-            ModSoilBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.MUD));
+            BlockBehaviour.Properties.ofFullCopy(Blocks.MUD));
     public static final DeferredBlock<Block> SILT_FARMLAND = registerBlock("silt_farmland",
-            ModFarmBlock::new, BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)
+            p -> new FarmlandBlock(SILT.value(), p), BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)
     );
 
     //Trees & Wood

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "r_wilderness:alpine_fence_gate"
+        "recipes": "r_wilderness:alpine_fence_gate"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
