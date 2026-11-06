@@ -29,12 +29,9 @@
      public static void bootstrap(BootstrapContext<WorldPreset> context) {
          HolderGetter<DimensionType> holdergetter = context.lookup(Registries.DIMENSION_TYPE);
 
-
          HolderGetter<RebornWorldSettings> rebornSettings  = context.lookup(RRegistries.WRGEN_SETTINGS);
          HolderGetter<NoiseGeneratorSettings> noiseSettings  = context.lookup(Registries.NOISE_SETTINGS);
          HolderGetter<Biome> biomes  = context.lookup(Registries.BIOME);
-         HolderGetter<PlacedFeature> placedFeatures = context.lookup(Registries.PLACED_FEATURE);
-         HolderGetter<StructureSet> structureSets = context.lookup(Registries.STRUCTURE_SET);
          HolderGetter<MultiNoiseBiomeSourceParameterList> multiNoiseBiomeSourceParameterLists
                  = context.lookup(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST);
          Holder<DimensionType> overworldDimensionType

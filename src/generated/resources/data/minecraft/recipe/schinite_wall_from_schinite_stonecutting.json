@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": "r_wilderness:schinite",
-  "result": {
-    "id": "r_wilderness:schinite_wall"
-  }
-}

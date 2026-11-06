@@ -10,7 +10,7 @@ public class RRegistries {
 
 
     public static final ResourceKey<Registry<RebornWorldSettings>> WRGEN_SETTINGS = createRegistryKey("worldgen/reborn_settings");
-    public static final ResourceKey<Registry<BiomePlacementData>> REBORN_BIOME_PLACEMENT_KEY = createRegistryKey("worldgen/biome_placement");
+    public static final ResourceKey<Registry<BiomePlacementData>> REBORN_BIOME_PLACEMENT_KEY = createRegistryKey("worldgen/reborn_biome_placement");
 
     private static <T> ResourceKey<Registry<T>> createRegistryKey(String name) {
         return ResourceKey.createRegistryKey(Identifier.withDefaultNamespace(name));

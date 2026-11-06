@@ -11,9 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.material.OverworldMaterialRules;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.biome.OverworldBiomeBuilder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.*;
@@ -46,13 +44,13 @@ public record RebornWorldSettings(
                             MaterialRule.HOLDER_CODEC.fieldOf("material_rule").forGetter(RebornWorldSettings::materialRule),
                             Aquifer.Config.CODEC.optionalFieldOf("aquifers").forGetter(RebornWorldSettings::aquifers),
                             Codec.INT.fieldOf("sea_level").forGetter(RebornWorldSettings::seaLevel),
-                            Codec.INT.fieldOf("sea_level").forGetter(RebornWorldSettings::lavaLevel)
+                            Codec.INT.fieldOf("lava_level").forGetter(RebornWorldSettings::lavaLevel)
                     )
                     .apply(i, RebornWorldSettings::new)
     );
 
 
-    public static final Codec<Holder<RebornWorldSettings>> CODEC = RegistryCodecs.holder(RRegistries.WRGEN_SETTINGS, DIRECT_CODEC);
+    public static final Codec<Holder<RebornWorldSettings>> HOLDER_CODEC = RegistryCodecs.holder(RRegistries.WRGEN_SETTINGS, DIRECT_CODEC);
 
     public static final ResourceKey<RebornWorldSettings> OVERWORLD = ResourceKey.create(
             RRegistries.WRGEN_SETTINGS, RWildernessMod.identifier("overworld")
@@ -70,7 +68,6 @@ public record RebornWorldSettings(
 
         functionNames = NoiseRouterData.OVERWORLD_FUNCTIONS;
 
-        Holder<DensityFunction> weirdness = functions.getOrThrow(NoiseRouterData.RIDGES);
         NoiseRouter router = RebornRouterData.overworld(functions, functionNames);
         return new RebornWorldSettings(
                 NoiseSettings.create(WildernessConstants.WORLD_BOTTOM, WildernessConstants.WORLD_HEIGHT),

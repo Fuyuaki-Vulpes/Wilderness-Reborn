@@ -200,17 +200,23 @@ public class RWBlockModels extends BlockModelGenerators {
     this.createGrassBlock(block,dirt,block, colorSource);
     }
 
-    public void createFarmland(DeferredBlock<Block> farmland, DeferredBlock<Block> soil,ModelTemplate template) {
+    public void createFarmland(DeferredBlock<Block> farmlandDef, DeferredBlock<Block> soilDef,ModelTemplate template) {
+        Block farmland = farmlandDef.get();
+        Block soil = soilDef.get();
 
+        Material soilTexture = TextureMapping.getBlockTexture(soil);
         TextureMapping dryTextures = (new TextureMapping())
-                .put(TextureSlot.DIRT, TextureMapping.getBlockTexture(soil.get()))
-                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(farmland.get()));
+                .put(TextureSlot.SIDE, soilTexture)
+                .put(TextureSlot.BOTTOM, soilTexture)
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(farmland));
         TextureMapping moistTextures = (new TextureMapping())
-                .put(TextureSlot.DIRT, TextureMapping.getBlockTexture(soil.get()))
-                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(farmland.get(), "_moist"));
-        MultiVariant dryModel = plainVariant(template.create(farmland.get(), dryTextures, this.modelOutput));
-        MultiVariant moistModel = plainVariant(template.create(ModelLocationUtils.getModelLocation(farmland.get(), "_moist"), moistTextures, this.modelOutput));
-        this.blockStateOutput.accept(MultiVariantGenerator.dispatch(farmland.get()).with(createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, moistModel, dryModel)));
+                .put(TextureSlot.SIDE, soilTexture)
+                .put(TextureSlot.BOTTOM, soilTexture)
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(farmland, "_moist"));
+        MultiVariant dryModel = plainVariant(template.create(farmland, dryTextures, this.modelOutput));
+        MultiVariant moistModel = plainVariant(template.create(ModelLocationUtils.getModelLocation(farmland, "_moist"), moistTextures, this.modelOutput));
+        this.blockStateOutput
+                .accept(MultiVariantGenerator.dispatch(farmland).with(createEmptyOrFullDispatch(BlockStateProperties.MOISTURE, 7, moistModel, dryModel)));
     }
 
 

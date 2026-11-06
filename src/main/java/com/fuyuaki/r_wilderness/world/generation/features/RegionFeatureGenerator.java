@@ -471,13 +471,12 @@ public class RegionFeatureGenerator {
             int startX = thread * samples;
             int endX = startX + samples;
             futures[thread] = CompletableFuture.runAsync(() -> {
-                // Allocate scratch buffers once per thread, not per pixel!
                 TectonicPlateNode[] nearestNodes = new TectonicPlateNode[arrayHold];
                 float[] distances = new float[arrayHold];
                 TectonicPlateNode[] nodes2 = new TectonicPlateNode[9];
                 float[] dist2 = new float[9];
                 float[] localDataScratch = new float[4];
-                float[] pairResultsScratch = new float[2];
+                float[] pairResultsScratch = new float[3];
                 float[] finalRasterScratch = new float[5];
                 Map<RegionPos, WorldRegion> localNeighborCache = new HashMap<>();
 
@@ -492,7 +491,7 @@ public class RegionFeatureGenerator {
                         trueX = xPos * scale + minX;
                         trueZ = zPos * scale + minZ;
 
-                        localNeighborCache.clear(); // Clear cache per pixel or keep per row if stable
+                        localNeighborCache.clear();
 
                         rasterLocal = calculateRasterizedPlatesForPosition(
                                 trueX, trueZ, neighbors, nearestNodes, distances, nodes2, dist2,

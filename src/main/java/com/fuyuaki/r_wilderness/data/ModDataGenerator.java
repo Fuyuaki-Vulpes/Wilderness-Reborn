@@ -47,20 +47,15 @@ public class ModDataGenerator {
 
         event.createBlockAndItemTags(RWBlockTags::new, RWItemTags::new);
 
-        generator.addProvider(true,
-                new RWBiomeTags(packOutput, lookupProvider));
+        generator.addProvider(true, new RWBiomeTags(packOutput, lookupProvider));
 
-        generator.addProvider(true,
-                new RWFluidTags(packOutput, lookupProvider));
+        generator.addProvider(true, new RWFluidTags(packOutput, lookupProvider));
 
-        generator.addProvider(true,
-                new RWWorldPresetTags(packOutput, lookupProvider));
+        generator.addProvider(true, new RWWorldPresetTags(packOutput, lookupProvider));
 
-        generator.addProvider(true,
-                new EN_US_LangProvider(packOutput));
+        generator.addProvider(true, new EN_US_LangProvider(packOutput));
 
-      generator.addProvider(true,
-                new RWSoundDefinition(packOutput));
+      generator.addProvider(true, new RWSoundDefinition(packOutput));
 
 
 

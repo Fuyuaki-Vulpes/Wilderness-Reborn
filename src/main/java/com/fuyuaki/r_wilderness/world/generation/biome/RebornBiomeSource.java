@@ -46,6 +46,9 @@ public class RebornBiomeSource extends BiomeSource {
 
     public RebornBiomeSource() {
         this.knownBiomes = PreemptiveGenerationCollector.instance().getKnownBiomePlacements();
+        this.possibleBiomes = Suppliers.memoize(
+                () -> this.knownBiomes.stream().map(BiomePlacementData::biome).distinct().collect(ImmutableSet.toImmutableSet())
+        );
     }
 
     public RebornBiomeSource(List<BiomePlacementData> knownBiomes) {

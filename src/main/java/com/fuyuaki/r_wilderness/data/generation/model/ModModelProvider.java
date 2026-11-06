@@ -77,7 +77,7 @@ public class ModModelProvider implements DataProvider, IModelProviderExtension {
 
     @Override
     public final String getName() {
-        return "MTA Model Definitions";
+        return "Reborrn: Wilderness Model Provider";
     }
 
     static class BlockStateGeneratorCollector implements Consumer<BlockModelDefinitionGenerator> {

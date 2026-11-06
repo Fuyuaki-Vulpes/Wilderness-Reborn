@@ -22,6 +22,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -121,6 +122,11 @@ public class RCommonEvents {
     @SubscribeEvent
     public static void serverStoppedEvent(ServerStoppedEvent event){
         PreemptiveGenerationCollector.instance().flush();
+    }
+
+    @SubscribeEvent
+    public static void serverAboutToStart(ServerAboutToStartEvent event){
+        PreemptiveGenerationCollector.instance().backupInit(event.getServer());
     }
 
 

@@ -1,7 +1,8 @@
 {
-  "parent": "minecraft:block/template_farmland",
+  "parent": "minecraft:block/template_cube_bottom_top_indented",
   "textures": {
-    "dirt": "r_wilderness:block/silt",
+    "bottom": "r_wilderness:block/silt",
+    "side": "r_wilderness:block/silt",
     "top": "r_wilderness:block/silt_farmland_moist"
   }
 }

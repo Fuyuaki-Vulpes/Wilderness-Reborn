@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab_top",
-  "textures": {
-    "bottom": "r_wilderness:block/weathered_bedrock",
-    "side": "r_wilderness:block/weathered_bedrock",
-    "top": "r_wilderness:block/weathered_bedrock"
-  }
-}

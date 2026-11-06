@@ -1,6 +1,5 @@
 package com.fuyuaki.r_wilderness.world.level.levelgen;
 
-import com.fuyuaki.r_wilderness.api.RRegistries;
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.mixin.accessor.ChunkMapAccessor;
 import com.fuyuaki.r_wilderness.util.PreemptiveGenerationCollector;
@@ -54,8 +53,8 @@ import java.util.function.Supplier;
 public class RebornChunkGenerator extends ChunkGenerator implements ChunkGeneratorExtension {
     public static final MapCodec<RebornChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
-                            BiomeSource.CODEC.fieldOf("biome_source").forGetter(chunkGenerator -> chunkGenerator.biomeSource),
-                            RebornWorldSettings.CODEC.fieldOf("generator_settings").forGetter(chunkGenerator -> chunkGenerator.settings)
+                            BiomeSource.CODEC.fieldOf("biome_source").forGetter(RebornChunkGenerator::getBiomeSource),
+                            RebornWorldSettings.HOLDER_CODEC.fieldOf("generator_settings").forGetter(RebornChunkGenerator::settings)
                     )
                     .apply(instance, instance.stable(RebornChunkGenerator::new))
     );
@@ -89,6 +88,11 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
             }
         };
     }
+
+    public Holder<RebornWorldSettings> settings() {
+        return settings;
+    }
+
 
     private RebornNoiseChunk createNoiseChunk(
             ChunkAccess chunk, StructureManager structureManager, Blender blender, RandomState randomState, NoiseSettings noiseSettings
