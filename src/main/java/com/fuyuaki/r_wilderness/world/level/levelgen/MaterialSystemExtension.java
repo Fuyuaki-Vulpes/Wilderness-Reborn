@@ -1,5 +1,8 @@
 package com.fuyuaki.r_wilderness.world.level.levelgen;
 
+import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
+import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
+import com.fuyuaki.r_wilderness.world.level.levelgen.material.RebornMaterialRuleContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
@@ -73,6 +76,8 @@ public class MaterialSystemExtension {
     }
 
     public void buildSurface(
+            RegionMemory regionMemory,
+            WorldRegion region,
             RandomState randomState,
             BiomeManager biomeManager,
             WorldGenerationContext generationContext,
@@ -120,7 +125,7 @@ public class MaterialSystemExtension {
                 fullVolume.minBlockY(),
                 fullVolume.minBlockZ()
         );
-        MaterialRuleContext context = new MaterialRuleContext(
+        MaterialRuleContext context = new RebornMaterialRuleContext(regionMemory,
                 this.materialSystem, randomState, narrowedVolume, noiseChunk.cachingSamplers(), biomeManager::getBiome, generationContext, possibleBiomes
         );
         RuleEvaluator rule = ruleSource.compile(context);

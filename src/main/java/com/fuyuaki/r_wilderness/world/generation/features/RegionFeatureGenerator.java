@@ -13,6 +13,7 @@ import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
 import com.fuyuaki.r_wilderness.world.generation.region.data.RegionFloatMap;
 import com.fuyuaki.r_wilderness.world.generation.region.data.RegionPos;
+import com.fuyuaki.r_wilderness.world.generation.region.reference.RegionLayerTypes;
 import com.ibm.icu.impl.Pair;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -202,10 +203,7 @@ public class RegionFeatureGenerator {
         return finalMap;
     }
 
-    // Helper for local region caching without object allocation thrashing
     private static WorldRegion getCachedRegion(int regX, int regZ, Map<RegionPos, WorldRegion> sourceMap, Map<RegionPos, WorldRegion> cache) {
-        // If using Java, you can pool or use a temporary lookup object if RegionPos is immutable.
-        // Ideally, pass a reusable wrapper or use primitive long keys if performance is critical.
         RegionPos tempPos = new RegionPos(regX, regZ);
         return cache.computeIfAbsent(tempPos, sourceMap::get);
     }
@@ -254,7 +252,7 @@ public class RegionFeatureGenerator {
     }
 
     private static void calculatePlateRasterization(int validNodeCount, TectonicPlateNode[] nearestNodes, float[] distances, TectonicPlateNode closestNode, float closestDist, float[] finalRaster, float[] pairResultsScratch) {
-        float boundaryWidth = RegionPlates.MAJOR_PLATE_SIZE * 0.35f;
+        float boundaryWidth = RegionPlates.MAJOR_PLATE_SIZE * 0.15f;
         int weightI = GenerationUtils.TectonicArrayIndex.WEIGHT;
         int edgeI = GenerationUtils.TectonicArrayIndex.EDGES;
         int heightI = GenerationUtils.TectonicArrayIndex.BASE_ELEVATION_OFFSET;
@@ -282,10 +280,9 @@ public class RegionFeatureGenerator {
             if (closestNode.getId() == otherNode.getId()) continue;
 
             float distanceDifference = otherDist - closestDist;
-            float d = Math.clamp(1.0f - (distanceDifference / boundaryWidth), 0.0f, 1.0f);
-            float pairWeight = (d * d * (3.0f - (2.0f * d)));
+            float pairFarWeight = Math.clamp(1.0f - (distanceDifference / boundaryWidth), 0.0f, 1.0f);
+            float pairWeight = (pairFarWeight * pairFarWeight * (3.0f - (2.0f * pairFarWeight)));
 
-            float pairFarWeight = d;
             float d2 = Math.clamp(1.0f - (distanceDifference / (boundaryWidth / 2f)), 0.0f, 1.0f);
             float pairWeight2 = (d2 * d2 * (3.0f - (2.0f * d2)));
 
@@ -308,7 +305,7 @@ public class RegionFeatureGenerator {
                 }
             }
             totalVolcanicness += pairResultsScratch[1] * pairWeight;
-            totalStress += pairResultsScratch[2] * pairFarWeight * 2.0f;
+            totalStress += pairResultsScratch[2] * pairFarWeight;
 
             weights += otherNode.getWeight() * pairWeight2;
             total += pairWeight2;
@@ -329,8 +326,9 @@ public class RegionFeatureGenerator {
         float distWithSideBias = otherDist - closestDist;
         float distToEdge = Math.abs(distWithSideBias);
 
-        resultsOut[0] = 0.0f; // height
-        resultsOut[1] = 0.0f; // volcanic / stress accumulator
+        resultsOut[0] = 0.0f;
+        resultsOut[1] = 0.0f;
+        resultsOut[2] = 0.0f;
 
         if (distToEdge >= boundaryWidth) {
             lockedHeightOffset = true;
@@ -390,7 +388,7 @@ public class RegionFeatureGenerator {
         float faultWidth = boundaryWidth * 0.15f;
         float faultRatio = distToEdge / faultWidth;
         float faultProximity = (float) Math.exp(-faultRatio * faultRatio);
-        results[1] += faultProximity * speedIntensity;
+        results[2] += faultProximity * speedIntensity;
 
         return shearDeformation;
     }
@@ -434,7 +432,7 @@ public class RegionFeatureGenerator {
 
         results[1] += volcanicArcFactor * Math.abs(subdueBias) * convergenceSpeed;
         float compressionalStress = Math.max(collisionGaussian, 1.0f - Math.min(1.0f, distanceToEdge / (boundaryWidth * 0.3f)));
-        results[1] += compressionalStress * convergenceSpeed;
+        results[2] += compressionalStress * convergenceSpeed;
 
         return (subdueShiftPost + collisionShift) * (convergenceSpeed * 0.5f + 0.5f);
     }
@@ -456,7 +454,7 @@ public class RegionFeatureGenerator {
         int minX = RegionPos.toBlockCoord(pos.x());
         int minZ = RegionPos.toBlockCoord(pos.z());
         RegionFloatMap[] rasterizedPlates = new RegionFloatMap[GenerationUtils.TectonicArrayIndex.LAYER_COUNT];
-        int resolution = RegionFloatMap.Resolution.R_512;
+        int resolution = RegionLayerTypes.PLATE_WEIGHTS.getDefaultResolution();
         for (int i = 0; i < rasterizedPlates.length; i++) {
             rasterizedPlates[i] = worldRegion.layers().getOfIndex(i);
         }
@@ -500,9 +498,6 @@ public class RegionFeatureGenerator {
 
                         for (int i = 0; i < GenerationUtils.TectonicArrayIndex.LAYER_COUNT; i++) {
                             r = rasterLocal[i];
-                            if (rasterizedPlates[i].getNoiseMap() != null) {
-                                r *= (float) (rasterizedPlates[i].getNoiseMap().noise(trueX, trueZ) + 1) * 0.5f;
-                            }
                             maps[i][xAdapted + zPos] = r;
                         }
                     }
@@ -711,16 +706,10 @@ public class RegionFeatureGenerator {
         RegionFloatMap buoyancy = worldRegion.layers().getBuoyancy();
         RegionFloatMap age = worldRegion.layers().getAge();
         RegionFloatMap swell = worldRegion.layers().getSwelling();
-        Noise2D plateauRiverCarve = worldRegion.layers().record().plateauBadlandCarve().getNoise();
-        Noise2D plateauTableCarve = worldRegion.layers().record().plateauCanyonCarve().getNoise();
         Noise2D mountains = worldRegion.layers().record().mountains().getNoise();
-        RegionFloatMap vegetation = worldRegion.layers().getVegetation();
-        RegionFloatMap erodability = worldRegion.layers().getErodability();
-        RegionFloatMap humidity = worldRegion.layers().getHumidity();
         RegionFloatMap stress = worldRegion.layers().getTectonicStress();
         RegionFloatMap weight = worldRegion.layers().getPlateWeights();
         RegionFloatMap volcanic = worldRegion.layers().getVolcanicness();
-        RegionFloatMap hilliness = worldRegion.layers().getHilliness();
         RegionFloatMap plateauOffset = worldRegion.layers().getPlateaus();
 
         Noise2D islandModulator = worldRegion.layers().record().islandModulator().getNoise();
@@ -833,7 +822,7 @@ public class RegionFeatureGenerator {
                         trueZ = zPos * scaleC + minZ;
                         float elevation = heightmap.getGlobal(trueX,trueZ);
 
-                        weightLocal = Math.clamp(((weight.upsampleFromNeighbors(trueX, trueZ, neighbors) - 0.7f) / 0.3f), -1.25f, 1.25f);
+                        weightLocal = Math.clamp(((weight.upsampleFromNeighbors(trueX, trueZ, neighbors) - 0.65f) / 0.35f), -1.25f, 1.25f);
                         buoyancyLocal = buoyancy.upsampleFromNeighbors(trueX, trueZ, neighbors) * 0.35f;
 
                         float continentalPre = Math.clamp(buoyancyLocal + weightLocal, -1.5f, 1.5f);
@@ -1004,23 +993,23 @@ public class RegionFeatureGenerator {
                         trueZ = (zPos - padding) * scale + minZ;
 
                         points.clear();
-                        for (int xO = -maxRiverRange; xO <= maxRiverRange; xO++) {
-                            for (int zO = -maxRiverRange; zO <= maxRiverRange; zO++) {
-                                int xOff = riverSearchRange * xO;
-                                int zOff = riverSearchRange * zO;
-                                RegionPos pos0 = new RegionPos(RegionPos.fromBlockCoord(trueX + xOff), RegionPos.fromBlockCoord(trueZ + zOff));
-                                boolean sameRegion = pos0.x() == pos.x() && pos0.z() == pos.z();
-                                WorldRegion r = sameRegion ? worldRegion : neighbors.get(pos0);
-                                if (r == null) continue;
-                                RiverNode n;
-
-                                n = r.getNbtData().rivers().getNodeAtBlock(trueX + xOff, trueZ + zOff);
-
-                                if (n == null || !n.isEnabled()|| !n.touches(trueX,trueZ)) continue;
-
-                                points.addAll(n.getPoints());
-                            }
-                        }
+//                        for (int xO = -maxRiverRange; xO <= maxRiverRange; xO++) {
+//                            for (int zO = -maxRiverRange; zO <= maxRiverRange; zO++) {
+//                                int xOff = riverSearchRange * xO;
+//                                int zOff = riverSearchRange * zO;
+//                                RegionPos pos0 = new RegionPos(RegionPos.fromBlockCoord(trueX + xOff), RegionPos.fromBlockCoord(trueZ + zOff));
+//                                boolean sameRegion = pos0.x() == pos.x() && pos0.z() == pos.z();
+//                                WorldRegion r = sameRegion ? worldRegion : neighbors.get(pos0);
+//                                if (r == null) continue;
+//                                RiverNode n;
+//
+//                                n = r.getNbtData().rivers().getNodeAtBlock(trueX + xOff, trueZ + zOff);
+//
+//                                if (n == null || !n.isEnabled()|| !n.touches(trueX,trueZ)) continue;
+//
+//                                points.addAll(n.getPoints());
+//                            }
+//                        }
 
 
                         float elevation = heightmapBasic.upsampleFromNeighborsBufferSafe(trueX, trueZ,neighbors);
@@ -1030,7 +1019,6 @@ public class RegionFeatureGenerator {
                         }else{
                             map = calculateHeightFromRivers(trueX, trueZ, points, elevation);
                         }
-                        float riverness = map.first;
                         float postRiverElevation = map.second;
 
                         heightmapMap[xAdapted + zPos] = postRiverElevation;

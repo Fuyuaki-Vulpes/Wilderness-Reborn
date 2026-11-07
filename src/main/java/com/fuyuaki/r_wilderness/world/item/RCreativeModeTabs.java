@@ -55,12 +55,6 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.MOUNTAIN_HEATHER);
                 output.accept(RBlocks.SNOWBELL);
 
-                output.accept(RItems.PEAT_BALL);
-                output.accept(RItems.CHALK_DUST);
-                output.accept(RBlocks.LIMESTONE);
-                output.accept(RBlocks.MUD_STONE);
-                output.accept(RBlocks.CHALK);
-
                 output.accept(RBlocks.SCHINITE);
                 output.accept(RBlocks.SCHINITE_STAIRS);
                 output.accept(RBlocks.SCHINITE_SLAB);
@@ -111,17 +105,6 @@ public class RCreativeModeTabs {
                 output.accept(RBlocks.MALATITE_EMERALD_ORE);
                 output.accept(RBlocks.MALATITE_REDSTONE_ORE);
                 output.accept(RBlocks.MALATITE_LAPIS_ORE);
-
-                output.accept(RBlocks.CHALKY_SOIL);
-                output.accept(RBlocks.CHALKY_FARMLAND);
-                output.accept(RBlocks.CLAY_SOIL);
-                output.accept(RBlocks.CLAY_FARMLAND);
-                output.accept(RBlocks.PEAT);
-                output.accept(RBlocks.PEAT_FARMLAND);
-                output.accept(RBlocks.SANDY_SOIL);
-                output.accept(RBlocks.SANDY_FARMLAND);
-                output.accept(RBlocks.SILT);
-                output.accept(RBlocks.SILT_FARMLAND);
             }))
             .build());
 

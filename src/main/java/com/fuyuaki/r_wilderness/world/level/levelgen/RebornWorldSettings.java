@@ -66,7 +66,7 @@ public record RebornWorldSettings(
         HolderGetter<NormalNoise> noises = context.lookup(Registries.NOISE);
         OverworldFunctionSet<ResourceKey<DensityFunction>> functionNames;
 
-        functionNames = NoiseRouterData.OVERWORLD_FUNCTIONS;
+        functionNames = RebornRouterData.OVERWORLD_FUNCTIONS;
 
         NoiseRouter router = RebornRouterData.overworld(functions, functionNames);
         return new RebornWorldSettings(

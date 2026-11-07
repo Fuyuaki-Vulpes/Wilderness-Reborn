@@ -7,17 +7,17 @@ import com.fuyuaki.r_wilderness.data.generation.lang.EN_US_LangProvider;
 import com.fuyuaki.r_wilderness.data.generation.model.ModModelProvider;
 import com.fuyuaki.r_wilderness.data.generation.other.*;
 import com.fuyuaki.r_wilderness.data.generation.tags.*;
-import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomeData;
-import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomeModifiers;
-import com.fuyuaki.r_wilderness.data.worldgen.biome.ModBiomePlacements;
+import com.fuyuaki.r_wilderness.data.worldgen.biome.RWBiomeData;
+import com.fuyuaki.r_wilderness.data.worldgen.biome.RWBiomeModifiers;
+import com.fuyuaki.r_wilderness.data.worldgen.biome.RWBiomePlacements;
 import com.fuyuaki.r_wilderness.data.worldgen.features.ModFeatureUtils;
 import com.fuyuaki.r_wilderness.data.worldgen.placement.ModPlacementUtils;
 import com.fuyuaki.r_wilderness.init.RDamageTypes;
 import com.fuyuaki.r_wilderness.world.item.enchantment.ModEnchantments;
+import com.fuyuaki.r_wilderness.world.level.levelgen.RebornRouterData;
 import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldConfiguration;
 import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldPresets;
 import com.fuyuaki.r_wilderness.world.level.levelgen.RebornWorldSettings;
-import com.fuyuaki.r_wilderness.world.level.levelgen.feature.RWFeatureTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
@@ -47,6 +47,8 @@ public class ModDataGenerator {
 
         event.createBlockAndItemTags(RWBlockTags::new, RWItemTags::new);
 
+        generator.addProvider(true, new RWBiomePlacementDataTags(packOutput, lookupProvider));
+
         generator.addProvider(true, new RWBiomeTags(packOutput, lookupProvider));
 
         generator.addProvider(true, new RWFluidTags(packOutput, lookupProvider));
@@ -69,13 +71,14 @@ public class ModDataGenerator {
                 .add(Registries.LOOT_TABLE, RWLoot.create())
                 .add(Registries.CARVER, ModCarvers::bootstrap)
                 .add(Registries.PLACED_FEATURE, ModPlacementUtils::bootstrap)
-                .add(Registries.BIOME, ModBiomeData::bootstrap)
-                .add(RRegistries.REBORN_BIOME_PLACEMENT_KEY, ModBiomePlacements::bootstrap)
-                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifiers::bootstrap)
+                .add(Registries.BIOME, RWBiomeData::bootstrap)
+                .add(RRegistries.REBORN_BIOME_PLACEMENT_KEY, RWBiomePlacements::bootstrap)
+                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, RWBiomeModifiers::bootstrap)
                 .add(Registries.ENCHANTMENT, ModEnchantments::bootstrap)
                 .add(Registries.WORLD_PRESET, RebornWorldPresets::bootstrap)
                 .add(Registries.DIMENSION_TYPE, RebornWorldConfiguration.DimensionTypes::bootstrap)
                 .add(Registries.DAMAGE_TYPE, RDamageTypes::bootstrap)
+                .add(Registries.DENSITY_FUNCTION, RebornRouterData::bootstrap)
                 .add(RRegistries.WRGEN_SETTINGS, RebornWorldSettings::bootstrap);
         event.recipe(RWRecipes::new);
     }

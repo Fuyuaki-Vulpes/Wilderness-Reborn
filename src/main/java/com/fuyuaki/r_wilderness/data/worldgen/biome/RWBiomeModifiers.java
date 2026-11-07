@@ -25,7 +25,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import java.util.Arrays;
 import java.util.Set;
 
-public class ModBiomeModifiers {
+public class RWBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_LARGE_CAVES = registerKey("add_large_caves");
     public static final ResourceKey<BiomeModifier> ADD_SINKHOLES = registerKey("add_sinkholes");
     public static final ResourceKey<BiomeModifier> REMOVE_BLOBS = registerKey("remove_blobs");

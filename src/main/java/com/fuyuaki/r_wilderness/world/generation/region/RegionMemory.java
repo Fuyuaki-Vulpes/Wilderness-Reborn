@@ -58,6 +58,14 @@ public class RegionMemory implements AutoCloseable{
         put(regionAt);
         return regionAt;
     }
+    public WorldRegion requestImmediately(int x, int z){
+        WorldRegion regionAt = getRegionAt(x,z);
+        if (regionAt.getPhase().isAtLeast(RegionPhase.LOADED_AND_FINISHED)){
+            regionAt.setReadyToLoad();
+        }
+        put(regionAt);
+        return regionAt;
+    }
 
 
     protected void put(WorldRegion region){
@@ -395,6 +403,10 @@ public class RegionMemory implements AutoCloseable{
 
     public boolean readyForChunkReading(BlockPos middleBlockPosition) {
         WorldRegion regionAt = getRegionAt(middleBlockPosition);
+        return regionAt != null && regionAt.getPhase().isAtLeast(RegionPhase.LOADED_AND_FINISHED) && regionAt.isReadyToLoad();
+    }
+    public boolean readyForChunkReading(int x, int z) {
+        WorldRegion regionAt = getRegionAt(x,z);
         return regionAt != null && regionAt.getPhase().isAtLeast(RegionPhase.LOADED_AND_FINISHED) && regionAt.isReadyToLoad();
     }
 }

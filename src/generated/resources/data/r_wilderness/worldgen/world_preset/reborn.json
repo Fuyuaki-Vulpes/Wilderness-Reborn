@@ -6,7 +6,7 @@
         "type": "r_wilderness:reborn",
         "biome_source": {
           "type": "r_wilderness:reborn_biome_source",
-          "biome_lookup": []
+          "biome_lookup": "#r_wilderness:enabled"
         },
         "generator_settings": "r_wilderness:overworld"
       }

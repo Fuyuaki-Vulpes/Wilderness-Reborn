@@ -354,6 +354,14 @@ public class RegionManager {
         long startTime = System.nanoTime();
         RegionPos pos =  worldRegion.getPos();
         SerializableRegionData data = new SerializableRegionData(worldRegion.getPos(), new RegionPlates(pos,this.seed,this.regionNoises), new RegionRivers(regionNoises), new RegionWaterBodies(regionNoises));
+
+        worldRegion.layers().setAtmospherePressure(this.regionNoises.atmospherePressure().generate(worldRegion.layers().getAtmospherePressure(),worldRegion.getPos()));
+        worldRegion.layers().setTemperature(this.regionNoises.temperature().generate(worldRegion.layers().getTemperature(),worldRegion.getPos()));
+        worldRegion.layers().setVegetation(this.regionNoises.vegetation().generate(worldRegion.layers().getVegetation(),worldRegion.getPos()));
+        worldRegion.layers().setHumidity(this.regionNoises.humidity().generate(worldRegion.layers().getHumidity(),worldRegion.getPos()));
+        worldRegion.layers().setRockiness(this.regionNoises.rockiness().generate(worldRegion.layers().getRockiness(),worldRegion.getPos()));
+        worldRegion.layers().setMagicalness(this.regionNoises.magicalness().generate(worldRegion.layers().getMagicalness(),worldRegion.getPos()));
+
         worldRegion.setNbtData(data);
         worldRegion.updateStatus(RegionPhase.INITIALIZED);
         long endTime = System.nanoTime();
@@ -390,12 +398,6 @@ public class RegionManager {
         long startTime = System.nanoTime();
         RegionPos pos = worldRegion.getPos();
 
-        worldRegion.layers().setAtmospherePressure(this.regionNoises.atmospherePressure().generate(worldRegion.layers().getAtmospherePressure(),worldRegion.getPos()));
-        worldRegion.layers().setTemperature(this.regionNoises.temperature().generate(worldRegion.layers().getTemperature(),worldRegion.getPos()));
-        worldRegion.layers().setVegetation(this.regionNoises.vegetation().generate(worldRegion.layers().getVegetation(),worldRegion.getPos()));
-        worldRegion.layers().setHumidity(this.regionNoises.humidity().generate(worldRegion.layers().getHumidity(),worldRegion.getPos()));
-        worldRegion.layers().setRockiness(this.regionNoises.rockiness().generate(worldRegion.layers().getRockiness(),worldRegion.getPos()));
-        worldRegion.layers().setMagicalness(this.regionNoises.magicalness().generate(worldRegion.layers().getMagicalness(),worldRegion.getPos()));
 
         RegionFloatMap plateau = RegionFeatureGenerator.plateauMap(pos,level, worldRegion);
         worldRegion.layers().setPlateaus(plateau);
@@ -428,10 +430,8 @@ public class RegionManager {
         long startTime = System.nanoTime();
         RegionPos pos = worldRegion.getPos();
 
-        int maxIterations = 10;
-        for (int iterations = 0; iterations < maxIterations; iterations++) {
-            worldRegion.getNbtData().rivers().computeEntireRivers(pos, neighbors, worldRegion);
-        }
+        worldRegion.getNbtData().rivers().computeEntireRivers(pos, neighbors, worldRegion);
+
         worldRegion.getNbtData().rivers().postProcessRiverCliffsAndFlow(pos, neighbors,worldRegion,this.seed);
         worldRegion.updateStatus(RegionPhase.RIVERS);
         long endTime = System.nanoTime();

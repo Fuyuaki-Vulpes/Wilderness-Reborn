@@ -1,6 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation.biome;
 
-import com.fuyuaki.r_wilderness.util.PreemptiveGenerationCollector;
+import com.fuyuaki.r_wilderness.api.RRegistries;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
@@ -8,11 +8,9 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
-import net.minecraft.core.QuartPos;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
@@ -33,28 +31,22 @@ import static com.fuyuaki.r_wilderness.api.RWildernessMod.MODID;
 public class RebornBiomeSource extends BiomeSource {
 
     protected RegionMemory memory = null;
-    protected List<BiomePlacementData> knownBiomes;
+    protected final HolderSet<BiomePlacementData> placementSet;
 
 
     public static final MapCodec<RebornBiomeSource> CODEC = RecordCodecBuilder.mapCodec(
-            stable -> stable.group(
-                            BiomePlacementData.CODEC.listOf().fieldOf("biome_lookup").forGetter(RebornBiomeSource::getKnownBiomes)
+            instance -> instance.group(
+                            RegistryCodecs.holderSet(RRegistries.REBORN_BIOME_PLACEMENT_KEY).fieldOf("biome_lookup").forGetter(RebornBiomeSource::getPlacementSet)
                     )
-                    .apply(stable, stable.stable(RebornBiomeSource::new))
+                    .apply(instance, RebornBiomeSource::new)
     );
 
-
-    public RebornBiomeSource() {
-        this.knownBiomes = PreemptiveGenerationCollector.instance().getKnownBiomePlacements();
+    public RebornBiomeSource(HolderSet<BiomePlacementData> placementSet) {
+        this.placementSet = placementSet;
         this.possibleBiomes = Suppliers.memoize(
-                () -> this.knownBiomes.stream().map(BiomePlacementData::biome).distinct().collect(ImmutableSet.toImmutableSet())
+                () -> this.placementSet.stream().map(Holder::value).map(BiomePlacementData::biome).distinct().collect(ImmutableSet.toImmutableSet())
         );
     }
-
-    public RebornBiomeSource(List<BiomePlacementData> knownBiomes) {
-        this.knownBiomes = knownBiomes;
-    }
-
     public RegionMemory getMemory() {
         return memory;
     }
@@ -63,16 +55,12 @@ public class RebornBiomeSource extends BiomeSource {
         this.memory = memory;
     }
 
-    public void setKnownBiomes(List<BiomePlacementData> knownBiomes) {
-        this.knownBiomes = knownBiomes;
-        this.possibleBiomes = Suppliers.memoize(
-                () -> this.knownBiomes.stream().map(BiomePlacementData::biome).distinct().collect(ImmutableSet.toImmutableSet())
-        );
 
+    public List<BiomePlacementData> getPlacementList() {
+        return placementSet.stream().map(Holder::value).collect(Collectors.toList());
     }
-
-    public List<BiomePlacementData> getKnownBiomes() {
-        return knownBiomes;
+    public HolderSet<BiomePlacementData> getPlacementSet() {
+        return placementSet;
     }
 
 
@@ -174,7 +162,7 @@ public class RebornBiomeSource extends BiomeSource {
 
     @Override
     protected Stream<Holder<Biome>> collectPossibleBiomes() {
-        return this.knownBiomes.stream().map(BiomePlacementData::biome);
+        return this.getPlacementList().stream().map(BiomePlacementData::biome);
     }
 
     @Override public BiomeResolver createResolver(Climate.Sampler sampler) {
@@ -193,7 +181,7 @@ public class RebornBiomeSource extends BiomeSource {
 
         BiomeSampleProfile profile = BiomeSampleProfile.make(this.memory,x,y,z);
 
-        for (BiomePlacementData placement : this.knownBiomes){
+        for (BiomePlacementData placement : this.getPlacementList()){
             float affinity = placement.target().computeAffinity(profile);
             if (affinity > bestAffinity){
                 bestAffinity = affinity;
@@ -202,10 +190,10 @@ public class RebornBiomeSource extends BiomeSource {
         }
 
         if (bestAffinity < 0){
-            return knownBiomes.stream()
-                    .filter(p -> p.biome().is(Biomes.THE_VOID))
+            return this.getPlacementList().stream()
+                    .filter(p -> p.biome().is(Biomes.PLAINS))
                     .findFirst()
-                    .orElse(knownBiomes.getFirst());
+                    .orElse(this.getPlacementList().getFirst());
         }
 
         return biome;

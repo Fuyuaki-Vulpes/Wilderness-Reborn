@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
-public abstract class ModBiomePlacements {
+public abstract class RWBiomePlacements {
     public static final ResourceKey<BiomePlacementData> VOID = register("void");
 
     //OFF LAND
@@ -403,7 +403,7 @@ public abstract class ModBiomePlacements {
         );
 
         placement(context, BARREN_CAVES,
-                getBiomeHolder(lookup, RBiomes.BARREN_CAVES),
+                getBiomeHolder(lookup, RWBiomes.BARREN_CAVES),
                 BiomeTargetProfile.Builder.caveTemplate()
                         .barren().tagged(CAVE)
         );

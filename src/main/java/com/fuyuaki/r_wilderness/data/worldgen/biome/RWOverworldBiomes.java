@@ -14,7 +14,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.attribute.BackgroundMusic;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
@@ -25,7 +24,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.jspecify.annotations.Nullable;
 
 
-public class ROverworldBiomes {
+public class RWOverworldBiomes {
     protected static final int NORMAL_WATER_COLOR = 4159204;
     protected static final int NORMAL_WATER_FOG_COLOR = 329011;
     private static final int OVERWORLD_FOG_COLOR = 12638463;

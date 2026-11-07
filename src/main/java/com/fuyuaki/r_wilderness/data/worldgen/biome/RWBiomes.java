@@ -5,7 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
-public class RBiomes {
+public class RWBiomes {
 
     //SURFACE
     public static final ResourceKey<Biome> ALPINE_TUNDRA = biome("alpine_tundra");

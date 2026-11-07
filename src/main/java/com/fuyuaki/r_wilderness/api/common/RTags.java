@@ -1,6 +1,8 @@
 package com.fuyuaki.r_wilderness.api.common;
 
+import com.fuyuaki.r_wilderness.api.RRegistries;
 import com.fuyuaki.r_wilderness.api.RWildernessMod;
+import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
@@ -87,6 +89,14 @@ public class RTags {
         private static TagKey<DamageType> tag(String name) {
 
             return TagKey.create(Registries.DAMAGE_TYPE, RWildernessMod.identifier(name));
+        }
+    }
+    public static class BiomePlacementDatas {
+
+        public static final TagKey<BiomePlacementData> ENABLED = tag("enabled");
+
+        private static TagKey<BiomePlacementData> tag(String name) {
+            return TagKey.create(RRegistries.REBORN_BIOME_PLACEMENT_KEY, RWildernessMod.identifier(name));
         }
     }
 }

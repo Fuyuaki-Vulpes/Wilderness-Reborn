@@ -46,7 +46,7 @@ public class RCommonEvents {
         event.worldRegistry(
                 RRegistries.WRGEN_SETTINGS,
                 RebornWorldSettings.DIRECT_CODEC,
-                RebornWorldSettings.DIRECT_CODEC
+                null
         );
     }
 
@@ -121,12 +121,10 @@ public class RCommonEvents {
 
     @SubscribeEvent
     public static void serverStoppedEvent(ServerStoppedEvent event){
-        PreemptiveGenerationCollector.instance().flush();
     }
 
     @SubscribeEvent
     public static void serverAboutToStart(ServerAboutToStartEvent event){
-        PreemptiveGenerationCollector.instance().backupInit(event.getServer());
     }
 
 

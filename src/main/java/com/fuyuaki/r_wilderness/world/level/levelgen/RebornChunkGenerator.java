@@ -2,15 +2,18 @@ package com.fuyuaki.r_wilderness.world.level.levelgen;
 
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.mixin.accessor.ChunkMapAccessor;
-import com.fuyuaki.r_wilderness.util.PreemptiveGenerationCollector;
 import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
 import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
+import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
+import com.fuyuaki.r_wilderness.world.generation.region.reference.RegionLayers;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Sets;
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.*;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
@@ -63,6 +66,7 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
     private static final BlockState AIR = Blocks.AIR.defaultBlockState();
 
 
+    private RegionMemory regionMemory;
     private final Holder<RebornWorldSettings> settings;
     private final Supplier<Aquifer.FluidPicker> globalFluidPicker;
 
@@ -98,7 +102,7 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
             ChunkAccess chunk, StructureManager structureManager, Blender blender, RandomState randomState, NoiseSettings noiseSettings
     ) {
         Beardifier beardifier = Beardifier.forStructuresInChunk(structureManager, chunk.getPos());
-        return new RebornNoiseChunk(randomState, beardifier, this.settings.value(), this.globalFluidPicker.get(), blender, chunkVolume(chunk, noiseSettings));
+        return new RebornNoiseChunk(this.regionMemory,randomState, beardifier, this.settings.value(), this.globalFluidPicker.get(), blender, chunkVolume(chunk, noiseSettings));
     }
 
     private static DensityVolume chunkVolume(ChunkAccess chunk, NoiseSettings noiseSettings) {
@@ -111,6 +115,21 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
     }
 
     @Override public CompletableFuture<ChunkAccess> buildTerrain(ChunkAccess chunk, Blender blender, RandomState randomState, StructureManager structureManager, BiomeManager biomeManager, @Nullable WorldGenRegion carverBiomeRegion, Set<Holder<Biome>> possibleBiomes) {
+        this.regionMemory.getRegionAt(chunk.getPos().getMiddleBlockPosition(0));
+        WorldRegion region = null;
+        while (!regionMemory.readyForChunkReading(chunk.getPos().getMiddleBlockPosition(0))){
+            try{
+                region = regionMemory.requestImmediately(chunk.getPos().getMiddleBlockPosition(0));
+                Thread.sleep(10L);
+            } catch (Exception e) {
+                LogUtils.getLogger().warn("Sleep failed for chunk {}",chunk, e);
+            }
+        }
+        if (region == null){
+            region = regionMemory.requestImmediately(chunk.getPos().getMiddleBlockPosition(0));
+        }
+
+        WorldRegion region1 = region;
 
         NoiseSettings noiseSettings = this.settings.value().noiseSettings().clampToHeightAccessor(chunk.getHeightAccessorForGeneration());
         return noiseSettings.height() > 0 && !SharedConstants.debugVoidTerrain(chunk.getPos()) ? CompletableFuture.supplyAsync(() -> {
@@ -129,7 +148,7 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
                 }
 
                 try (Zone var39 = profiler.zone("doFill")) {
-                    this.doFill(noiseChunk, chunk);
+                    this.doFill(noiseChunk, chunk,region1);
                 } finally {
                     for (LevelChunkSection section : sections) {
                         section.release();
@@ -139,11 +158,11 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
                 MaterialRule materialRule = this.settings.value().materialRule().value();
 
                 try (Zone var41 = profiler.zone("buildSurface")) {
-                    this.buildSurface(chunk, noiseChunk, randomState, biomeManager, possibleBiomes, materialRule);
+                    this.buildSurface(region1, chunk, noiseChunk, randomState, biomeManager, possibleBiomes, materialRule);
                 }
 
                 try (Zone var42 = profiler.zone("generateCarvers")) {
-                    this.generateCarvers(chunk, blender, noiseChunk, randomState, biomeManager, carverBiomeRegion, materialRule);
+                    this.generateCarvers(region1, chunk, blender, noiseChunk, randomState, biomeManager, carverBiomeRegion, materialRule);
                 }
 
                 return chunk;
@@ -152,6 +171,48 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
     }
 
     @Override public void addDebugScreenInfo(List<String> result, RandomState randomState, BlockPos feetPos, SamplerContext samplerContext) {
+        RegionMemory memory = RegionMemory.getInstance(Minecraft.getInstance().getSingleplayerServer().overworld());
+        int x = feetPos.getX();
+        int z = feetPos.getZ();
+        WorldRegion region = memory.getRegionAt(x, z);
+        RegionLayers layers = region.layers();
+
+        String continentalness = DEBUG_MENU_FORMAT.format(layers.getContinentalness().getUpsampled(x,z,memory));
+        String erosion = DEBUG_MENU_FORMAT.format(layers.getErodability().getUpsampled(x,z,memory));
+        String plateau = DEBUG_MENU_FORMAT.format(layers.getPlateaus().getUpsampled(x,z,memory));
+        String hill = DEBUG_MENU_FORMAT.format(layers.getHilliness().getUpsampled(x,z,memory));
+        String tectonicStress = DEBUG_MENU_FORMAT.format(layers.getTectonicStress().getUpsampled(x,z,memory));
+        String volcanicness = DEBUG_MENU_FORMAT.format(layers.getVolcanicness().getUpsampled(x,z,memory));
+        String plateAge = DEBUG_MENU_FORMAT.format(layers.getAge().getUpsampled(x,z,memory));
+        String plateSwell = DEBUG_MENU_FORMAT.format(layers.getSwelling().getUpsampled(x,z,memory));
+        String plateWeight = DEBUG_MENU_FORMAT.format(layers.getPlateWeights().getUpsampled(x,z,memory));
+        String plateDistToParent = DEBUG_MENU_FORMAT.format(layers.getDistToParent().getUpsampled(x,z,memory));
+        String plateEdges = DEBUG_MENU_FORMAT.format(layers.getPlateEdges().getUpsampled(x,z,memory));
+        String plateBuoyancy = DEBUG_MENU_FORMAT.format(layers.getBuoyancy().getUpsampled(x,z,memory));
+        String rockiness = DEBUG_MENU_FORMAT.format(layers.getRockiness().getUpsampled(x,z,memory));
+        String humidity = DEBUG_MENU_FORMAT.format(layers.getHumidity().getUpsampled(x,z,memory));
+        String temperature = DEBUG_MENU_FORMAT.format(layers.getTemperature().getUpsampled(x,z,memory));
+        String atmosPressure = DEBUG_MENU_FORMAT.format(layers.getAtmospherePressure().getUpsampled(x,z,memory));
+        String plateElevOff = DEBUG_MENU_FORMAT.format(layers.getPlateElevationOffsets().getUpsampled(x,z,memory));
+        String heightmap = DEBUG_MENU_FORMAT.format(layers.getHeightmapBasic().getUpsampled(x,z,memory));
+        String rivers = DEBUG_MENU_FORMAT.format(layers.getRivers().getUpsampled(x,z,memory));
+        String elevation = DEBUG_MENU_FORMAT.format(layers.getElevation().getUpsampled(x,z,memory));
+        String magic = DEBUG_MENU_FORMAT.format(layers.getMagicalness().getUpsampled(x,z,memory));
+        String vegetation = DEBUG_MENU_FORMAT.format(layers.getVegetation().getUpsampled(x,z,memory));
+
+
+        result.add("EP: " + plateElevOff + " EB: " + heightmap + " EF: " + elevation);
+
+        result.add("PST: " + tectonicStress + " PA: " + plateAge + " PE: " + plateEdges);
+        result.add("PW: " + plateWeight + " PB: " + plateBuoyancy);
+        result.add("PD: " + plateDistToParent + " PSW: " + plateSwell);
+
+        result.add("GH: " + hill + " GP: " + plateau);
+        result.add("GR: " + rivers + " GA: " + atmosPressure);
+
+        result.add("GT: " + temperature + " GC: " + continentalness + " GE: " + erosion);
+        result.add("GH: " + humidity + " GF: " + vegetation + " GR: " + rockiness);
+        result.add("GV: " + volcanicness + " GM: " + magic);
 
     }
 
@@ -165,8 +226,8 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
     @Override
     @SuppressWarnings("ConstantConditions")
     public void initRandomState(ChunkMap chunkMap, ServerLevel level) {
-
-
+        RegionMemory regionMemory = RegionMemory.getInstance(level);
+        this.regionMemory = regionMemory;
         if (complete) {
             final RebornChunkGenerator copy = copy();
 
@@ -181,7 +242,6 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
 
         if (this.biomeSource instanceof RebornBiomeSource) {
             ((RebornBiomeSource) this.biomeSource).setMemory(RegionMemory.getInstance(level));
-            ((RebornBiomeSource) this.biomeSource).setKnownBiomes(PreemptiveGenerationCollector.instance().getKnownBiomePlacements());
 
         }
 
@@ -195,7 +255,7 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
 
     @Override
     public void initBiomeSource(ServerLevel level) {
-        List<BiomePlacementData> knownBiomes = PreemptiveGenerationCollector.instance().getKnownBiomePlacements();
+        List<BiomePlacementData> knownBiomes = ((RebornBiomeSource)this.biomeSource).getPlacementList();
         this.featuresPerStep = Lazy.of(
                 () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(knownBiomes.stream().map(BiomePlacementData::biome).toList()), biomeHolder -> generationSettingsGetter.apply(biomeHolder).features(), true)
         );
@@ -206,14 +266,12 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
     }
 
 
-    // CREATE THE ELEVATION, AIR : WATER : STONE
-    private void doFill(RebornNoiseChunk noiseChunk, ChunkAccess chunk) {
+    private void doFill(RebornNoiseChunk noiseChunk, ChunkAccess chunk, WorldRegion region) {
         Heightmap oceanFloor = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.OCEAN_FLOOR_WG);
         Heightmap worldSurface = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.WORLD_SURFACE_WG);
         Aquifer aquifer = noiseChunk.aquifer();
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
         DensityVolume volume = noiseChunk.volume();
-        // CHANGE METHOD
         DensitySampler.Bound finalDensity = noiseChunk.cachingSamplers().get(this.settings.value().noiseRouter().finalDensity());
 
         try (ScopedDensityBuffer densityBuffer = finalDensity.sampleVolume(volume)) {
@@ -222,17 +280,19 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
 
                 for (int x = 0; x < volume.sizeX(); x++) {
                     int blockX = volume.blockX(x);
+                    float yLevel = region.layers().getElevation().getUpsampled(blockX,blockZ,this.regionMemory);
 
                     for (int y = volume.sizeY() - 1; y >= 0; y--) {
                         int blockY = volume.blockY(y);
                         LevelChunkSection section = chunk.getSection(chunk.getSectionIndex(blockY));
-                        float density = densityBuffer.get(volume.indexUnchecked(x, y, z));
+                        float densityPre = densityBuffer.get(volume.indexUnchecked(x, y, z));
+                        float density = this.adaptDensity(densityPre, yLevel,blockY);
                         BlockState state = aquifer.computeSubstance(blockX, blockY, blockZ, density);
                         if (state == null) {
                             state = this.settings.value().defaultBlock();
                         }
 
-                        state = this.debugPreliminarySurfaceLevel(noiseChunk, blockX, blockY, blockZ, state);
+                        state = this.debugPreliminarySurfaceLevel(noiseChunk, blockX, blockY, blockZ, state,yLevel);
                         if (state != AIR) {
                             section.setBlockState(x, SectionPos.sectionRelative(blockY), z, state, false);
                             oceanFloor.update(x, blockY, z, state);
@@ -248,8 +308,19 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
         }
     }
 
+    private float adaptDensity(float densityPre, float yLevel, int y) {
+        if (y > yLevel) {
+            float l = Math.max((y - yLevel) / 32,0.0f);
+            return 0.3f - Math.min(l,1.3f) ;
+        }
+        float l = 1 - Math.min((yLevel - y) / 12,1.0f);
+        float d = densityPre + l;
+        return d > 0.0f ? Math.max(d,0.3f) : d;
+    }
+
 
     private void buildSurface(
+            WorldRegion region,
             ChunkAccess protoChunk,
             RebornNoiseChunk noiseChunk,
             RandomState randomState,
@@ -259,11 +330,12 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
     ) {
         if (!SharedConstants.debugVoidTerrain(protoChunk.getPos()) && !SharedConstants.DEBUG_DISABLE_SURFACE) {
             WorldGenerationContext context = new WorldGenerationContext(this, protoChunk.getHeightAccessorForGeneration());
-            ((RandomStateExtension) (Object) randomState).getMaterialSystemExtension().buildSurface(randomState, biomeManager, context, protoChunk, noiseChunk, materialRule, possibleBiomes);
+            ((RandomStateExtension) (Object) randomState).getMaterialSystemExtension().buildSurface(this.regionMemory, region, randomState, biomeManager, context, protoChunk, noiseChunk, materialRule, possibleBiomes);
         }
     }
 
     private void generateCarvers(
+            WorldRegion region,
             ChunkAccess chunk,
             Blender blender,
             RebornNoiseChunk noiseChunk,
@@ -391,17 +463,10 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
         return this.getBiomeGenerationSettings(biomeResolver.getNoiseBiome(quartX, 0, quartZ));
     }
 
-    private BlockState debugPreliminarySurfaceLevel(RebornNoiseChunk noiseChunk, int posX, int posY, int posZ, BlockState state) {
+    private BlockState debugPreliminarySurfaceLevel(RebornNoiseChunk noiseChunk, int posX, int posY, int posZ, BlockState state, float yLevel) {
         if (SharedConstants.DEBUG_AQUIFERS && posZ >= 0 && posZ % 4 == 0) {
-            DensityFunction surfaceLevelFunction = this.settings.value().aquifers().map(Aquifer.Config::surfaceLevel).orElse(null);
-            if (surfaceLevelFunction == null) {
-                return state;
-            }
-
-            int preliminarySurfaceLevel = Mth.floor(noiseChunk.cachingSamplers().sampleValue(surfaceLevelFunction, posX, 0, posZ));
-            int adjustedSurfaceLevel = preliminarySurfaceLevel + 8;
-            if (posY == adjustedSurfaceLevel) {
-                state = adjustedSurfaceLevel < this.getSeaLevel() ? Blocks.SLIME_BLOCK.defaultBlockState() : Blocks.HONEY_BLOCK.defaultBlockState();
+            if (posY == yLevel) {
+                state = yLevel < this.getSeaLevel() ? Blocks.SLIME_BLOCK.defaultBlockState() : Blocks.HONEY_BLOCK.defaultBlockState();
             }
         }
 
@@ -450,6 +515,21 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
             return OptionalInt.empty();
         }
 
+        this.regionMemory.getRegionAt(blockX,blockZ);
+        WorldRegion region = null;
+        while (!regionMemory.readyForChunkReading(blockX,blockZ)){
+            try{
+                region = regionMemory.requestImmediately(blockX,blockZ);
+                Thread.sleep(10L);
+            } catch (Exception e) {
+                LogUtils.getLogger().warn("Sleep failed for position {}, {}",blockX,blockZ, e);
+            }
+        }
+        if (region == null){
+            region = regionMemory.requestImmediately(blockX,blockZ);
+        }
+
+
         DensityVolume volume = new DensityVolume(1, noiseSettings.height(), 1, blockX, noiseSettings.minY(), blockZ);
         BlockState[] writeTo;
         if (columnReference == null) {
@@ -459,15 +539,17 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
             columnReference.setValue(new NoiseColumn(volume.minBlockY(), writeTo));
         }
 
-        try (RebornNoiseChunk noiseChunk = new RebornNoiseChunk(randomState, null, this.settings.value(), this.globalFluidPicker.get(), Blender.empty(), volume)) {
+        try (RebornNoiseChunk noiseChunk = new RebornNoiseChunk(this.regionMemory, randomState, null, this.settings.value(), this.globalFluidPicker.get(), Blender.empty(), volume)) {
             Aquifer aquifer = noiseChunk.aquifer();
             BlockState defaultState = this.settings.value().defaultBlock();
             DensitySampler.Bound finalDensity = noiseChunk.cachingSamplers().get(this.settings.value().noiseRouter().finalDensity());
+            float yLevel = region.layers().getElevation().getUpsampled(blockX,blockZ,this.regionMemory);
 
             try (ScopedDensityBuffer densityBuffer = finalDensity.sampleVolume(noiseChunk.volume())) {
                 for (int y = volume.sizeY() - 1; y >= 0; y--) {
-                    float density = densityBuffer.get(volume.indexUnchecked(0, y, 0));
                     int blockY = volume.blockY(y);
+                    float densityPre = densityBuffer.get(volume.indexUnchecked(0, y, 0));
+                    float density = this.adaptDensity(densityPre, yLevel,blockY);
                     BlockState baseState = aquifer.computeSubstance(blockX, blockY, blockZ, density);
                     BlockState state = baseState == null ? defaultState : baseState;
                     if (writeTo != null) {

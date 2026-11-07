@@ -2,6 +2,8 @@
 
  import com.fuyuaki.r_wilderness.api.RRegistries;
  import com.fuyuaki.r_wilderness.api.RWildernessMod;
+ import com.fuyuaki.r_wilderness.api.common.RTags;
+ import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
  import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
  import net.minecraft.core.Holder;
  import net.minecraft.core.HolderGetter;
@@ -49,12 +51,11 @@
          Holder<NoiseGeneratorSettings> holder3 = noiseSettings.getOrThrow(NoiseGeneratorSettings.END);
 
 
-
          LevelStem endStem  = new LevelStem(holder2, new NoiseBasedChunkGenerator(TheEndBiomeSource.create(biomes), holder3));
+         HolderGetter<BiomePlacementData> bPlaceData = context.lookup(RRegistries.REBORN_BIOME_PLACEMENT_KEY);
 
 
-
-         RebornBiomeSource biomeSource = new RebornBiomeSource();
+         RebornBiomeSource biomeSource = new RebornBiomeSource(bPlaceData.getOrThrow(RTags.BiomePlacementDatas.ENABLED));
 
          registerCustomOverworldPreset(
                  context,

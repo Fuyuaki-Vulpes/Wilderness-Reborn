@@ -32,6 +32,7 @@ public class MajorTectonicPlate {
     private static final long PRIME_2 = 0xbf58476d1ce4e5b9L;
     private static final long PRIME_3 = 0x94d049bb133111ebL;
     private static final long SALT = 0x9f01e1ee4e2adac8L;
+    private static final float LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT = 0.65f;
 
     public final int id;
 
@@ -106,7 +107,9 @@ public class MajorTectonicPlate {
         this.velocityX = (float) Math.cos(velAngle) * speedSquared;
         this.velocityZ = (float) Math.sin(velAngle) * speedSquared;
 
-        this.weight = getSaltedFloat(hash, 4);
+        float w = getSaltedFloat(hash, 4);
+
+        this.weight = adaptWeight(w);
         this.influence = getSaltedFloat(hash, 5);
 
         float angle = (getSaltedFloat(hash, 6) * 2.0f - 1.0f) * MAX_ANGLE;
@@ -116,6 +119,23 @@ public class MajorTectonicPlate {
         this.stretchZ = getSaltedFloat(hash, 8) * 0.3f + 0.85f;
         this.age = getSaltedFloat(hash, 9);
 
+    }
+
+    private static float adaptWeight(float w) {
+        float fW;
+        if (w < LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT) {
+            float adaptW = w / LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT;
+            fW = (float) (LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT * Math.pow(adaptW, 2));
+        } else {
+            float adaptW = (w - LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT) / (1.0f - LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT);
+            fW = (float) (LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT + (1.0f - LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT) * (1.0 - Math.pow(1.0 - adaptW, 2)));
+        }
+        if (fW > LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT - 0.1f && fW <= LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT) {
+            fW = LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT - 0.1F;
+        } else if (fW < LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT + 0.1f && fW > LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT) {
+            fW =  LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT + 0.1F;
+        }
+        return fW;
     }
 
     public float getWeightedDistance(float targetX, float targetZ) {

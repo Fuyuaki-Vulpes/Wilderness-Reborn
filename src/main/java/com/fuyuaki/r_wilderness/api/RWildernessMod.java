@@ -87,7 +87,6 @@ public class RWildernessMod {
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        PreemptiveGenerationCollector.instance().init(event.getServer());
     }
 
     @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
