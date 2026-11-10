@@ -799,7 +799,7 @@ public class RegionFeatureGenerator {
 
                         localElevation = plateHeightVariation + pBaseE + artifacts;
 
-                        double peaks1 = peakCellular.noise(trueX, trueZ);
+                        double peaks1 = Mth.square(1 - Math.pow(1 - peakCellular.noise(trueX, trueZ),5));
                         double peaks2 = Mth.smoothstep((float) peakSimplex.noise(trueX, trueZ));
                         float peaks = (float) Math.max(peaks1 * (peaks2 * 0.75f + 0.25f),peaks2 * peaks2);
                         float mountainSq = mountainFlat * mountainFlat;
@@ -823,7 +823,7 @@ public class RegionFeatureGenerator {
 
                         float shatterFilter = Math.max(Math.max(plat,hills * 0.65f),edge) * (Math.min((stressL + localVolcanicness * 0.5f) * plateEFilter, 0.5f) * 0.5f + 0.5f) * (Math.max(0.0f,rocks * 0.5f) + 0.5f);
                         float mountainFilter = stressFactored * (localVolcanicness * 0.25f + 0.75f) * plateEFilter;
-                        float peakFilter = stressFactored * (1.0f - (plateAge * 0.5f)) * (0.5f + (frostFactor * 0.5f)) * plateEFilter;
+                        float peakFilter = stressFactored * (1.0f - (plateAge * 0.25f)) * (0.5f + (frostFactor * 0.5f)) * plateEFilter;
 
                         float shatterOffset = shatter * WildernessConstants.MAX_ARTIFACT_ELEVATION * shatterFilter;
                         float peaksOffset = Math.max(peaks * WildernessConstants.MAX_PEAK_VARIATION * peakFilter,0.0f);

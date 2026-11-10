@@ -5,6 +5,7 @@ import com.fuyuaki.r_wilderness.mixin.accessor.ChunkMapAccessor;
 import com.fuyuaki.r_wilderness.util.HorizontalDirection;
 import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
 import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
+import com.fuyuaki.r_wilderness.world.generation.features.RegionNoisesRecord;
 import com.fuyuaki.r_wilderness.world.generation.features.plates.TectonicPlateNode;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
@@ -240,6 +241,27 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
         result.add("Age: " + age + " Weight: " + weight);
         result.add("Movement: X: " + vX + " Z:" + vZ);
         result.add("Len: " + velocity.length() + " Dir: " + HorizontalDirection.fromVector(velocity).getSerializedName());
+
+        // NOISES
+
+        RegionNoisesRecord record = region.layers().record();
+
+        String tI = DEBUG_MENU_FORMAT_SHORT.format(record.tectonicIntensity().getNoise().noise(x,z));
+        String mP = DEBUG_MENU_FORMAT_SHORT.format(record.mountainPeaks().getNoise().noise(x,z));
+        String pF = DEBUG_MENU_FORMAT_SHORT.format(record.peakFilter().getNoise().noise(x,z));
+        String m = DEBUG_MENU_FORMAT_SHORT.format(record.mountains().getNoise().noise(x,z));
+        String a = DEBUG_MENU_FORMAT_SHORT.format(record.artifacts().getNoise().noise(x,z));
+        String pA = DEBUG_MENU_FORMAT_SHORT.format(record.pilarArtifacts().getNoise().noise(x,z));
+        String iM = DEBUG_MENU_FORMAT_SHORT.format(record.islandModulator().getNoise().noise(x,z));
+        String sM = DEBUG_MENU_FORMAT_SHORT.format(record.stressModulator().getNoise().noise(x,z));
+        String mC = DEBUG_MENU_FORMAT_SHORT.format(record.mountainChunk().getNoise().noise(x,z));
+
+        result.add("Noises:");
+        result.add("TecInt: " + tI + " MouPeak: " + mP);
+        result.add("PeakFil: " + pF + " Mount: " + m);
+        result.add("Artif: " + a + " PilArt: " + pA);
+        result.add("IslMod: " + iM + " StreMod: " + sM);
+        result.add("MouChun: " + mC);
     }
 
     //GENERATORS

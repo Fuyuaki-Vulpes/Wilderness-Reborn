@@ -35,6 +35,7 @@ public record RegionNoisesRecord(
 ) {
 
     private static final int CONTINENTAL = RegionPlates.MAJOR_PLATE_SIZE;
+
     public static RegionNoisesRecord createFor(long seed) {
         return new RegionNoisesRecord(
                 NoiseRecord.of(
@@ -46,15 +47,15 @@ public record RegionNoisesRecord(
         ), NoiseRecord.of(
                         simplex(seed, "plateau", 1400.0f, 1).fractalType(FastNoiseLite.FractalType.FBm).fractalLacunarity(3.5f)
         ), NoiseRecord.of(
-                        simplex(seed, "atmosphere_pressure", 2400.0f, 1)
+                        simplex(seed, "atmosphere_pressure", CONTINENTAL * 1.75f, 1)
         ), NoiseRecord.of(
-                        simplex(seed, "temperature", 2400.0f, 1).octaves(2)
+                        simplex(seed, "temperature", CONTINENTAL * 1.75f, 1).octaves(2)
         ), NoiseRecord.of(
-                        simplex(seed, "erodability", 1200.0f, 1).octaves(2)
+                        simplex(seed, "erodability", CONTINENTAL * 0.75f, 1).octaves(2)
         ), NoiseRecord.of(
-                        simplex(seed, "vegetation", 720.0f, 1).octaves(2)
+                        simplex(seed, "vegetation", CONTINENTAL * 0.25f, 1).octaves(2)
         ), NoiseRecord.of(
-                        simplex(seed, "humidity", 1300.0f, 1)
+                        simplex(seed, "humidity", CONTINENTAL * 0.5f, 1)
         ), NoiseRecord.of(
                         simplex(seed, "rockiness", 512.0f, 1).octaves(2)
         ), NoiseRecord.of(
@@ -64,7 +65,7 @@ public record RegionNoisesRecord(
         ), NoiseRecord.of(
                         simplex(seed, "badlands_carver", 256.0f, 1).octaves(2).fractalOctaves(2).fractalGain(0.14f).ridged()
         ), NoiseRecord.of(
-                        cellular(seed, "hills", 1200.0f, 1).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq)
+                        cellular(seed, "hills", 512.0f, 1).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq)
         ),NoiseRecord.of(
                 simplex(seed, "river_sway",128.0f,1).octaves(2)
         ),NoiseRecord.of(
@@ -74,21 +75,21 @@ public record RegionNoisesRecord(
         ),NoiseRecord.of(
                 simplex(seed, "tectonic_intensity",1280.0f,1).octaves(2)
         ), NoiseRecord.of(
-                cellular(seed, "peaks", 128.0f, 1).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq).scaled(0,1)
+                cellular(seed, "peaks", 32.0f, 1).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq).scaled(0,1)
         ),NoiseRecord.of(
-                simplex(seed, "peak_filter",256.0f,1).octaves(2).ridged().scaled(0,1)
+                simplex(seed, "peak_filter",64.0f,1).octaves(2).ridged().scaled(0,1)
         ),NoiseRecord.of(
-                simplex(seed, "mountains",512.0f,1).octaves(4).ridged().scaled(0,1)
+                simplex(seed, "mountains",128.0f,1).octaves(4).ridged().scaled(0,1)
         ), NoiseRecord.of(
-                cellular(seed, "artifacts", 256.0f, 1).jitter(1.7f).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq).scaled(0,1)
+                cellular(seed, "artifacts", 64.0f, 1).jitter(1.7f).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq).scaled(0,1)
         ),NoiseRecord.of(
                 simplex(seed, "pillar_artifacts",64.0f,1).octaves(2).fractalOctaves(2).fractalGain(0.1f)
         ),NoiseRecord.of(
-                simplex(seed, "island_modulator",900f,1).octaves(3)
+                simplex(seed, "island_modulator",520f,1).octaves(3)
         ),NoiseRecord.of(
-                simplex(seed, "stress_modulator",700f,1).octaves(3).scaled(0,1)
+                simplex(seed, "stress_modulator",612f,1).octaves(3).scaled(0,1)
         ),NoiseRecord.of(
-                simplex(seed, "mountain_chunk",1024.0f,1).scaled(0.0f,1.0f).fractalGain(0.5f).fractalWeightedStrength(1.0f).fractalType(FastNoiseLite.FractalType.Ridged).fractalOctaves(3).octaves(3).scaled(0.0f,1.0f)
+                simplex(seed, "mountain_chunk",160.0f,1).scaled(0.0f,1.0f).fractalGain(0.5f).fractalWeightedStrength(1.0f).fractalType(FastNoiseLite.FractalType.Ridged).fractalOctaves(3).octaves(3).scaled(0.0f,1.0f)
         )
         );
     }
