@@ -64,7 +64,7 @@ public abstract class ServerLevelMixin extends Level implements ServerEntityGett
     }
 
 
-/*
+    /*
     @Redirect(method = "tick",at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/SleepStatus;areEnoughSleeping(I)Z"))
     private boolean skipThroughNight(SleepStatus instance, int requiredSleepPercentage){
         return false;

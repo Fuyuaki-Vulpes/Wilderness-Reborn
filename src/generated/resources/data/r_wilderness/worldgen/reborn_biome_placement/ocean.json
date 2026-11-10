@@ -4,8 +4,8 @@
   "target": {
     "continentalness": {
       "any": false,
-      "max": -0.15,
-      "mean": -0.45,
+      "max": -0.25,
+      "mean": -0.5,
       "min": -0.75
     },
     "erodability": {

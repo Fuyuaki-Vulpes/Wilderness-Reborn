@@ -62,6 +62,16 @@ public class WorldRegion {
         return layers;
     }
 
+    public float getAdjustedElevationForPosition(int x, int z, RegionMemory memory) {
+        float finalE = layers().getElevation().getUpsampled(z, x, memory);
+        float stress = layers().getTectonicStress().getUpsampled(z, x, memory);
+      /*  if (stress >= 0.01f){
+            float mountainity = (float) (layers().record().mountainChunk().getNoise().noise(x,z) * stress);
+            return finalE + mountainity;
+        }*/
+        return finalE;
+    }
+
     public boolean hasBeenSaved() {
         return hasBeenSaved;
     }
@@ -137,80 +147,5 @@ public class WorldRegion {
 
     public void setReadyToLoad() {
         this.readyToLoad = true;
-    }
-
-    public float caveLikelihood(float surfaceY,int x, int y, int z, RegionMemory memory){
-        if (y <= WildernessConstants.CAVES_BOTTOM || y > surfaceY){
-            return -1.0f;
-        }
-
-
-        float depthBelowSurface = surfaceY - y;
-        float surfacePenalty = Math.clamp((16.0f - depthBelowSurface) / 16.0f, 0.0f, 1.0f);
-
-        float stress = this.layers.getTectonicStress().getUpsampled(x,z,memory);
-        float volcanicness = this.layers.getVolcanicness().getUpsampled(x,z,memory);
-        float rockiness = this.layers.getRockiness().getUpsampled(x,z,memory);
-
-        float ySpaghetti = y * 1.25f;
-        float spaghetti1 =  (float) this.layers.record().spaghettiWorm1().noise(x,ySpaghetti,z);
-        float spaghetti2 =  (float) this.layers.record().spaghettiWorm2().noise(x,ySpaghetti,z);
-        float spaghettiThickness =  (float) this.layers.record().spaghettiThickness().noise(x,ySpaghetti,z);
-        float spaghettiRarity =  Math.min((float) this.layers.record().spaghettiRarity().noise(x,ySpaghetti,z),0.0f);
-        float spaghettiWorm = (spaghetti1 * spaghetti1) + (spaghetti2 * spaghetti2);
-
-        float spaghettiThreshold = 0.025f + (stress * 0.035f) + (rockiness * 0.005f) + (spaghettiThickness * 0.025f);
-
-        float spaghetti = spaghettiThreshold - spaghettiWorm - (surfacePenalty * 0.05f) + spaghettiRarity;
-
-        float yPore = y * 2.1f;
-        float poreValue = (float) this.layers.record().cavePores().noise(x,yPore,z);
-        float poreThickness =  (float) this.layers.record().cavePoresThickness().noise(x,yPore,z);
-        float poreRarity = Math.min((float) this.layers.record().cavePoreRarity().noise(x,y,z),0.0f);
-
-        float poreThreshold = 0.75f - (poreThickness * 0.15f) - (volcanicness * 0.25f);
-        float pores = poreValue - poreThreshold - (surfacePenalty * 0.25f) + poreRarity;
-
-        float yRidge = y * 6.0f;
-        float ridgeValue =  1 + (float) Math.min(this.layers.record().ridgeCaves().noise(x,yRidge,z) + 0.01f,0.0f);
-        float ridgeThickness =  (float) this.layers.record().ridgeCaveThickness().noise(x,yRidge,z);
-        float ridgeRarity =  Math.min((float) this.layers.record().ridgeCaveRarity().noise(x,y,z),0.0f) * 0.1f;
-
-        float ridgeThreshold = 0.15f
-                + (ridgeThickness * 0.15f)
-                + (stress * 0.25f);
-        float ridges = ridgeThreshold - (1 - ridgeValue) - (surfacePenalty * 0.02f) + ridgeRarity;
-        float yLimiter;
-        if (y > WildernessConstants.CAVES_BOTTOM_CENTER) {
-            yLimiter = 0.0f;
-        }else{
-
-            float minYLimit = y -WildernessConstants.CAVES_BOTTOM;
-            float yGap = WildernessConstants.CAVES_BOTTOM_CENTER - WildernessConstants.CAVES_BOTTOM;
-            float yNegDelta = minYLimit / yGap;
-            yLimiter = Math.min(1 - yNegDelta,0.0f);
-        }
-
-        return Math.max(Math.max(spaghetti,pores),ridges) - yLimiter;
-    }
-
-    public double computeBarrierFor(int x, int y, int z, RegionMemory memory) {
-        float barrier = (float) this.layers.record().aquiferBarrier().noise(x,y,z);
-        return barrier;
-    }
-
-    public double computeFloodednessFor(int x, int y, int z, RegionMemory memory) {
-        float flood =  (float) this.layers.record().aquiferFloodedness().noise(x,y,z);
-        return flood;
-    }
-
-    public double computeFluidSpreadFor(int x, int y, int z, RegionMemory memory) {
-        float spread =  (float) this.layers.record().aquiferSpread().noise(x,y,z);
-        return spread;
-    }
-
-    public BlockState computeFluidTypeFor(int x, int y, int z, Aquifer.FluidStatus globalFluid, RegionMemory memory) {
-        float lava = (float) this.layers.record().aquiferLava().noise(x,y,z);
-        return lava >= 0.3f ? Blocks.LAVA.defaultBlockState() :  globalFluid.fluidType();
     }
 }

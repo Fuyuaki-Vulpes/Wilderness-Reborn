@@ -330,6 +330,7 @@ public class RegionMemory implements AutoCloseable{
         for (WorldRegion worldRegion : activeRegions.values()) {
             this.regionManager.save(worldRegion);
         }
+        this.initializationFutures = null;
         activeRegions.clear();
         this.regionManager.close();
         this.regionManager = null;

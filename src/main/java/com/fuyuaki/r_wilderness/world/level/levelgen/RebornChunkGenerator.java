@@ -2,8 +2,10 @@ package com.fuyuaki.r_wilderness.world.level.levelgen;
 
 import com.fuyuaki.r_wilderness.api.WildernessConstants;
 import com.fuyuaki.r_wilderness.mixin.accessor.ChunkMapAccessor;
+import com.fuyuaki.r_wilderness.util.HorizontalDirection;
 import com.fuyuaki.r_wilderness.world.generation.biome.BiomePlacementData;
 import com.fuyuaki.r_wilderness.world.generation.biome.RebornBiomeSource;
+import com.fuyuaki.r_wilderness.world.generation.features.plates.TectonicPlateNode;
 import com.fuyuaki.r_wilderness.world.generation.region.RegionMemory;
 import com.fuyuaki.r_wilderness.world.generation.region.WorldRegion;
 import com.fuyuaki.r_wilderness.world.generation.region.reference.RegionLayers;
@@ -38,8 +40,10 @@ import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.densityfunction.*;
 import net.minecraft.world.level.levelgen.material.rule.MaterialRule;
+import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.joml.Vector2f;
 import org.jspecify.annotations.Nullable;
 
 import java.text.DecimalFormat;
@@ -63,6 +67,7 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
     );
 
     private static final DecimalFormat DEBUG_MENU_FORMAT = new DecimalFormat("0.000", DecimalFormatSymbols.getInstance(Locale.ROOT));
+    private static final DecimalFormat DEBUG_MENU_FORMAT_SHORT = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ROOT));
     private static final BlockState AIR = Blocks.AIR.defaultBlockState();
 
 
@@ -193,10 +198,10 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
         String humidity = DEBUG_MENU_FORMAT.format(layers.getHumidity().getUpsampled(x,z,memory));
         String temperature = DEBUG_MENU_FORMAT.format(layers.getTemperature().getUpsampled(x,z,memory));
         String atmosPressure = DEBUG_MENU_FORMAT.format(layers.getAtmospherePressure().getUpsampled(x,z,memory));
-        String plateElevOff = DEBUG_MENU_FORMAT.format(layers.getPlateElevationOffsets().getUpsampled(x,z,memory));
-        String heightmap = DEBUG_MENU_FORMAT.format(layers.getHeightmapBasic().getUpsampled(x,z,memory));
+        String plateElevOff = DEBUG_MENU_FORMAT_SHORT.format(layers.getPlateElevationOffsets().getUpsampled(x,z,memory));
+        String heightmap = DEBUG_MENU_FORMAT_SHORT.format(layers.getHeightmapBasic().getUpsampled(x,z,memory));
         String rivers = DEBUG_MENU_FORMAT.format(layers.getRivers().getUpsampled(x,z,memory));
-        String elevation = DEBUG_MENU_FORMAT.format(layers.getElevation().getUpsampled(x,z,memory));
+        String elevation = DEBUG_MENU_FORMAT_SHORT.format(layers.getElevation().getUpsampled(x,z,memory));
         String magic = DEBUG_MENU_FORMAT.format(layers.getMagicalness().getUpsampled(x,z,memory));
         String vegetation = DEBUG_MENU_FORMAT.format(layers.getVegetation().getUpsampled(x,z,memory));
 
@@ -214,6 +219,27 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
         result.add("GH: " + humidity + " GF: " + vegetation + " GR: " + rockiness);
         result.add("GV: " + volcanicness + " GM: " + magic);
 
+        result.add("");
+
+        //CURRENT PLATE
+        TectonicPlateNode node = region.getNbtData().plates().closestNode(x,z);
+        String parentX = DEBUG_MENU_FORMAT_SHORT.format(node.getParentX());
+        String parentZ = DEBUG_MENU_FORMAT_SHORT.format(node.getParentZ());
+        TectonicPlateNode.TerrainMaker maker = node.getTerrainMaker();
+        String type = node.getType().getSerializedName();
+        String age = DEBUG_MENU_FORMAT.format(maker.age());
+        String weight = DEBUG_MENU_FORMAT.format(maker.weight());
+
+        Vec2 velocity = node.getVelocity();
+        String vX = DEBUG_MENU_FORMAT_SHORT.format(velocity.x);
+        String vZ = DEBUG_MENU_FORMAT_SHORT.format(velocity.y);
+
+        result.add("Current Plate:");
+        result.add("X:" + parentX + " Z:" + parentZ);
+        result.add("Type: " + type);
+        result.add("Age: " + age + " Weight: " + weight);
+        result.add("Movement: X: " + vX + " Z:" + vZ);
+        result.add("Len: " + velocity.length() + " Dir: " + HorizontalDirection.fromVector(velocity).getSerializedName());
     }
 
     //GENERATORS
@@ -281,7 +307,6 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
                 for (int x = 0; x < volume.sizeX(); x++) {
                     int blockX = volume.blockX(x);
                     float yLevel = region.layers().getElevation().getUpsampled(blockX,blockZ,this.regionMemory);
-
                     for (int y = volume.sizeY() - 1; y >= 0; y--) {
                         int blockY = volume.blockY(y);
                         LevelChunkSection section = chunk.getSection(chunk.getSectionIndex(blockY));
@@ -311,7 +336,7 @@ public class RebornChunkGenerator extends ChunkGenerator implements ChunkGenerat
     private float adaptDensity(float densityPre, float yLevel, int y) {
         if (y > yLevel) {
             float l = Math.max((y - yLevel) / 32,0.0f);
-            return 0.3f - Math.min(l,1.3f) ;
+            return -0.3f - Math.min(l,1.3f) ;
         }
         float l = 1 - Math.min((yLevel - y) / 12,1.0f);
         float d = densityPre + l;

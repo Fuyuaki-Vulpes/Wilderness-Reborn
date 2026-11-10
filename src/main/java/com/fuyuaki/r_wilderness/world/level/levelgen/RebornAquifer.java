@@ -132,7 +132,7 @@ public class RebornAquifer implements Aquifer {
 
             for (int z = 0; z < volume.sizeZ(); z++) {
                 for (int x = 0; x < volume.sizeX(); x++) {
-                    int surfaceLevel = Mth.floor(this.regionMemory.getRegionAt(volume.blockX(x),volume.blockZ(z)).layers().getElevation().getUpsampled(volume.blockX(x),volume.blockZ(z),regionMemory));
+                    int surfaceLevel = Mth.floor(this.regionMemory.getRegionAt(volume.blockX(x),volume.blockZ(z)).layers().getElevation().getUpsampled(volume.blockX(x),volume.blockZ(z),regionMemory)) - 8;
                     this.surfaceLevelCache.put(ChunkPos.pack(volume.blockX(x), volume.blockZ(z)), surfaceLevel);
                     if (surfaceLevel > maxY) {
                         maxY = surfaceLevel;
@@ -494,7 +494,7 @@ public class RebornAquifer implements Aquifer {
 
     private BlockState computeFluidType(int x, int y, int z, Aquifer.FluidStatus globalFluid, int fluidSurfaceLevel) {
         BlockState fluidType = globalFluid.fluidType();
-        if (fluidSurfaceLevel <= -10 && fluidSurfaceLevel != DimensionType.WAY_BELOW_MIN_Y && globalFluid.fluidType() != Blocks.LAVA.defaultBlockState()) {
+        if (fluidSurfaceLevel != DimensionType.WAY_BELOW_MIN_Y && globalFluid.fluidType() != Blocks.LAVA.defaultBlockState()) {
             int fluidTypeCellWidth = 64;
             int fluidTypeCellHeight = 40;
             int fluidTypeCellX = Math.floorDiv(x, fluidTypeCellWidth);

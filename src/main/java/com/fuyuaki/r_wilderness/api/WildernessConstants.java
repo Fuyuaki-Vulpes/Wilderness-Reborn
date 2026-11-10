@@ -38,20 +38,23 @@ public class WildernessConstants {
     public static long EARTH_ORBIT_PERIOD = 365 * DAY_PERIOD;
 
 
+    public static final float ISLAND_ELEVATION_MAX = 64.0f;
+
     public static final float SHEAR_AMPLITUDE = 16.0f;
     public static final float MAX_MOUNTAIN_HEIGHT = 320.0f;
-    public static final float MAX_TRENCH_DEPTH = 64.0f;
-    public static final float MAX_ARC_HEIGHT = 120.0f;
+    public static final float MAX_TRENCH_DEPTH = 148.0f;
+    public static final float MAX_ARC_HEIGHT = 128.0f;
     public static final float RIFT_VALLEY_UPSHIFT = 16.0f;
-    public static final float RIFT_VALLEY_DEPTH = 96.0f;
+    public static final float RIFT_VALLEY_DEPTH = 196.0f;
     public static final float BASE_PLATEAU_UPLIFT = 48.0f;
     public static final float PILLAR_HEIGHTS = 32.0f;
     public static final float PLATEAU_MODULABLE_HEIGHT = 96.0f;
-    public static final float CONTINENTAL_ELEVATION_MIN_MAX = 64.0f;
+    public static final float CONTINENTAL_ELEVATION_MIN_MAX = 48.0f;
     public static final float SWELL_HILL_SCALE = 32.0f;
     public static final float VOLCANIC_ARTIFACT_SCALE = 48.0f;
-    public static final float MAX_MOUNTAIN_LOCAL_VARIATION = 96.0f;
-    public static final float MAX_PEAK_VARIATION = 64.0f;
+    public static final float MAX_MOUNTAIN_LOCAL_VARIATION = 48.0f;
+    public static final float MAX_MOUNTAIN_CHUNK_VARIATION = 128.0f;
+    public static final float MAX_PEAK_VARIATION = 32.0f;
     public static final float MAX_ARTIFACT_ELEVATION = 48.0f;
     public static final float MOUNT_HILL_ELEVATION = 48.0f;
 

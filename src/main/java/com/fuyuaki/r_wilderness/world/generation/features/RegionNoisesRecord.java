@@ -1,5 +1,6 @@
 package com.fuyuaki.r_wilderness.world.generation.features;
 
+import com.fuyuaki.r_wilderness.world.generation.features.plates.RegionPlates;
 import com.fuyuaki.r_wilderness.world.generation.noise.*;
 import com.fuyuaki.r_wilderness.world.generation.region.data.RegionFloatMap;
 import com.fuyuaki.r_wilderness.world.generation.region.data.RegionPos;
@@ -29,22 +30,11 @@ public record RegionNoisesRecord(
         NoiseRecord artifacts,
         NoiseRecord pilarArtifacts,
         NoiseRecord islandModulator,
-        Noise3D ridgeCaves,
-        Noise3D ridgeCaveThickness,
-        Noise3D ridgeCaveRarity,
-        Noise3D spaghettiWorm1,
-        Noise3D spaghettiWorm2,
-        Noise3D spaghettiThickness,
-        Noise3D spaghettiRarity,
-        Noise3D cavePores,
-        Noise3D cavePoresThickness,
-        Noise3D cavePoreRarity,
-        Noise3D aquiferBarrier,
-        Noise3D aquiferFloodedness,
-        Noise3D aquiferSpread,
-        Noise3D aquiferLava
+        NoiseRecord stressModulator,
+        NoiseRecord mountainChunk
 ) {
 
+    private static final int CONTINENTAL = RegionPlates.MAJOR_PLATE_SIZE;
     public static RegionNoisesRecord createFor(long seed) {
         return new RegionNoisesRecord(
                 NoiseRecord.of(
@@ -71,12 +61,10 @@ public record RegionNoisesRecord(
                         simplex(seed, "magic", 512.0f, 1).octaves(2)
         ), NoiseRecord.of(
                         cellular(seed, "canyon_carver", 256.0f, 1).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq)
-                                .warped(simplex(seed, "canyon_warp", 128.0f, 48))
         ), NoiseRecord.of(
                         simplex(seed, "badlands_carver", 256.0f, 1).octaves(2).fractalOctaves(2).fractalGain(0.14f).ridged()
         ), NoiseRecord.of(
                         cellular(seed, "hills", 1200.0f, 1).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq)
-                                .warped(simplex(seed, "hills_warp", 500.0f, 64)).scaled(0,2)
         ),NoiseRecord.of(
                 simplex(seed, "river_sway",128.0f,1).octaves(2)
         ),NoiseRecord.of(
@@ -86,33 +74,22 @@ public record RegionNoisesRecord(
         ),NoiseRecord.of(
                 simplex(seed, "tectonic_intensity",1280.0f,1).octaves(2)
         ), NoiseRecord.of(
-                cellular(seed, "peaks", 64.0f, 1).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq).scaled(0,1)
-                        .warped(simplex(seed, "peaks_warp", 800.0f, 70))
+                cellular(seed, "peaks", 128.0f, 1).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq).scaled(0,1)
         ),NoiseRecord.of(
-                simplex(seed, "peak_filter",128.0f,1).octaves(2).ridged().scaled(0,1)
+                simplex(seed, "peak_filter",256.0f,1).octaves(2).ridged().scaled(0,1)
         ),NoiseRecord.of(
-                simplex(seed, "mountains",256.0f,1).octaves(4).ridged().scaled(0,1)
+                simplex(seed, "mountains",512.0f,1).octaves(4).ridged().scaled(0,1)
         ), NoiseRecord.of(
                 cellular(seed, "artifacts", 256.0f, 1).jitter(1.7f).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq).scaled(0,1)
-                        .warped(simplex(seed, "artifacts_warp", 70.0f, 110))
         ),NoiseRecord.of(
                 simplex(seed, "pillar_artifacts",64.0f,1).octaves(2).fractalOctaves(2).fractalGain(0.1f)
         ),NoiseRecord.of(
-                simplex(seed, "island_modulator",1550f,1).octaves(3)
-        ), cellular3d(seed, "ridge_cave",256.0f,1).jitter(0.95f).distanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq)
-        , simplex3d(seed, "ridge_cave_thickness",128.0f,1)
-        , simplex3d(seed, "ridge_cave_rarity",256.0f,1)
-        , simplex3d(seed, "spaghetti_worm_1",64.0f,1)
-        , simplex3d(seed, "spaghetti_worm_2",64.0f,1)
-        , simplex3d(seed, "spaghetti_thickness",32.0f,1)
-        , simplex3d(seed, "spaghetti_rarity",128.0f,1)
-        , simplex3d(seed, "cave_pores",64.0f,1).octaves(2)
-        , simplex3d(seed, "cave_pores_thickness",64.0f,1)
-        , simplex3d(seed, "cave_pores_rarity",128.0f,1)
-        , simplex3d(seed, "aquifer_barrier",128.0f,1)
-        , simplex3d(seed, "aquifer_floodedness",128.0f,1)
-        , simplex3d(seed, "aquifer_spread",64.0f,1)
-        , simplex3d(seed, "aquifer_lava",12.0f,1)
+                simplex(seed, "island_modulator",900f,1).octaves(3)
+        ),NoiseRecord.of(
+                simplex(seed, "stress_modulator",700f,1).octaves(3).scaled(0,1)
+        ),NoiseRecord.of(
+                simplex(seed, "mountain_chunk",1024.0f,1).scaled(0.0f,1.0f).fractalGain(0.5f).fractalWeightedStrength(1.0f).fractalType(FastNoiseLite.FractalType.Ridged).fractalOctaves(3).octaves(3).scaled(0.0f,1.0f)
+        )
         );
     }
 

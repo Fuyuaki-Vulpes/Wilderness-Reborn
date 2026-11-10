@@ -58,8 +58,9 @@ public enum BiomePlacementTags implements StringRepresentable {
             tags.add(RIVER);
         }
         float continents = layers.getContinentalness().getUpsampled(x, z, memory);
-        if (continents < -0.25f && (elevation >= SEA_LEVEL - 4 || tags.contains(RIVER))){
-            if (layers.getPlateWeights().getUpsampled(x,z,memory) <= 0.45f){
+        float weight = layers.getPlateWeights().getUpsampled(x, z, memory);
+        if (continents < -0.1f && (elevation >= SEA_LEVEL - 12 || tags.contains(RIVER)) && weight <= 0.650f){
+            if (weight <= 0.45f && continents < -0.50f){
                 tags.add(ISLAND);
             }else{
                 tags.add(TIED_ISLAND);

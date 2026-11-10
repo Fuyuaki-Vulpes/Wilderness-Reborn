@@ -22,10 +22,10 @@ public enum RegionLayerTypes {
     HUMIDITY(15, "Humidity", "humidity","humidity",RegionFloatMap.Resolution.R_128),
     ROCKINESS(16, "Rockiness", "rockiness","rockiness",RegionFloatMap.Resolution.R_128),
     MAGICALNESS(17, "Magicalness", "magicalness","magicalness",RegionFloatMap.Resolution.R_128),
-    HEIGHTMAP_BASIC(18, "Heightmap Basic","heightmap_basic","heightmapbasic", RegionFloatMap.Resolution.R_1024),
-    CONTINENTALNESS(19, "Continentalness","continentalness","continentalness", RegionFloatMap.Resolution.R_256),
+    HEIGHTMAP_BASIC(18, "Heightmap Basic","heightmap_basic","heightmapbasic", RegionFloatMap.Resolution.R_2048),
+    CONTINENTALNESS(19, "Continentalness","continentalness","continentalness", RegionFloatMap.Resolution.R_512),
     HILLS(20, "Hills","hills","hills", RegionFloatMap.Resolution.R_512),
-    RIVER_INFLUENCE(21, "Rivers","rivers","rivers", RegionFloatMap.Resolution.R_1024),
+    RIVER_INFLUENCE(21, "Rivers","rivers","rivers", RegionFloatMap.Resolution.R_2048),
     GLACIAL_THICKNESS(22, "Glacial Thickness","glacial_thickness","glacial", RegionFloatMap.Resolution.R_512),
     ;
 

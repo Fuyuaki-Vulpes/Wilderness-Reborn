@@ -132,13 +132,9 @@ public class RWBlockModels extends BlockModelGenerators {
 
     private void vanillaOverride() {
         this.createGrassBlock(Blocks.GRASS_BLOCK,Blocks.DIRT,new GrassColorSource());
-        this.createRTintedPlantBlock(Blocks.SHORT_GRASS, RPlantType.TINTED);
         this.createRTintedPlantBlock(Blocks.BUSH, RPlantType.TINTED);
-        this.createRPlantBlock(Blocks.SHORT_DRY_GRASS, RPlantType.NOT_TINTED);
-        this.createRPlantBlock(Blocks.TALL_DRY_GRASS, RPlantType.NOT_TINTED);
         this.createTintedRebornPlant(Blocks.FERN, Blocks.POTTED_FERN,RPlantType.FERN_LIKE);
         this.createRDoublePlantWithTintedModel(Blocks.LARGE_FERN, RPlantType.FERN_LIKE, RPlantType.FERN_LIKE_DOUBLE_BOTTOM);
-        this.createRDoublePlantWithTintedModel(Blocks.TALL_GRASS, RPlantType.TINTED, RPlantType.TINTED);
         this.createRPlantBlock(Blocks.FIREFLY_BUSH, RPlantType.EMISSIVE_NOT_TINTED);
 
     }

@@ -566,10 +566,10 @@ public record BiomeTargetProfile(
         }
 
         public Builder deepOcean() {
-            return withContinentalness(-2.0f,-1.5f, -0.5f);
+            return withContinentalness(-2.0f,-1.5f, -0.65f);
         }
         public Builder ocean() {
-            return withContinentalness(-0.75f, -0.15f);
+            return withContinentalness(-0.75f, -0.25f);
         }
         public Builder shore() {
             return withContinentalness(-0.20f, 0.15f);

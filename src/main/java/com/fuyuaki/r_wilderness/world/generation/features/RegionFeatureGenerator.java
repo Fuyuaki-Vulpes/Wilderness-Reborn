@@ -30,6 +30,8 @@ public class RegionFeatureGenerator {
     public static final float RIVER_MINIMUM_HEIGHT_PROCESSOR = WildernessConstants.SEA_LEVEL - RiverNode.MAX_DEPTH;
     private static final int MAX_RIVER_POINTS_HEIGHT_SCAN = 8;
 
+    // TECTONIC PLATES
+
     public static float[] calculateRasterizedPlatesForPosition(int xPos, int zPos, Map<RegionPos, WorldRegion> neighbors, TectonicPlateNode[] nearestNodes, float[] distances, TectonicPlateNode[] nodes2, float[] dist2, int arrayHold, float[] localDataScratch, float[] pairResultsScratch, float[] finalRasterScratch, Map<RegionPos, WorldRegion> localNeighborCache) {
         Arrays.fill(nearestNodes, null);
         Arrays.fill(distances, Float.MAX_VALUE);
@@ -221,7 +223,7 @@ public class RegionFeatureGenerator {
 
         float total = 1.0f;
         float maxParentDist = RegionPlates.MAJOR_PLATE_SIZE;
-        float distToParent = closest.getDistToParent() / maxParentDist;
+        float distToParent = Mth.square(closest.getDistToParent() / maxParentDist);
 
         while (validNodeCount < nodes.length && nodes[validNodeCount] != null) {
             validNodeCount++;
@@ -252,7 +254,7 @@ public class RegionFeatureGenerator {
     }
 
     private static void calculatePlateRasterization(int validNodeCount, TectonicPlateNode[] nearestNodes, float[] distances, TectonicPlateNode closestNode, float closestDist, float[] finalRaster, float[] pairResultsScratch) {
-        float boundaryWidth = RegionPlates.MAJOR_PLATE_SIZE * 0.15f;
+        float boundaryWidth = RegionPlates.MAJOR_PLATE_SIZE * 0.40f;
         int weightI = GenerationUtils.TectonicArrayIndex.WEIGHT;
         int edgeI = GenerationUtils.TectonicArrayIndex.EDGES;
         int heightI = GenerationUtils.TectonicArrayIndex.BASE_ELEVATION_OFFSET;
@@ -334,21 +336,23 @@ public class RegionFeatureGenerator {
             lockedHeightOffset = true;
         }
 
-        float bF = 1.0f - (distToEdge / boundaryWidth);
+        float bF = Mth.square(1.0f - (distToEdge / boundaryWidth));
         float boundaryFadeSmooth = bF * bF * (3.0f - (2.0f * bF));
 
         float weight1 = closestNode.getWeight();
         float weight2 = otherNode.getWeight();
 
         if (!lockedHeightOffset) {
-            float relativeSpeedX = closestNode.getVelocityX() - otherNode.getVelocityX();
-            float relativeSpeedZ = closestNode.getVelocityZ() - otherNode.getVelocityZ();
+            float relativeSpeedX = otherNode.getVelocityX() - closestNode.getVelocityX();
+            float relativeSpeedZ = otherNode.getVelocityZ() - closestNode.getVelocityZ();
+
+            float parentXA = closestNode.getParentX();
+            float parentZA = closestNode.getParentZ();
 
             float parentXB = otherNode.getParentX();
-            float parentXA = closestNode.getParentX();
-            float distToBX = parentXB - parentXA;
             float parentZB = otherNode.getParentZ();
-            float parentZA = closestNode.getParentZ();
+
+            float distToBX = parentXB - parentXA;
             float distToBZ = parentZB - parentZA;
 
             float length = (float) Math.sqrt(distToBX * distToBX + distToBZ * distToBZ);
@@ -365,8 +369,8 @@ public class RegionFeatureGenerator {
                 float transformSpeed = (float) Math.sqrt(transformSpeedX * transformSpeedX + transformSpeedZ * transformSpeedZ);
 
                 float weightDifference = weight1 - weight2;
-                float collisionSpeed = Math.max(0.0f, -directSpeed);
-                float separationSpeed = Math.max(0.0f, directSpeed);
+                float collisionSpeed = Math.max(0.0f, directSpeed);
+                float separationSpeed = Math.max(0.0f, -directSpeed);
 
                 float convergenceShift = makeConvergence(distToEdge, collisionSpeed, weightDifference, boundaryWidth, resultsOut);
                 float divergenceShift = makeDivergence(distToEdge, separationSpeed, boundaryWidth, resultsOut);
@@ -377,7 +381,8 @@ public class RegionFeatureGenerator {
             }
         }
 
-        resultsOut[0] = finalHeightOff;
+        float maxWeight = Math.max(closestNode.getWeight(), otherNode.getWeight());
+        resultsOut[0] = finalHeightOff * maxWeight;
     }
 
     private static float makeShear(float transformSpeed, float distToEdge, float boundaryWidth, float[] results) {
@@ -395,14 +400,15 @@ public class RegionFeatureGenerator {
 
     private static float makeConvergence(float distanceToEdge, float convergenceSpeed, float weightDifference, float boundaryWidth, float[] results) {
         float wShift = Math.signum(weightDifference);
-        float shiftIntensity = 3.0f;
+        float shiftIntensity = 4.0f;
         float subdueBias = Math.clamp(weightDifference * shiftIntensity, -1.0f, 1.0f);
 
         float mountainRadius = boundaryWidth * 0.25f;
         float mDistanceRatio = distanceToEdge / mountainRadius;
 
+        float collisionBias = Mth.square(Math.clamp(1.0f - Math.abs(subdueBias), 0.0f, 1.0f));
         float collisionGaussian = (float) Math.exp(-mDistanceRatio * mDistanceRatio);
-        float collisionShift = WildernessConstants.MAX_MOUNTAIN_HEIGHT * Math.clamp(1.0f - Math.abs(subdueBias), 0.0f, 1.0f) * collisionGaussian;
+        float collisionShift = WildernessConstants.MAX_MOUNTAIN_HEIGHT * collisionBias * collisionGaussian;
         float subdueShift;
         float volcanicArcFactor = 0.0f;
 
@@ -428,7 +434,7 @@ public class RegionFeatureGenerator {
             }
         }
 
-        float subdueShiftPost = subdueShift * Math.abs(subdueBias);
+        float subdueShiftPost = subdueShift * (0.5f + (Math.abs(subdueBias) * 0.5f));
 
         results[1] += volcanicArcFactor * Math.abs(subdueBias) * convergenceSpeed;
         float compressionalStress = Math.max(collisionGaussian, 1.0f - Math.min(1.0f, distanceToEdge / (boundaryWidth * 0.3f)));
@@ -513,6 +519,7 @@ public class RegionFeatureGenerator {
         return rasterizedPlates;
     }
 
+    // PLATEAUS
 
     public static RegionFloatMap plateauMap(RegionPos pos, ServerLevel level, WorldRegion worldRegion) {
         Noise2D plateauFilter = worldRegion.layers().record().plateauFilter().getNoise();
@@ -611,26 +618,7 @@ public class RegionFeatureGenerator {
         return map;
     }
 
-    private static float filterMap(RegionFloatMap map, int x, int z, float minimum, float maximum) {
-        float multiplier = 1 / (maximum - minimum);
-        return Math.clamp((map.getGlobal(x, z) - minimum) * multiplier, 0, 1.25f);
-    }
-
-    private static float filter(float v, float minimum, float maximum) {
-        float multiplier = 1 / (maximum - minimum);
-        return Math.clamp((v - minimum) * multiplier, 0, 1.0f);
-    }
-
-    private static float peakAtMap(RegionFloatMap map, int x, int z, float range, float peak) {
-        float f = map.getGlobal(x, z);
-        float difference = Math.abs(f - peak) / range;
-        return Math.clamp(1 - difference, 0, 1);
-    }
-
-    private static float peakAt(float f, float range, float peak) {
-        float difference = Math.abs(f - peak) / range;
-        return Math.clamp(1 - difference, 0, 1);
-    }
+    //HILLS
 
     public static RegionFloatMap createHills(RegionPos pos, ServerLevel level, WorldRegion worldRegion) {
 
@@ -699,20 +687,37 @@ public class RegionFeatureGenerator {
         return hills;
     }
 
+    // HEIGHTMAP AND CONTINENTALNESS
 
     public static void createHeightmapsAndPrepareForRiver(RegionPos pos, ServerLevel level, WorldRegion worldRegion, Map<RegionPos, WorldRegion> neighbors) {
+
+
+        Noise2D peakCellular = worldRegion.layers().record().mountainPeaks().getNoise();
+        Noise2D mountains2 = worldRegion.layers().record().mountainChunk().getNoise();
+        Noise2D peakSimplex = worldRegion.layers().record().peakFilter().getNoise();
+        Noise2D mountains = worldRegion.layers().record().mountains().getNoise();
+        Noise2D artf = worldRegion.layers().record().artifacts().getNoise();
+        Noise2D plateauBadlandCarve = worldRegion.layers().record().plateauBadlandCarve().getNoise();
+        Noise2D plateauCanyonCarve = worldRegion.layers().record().plateauCanyonCarve().getNoise();
+        Noise2D pillarArtifacts = worldRegion.layers().record().pilarArtifacts().getNoise();
+        Noise2D islandModulator = worldRegion.layers().record().islandModulator().getNoise();
+        Noise2D stressModulator = worldRegion.layers().record().stressModulator().getNoise();
 
         RegionFloatMap plateElevationOffset = worldRegion.layers().getPlateElevationOffsets();
         RegionFloatMap buoyancy = worldRegion.layers().getBuoyancy();
         RegionFloatMap age = worldRegion.layers().getAge();
         RegionFloatMap swell = worldRegion.layers().getSwelling();
-        Noise2D mountains = worldRegion.layers().record().mountains().getNoise();
         RegionFloatMap stress = worldRegion.layers().getTectonicStress();
         RegionFloatMap weight = worldRegion.layers().getPlateWeights();
         RegionFloatMap volcanic = worldRegion.layers().getVolcanicness();
         RegionFloatMap plateauOffset = worldRegion.layers().getPlateaus();
-
-        Noise2D islandModulator = worldRegion.layers().record().islandModulator().getNoise();
+        RegionFloatMap rockiness = worldRegion.layers().getRockiness();
+        RegionFloatMap edges = worldRegion.layers().getPlateEdges();
+        RegionFloatMap hilliness = worldRegion.layers().getHilliness();
+        RegionFloatMap erodability = worldRegion.layers().getErodability();
+        RegionFloatMap temperature = worldRegion.layers().getTemperature();
+        RegionFloatMap humidity = worldRegion.layers().getHumidity();
+        RegionFloatMap vegetation = worldRegion.layers().getVegetation();
 
         int minX = RegionPos.toBlockCoord(pos.x());
         int minZ = RegionPos.toBlockCoord(pos.z());
@@ -729,8 +734,6 @@ public class RegionFeatureGenerator {
         int scale = RegionPos.REGION_SIZE / resolution;
         int samplesC = resolutionCont / THREAD_COUNT;
         int scaleC = RegionPos.REGION_SIZE / resolutionCont;
-        float maxContinentForBuyancyInfluence = 0.35f;
-
 
 
         for (int thread = 0; thread < THREAD_COUNT; thread++) {
@@ -747,7 +750,6 @@ public class RegionFeatureGenerator {
                 float plateHeightVariation;
                 float pBaseE;
                 float stressL;
-                float v;
                 float artifacts;
                 float localElevation;
                 for (int xPos = startX; xPos < endX; xPos++) {
@@ -764,20 +766,26 @@ public class RegionFeatureGenerator {
 
                         float continents = Math.clamp((buoyancyLocal * 0.45f) + weightLocal, -1.5f, 1.5f);
 
+                        float localVolcanicness = volcanic.upsampleFromNeighborsBufferSafe(trueX, trueZ,neighbors);
+
                         float c = Math.abs(Math.clamp(continents * 1.5f, -1.0f, 1.0f));
                         float contElevationFactor = (c * c * (3.0f - 2.0f * c)) * Math.signum(continents);
-                        float cFilter = Math.clamp(-continents,0.0f,0.5f) * 2;
+                        float isMod = (float) islandModulator.noise(trueX, trueZ);
+                        float cTI = Math.max(isMod + localVolcanicness,0.15f) * 0.5f + 0.5f;
+
+                        float cFilter = Mth.lerp(Math.clamp((-continents + 0.15f) / 0.35f,0.0f, 1.0f), 1.0f, cTI);
 
                         pEOf = plateElevationOffset.upsampleFromNeighbors(trueX, trueZ, neighbors);
-                        float pEOfModulator =  1 - ((float) Mth.smoothstep(Math.clamp((pEOf + 16) * 1.1f,0,32) / 32));
+                        float pEOfModulator =  1 - Mth.smoothstep(Math.clamp((pEOf + 16) * 1.1f,0,32) / 32);
 
-                        v = volcanic.upsampleFromNeighbors(trueX, trueZ, neighbors);
-                        float cTI = filter((float) islandModulator.noise(trueX,trueZ),0.15f,0.5f);
-                        float pEOfPost = Mth.lerp(cFilter,pEOf,pEOfModulator * Math.max(pEOf,v) * cTI);
+                        float pEOfPost = Mth.lerp(cFilter,pEOf,pEOfModulator * Math.max(pEOf,localVolcanicness) * cTI);
+                        float stressMod = Mth.clamp(((float) stressModulator.noise(trueX,trueZ) - (0.25f + Math.clamp(-continents * 0.75f, 0.0f,0.5f))) * 6,0.0f,1.0f);
+                        float stressWMod = Mth.smoothstep(1 - peakAt(weightLocal,0.15f, -0.10f));
+                        stressL = Math.clamp(stress.upsampleFromNeighbors(trueX, trueZ, neighbors) * (0.05f + Mth.smoothstep(stressMod * 0.95f)) - stressWMod,0,1);
 
-                        stressL = stress.upsampleFromNeighbors(trueX, trueZ, neighbors);
 
-                        float effectivePlateOffsetMultiplier = (float) Mth.lerp(filter(stressL,0.0f,0.5f),1.0f,mountains.noise(trueX,trueZ) * 0.5f + 0.5f);
+                        float mountainFlat = (float) mountains.noise(trueX,trueZ);
+                        float effectivePlateOffsetMultiplier = Mth.lerp(filter(stressL,0.0f,0.5f),1.0f,mountainFlat * 0.5f + 0.5f);
                         plateHeightVariation = (pEOfPost * ((1 - plateAge) * 0.25f + 0.75f) * effectivePlateOffsetMultiplier)
                                 + (contElevationFactor * WildernessConstants.CONTINENTAL_ELEVATION_MIN_MAX)
                                 + (swelling * WildernessConstants.SWELL_HILL_SCALE);
@@ -787,13 +795,89 @@ public class RegionFeatureGenerator {
 
 
 
-
-                        artifacts = (v * (1 - filter(plateAge, 0.1f, 0.5f)) * WildernessConstants.VOLCANIC_ARTIFACT_SCALE);
+                        artifacts = (localVolcanicness * (1 - filter(plateAge, 0.1f, 0.5f)) * WildernessConstants.VOLCANIC_ARTIFACT_SCALE);
 
                         localElevation = plateHeightVariation + pBaseE + artifacts;
 
+                        double peaks1 = peakCellular.noise(trueX, trueZ);
+                        double peaks2 = Mth.smoothstep((float) peakSimplex.noise(trueX, trueZ));
+                        float peaks = (float) Math.max(peaks1 * (peaks2 * 0.75f + 0.25f),peaks2 * peaks2);
+                        float mountainSq = mountainFlat * mountainFlat;
+                        float mountain2 = (float) mountains2.noise(trueX,trueZ);
+                        float shatter = filter((float) artf.noise(trueX,trueZ),-0.5f,0.5f);
+                        float erod = filter(erodability.upsampleFromNeighbors(trueX,trueZ,neighbors),-0.5f,0.5f);
 
-                        heightFmap[xAdapted + zPos] = 64 + localElevation;
+                        float mountainFactor = (1-erod) * plateAge * 0.5f + (1-erod) * 0.25f + plateAge * 0.25f;
+
+                        float mountain = Mth.lerp(mountainFactor,mountainSq, mountainFlat * 0.75f);
+
+                        float rocks = rockiness.upsampleFromNeighborsBufferSafe(trueX,trueZ,neighbors);
+                        float temp = temperature.upsampleFromNeighborsBufferSafe(trueX,trueZ,neighbors);
+                        float hum = humidity.upsampleFromNeighborsBufferSafe(trueX,trueZ,neighbors);
+
+                        float frostFactor = Math.max(-temp,0.0f) * Math.max(hum,0.0f);
+                        float stressFactored = 1 - Mth.square(1 - stressL);
+                        float edge = edges.upsampleFromNeighborsBufferSafe(trueX, trueZ,neighbors);
+                        float hills = hilliness.upsampleFromNeighborsBufferSafe(trueX, trueZ,neighbors);
+                        float plateEFilter = Math.clamp((plat + 16.0f) / 32.0f, 0.0f, 1.0f);
+
+                        float shatterFilter = Math.max(Math.max(plat,hills * 0.65f),edge) * (Math.min((stressL + localVolcanicness * 0.5f) * plateEFilter, 0.5f) * 0.5f + 0.5f) * (Math.max(0.0f,rocks * 0.5f) + 0.5f);
+                        float mountainFilter = stressFactored * (localVolcanicness * 0.25f + 0.75f) * plateEFilter;
+                        float peakFilter = stressFactored * (1.0f - (plateAge * 0.5f)) * (0.5f + (frostFactor * 0.5f)) * plateEFilter;
+
+                        float shatterOffset = shatter * WildernessConstants.MAX_ARTIFACT_ELEVATION * shatterFilter;
+                        float peaksOffset = Math.max(peaks * WildernessConstants.MAX_PEAK_VARIATION * peakFilter,0.0f);
+                        float mountainOffset = Math.max(mountain * WildernessConstants.MAX_MOUNTAIN_LOCAL_VARIATION * mountainFilter,0.0f);
+                        float mountainOffset2 = stressFactored * mountain2 * WildernessConstants.MAX_MOUNTAIN_CHUNK_VARIATION  * plateEFilter;
+
+                        float er2 = erodability.upsampleFromNeighbors(trueX, trueZ, neighbors);
+                        float veg = vegetation.upsampleFromNeighbors(trueX, trueZ, neighbors);
+
+
+                        float erosionFilter = filter(er2, -0.35f, 0.25f) * 0.75f + 0.25f;
+
+                        float pBadlands = Math.min(1.0f - (filter((float) plateauBadlandCarve.noise(trueX, trueZ), -0.75f, 0.75f)
+                                * erosionFilter
+                                * (1 - filter(veg, -0.15f, 0.5f) * 0.75f)), 1.0f);
+
+                        float pCanyon = 1.0f - (filter((float) plateauCanyonCarve.noise(trueX, trueZ), -0.75f, 0.5f)
+                                * erosionFilter
+                                * (filter(hum, 0.0f, 0.35f))
+                                * (1 - (filter(stressL, 0.1f, 0.85f) * 0.5f)));
+
+                        float eFiltStep = filter(er2, -0.5f, 0.5f) * 0.75f;
+
+                        float scaleToStep = Math.clamp(1 - eFiltStep, 0, 1) * WildernessConstants.PLATEAU_STEPS_MAX;
+                        float scaleToStepSt = Math.clamp(1 - eFiltStep * 0.5f, 0, 1) * 0.15f;
+
+                        float pFilterE = Math.max(pCanyon, pBadlands * pBadlands);
+
+                        float plateauElevation = pBaseE * steppedNoBlend(pFilterE,scaleToStepSt);
+
+                        float platStepped = Math.max(stepped(plateauElevation, scaleToStep), 0);
+                        float hillO = filter(hills, 0.05f, 0.95f) * ((1 - (filter(er2, -0.5f, 0.85f))) * 0.5f + 0.5f) * WildernessConstants.MOUNT_HILL_ELEVATION;
+                        float hillElev = ((1 - plat) * hillO) + (plat * stepped(hillO, scaleToStep));
+
+                        float offsetPillars = stepped( filter ((float) pillarArtifacts.noise(trueX,trueZ),0.35f,1.0f) * Math.max(filter(rocks,0.0f,0.65f) * 0.5f,plat) * WildernessConstants.PILLAR_HEIGHTS,0.1f);
+
+                        float details1 = shatterOffset + mountainOffset + peaksOffset + mountainOffset2;
+                        float details2 = ((1 - plat) * details1) + (plat * stepped(details1, scaleToStep) + offsetPillars) * cFilter;
+
+
+                        float islands = isMod * Math.clamp(1 - (stressL - 0.15f),0,1) * filter(localVolcanicness,0.05f,0.6f);
+                        float islandLand = Mth.smoothstep(islands) * WildernessConstants.ISLAND_ELEVATION_MAX;
+
+                        float offset = details2 + ((platStepped + hillElev)) + islandLand;
+
+
+                        float rawHeightAboveSea = localElevation + offset;
+                        float coastalZone = 1.0f - Mth.clamp(Math.abs(rawHeightAboveSea - 3.5f) / 12.0f, 0.0f, 1.0f);
+                        float coastalErosionFactor = coastalZone * filter(er2, -0.8f, 0.3f);
+                        float targetShelfOffset = 1.0f - localElevation;
+                        offset = Mth.lerp(coastalErosionFactor * 0.75f, offset, targetShelfOffset);
+
+
+                        heightFmap[xAdapted + zPos] = 64 + localElevation + offset;
 
                     }
                 }
@@ -805,8 +889,8 @@ public class RegionFeatureGenerator {
         heightmap.updateMap(heightFmap);
         heightmap.setStatus(RegionFloatMap.Status.COMPLETE);
 
-        float eCCont = 64.0f;
-        float eStartCont = 32.0f;
+        float eCCont = 128.0f;
+        float eStartCont = 64.0f;
         for (int thread = 0; thread < THREAD_COUNT; thread++) {
             int startX = thread * samplesC;
             int endX = startX + samplesC;
@@ -829,8 +913,8 @@ public class RegionFeatureGenerator {
                         float cDelta = Math.clamp(-continentalPre,0.0f,0.5f) * 2;
                         float eDelta = Mth.clamp(elevation - eStartCont, 0.0f,eCCont) / eCCont;
                         float cAdd = Mth.lerp(cDelta, eDelta * 0.25f,eDelta);
-                        float deepSea = Math.clamp(-continentalPre - 0.5f,0.0f,0.5f) * 2.0f;
-                        continentalFMap[xAdapted + zPos] = continentalPre + Math.clamp((cAdd * (1 - deepSea)),0.0f,0.5f);
+                        float deepSea = Math.clamp(-continentalPre - 0.5f,0.0f,0.5f) * 4.0f;
+                        continentalFMap[xAdapted + zPos] = continentalPre + Math.clamp((cAdd * (1 - deepSea)),0.0f,0.15f);
                     }
                 }
             });
@@ -845,12 +929,15 @@ public class RegionFeatureGenerator {
         worldRegion.layers().setContinentalness(continentalness);
     }
 
+    // FINAL ELEVATION MAP
+
     public static void createRiverShapeAndHeightmaps(RegionPos pos, ServerLevel level, WorldRegion worldRegion, Map<RegionPos, WorldRegion> neighbors) {
 
 
         RegionFloatMap heightmapBasic = worldRegion.layers().getHeightmapBasic();
 
         Noise2D peakCellular = worldRegion.layers().record().mountainPeaks().getNoise();
+        Noise2D mountains2 = worldRegion.layers().record().mountainChunk().getNoise();
         Noise2D peakSimplex = worldRegion.layers().record().peakFilter().getNoise();
         Noise2D mountains = worldRegion.layers().record().mountains().getNoise();
         Noise2D artifacts = worldRegion.layers().record().artifacts().getNoise();
@@ -861,6 +948,7 @@ public class RegionFeatureGenerator {
         RegionFloatMap edges = worldRegion.layers().getPlateEdges();
         RegionFloatMap volcanic = worldRegion.layers().getVolcanicness();
         RegionFloatMap hilliness = worldRegion.layers().getHilliness();
+        RegionFloatMap plateElevationOffsets = worldRegion.layers().getPlateElevationOffsets();
         RegionFloatMap plateAge = worldRegion.layers().getAge();
         RegionFloatMap rockiness = worldRegion.layers().getRockiness();
         RegionFloatMap humidity = worldRegion.layers().getHumidity();
@@ -911,6 +999,7 @@ public class RegionFeatureGenerator {
                         trueZ = (zPos - paddingR) * scaleR + minZ;
                         finalInfluence = 0.0f;
                         searchLoop:
+                        /*
                         for (int xO = -maxRiverRange; xO <= maxRiverRange; xO++) {
                             for (int zO = -maxRiverRange; zO <= maxRiverRange; zO++) {
                                 int xOff = riverSearchRange * xO;
@@ -955,9 +1044,10 @@ public class RegionFeatureGenerator {
                         }
                         float c = continentalness.upsampleFromNeighbors(trueX,trueZ,neighbors);
                         float cFilter = 1.0f - Mth.clamp(-c + 0.05f,0.0f,0.25f) / 0.2f;
+*/
 
-
-                        riversMap[xAdapted+zPos] = finalInfluence * cFilter;
+//                        riversMap[xAdapted+zPos] = finalInfluence * cFilter;
+                        riversMap[xAdapted+zPos] = finalInfluence;
                     }
                 }
             });
@@ -1129,82 +1219,7 @@ public class RegionFeatureGenerator {
                         }
 
 
-                        double peaks1 = peakCellular.noise(trueX, trueZ);
-                        double peaks2 = Mth.smoothstep((float) peakSimplex.noise(trueX, trueZ));
-                        float peaks = (float) Math.max(peaks1 * peaks2,peaks2 * peaks2);
-                        float mountainFlat = (float) mountains.noise(trueX,trueZ);
-                        float mountainSq = mountainFlat * mountainFlat;
-                        float shatter = filter((float) artifacts.noise(trueX,trueZ),-0.5f,0.5f);
-                        float erod = filter(erodability.upsampleFromNeighbors(trueX,trueZ,neighbors),-0.5f,0.5f);
-                        float age = plateAge.upsampleFromNeighborsBufferSafe(trueX,trueZ,neighbors);
-
-                        float mountainFactor = (1-erod) * age * 0.5f + (1-erod) * 0.25f + age * 0.25f;
-
-                        float mountain = Mth.lerp(mountainFactor,mountainSq, mountainFlat * 0.75f);
-
-                        float rocks = rockiness.upsampleFromNeighborsBufferSafe(trueX,trueZ,neighbors);
-                        float temp = temperature.upsampleFromNeighborsBufferSafe(trueX,trueZ,neighbors);
-                        float hum = humidity.upsampleFromNeighborsBufferSafe(trueX,trueZ,neighbors);
-
-                        float frostFactor = Math.max(-temp,0.0f) * Math.max(hum,0.0f);
-                        float localStress = stress.upsampleFromNeighborsBufferSafe(trueX, trueZ,neighbors);
-                        float localVolcanicness = volcanic.upsampleFromNeighborsBufferSafe(trueX, trueZ,neighbors);
-                        float edge = edges.upsampleFromNeighborsBufferSafe(trueX, trueZ,neighbors);
-
-                        float plateau = plateaus.upsampleFromNeighborsBufferSafe(trueX, trueZ,neighbors);
-                        float hills = hilliness.upsampleFromNeighborsBufferSafe(trueX, trueZ,neighbors);
-
-                        float shatterFilter = Math.max(Math.max(plateau,hills * 0.65f),edge) * (Math.min(localStress + localVolcanicness * 0.5f, 0.5f) * 0.5f + 0.5f) * (Math.max(0.0f,rocks * 0.5f) + 0.5f);
-                        float mountainFilter = localStress * (localVolcanicness * 0.25f + 0.75f);
-                        float peakFilter = localStress * (1.0f - (age * 0.5f)) * (0.5f + (frostFactor * 0.5f));
-
-                        float shatterOffset = shatter * WildernessConstants.MAX_ARTIFACT_ELEVATION * shatterFilter * (1-(riv * 0.9f));
-                        float peaksOffset = Math.max(peaks * WildernessConstants.MAX_PEAK_VARIATION * peakFilter * (1-riv),0.0f);
-                        float mountainOffset = Math.max(mountain * WildernessConstants.MAX_MOUNTAIN_LOCAL_VARIATION * mountainFilter * (1-(riv * 0.9f)),0.0f);
-
-                        float er2 = erodability.upsampleFromNeighbors(trueX, trueZ, neighbors);
-                        float veg = vegetation.upsampleFromNeighbors(trueX, trueZ, neighbors);
-
-                        float stressL = stress.upsampleFromNeighbors(trueX, trueZ, neighbors);
-
-                        float pBaseE = plateau * WildernessConstants.PLATEAU_MODULABLE_HEIGHT;
-
-                        float erosionFilter = filter(er2, -0.35f, 0.25f) * 0.75f + 0.25f;
-
-                        float pBadlands = Math.min(1.0f - (filter((float) plateauBadlandCarve.noise(trueX, trueZ), -0.75f, 0.75f)
-                                * erosionFilter
-                                * (1 - filter(veg, -0.15f, 0.5f) * 0.75f)), 1.0f);
-
-                        float pCanyon = 1.0f - (filter((float) plateauCanyonCarve.noise(trueX, trueZ), -0.75f, 0.5f)
-                                * erosionFilter
-                                * (filter(hum, 0.0f, 0.35f))
-                                * (1 - (filter(stressL, 0.1f, 0.85f) * 0.5f)));
-
-                        float eFiltStep = filter(er2, -0.5f, 0.5f) * 0.75f;
-
-                        float scaleToStep = Math.clamp(1 - eFiltStep, 0, 1) * WildernessConstants.PLATEAU_STEPS_MAX;
-                        float scaleToStepSt = Math.clamp(1 - eFiltStep * 0.5f, 0, 1) * 0.15f;
-
-                        float pFilterE = Math.max(pCanyon, pBadlands * pBadlands);
-
-                        float plateauElevation = pBaseE * steppedNoBlend(pFilterE,scaleToStepSt);
-
-                        float platStepped = Math.max(stepped(plateauElevation, scaleToStep), 0);
-                        float hillO = filter(hills, 0.05f, 0.95f) * ((1 - (filter(er2, -0.5f, 0.85f))) * 0.5f + 0.5f) * WildernessConstants.MOUNT_HILL_ELEVATION;
-                        float hillElev = ((1 - plateau) * hillO) + (plateau * stepped(hillO, scaleToStep));
-
-                        float offsetPillars = stepped( filter ((float) pillarArtifacts.noise(trueX,trueZ),0.35f,1.0f) * Math.max(filter(rocks,0.0f,0.65f) * 0.5f,plateau) * WildernessConstants.PILLAR_HEIGHTS,0.1f);
-
-                        float continents = continentalness.upsampleFromNeighbors(trueX, trueZ, neighbors);
-                        float cTI = Math.max((float) islandModulator.noise(trueX,trueZ) + localVolcanicness,0.15f) * 0.5f + 0.5f;
-                        float cFilter = Mth.lerp(Math.clamp((-continents + 0.05f) / 0.35f,0.0f, 1.0f), 1.0f, cTI);
-
-                        float details1 = shatterOffset + mountainOffset + peaksOffset;
-                        float details2 = ((1 - plateau) * details1) + (plateau * stepped(details1, scaleToStep) + offsetPillars) * cFilter;
-                        float offset = details2 + ((platStepped + hillElev) * (1-riv));
-
-
-                        finalElevation[xAdapted + zPos] = elevationPost + offset;
+                        finalElevation[xAdapted + zPos] = elevationPost;
                     }
                 }
             });
@@ -1364,23 +1379,6 @@ public class RegionFeatureGenerator {
 
     }
 
-    public static float stepped(float originalTerrain, float scaleToStep) {
-        float times = originalTerrain / Math.max(scaleToStep, 0.0001f);
-        float base = (float) Math.floor(times);
-        float smooth = times - base;
-
-        float smoothed = (float) Mth.smoothstep(Mth.smoothstep(smooth));
-
-        return (base + smoothed) * scaleToStep;
-    }
-
-    public static float steppedNoBlend(float originalTerrain, float scaleToStep) {
-        float times = originalTerrain / Math.max(scaleToStep, 0.0001f);
-        float base = (float) Math.floor(times);
-
-        return base * scaleToStep;
-    }
-
     public static WaterFlowData makeChunkFlowRiverData(int xPos, int zPos, float elevationAt, RegionPos pos, WorldRegion worldRegion, RegionMemory memory) {
         worldRegion.query();
         List<RiverPoint> flowData = new ArrayList<>();
@@ -1414,6 +1412,25 @@ public class RegionFeatureGenerator {
         WaterFlowData data = WaterFlowData.mixAll(xPos,zPos,flowData,elevationAt);
         worldRegion.release();
         return data;
+    }
+
+    // UTILITY FUNCTIONS
+
+    public static float stepped(float originalTerrain, float scaleToStep) {
+        float times = originalTerrain / Math.max(scaleToStep, 0.0001f);
+        float base = (float) Math.floor(times);
+        float smooth = times - base;
+
+        float smoothed = (float) Mth.smoothstep(Mth.smoothstep(smooth));
+
+        return (base + smoothed) * scaleToStep;
+    }
+
+    public static float steppedNoBlend(float originalTerrain, float scaleToStep) {
+        float times = originalTerrain / Math.max(scaleToStep, 0.0001f);
+        float base = (float) Math.floor(times);
+
+        return base * scaleToStep;
     }
 
     private static float[] trimEdges(float[] paddedMap,int paddingSize,int resolution, int paddedResolution) {
@@ -1462,5 +1479,25 @@ public class RegionFeatureGenerator {
         return targetX * targetTotalWidth + targetZ;
     }
 
+    private static float peakAtMap(RegionFloatMap map, int x, int z, float range, float peak) {
+        float f = map.getGlobal(x, z);
+        float difference = Math.abs(f - peak) / range;
+        return Math.clamp(1 - difference, 0, 1);
+    }
+
+    private static float peakAt(float f, float range, float peak) {
+        float difference = Math.abs(f - peak) / range;
+        return Math.clamp(1 - difference, 0, 1);
+    }
+
+    private static float filterMap(RegionFloatMap map, int x, int z, float minimum, float maximum) {
+        float multiplier = 1 / (maximum - minimum);
+        return Math.clamp((map.getGlobal(x, z) - minimum) * multiplier, 0, 1.25f);
+    }
+
+    private static float filter(float v, float minimum, float maximum) {
+        float multiplier = 1 / (maximum - minimum);
+        return Math.clamp((v - minimum) * multiplier, 0, 1.0f);
+    }
 
 }

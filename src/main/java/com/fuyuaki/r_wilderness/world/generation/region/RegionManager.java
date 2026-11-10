@@ -30,6 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RegionManager {
     private final ExecutorService ioExecutor;
@@ -40,6 +41,15 @@ public class RegionManager {
     private final RandomSource random;
     private final ServerLevel level;
     private final Path regionDir;
+
+    private final List<Double> initializedTimes = new ArrayList<>();
+    private final List<Double> rasterTimes = new ArrayList<>();
+    private final List<Double> platTimes = new ArrayList<>();
+    private final List<Double> heightTimes = new ArrayList<>();
+    private final List<Double> riverTimes = new ArrayList<>();
+    private final List<Double> postTimes = new ArrayList<>();
+    private final List<Double> finalTimes = new ArrayList<>();
+
     private final ConcurrentHashMap<Long, CompletableFuture<WorldRegion>> initializations = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, CompletableFuture<WorldRegion>> rasterizations = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Long, CompletableFuture<WorldRegion>> plateauTerrains = new ConcurrentHashMap<>();
@@ -70,6 +80,8 @@ public class RegionManager {
 
     public void joinCompletedRegions(){
 
+        AtomicBoolean updatedAny = new AtomicBoolean(false);
+
         if (!initializations.isEmpty()) {
             initializations.entrySet().removeIf(entry -> {
                 CompletableFuture<WorldRegion> future = entry.getValue();
@@ -85,7 +97,7 @@ public class RegionManager {
                     RegionMemory.getInstance(level).putRegion(packedPos, completedRegion);
                     LOGGER.debug("Successfully Initialized and Merged region at {}", completedRegion.getPos());
                     this.save(completedRegion);
-
+                    updatedAny.set(true);
                 } catch (Exception e) {
                     LOGGER.error("Region Initialization failed for region at {}", RegionPos.unpack(entry.getKey()), e);
                 }
@@ -108,6 +120,7 @@ public class RegionManager {
                     RegionMemory.getInstance(level).putRegion(packedPos, completedRegion);
                     LOGGER.debug("Successfully Rasterized and Merged Region at {}", completedRegion.getPos());
                     this.save(completedRegion);
+                    updatedAny.set(true);
                 } catch (Exception e) {
                     LOGGER.error("Region Rasterization failed for region at {}", RegionPos.unpack(entry.getKey()), e);
                 }
@@ -129,6 +142,7 @@ public class RegionManager {
                     RegionMemory.getInstance(level).putRegion(packedPos, completedRegion);
                     LOGGER.debug("Created Plateaus and Terrain Variation and Merged Region at {}", completedRegion.getPos());
                     this.save(completedRegion);
+                    updatedAny.set(true);
                 } catch (Exception e) {
                     LOGGER.error("Plateau and Terrain Layer Generation failed for region at {}", RegionPos.unpack(entry.getKey()), e);
                 }
@@ -150,6 +164,7 @@ public class RegionManager {
                     RegionMemory.getInstance(level).putRegion(packedPos, completedRegion);
                     LOGGER.debug("Created Rough Heightmaps and Merged Region at {}", completedRegion.getPos());
                     this.save(completedRegion);
+                    updatedAny.set(true);
                 } catch (Exception e) {
                     LOGGER.error("Rough Heightmap Generation failed for region at {}", RegionPos.unpack(entry.getKey()), e);
                 }
@@ -172,6 +187,7 @@ public class RegionManager {
                     RegionMemory.getInstance(level).putRegion(packedPos, completedRegion);
                     LOGGER.debug("Successfully created Rivers and Merged region at {}", completedRegion.getPos());
                     this.save(completedRegion);
+                    updatedAny.set(true);
                 } catch (Exception e) {
                     LOGGER.error("Region River generation failed for region at {}", RegionPos.unpack(entry.getKey()), e);
                 }
@@ -194,6 +210,7 @@ public class RegionManager {
                     RegionMemory.getInstance(level).putRegion(packedPos, completedRegion);
                     LOGGER.debug("Successfully Post Processed Rivers and Merged region at {}", completedRegion.getPos());
                     this.save(completedRegion);
+                    updatedAny.set(true);
                 } catch (Exception e) {
                     LOGGER.error("Region River Post Processing failed for region at {}", RegionPos.unpack(entry.getKey()), e);
                 }
@@ -214,11 +231,16 @@ public class RegionManager {
                     RegionMemory.getInstance(level).putRegion(packedPos, completedRegion);
                     LOGGER.info("Successfully Generated and Merged region at {}", completedRegion.getPos());
                     this.save(completedRegion);
+                    updatedAny.set(true);
                 } catch (Exception e) {
                     LOGGER.error("Region Finalization failed for region at {}", RegionPos.unpack(entry.getKey()), e);
                 }
                 return true;
             });
+        }
+
+        if (this.finalTimes.size() >= 4 && updatedAny.get()) {
+            this.computeAverageTimeOfPhases();
         }
     }
 
@@ -367,6 +389,7 @@ public class RegionManager {
         long endTime = System.nanoTime();
         double durationMs = (endTime - startTime) / 1_000_000.0;
         LOGGER.debug("Initialization for region at {} complete with time: {} ms", pos, durationMs);
+        this.addToInit(durationMs);
         return worldRegion;
     }
 
@@ -389,6 +412,7 @@ public class RegionManager {
         long endTime = System.nanoTime();
         double durationMs = (endTime - startTime) / 1_000_000.0;
         LOGGER.debug("Rasterized region at {} in {} ms", pos, durationMs);
+        this.addToRasters(durationMs);
         return worldRegion;
     }
 
@@ -408,6 +432,7 @@ public class RegionManager {
         long endTime = System.nanoTime();
         double durationMs = (endTime - startTime) / 1_000_000.0;
         LOGGER.debug("Generated Plateau and Terrain Data for region at {}. Completed in {} ms", pos, durationMs);
+        this.addToPlat(durationMs);
         return worldRegion;
     }
 
@@ -422,6 +447,7 @@ public class RegionManager {
         long endTime = System.nanoTime();
         double durationMs = (endTime - startTime) / 1_000_000.0;
         LOGGER.debug("Heightmaps for region at {} took {} ms to complete", pos, durationMs);
+        this.addToHeight(durationMs);
         return worldRegion;
     }
 
@@ -437,6 +463,7 @@ public class RegionManager {
         long endTime = System.nanoTime();
         double durationMs = (endTime - startTime) / 1_000_000.0;
         LOGGER.debug("Rivers for region at {} took {} ms to complete", pos, durationMs);
+        this.addToRiver(durationMs);
         return worldRegion;
     }
 
@@ -453,6 +480,7 @@ public class RegionManager {
         long endTime0 = System.nanoTime();
         double durationMs0 = (endTime0 - startTime) / 1_000_000.0;
         LOGGER.debug("Ran Processing for region at {}, time taken: {} ms", worldRegion.getPos(), durationMs0);
+        this.addToPost(durationMs0);
 
 
         return worldRegion;
@@ -468,6 +496,7 @@ public class RegionManager {
         long endTime = System.nanoTime();
         double durationMs = (endTime - startTime) / 1_000_000.0;
         LOGGER.debug("Finalized region at {} within {} ms", worldRegion.getPos(), durationMs);
+        this.addToFinal(durationMs);
         return worldRegion;
     }
 
@@ -524,7 +553,49 @@ public class RegionManager {
         return this.regionDir.resolve(fileName);
     }
 
+    private synchronized void addToInit(double time){
+        this.initializedTimes.add(time);
+    }
+    private synchronized void addToRasters(double time){
+        this.rasterTimes.add(time);
+    }
+    private synchronized void addToPlat(double time){
+        this.platTimes.add(time);
+    }
+    private synchronized void addToHeight(double time){
+        this.heightTimes.add(time);
+    }
+    private synchronized void addToRiver(double time){
+        this.riverTimes.add(time);
+    }
+    private synchronized void addToPost(double time){
+        this.postTimes.add(time);
+    }
+    private synchronized void addToFinal(double time){
+        this.finalTimes.add(time);
+    }
 
+    public void computeAverageTimeOfPhases(){
+        LOGGER.debug("Average duration for INITIALIZATION was {} ms", calculateAverage(this.initializedTimes));
+        LOGGER.debug("Average duration for RASTER was {} ms", calculateAverage(this.rasterTimes));
+        LOGGER.debug("Average duration for PLATEAU was {} ms", calculateAverage(this.platTimes));
+        LOGGER.debug("Average duration for ROUGH HEIGHTS was {} ms", calculateAverage(this.heightTimes));
+        LOGGER.debug("Average duration for RIVER was {} ms", calculateAverage(this.riverTimes));
+        LOGGER.debug("Average duration for RIVER POST was {} ms", calculateAverage(this.postTimes));
+        LOGGER.debug("Average duration for FINALIZATION was {} ms", calculateAverage(this.finalTimes));
+    }
+
+    public static double calculateAverage(List<Double> list) {
+        if (list == null || list.isEmpty()) {
+            return 0.0;
+        }
+        double sum = 0.0;
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            sum += list.get(i);
+        }
+        return sum / size;
+    }
 
     public void close() {
         try {

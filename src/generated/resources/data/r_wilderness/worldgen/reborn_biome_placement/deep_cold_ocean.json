@@ -4,7 +4,7 @@
   "target": {
     "continentalness": {
       "any": false,
-      "max": -0.5,
+      "max": -0.65,
       "mean": -1.5,
       "min": -2.0
     },

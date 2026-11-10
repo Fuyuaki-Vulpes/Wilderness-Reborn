@@ -61,11 +61,12 @@ public class TectonicPlateNode {
         float worldZ = worldPosition(cellZ + centerZ) + RegionPos.toBlockCoord(regionPos.z()) - (velocityZParent * offsetDistance);
         float distTo = parent.getWeightedDistance(worldX,worldZ);
         this.distToParent = distTo;
-        float weightLoss = 0.25f;
+        float weightLoss = 0.15f;
         float distRaw = parent.getRawDistance(worldX,worldZ);
-        int maxDistanceForBias = 8192;
-        float dB = Math.clamp(distTo / maxDistanceForBias,0.0f,1.0f);
-        float distBias = (float) Mth.smoothstep(dB);
+        int maxDistanceForBias = 4096;
+        int minDistToBias = 4096;
+        float dB = Math.clamp((distTo - minDistToBias) / maxDistanceForBias,0.0f,1.0f);
+        float distBias = Mth.smoothstep(dB);
 
         float rollBias = Math.clamp(distRaw / maxDistanceForBias,0,1);
         float rollBiasMulti = rollBias * rollBias;
@@ -85,8 +86,12 @@ public class TectonicPlateNode {
         }
         else {
             this.type = Type.MICRO;
+            float w = getSaltedFloat(hash, i++);
+            float w2 = w * w;
+            float pW = 1-parent.weight;
+            float wW = w2 * pW * 0.5f;
             weight = Math.clamp(
-                    (getSaltedFloat(hash,i++) - 0.5f) * 0.5f + parent.weight
+                    parent.weight + wW
                     ,0.0f,1.0f);
 
             double velAngle = getSaltedFloat(hash, i++) * (2.0 * Math.PI);
@@ -168,7 +173,7 @@ public class TectonicPlateNode {
         return pos * RegionPos.REGION_SIZE / RegionPlates.MINOR_PLATE_GRID_SIZE;
     }
 
-    private Type getType() {
+    public Type getType() {
         return this.type;
     }
 
@@ -305,7 +310,7 @@ public class TectonicPlateNode {
     }
 
     public enum Type implements StringRepresentable {
-        MINOR ("minor"),
+        MINOR ("default"),
         MICRO ("micro"),
         ;
         public static final Codec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
@@ -322,7 +327,7 @@ public class TectonicPlateNode {
         }
     }
 
-    private record LocationStorage(int cellX, int cellZ,Vec2 parentLocation,RegionPos regionPos,Vec2 center){
+    public record LocationStorage(int cellX, int cellZ,Vec2 parentLocation,RegionPos regionPos,Vec2 center){
         public static final Codec<LocationStorage> CODEC = RecordCodecBuilder.create(
 
                 i -> i.group(
@@ -340,7 +345,7 @@ public class TectonicPlateNode {
 
     }
 
-    private record DeformationStorage(Vec2 stretch, float cosTheta, float sinTheta){
+    public record DeformationStorage(Vec2 stretch, float cosTheta, float sinTheta){
 
         public static final Codec<DeformationStorage> CODEC = RecordCodecBuilder.create(
                 i -> i.group(
@@ -356,7 +361,7 @@ public class TectonicPlateNode {
 
     }
 
-    private record TerrainMaker(float weight, float buoyancy, float age, float swelling){
+    public record TerrainMaker(float weight, float buoyancy, float age, float swelling){
         public static final Codec<TerrainMaker> CODEC = RecordCodecBuilder.create(
                 i -> i.group(
                         Codec.FLOAT.fieldOf("weight").forGetter(TerrainMaker::weight),

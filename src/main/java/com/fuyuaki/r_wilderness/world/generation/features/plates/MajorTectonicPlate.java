@@ -103,9 +103,8 @@ public class MajorTectonicPlate {
 
         double velAngle = getSaltedFloat(hash, 2) * (2.0 * Math.PI);
         float speedRaw = getSaltedFloat(hash, 3) * 0.95f + 0.05f;
-        float speedSquared = speedRaw * speedRaw;
-        this.velocityX = (float) Math.cos(velAngle) * speedSquared;
-        this.velocityZ = (float) Math.sin(velAngle) * speedSquared;
+        this.velocityX = (float) Math.cos(velAngle) * speedRaw;
+        this.velocityZ = (float) Math.sin(velAngle) * speedRaw;
 
         float w = getSaltedFloat(hash, 4);
 
@@ -125,7 +124,7 @@ public class MajorTectonicPlate {
         float fW;
         if (w < LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT) {
             float adaptW = w / LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT;
-            fW = (float) (LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT * Math.pow(adaptW, 2));
+            fW = (((float) (LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT * Math.pow(adaptW, 2)) / 0.65f) * 0.8f + 0.2f) * 0.60f;
         } else {
             float adaptW = (w - LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT) / (1.0f - LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT);
             fW = (float) (LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT + (1.0f - LAND_OCEANIC_PLATE_BOUNDARY_WEIGHT) * (1.0 - Math.pow(1.0 - adaptW, 2)));

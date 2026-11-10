@@ -8,6 +8,7 @@
     "accessor.ChunkMapAccessor",
     "common.AbstractFurnaceBlockEntityMixin",
     "common.BiomeMixin",
+    "common.ChunkGeneratorStructureStateMixin",
     "common.ChunkMapMixin",
     "common.ConsumableMixin",
     "common.ItemMixin",
@@ -27,7 +28,7 @@
   "client": [
     "client.CreateWorldScreenMixin",
     "client.CreativeModeInventoryScreenMixin",
-    "common.MinecraftMixin",
+    "common.MinecraftMixin"
   ],
   "injectors": {
     "defaultRequire": 1
